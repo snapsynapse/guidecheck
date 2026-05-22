@@ -40,6 +40,16 @@ blocks.
 For high-consequence tasks, projects need a constrained instruction surface
 that a human can review in full before authorizing an assistant to follow it.
 
+## Who this is for
+
+- AI governance practitioners who need evidence that guidance was reviewable
+  before an assistant acted on it.
+- Security engineers concerned with prompt injection and hidden instruction
+  channels.
+- AI platform and MLOps engineers who operationalize assistant workflows.
+- Technical policy and compliance professionals working on evidence,
+  reviewability, and control design.
+
 ## What this profile defines
 
 - a `.txt` artifact named `assistant-guide.txt`, served at `/.well-known/assistant-guide.txt`
@@ -150,6 +160,17 @@ expectation contract by `scripts/check_reference_verifier.py`.
 ## Status
 
 Draft for review, profile version 0.1.0. See `CHANGELOG.md`.
+
+This is an early-stage open standard. The most useful feedback right now is
+whether the hidden-instruction problem maps to real operational risk in your
+environment, whether `assistant-guide.txt` and the conformance ladder are the
+right abstraction, and what is missing before you could reference a standard
+like this in internal policy or architecture. Open an issue or start a
+discussion.
+
+If the direction is useful to your AI governance, security, or platform work,
+a GitHub star helps the project reach other practitioners working on the same
+problem.
 
 ## Contributing
 
