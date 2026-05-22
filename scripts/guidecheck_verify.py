@@ -561,9 +561,16 @@ def check_manifest(data: bytes, manifest_text: str | None, findings: list[Findin
     }
 
 
-def evaluate_local_file(path: Path, manifest_path: Path | None = None, now: datetime | None = None) -> Evaluation:
-    data = path.read_bytes()
-    manifest_text = manifest_path.read_text(encoding="utf-8") if manifest_path else None
+def evaluate_guide(
+    data: bytes,
+    manifest_text: str | None = None,
+    now: datetime | None = None,
+) -> tuple[list[Finding], int, bool]:
+    """Run Level 1-3 checks on raw guide bytes.
+
+    Returns (findings, achieved_level, level5_ready). Shared by the local-file
+    CLI and the hosted public-web API so both apply identical check logic.
+    """
     evaluated_at = now or datetime.now(timezone.utc)
     findings: list[Finding] = []
     text = decode_text(data)
@@ -597,7 +604,15 @@ def evaluate_local_file(path: Path, manifest_path: Path | None = None, now: date
     if "metadata.status.revoked" in error_ids:
         achieved = min(achieved, 1)
 
-    return Evaluation(path, data, manifest_path, manifest_text, evaluated_at, findings, achieved, False)
+    return findings, achieved, False
+
+
+def evaluate_local_file(path: Path, manifest_path: Path | None = None, now: datetime | None = None) -> Evaluation:
+    data = path.read_bytes()
+    manifest_text = manifest_path.read_text(encoding="utf-8") if manifest_path else None
+    evaluated_at = now or datetime.now(timezone.utc)
+    findings, achieved, level5_ready = evaluate_guide(data, manifest_text, evaluated_at)
+    return Evaluation(path, data, manifest_path, manifest_text, evaluated_at, findings, achieved, level5_ready)
 
 
 def output_for(evaluation: Evaluation) -> dict[str, object]:

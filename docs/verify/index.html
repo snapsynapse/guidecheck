@@ -10,7 +10,7 @@
   <meta name="author" content="Sam Rogers">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="theme-color" content="#0b6a62">
-  <link rel="canonical" href="https://guidecheck.org/verify/">
+  <link rel="canonical" href="https://guidecheck.org/verify">
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="mask-icon" href="/favicon.svg" color="#0b6a62">
@@ -18,6 +18,7 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="alternate" type="text/plain" href="https://guidecheck.org/llms.txt" title="LLM-readable summary">
+  <link rel="stylesheet" href="/verify/verify.css">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="GuideCheck">
@@ -27,7 +28,7 @@
   <meta property="og:image:alt" content="GuideCheck &mdash; the assistant-guide.txt artifact shown in full as plain text, beside a six-rung conformance ladder">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="634">
-  <meta property="og:url" content="https://guidecheck.org/verify/">
+  <meta property="og:url" content="https://guidecheck.org/verify">
   <meta property="og:locale" content="en_US">
 
   <meta name="twitter:card" content="summary_large_image">
@@ -191,14 +192,42 @@
 
 <section style="padding-top:0;">
   <div class="container">
-    <div class="panel">
-      <h2>Interactive verifier</h2>
-      <p>The hosted verifier at this URL is in development alongside the v0.1.0 draft. Until it ships, verify guides with any conformant verifier built against the verifier conformance profile and its fixture corpus.</p>
-      <div class="cta-row">
-        <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" class="btn btn-primary" target="_blank" rel="noopener">Verifier conformance profile</a>
-        <a href="https://github.com/snapsynapse/guidecheck/tree/main/fixtures" class="btn btn-secondary" target="_blank" rel="noopener">Fixture corpus</a>
+    <div class="panel" id="verifier">
+      <h2>Check a guide</h2>
+      <p>Enter the public https URL of an <code>assistant-guide.txt</code> file. The hosted verifier fetches it, runs the GuideCheck checks, and reports what it found. It evaluates Levels 1 through 3 only.</p>
+      <form id="verify-form" class="verify-form" novalidate>
+        <label for="guide-url">Guide URL</label>
+        <div class="verify-input-row">
+          <input type="url" id="guide-url" name="url" inputmode="url" autocomplete="off"
+                 spellcheck="false" placeholder="https://example.com/.well-known/assistant-guide.txt" required>
+          <button type="submit" id="verify-submit" class="btn btn-primary">Verify</button>
+        </div>
+        <p class="verify-hint">https only. The verifier does not store submitted URLs. See the privacy note below.</p>
+      </form>
+
+      <div id="verify-status" class="verify-status" role="status" aria-live="polite" hidden></div>
+      <div id="verify-error" class="verify-error" role="alert" hidden></div>
+
+      <div id="verify-results" class="verify-results" hidden>
+        <p id="verify-headline" class="verify-headline"></p>
+
+        <h3>Compact report</h3>
+        <pre id="verify-compact"></pre>
+
+        <h3 id="verify-findings-heading">Findings</h3>
+        <div id="verify-findings"></div>
+
+        <h3>Raw verifier output</h3>
+        <pre id="verify-json"></pre>
+        <div class="cta-row">
+          <button type="button" id="verify-download" class="btn btn-secondary">Download JSON</button>
+        </div>
       </div>
     </div>
+
+    <p>This hosted verifier is one conformant verifier, not a root of trust. You may use it or any other verifier built against the
+      <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">verifier conformance profile</a>
+      and its <a href="https://github.com/snapsynapse/guidecheck/tree/main/fixtures" target="_blank" rel="noopener">fixture corpus</a>.</p>
 
     <h2>What a verifier checks</h2>
     <ul>
@@ -222,6 +251,12 @@ note: conformance is not safety</pre>
     <h2>Conformance is not safety</h2>
     <p>A passing result, at any level, does not mean a guide is safe to follow or that its publisher is trustworthy. It means the file has the form the profile requires. Read the guide in full, apply the security practices a competent operator would already apply, and keep the human in the approval loop.</p>
 
+    <h2>What this hosted verifier covers</h2>
+    <p>This hosted verifier evaluates GuideCheck Levels 1 through 3. It does not fetch sidecar manifests, check independent provenance anchors (Level 4), or evaluate runtime conformance (Level 5). Every response carries a <code>hosted_limitations</code> field that states this.</p>
+
+    <h2>Privacy</h2>
+    <p>The guide URL you submit is sent to this site's server so it can fetch the file you named. Submitted URLs are not stored by the verifier and are kept out of its request logs. The hosting platform keeps standard short-lived request logs &mdash; timestamp, client IP, and the <code>/api/verify</code> path &mdash; for abuse prevention; those logs do not contain the guide URL.</p>
+
     <h2>Build your own verifier</h2>
     <p>GuideCheck never presents its hosted verifier as the only authoritative one, and never as a root of trust. Anyone may build a conformant verifier; the fixture suite is how independent implementations stay in agreement. See <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">verifier-conformance.md</a>.</p>
   </div>
@@ -234,5 +269,6 @@ note: conformance is not safety</pre>
   </div>
 </footer>
 
+<script src="/verify/verify.js" defer></script>
 </body>
 </html>

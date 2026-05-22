@@ -25,3 +25,9 @@ __pycache__/
 # Verifier scratch output
 /out/
 *.verifier-output.json
+
+# Vercel
+.vercel/
+
+# Generated at build time by vercel.json buildCommand (source is /schemas)
+/docs/schemas/
