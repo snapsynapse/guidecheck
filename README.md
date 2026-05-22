@@ -94,6 +94,47 @@ for byte profile, metadata, action blocks, command restrictions, prohibited
 patterns, manifest mismatch, and public-fetch safety. It is a repository
 regression harness, not the normative verifier. See `evals/README.md`.
 
+## Reference verifier scope
+
+Near-term implementation work is intentionally scoped to a reference verifier
+for Levels 1 through 3.
+
+The planned first build target is a local-file CLI that:
+
+- evaluates `assistant-guide.txt` bytes without executing guide content
+- computes and reports the guide SHA-256
+- checks Level 1 compact verification instructions and basic source metadata
+- checks the Level 2 byte profile and disallowed constructs
+- checks Level 3 metadata, required sections, action blocks, approval gates,
+  command restrictions, prohibited patterns, status, and staleness
+- emits machine-readable verifier output plus the compact human-readable report
+- runs against the current fixture and generated eval corpus
+
+Run the local reference verifier with:
+```text
+python3 scripts/guidecheck_verify.py assistant-guide.txt --pretty
+```
+
+Run the static fixture check for the reference verifier with:
+```text
+make verify-fixtures
+```
+
+Temporary limitations:
+
+- no public conformance claim beyond Level 3
+- no Level 4 provenance claim until manifest and independent-anchor fixtures
+  are complete
+- no hosted verifier claim until public-web fetch replay fixtures, SSRF cases,
+  redirect cases, TLS cases, and abuse controls are specified and tested
+- no Level 5 runtime conformance claim; Level 5 remains out of scope for the
+  reference verifier
+
+The current `scripts/eval_guidecheck.py` remains a regression harness and
+reference map, not the verifier itself. The reference verifier lives in
+`scripts/guidecheck_verify.py` and is checked against the same static fixture
+expectation contract by `scripts/check_reference_verifier.py`.
+
 ## Status
 
 Draft for review, profile version 0.1.0. See `CHANGELOG.md`.

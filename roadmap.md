@@ -7,6 +7,9 @@ items are visible without being treated as commitments.
 
 ## Near-term actions
 
+- Treat the first reference verifier milestone as Level 1 through Level 3 only.
+  Do not claim Level 4, hosted verifier, or Level 5 conformance from this
+  milestone.
 - Promote generated eval cases into static fixtures where they should become
   hard verifier conformance gates.
 - Add valid Level 1 and Level 4 static fixtures with complete `expected.json`
@@ -45,10 +48,15 @@ items are visible without being treated as commitments.
 
 ## Implementation work
 
-- Decide whether this repo should include a reference verifier CLI or keep
-  `scripts/eval_guidecheck.py` strictly as a regression harness.
-- If a reference verifier is added, separate normative fixture execution from
-  repository regression checks.
+- Maintain the local-file reference verifier CLI for Levels 1 through 3 before
+  attempting Level 4 provenance or hosted public-web verification.
+- Keep `scripts/eval_guidecheck.py` as a regression harness and reference map,
+  not the verifier implementation.
+- Continue separating the reference verifier from repository regression checks
+  while preserving the same normalized fixture expectation contract.
+- Emit machine-readable verifier output and the compact human-readable report
+  from the same evidence model.
+- Extend schema and fixture coverage as the local-file CLI contract evolves.
 - Add exact JSON Schema validation for manifest, verifier output, and fixture
   expected files using a pinned portable tool.
 - Add public-web replay fixtures through local HTTP servers for redirects,
@@ -60,10 +68,19 @@ items are visible without being treated as commitments.
 
 ## Open decisions
 
+- Which CLI name, output flags, and exit-code contract the Level 1-3 reference
+  verifier should expose.
+- Whether local-file verifier output should require `input.path`, keep
+  `input.url` optional, or use separate input object variants by mode.
+- What default staleness threshold, metadata value length threshold, approval
+  count warning threshold, and request/fetch limits should be pinned for the
+  reference implementation.
 - Whether GuideCheck's own `repository-url` should be a repository URL, a
   project page URL, or both through separate metadata fields.
 - Whether root `assistant-guide.txt` and `/.well-known/assistant-guide.txt`
   must remain byte-identical for all publishers or only for GuideCheck.
+- Exact Level 4 anchor wire formats for DNS TXT, package registry metadata,
+  repository-file hash publication, and signed `security.txt` fields.
 - Whether signed `security.txt` should be promoted from optional evidence to a
   stronger recommended path for Level 4.
 - Whether `code-executing` should require approval at Level 3, not only as a

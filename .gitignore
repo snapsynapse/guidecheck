@@ -13,6 +13,8 @@ node_modules/
 dist/
 build/
 .cache/
+__pycache__/
+*.py[cod]
 *.log
 
 # Local environment

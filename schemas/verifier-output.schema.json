@@ -31,11 +31,13 @@
     },
     "input": {
       "type": "object",
-      "required": ["url"],
+      "required": ["evaluation_mode"],
       "additionalProperties": true,
       "properties": {
         "url": { "type": "string", "format": "uri" },
         "evaluation_mode": { "type": "string", "enum": ["public-web", "local-file"] },
+        "path": { "type": "string", "minLength": 1 },
+        "manifest_path": { "type": "string", "minLength": 1 },
         "expected_canonical_url": { "type": "string", "format": "uri" },
         "expected_guide_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "expected_max_level": { "type": "integer", "minimum": 0, "maximum": 5 }
@@ -82,10 +84,19 @@
       "additionalProperties": true,
       "properties": {
         "url": { "type": "string", "format": "uri" },
+        "path": { "type": "string", "minLength": 1 },
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "fetched": { "type": "boolean" },
         "hash_match": { "type": "boolean" },
         "bytes_match": { "type": "boolean" }
+      }
+    },
+    "local_evaluation": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "evaluated_at": { "type": "string", "format": "date-time" },
+        "staleness_threshold_days": { "type": "integer", "minimum": 0 }
       }
     },
     "cross_channel_anchors": {
