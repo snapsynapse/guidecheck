@@ -2,8 +2,8 @@
   "description": "GuideCheck repository assistant-guide.txt evaluated as a local Level 3 fixture.",
   "evaluation_mode": "local-file",
   "achieved_level": 3,
-  "guide_sha256": "65a90dd704b26aa856ff91bc1ebb524829c41546bd78f3b33b1dfa2efedb2b09",
-  "guide_bytes": 8168,
+  "guide_sha256": "720e963b3f130db3f005f00d4f6793e8cd084364bf22b68ca6ef140a35eb0192",
+  "guide_bytes": 8164,
   "blocking_finding_ids": [],
   "required_warning_ids": [],
   "level5_ready": false
