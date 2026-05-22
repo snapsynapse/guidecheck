@@ -1,6 +1,8 @@
 # Fixture Suite
 
-The conformance test corpus for the GuideCheck Verifier Conformance Profile. A verifier is conformant for a verifier-profile version only if it passes the fixture suite for that version (verifier-conformance section 29).
+The conformance test corpus for the GuideCheck Verifier Conformance Profile. A
+verifier is conformant for a verifier-profile version only if it passes the
+fixture suite for that version (verifier-conformance section 29).
 
 ## Layout
 
@@ -13,7 +15,10 @@ Fixtures live under `valid/` or `invalid/` by whether the input is a conforming 
 
 ## Expected result format
 
-`expected.json` specifies normalized expectations, not a byte-for-byte full report. The expected-result schema lives at `schemas/fixture-expected.schema.json`. Conformant verifiers may differ in wording but MUST agree on:
+`expected.json` specifies normalized expectations, not a byte-for-byte full
+report. The expected-result schema lives at
+`schemas/fixture-expected.schema.json`. Conformant verifiers may differ in
+wording but MUST agree on:
 
 - `achieved_level`
 - `blocking_finding_ids`: the set of `error`-severity finding ids
@@ -33,7 +38,8 @@ Example:
 
 ## Status
 
-This is the v0.1.0 starter set. The full suite enumerated in verifier-conformance section 29 is in progress. Cases still to add:
+This is the v0.1.0 starter set. The full suite enumerated in
+verifier-conformance section 29 is in progress. Cases still to add:
 
 - valid Level 1, Level 4
 - guide over 8192 bytes
@@ -56,8 +62,14 @@ This is the v0.1.0 starter set. The full suite enumerated in verifier-conformanc
 - redirect chain cases
 - TLS failure cases
 
+Many of these cases are already covered as generated local evals in
+`scripts/eval_guidecheck.py`. They remain on this list until they are promoted
+into static fixture directories with `guide.txt` and `expected.json`.
+
 Contributions that add a fixture must include `guide.txt` and `expected.json` and update this list.
 
 ## Finding ids
 
-The finding ids used in `expected.json` files are defined in `finding-ids.md`. The current registry covers the starter fixture suite. New fixtures that introduce new required finding ids must update the registry in the same change.
+The finding ids used in `expected.json` files are defined in `finding-ids.md`.
+The current registry covers the starter fixture suite. New fixtures that
+introduce new required finding ids must update the registry in the same change.
