@@ -31,6 +31,7 @@ For high-consequence tasks, projects need a constrained instruction surface that
 - a five-level conformance ladder, from plain-text availability through verifiable provenance to runtime-enforced execution
 - a sidecar manifest plus cross-channel hash publication for provenance
 - a companion verifier conformance profile so independent verifiers agree on results
+- this repo's own `assistant-guide.txt`, for drafting or reviewing a target repo guide
 
 ## Documents
 
@@ -40,6 +41,8 @@ For high-consequence tasks, projects need a constrained instruction surface that
 - `threat-register.md` - known risk classes for fixture, verifier, and runtime authors
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
 - `finding-ids.md` - registry for fixture-required verifier finding ids
+- `assistant-guide.txt` - repository copy of the GuideCheck adoption guide
+- `.well-known/assistant-guide.txt` - canonical public copy of the adoption guide
 - `examples/` - sample conforming guides and a sample manifest
 - `fixtures/` - verifier conformance test corpus
 - `INTENT.md` - standards-level strategy, invariants, and recalibration gates
