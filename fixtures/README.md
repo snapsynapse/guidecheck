@@ -43,38 +43,36 @@ verifier-conformance section 29 is in progress.
 
 The current static corpus includes:
 
-- valid Level 2 and Level 3 examples
+- valid Level 1, Level 2, and Level 3 examples
 - a real-world PrompterKit Level 3 guide captured from
   `https://prompterkit.app/.well-known/assistant-guide.txt`
-- byte-profile failures for tabs, CRLF, non-ASCII, overlong lines, and oversize guides
+- byte-profile failures for tabs, CRLF, non-ASCII, NUL, ANSI escape, other controls, overlong lines, and oversize guides
+- disallowed constructs for HTML, Markdown images, data URLs, and JavaScript
 - compact verification instruction failure
-- metadata URL failure and revoked status
+- single-authority verifier language
+- metadata key, URL, status, date, and revoked-status failures
 - missing required section
-- malformed or incomplete action block
-- missing approval gate
-- networked action missing egress
-- shell runner warning
-- chained-guide and encoded-execution prohibitions
-- manifest hash mismatch
+- malformed or incomplete action blocks, duplicate ids, and invalid enum values
+- missing approval gates, including `code-executing`
+- networked action missing egress and broad egress wildcard
+- shell runner and missing `code-executing` warnings
+- command chaining, substitution, non-normal pipes, destructive glob, cwd, and env failures
+- chained-guide, next-guide, guide-rewrite, skip-approval, and encoded-execution prohibitions
+- manifest hash and byte-count mismatch
+- public-fetch SSRF, TLS, and cross-domain redirect scenarios
 
 Cases still to add:
 
 - valid Level 4
-- valid Level 1
-- additional metadata parser-confusion cases
-- duplicate action ids and invalid action enum values
-- code-executing action omitted
-- environment variable and cwd failures
-- command chaining, substitution, pipes, redirection, and destructive glob failures
 - guide with cross-channel hash divergence
-- guide with stale or malformed dates
-- hosted-fetch SSRF cases
-- redirect chain cases
-- TLS failure cases
+- additional metadata parser-confusion cases
+- public-fetch redirect-chain details beyond the modeled cross-domain case
+- public-fetch header and content-variation cases
+- Level 4 anchor scenarios for DNS, registry, repository, signed security.txt, and transparency logs
 
-Many of these cases are already covered as generated local evals in
-`scripts/eval_guidecheck.py`. They remain on this list until they are promoted
-into static fixture directories with `guide.txt` and `expected.json`.
+Some additional mutation cases remain covered by generated local evals in
+`scripts/eval_guidecheck.py`. Promote a generated case into this static corpus
+when it becomes a verifier conformance gate.
 
 Contributions that add a fixture must include `guide.txt` and `expected.json` and update this list.
 

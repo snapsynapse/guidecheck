@@ -1,0 +1,13 @@
+{
+  "description": "Static fixture promoted from generated/metadata-bad-key.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "abcb0d0a30286fe9c60c888248e9a0b3638b4e3229fa921c57707d7f1bf92369",
+  "guide_bytes": 5135,
+  "blocking_finding_ids": [
+    "metadata.malformed",
+    "metadata.missing-required"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/command-substitution.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "8ddbb39393d1b054df180ad43c558629bee0b38ed5cc2aabc9af809c5a484604",
+  "guide_bytes": 5138,
+  "blocking_finding_ids": [
+    "command.substitution"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

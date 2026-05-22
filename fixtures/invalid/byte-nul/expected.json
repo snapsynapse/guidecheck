@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/byte-nul.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "f7145bd161de1293d399fc0849dd8770039a0b3e3a48a3689288a4b482546c92",
+  "guide_bytes": 5136,
+  "blocking_finding_ids": [
+    "byte-profile.no-nul"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

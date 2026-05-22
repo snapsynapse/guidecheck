@@ -1,0 +1,12 @@
+{
+  "description": "A destructive action uses a glob, which is prohibited because the matched path set may be broader than the visible command.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "754f218144ef966ba72fd04d860cdef53ee73c421d6acd970eae9e6a95351b36",
+  "guide_bytes": 5162,
+  "blocking_finding_ids": [
+    "command.glob-destructive"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

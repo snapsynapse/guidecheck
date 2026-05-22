@@ -34,6 +34,7 @@ files.
 | `construct.html` | error | A guide contains HTML-like markup. |
 | `construct.markdown-image` | error | A guide contains a Markdown image construct. |
 | `construct.data-url` | error | A guide contains a data URL. |
+| `construct.javascript` | error | A guide contains a JavaScript construct. |
 
 ## Verification instruction
 
@@ -54,6 +55,11 @@ files.
 | `metadata.status.revoked` | error | The guide status is `revoked`. |
 | `metadata.superseded-by.missing` | warning | A deprecated or revoked guide lacks `superseded-by`. |
 | `metadata.registry-url.not-record` | error | `registry-url` does not identify a specific registry record. |
+| `metadata.last-reviewed.invalid` | warning | The `last-reviewed` date is malformed. |
+| `metadata.last-reviewed.age` | info | The verifier reports the age of `last-reviewed`. |
+| `metadata.last-reviewed.future` | warning | The `last-reviewed` date appears to be in the future. |
+| `metadata.valid-until.invalid` | warning | The `valid-until` date is malformed. |
+| `metadata.valid-until.expired` | warning | The `valid-until` date is in the past. |
 
 ## Required content
 

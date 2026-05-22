@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/env-unlisted.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "e1f702968cee0ac5285575342ad69ed00a30636b5e521411ebd95d5ed410d133",
+  "guide_bytes": 5153,
+  "blocking_finding_ids": [
+    "env.unlisted-variable"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

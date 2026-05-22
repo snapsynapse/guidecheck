@@ -1,0 +1,10 @@
+{
+  "description": "Public-web verification rejects plaintext HTTP input.",
+  "evaluation_mode": "public-web",
+  "achieved_level": 0,
+  "blocking_finding_ids": [
+    "fetch.scheme.http"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

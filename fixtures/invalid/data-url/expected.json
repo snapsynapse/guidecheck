@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/construct-data-url.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "d668744a28b5859ef58f15c4b9d8224b302ad75ac5e59e105cdfbde68d508563",
+  "guide_bytes": 5154,
+  "blocking_finding_ids": [
+    "construct.data-url"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

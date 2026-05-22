@@ -22,6 +22,8 @@ def fixture_dirs() -> list[Path]:
 
 def compare_fixture(path: Path) -> list[str]:
     expected = json.loads((path / "expected.json").read_text(encoding="utf-8"))
+    if expected["evaluation_mode"] != "local-file":
+        return []
     guide = path / "guide.txt"
     manifest = path / "manifest.txt"
     evaluation = guidecheck_verify.evaluate_local_file(guide, manifest if manifest.exists() else None)
@@ -66,7 +68,12 @@ def compare_fixture(path: Path) -> list[str]:
 def main() -> int:
     failures: list[str] = []
     fixtures = fixture_dirs()
+    checked = 0
     for fixture in fixtures:
+        expected = json.loads((fixture / "expected.json").read_text(encoding="utf-8"))
+        if expected["evaluation_mode"] != "local-file":
+            continue
+        checked += 1
         errors = compare_fixture(fixture)
         if errors:
             failures.append(f"{fixture.relative_to(ROOT)}: {'; '.join(errors)}")
@@ -75,7 +82,7 @@ def main() -> int:
         for failure in failures:
             print(f"- {failure}", file=sys.stderr)
         return 1
-    print(f"Reference verifier fixtures passed: {len(fixtures)} cases")
+    print(f"Reference verifier fixtures passed: {checked} cases")
     return 0
 
 

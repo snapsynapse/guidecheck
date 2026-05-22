@@ -86,6 +86,8 @@ def registered_finding_ids() -> set[str]:
 
 
 def validate_verifier_output(errors: list[str], fixture_dir: Path) -> None:
+    if not (fixture_dir / "guide.txt").exists():
+        return
     evaluation = gv.evaluate_local_file(
         fixture_dir / "guide.txt",
         fixture_dir / "manifest.txt" if (fixture_dir / "manifest.txt").exists() else None,
@@ -154,6 +156,25 @@ def validate_verifier_output(errors: list[str], fixture_dir: Path) -> None:
         fail(errors, label, "compact_report must be a non-empty string")
 
 
+def validate_public_fetch_scenario(errors: list[str], fixture_dir: Path) -> None:
+    scenario_path = fixture_dir / "scenario.json"
+    if not scenario_path.exists():
+        return
+    try:
+        scenario = json.loads(scenario_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        fail(errors, scenario_path, f"invalid JSON: {exc}")
+        return
+    if not isinstance(scenario.get("url"), str) or not scenario["url"]:
+        fail(errors, scenario_path, "url must be a non-empty string")
+    if "redirects" in scenario:
+        redirects = scenario["redirects"]
+        if not isinstance(redirects, list) or not all(isinstance(item, str) for item in redirects):
+            fail(errors, scenario_path, "redirects must be an array of strings")
+    if "tls_valid" in scenario and not isinstance(scenario["tls_valid"], bool):
+        fail(errors, scenario_path, "tls_valid must be boolean")
+
+
 def main() -> int:
     errors: list[str] = []
     registered_ids = registered_finding_ids()
@@ -161,6 +182,7 @@ def main() -> int:
     for fixture_dir in fixture_dirs:
         validate_fixture_expected(errors, fixture_dir / "expected.json")
         validate_verifier_output(errors, fixture_dir)
+        validate_public_fetch_scenario(errors, fixture_dir)
         expected = json.loads((fixture_dir / "expected.json").read_text(encoding="utf-8"))
         for key in ("blocking_finding_ids", "required_warning_ids"):
             for finding_id in expected[key]:

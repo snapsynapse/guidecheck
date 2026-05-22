@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/prohibited-rewrite-guide.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "1b8bc7656b73f157b658ef1fb1e8c9f6b7d98eedab292ab103a1d4dc3ce6c24c",
+  "guide_bytes": 5182,
+  "blocking_finding_ids": [
+    "prohibited.rewrite-guide"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

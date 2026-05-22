@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/action-duplicate-id.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "17570c4fe266ba94ea689c5cb05aff1ad88790d3afc742f411d2dc65b6def6cc",
+  "guide_bytes": 5128,
+  "blocking_finding_ids": [
+    "action-block.duplicate-id"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

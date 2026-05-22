@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/prohibited-next-guide.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "acd93f8ea348749186eac3f4619d299b68f94f6cfb0bf38032c595ea78e5199c",
+  "guide_bytes": 5176,
+  "blocking_finding_ids": [
+    "prohibited.next-guide-field"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

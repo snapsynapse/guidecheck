@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/command-pipe-nonnormal.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "360cb3da0012c1a1e263f12c07c597b3ead47c71c98633dfbde608baf809fb36",
+  "guide_bytes": 5145,
+  "blocking_finding_ids": [
+    "command.pipe-or-redirection"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/cwd-missing.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "e00321cbae891911f4b95683c05ab61278d68b6be753984703e66b960271c4c2",
+  "guide_bytes": 5128,
+  "blocking_finding_ids": [
+    "filesystem.cwd.missing"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

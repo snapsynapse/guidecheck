@@ -1,0 +1,6 @@
+{
+  "url": "https://example.com/.well-known/assistant-guide.txt",
+  "redirects": [
+    "https://evil.example.net/guide.txt"
+  ]
+}

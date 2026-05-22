@@ -1,0 +1,12 @@
+{
+  "description": "Date handling fixture with a temporally stable warning condition.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "31a2c7c1e0a3a0cbd7d7631788bee441c9514f117a7029df4a3ef6b33a96f957",
+  "guide_bytes": 5159,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "metadata.valid-until.invalid"
+  ],
+  "level5_ready": false
+}

@@ -1,0 +1,13 @@
+{
+  "description": "Static fixture promoted from generated/action-normal-mixed.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "04d7dc4f536e1ec83de4c7a64b37ef125b839b3573ee71483bb7dc0fe11699cf",
+  "guide_bytes": 5146,
+  "blocking_finding_ids": [
+    "action-block.class.normal-mixed",
+    "egress.missing"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

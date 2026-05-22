@@ -1,0 +1,10 @@
+{
+  "description": "Public-web verification rejects TLS validation failures.",
+  "evaluation_mode": "public-web",
+  "achieved_level": 0,
+  "blocking_finding_ids": [
+    "fetch.tls.invalid"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

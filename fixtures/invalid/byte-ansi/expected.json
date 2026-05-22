@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/byte-ansi.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "c4cc26f9defd665f3cb780c0303b5bb804e97ac2fe609fe109cb380946628a9d",
+  "guide_bytes": 5140,
+  "blocking_finding_ids": [
+    "byte-profile.no-ansi-escape"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

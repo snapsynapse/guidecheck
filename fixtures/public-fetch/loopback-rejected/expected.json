@@ -1,0 +1,10 @@
+{
+  "description": "Hosted verifier rejects loopback IP targets.",
+  "evaluation_mode": "public-web",
+  "achieved_level": 0,
+  "blocking_finding_ids": [
+    "fetch.ssrf.private-ip"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

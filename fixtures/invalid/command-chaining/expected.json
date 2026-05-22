@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/command-chaining.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "6113f5ada6f65aa66f1aa3e409129d047ce2feeb7e820a5c07e05320557c0d37",
+  "guide_bytes": 5145,
+  "blocking_finding_ids": [
+    "command.chaining"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

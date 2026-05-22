@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/action-malformed-line.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "9bdb77a5afe1d5651d651fae25c0c788e57b43c4f9c57d8acf19e2add59a3f0a",
+  "guide_bytes": 5134,
+  "blocking_finding_ids": [
+    "action-block.malformed"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

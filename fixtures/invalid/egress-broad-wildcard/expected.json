@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/egress-broad-wildcard.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "c412707ed0819b22708a59084b84eeda0c7ed20fd7f7403226c3fd2328683c30",
+  "guide_bytes": 5118,
+  "blocking_finding_ids": [
+    "egress.wildcard-too-broad"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Public-web verification blocks cross-registered-domain redirects.",
+  "evaluation_mode": "public-web",
+  "achieved_level": 0,
+  "blocking_finding_ids": [
+    "fetch.redirect.cross-domain"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

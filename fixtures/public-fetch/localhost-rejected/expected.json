@@ -1,0 +1,10 @@
+{
+  "description": "Hosted verifier rejects localhost targets.",
+  "evaluation_mode": "public-web",
+  "achieved_level": 0,
+  "blocking_finding_ids": [
+    "fetch.ssrf.localhost"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

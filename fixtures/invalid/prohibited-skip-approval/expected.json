@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/prohibited-skip-approval.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "621552b0c10950d43d0393bc15d3e96603e1f5665d1ac6edba42fe4308cd6ae5",
+  "guide_bytes": 5179,
+  "blocking_finding_ids": [
+    "prohibited.skip-approval"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

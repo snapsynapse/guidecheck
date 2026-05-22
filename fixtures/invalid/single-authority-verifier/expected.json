@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/single-authority-verifier.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "d6050d0b160952b8379e561b8de82d66366a051fa5c7156391220f82c3723549",
+  "guide_bytes": 5182,
+  "blocking_finding_ids": [
+    "verification-instruction.single-authority"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

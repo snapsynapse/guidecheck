@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/action-invalid-approval.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "fb519e39ee42a605292a978c6ade4e8bd99473213c3600bdb895568b0e2153d5",
+  "guide_bytes": 5131,
+  "blocking_finding_ids": [
+    "action-block.approval.invalid"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

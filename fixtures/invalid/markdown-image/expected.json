@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/construct-markdown-image.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "d3ab4480173ec866133affd097b040868b2b2a91ba1fd75715eee8d9f35ca0e1",
+  "guide_bytes": 5167,
+  "blocking_finding_ids": [
+    "construct.markdown-image"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

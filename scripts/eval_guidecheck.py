@@ -14,6 +14,7 @@ import ipaddress
 import json
 import re
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -175,7 +176,33 @@ def parse_metadata(text: str, findings: list[Finding]) -> dict[str, str]:
         finding(findings, "metadata.superseded-by.missing", "warning", "missing superseded-by")
     if "registry-url" in meta and not looks_like_registry_record(meta["registry-url"]):
         finding(findings, "metadata.registry-url.not-record", "error", "registry-url is not a record")
+    check_dates(meta, findings, date.today())
     return meta
+
+
+def check_dates(meta: dict[str, str], findings: list[Finding], today: date) -> None:
+    if "last-reviewed" in meta:
+        parsed = parse_iso_date(meta["last-reviewed"])
+        if parsed is None:
+            finding(findings, "metadata.last-reviewed.invalid", "warning", "last-reviewed date is malformed")
+        else:
+            age = (today - parsed).days
+            finding(findings, "metadata.last-reviewed.age", "info", f"last-reviewed is {age} days old")
+            if age < -7:
+                finding(findings, "metadata.last-reviewed.future", "warning", "last-reviewed date appears to be in the future")
+    if "valid-until" in meta:
+        parsed = parse_iso_date(meta["valid-until"])
+        if parsed is None:
+            finding(findings, "metadata.valid-until.invalid", "warning", "valid-until is malformed")
+        elif parsed < today:
+            finding(findings, "metadata.valid-until.expired", "warning", "valid-until is in the past")
+
+
+def parse_iso_date(value: str) -> date | None:
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
 
 
 def is_ascii_https_url(value: str) -> bool:
@@ -826,6 +853,8 @@ def load_fixture_cases() -> list[Case]:
     for expected_path in sorted((ROOT / "fixtures").glob("*/*/expected.json")):
         fixture_dir = expected_path.parent
         guide_path = fixture_dir / "guide.txt"
+        if not guide_path.exists():
+            continue
         expected = json.loads(expected_path.read_text())
         manifest_path = fixture_dir / "manifest.txt"
         cases.append(
@@ -839,6 +868,27 @@ def load_fixture_cases() -> list[Case]:
                 expected_sha256=expected.get("guide_sha256"),
                 expected_bytes=expected.get("guide_bytes"),
                 expected_level5_ready=expected.get("level5_ready"),
+            )
+        )
+    return cases
+
+
+def load_fetch_fixture_cases() -> list[FetchScenario]:
+    cases: list[FetchScenario] = []
+    for expected_path in sorted((ROOT / "fixtures" / "public-fetch").glob("*/expected.json")):
+        fixture_dir = expected_path.parent
+        scenario_path = fixture_dir / "scenario.json"
+        if not scenario_path.exists():
+            continue
+        scenario = json.loads(scenario_path.read_text(encoding="utf-8"))
+        expected = json.loads(expected_path.read_text(encoding="utf-8"))
+        cases.append(
+            FetchScenario(
+                name=str(fixture_dir.relative_to(ROOT)),
+                url=scenario["url"],
+                expected=expected["blocking_finding_ids"],
+                redirects=scenario.get("redirects"),
+                tls_valid=scenario.get("tls_valid", True),
             )
         )
     return cases
@@ -968,7 +1018,7 @@ def main() -> int:
         ok, reason = run_case(case)
         if not ok:
             failures.append(f"{case.name}: {reason}")
-    for case in fetch_scenarios():
+    for case in fetch_scenarios() + load_fetch_fixture_cases():
         case_count += 1
         ok, reason = run_fetch_case(case)
         if not ok:

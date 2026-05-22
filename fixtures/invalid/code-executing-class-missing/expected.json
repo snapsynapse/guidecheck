@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/code-executing-class-missing.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "b176a6e7f8e6ac4673d9d59df7b3696e849d5f0d61caaee305df54770d0cd6b7",
+  "guide_bytes": 5119,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "action-block.class.code-executing-missing"
+  ],
+  "level5_ready": false
+}

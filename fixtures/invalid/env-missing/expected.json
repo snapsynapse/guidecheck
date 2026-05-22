@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/env-missing.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "79116a4c716e674ca016f5ec2ad4125a7ecefdaf37f5e357355df226642df769",
+  "guide_bytes": 5142,
+  "blocking_finding_ids": [
+    "env.missing"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}
