@@ -20,11 +20,11 @@ from urllib.parse import urlparse
 
 
 VERIFIER_NAME = "guidecheck-reference-local"
-VERIFIER_VERSION = "0.2.0"
+VERIFIER_VERSION = "0.2.1"
 VERIFIER_PROFILE = "human-verifiable-assistant-guide-verifier"
-VERIFIER_PROFILE_VERSION = "0.2.0"
+VERIFIER_PROFILE_VERSION = "0.2.1"
 GUIDE_PROFILE = "human-verifiable-assistant-guide"
-GUIDE_PROFILE_VERSION = "0.2.0"
+GUIDE_PROFILE_VERSION = "0.2.1"
 DEFAULT_APPROVAL_WARNING_THRESHOLD = 10
 DEFAULT_METADATA_VALUE_WARNING_LENGTH = 80
 

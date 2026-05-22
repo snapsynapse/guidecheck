@@ -130,7 +130,10 @@ exist, and both run the same check logic:
 
 - a local-file reference CLI, `scripts/guidecheck_verify.py`
 - a hosted public-web verifier at https://guidecheck.org/verify, which fetches
-  a guide by URL and applies the same Level 1-3 checks
+  a guide by URL and applies the same Level 1-3 checks. The hosted verifier
+  also accepts optional agent category and expected-level inputs so product
+  telemetry can show where specific agent families routinely miss expected
+  conformance levels.
 
 Both verifiers:
 
@@ -167,6 +170,14 @@ Temporary limitations:
 - no Level 5 runtime conformance claim; Level 5 remains out of scope for the
   reference verifier
 
+Hosted verifier product telemetry is intentionally limited. It records target
+host, whether the path was the standard well-known path or a custom path,
+selected agent category, expected level, achieved level, outcome, failure
+category, and coarse duration. It does not store full submitted URLs, query
+strings, prompts, model responses, IP addresses, or stable visitor identifiers
+as product telemetry. Vercel may keep standard short-lived request logs for
+abuse prevention; those request logs do not include the submitted guide URL.
+
 The current `scripts/eval_guidecheck.py` remains a regression harness and
 reference map, not the verifier itself. The reference verifier lives in
 `scripts/guidecheck_verify.py` and is checked against the same static fixture
@@ -174,7 +185,7 @@ expectation contract by `scripts/check_reference_verifier.py`.
 
 ## Status
 
-Draft for review, profile version 0.2.0. See `CHANGELOG.md`.
+Draft for review, profile version 0.2.1. See `CHANGELOG.md`.
 
 This is an early-stage open standard. The most useful feedback right now is
 whether the hidden-instruction problem maps to real operational risk in your

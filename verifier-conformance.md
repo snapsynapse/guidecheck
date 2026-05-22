@@ -459,18 +459,18 @@ The minimum JSON-compatible schema is:
 {
   "verifier": {
     "name": "example-verifier",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "0.2.0",
+    "verifier_profile_version": "0.2.1",
     "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "0.2.0"
+    "guide_profile_version": "0.2.1"
   },
   "input": {
     "url": "https://example.com/.well-known/assistant-guide.txt"
   },
   "fetch": {
     "final_url": "https://example.com/.well-known/assistant-guide.txt",
-    "fetched_at": "2026-05-21T00:00:00Z",
+    "fetched_at": "2026-05-22T00:00:00Z",
     "http_status": 200,
     "headers": { "content-type": "text/plain; charset=utf-8" },
     "redirects": [],
@@ -583,7 +583,7 @@ A hosted checker SHOULD provide:
 - clear statement that conformance is not safety
 - no claim that the hosted checker is the only authoritative verifier
 - clear labeling when it is the standard primary verifier for a profile version
-- privacy notice explaining what URL and fetch metadata are logged
+- privacy notice explaining what submitted URL, fetch metadata, product telemetry, and retention policy apply
 - rate limiting and abuse protection
 The hosted checker SHOULD make it easy to use the recommended first-step ceremony:
 ```text

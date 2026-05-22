@@ -11,7 +11,25 @@
   border: 1px solid var(--border); border-radius: 6px;
   background: var(--bg); color: var(--text);
 }
-.verify-input-row input:focus-visible {
+.verify-options-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.85rem;
+}
+.verify-option select {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+.verify-input-row input:focus-visible,
+.verify-option select:focus-visible {
   outline: 3px solid var(--accent); outline-offset: 1px;
 }
 .verify-input-row .btn { flex: 0 0 auto; cursor: pointer; border: 0; }
@@ -101,4 +119,8 @@
 
 .verify-github-btn {
   color: var(--text);
+}
+
+@media (max-width: 600px) {
+  .verify-options-row { grid-template-columns: 1fr; }
 }

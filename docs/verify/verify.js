@@ -5,6 +5,8 @@
   if (!form) { return; }
 
   var input = document.getElementById("guide-url");
+  var agent = document.getElementById("agent-used");
+  var requestedLevel = document.getElementById("requested-level");
   var submit = document.getElementById("verify-submit");
   var statusEl = document.getElementById("verify-status");
   var errorEl = document.getElementById("verify-error");
@@ -28,6 +30,8 @@
   function setBusy(busy) {
     submit.disabled = busy;
     input.disabled = busy;
+    if (agent) { agent.disabled = busy; }
+    if (requestedLevel) { requestedLevel.disabled = busy; }
     submit.textContent = busy ? "Verifying..." : "Verify";
   }
 
@@ -188,10 +192,18 @@
     statusEl.textContent = "Fetching and verifying the guide...";
     show(statusEl);
 
+    var body = { url: url };
+    if (agent && agent.value) {
+      body.agent = agent.value;
+    }
+    if (requestedLevel && requestedLevel.value) {
+      body.requested_level = Number(requestedLevel.value);
+    }
+
     fetch("/api/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: url })
+      body: JSON.stringify(body)
     }).then(function (response) {
       return response.json().catch(function () {
         return null;

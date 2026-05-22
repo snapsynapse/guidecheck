@@ -4,6 +4,21 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-05-22
+
+### Added
+
+- sanitized hosted-verifier product telemetry for target host, path category,
+  selected agent category, expected level, achieved level, outcome, failure
+  category, and coarse duration
+- optional hosted-verifier agent category and expected-level inputs for
+  compatibility troubleshooting across agent families
+
+### Changed
+
+- documentation and public verifier copy now describe the hosted verifier's
+  limited product telemetry and distinguish it from normative verifier output
+
 ## [0.2.0] - 2026-05-21
 
 Open-question resolution and restructure. Profile and verifier-profile versions are bumped from 0.1.0; the constraint tightenings below make this a 0.2.0, not a 0.1.x patch.
@@ -64,6 +79,7 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.2.0
 [0.1.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.1.0

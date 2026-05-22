@@ -3,13 +3,13 @@ Assistant Guide: GuideCheck adoption for another repo
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.2.0
-guide-version: 0.2.0
+profile-version: 0.2.1
+guide-version: 0.2.1
 applies-to: guidecheck 0.2.x
 canonical-url: https://guidecheck.org/.well-known/assistant-guide.txt
 repository-url: https://github.com/snapsynapse/guidecheck
 source-path: /.well-known/assistant-guide.txt
-last-reviewed: 2026-05-21
+last-reviewed: 2026-05-22
 reviewed-by: security@guidecheck.org
 status: active
 recommended-verifier: https://guidecheck.org/verify

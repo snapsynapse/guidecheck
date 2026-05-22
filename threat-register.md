@@ -52,7 +52,7 @@ Risks here are not redundant with section 27 of the spec (Residual Threats). Sec
 - Verifier output tampering: the report shown to the user or agent may be altered after generation. Signed verifier output may be worth considering later, especially for hosted checkers and CI.
 - UI rendering bugs in verifier reports: even if the guide is ASCII, the report UI may render findings, URLs, or snippets in confusing ways. Reports should escape guide content and avoid active links where they could mislead.
 - Hosted-checker SSRF: a public checker that fetches user-supplied URLs can be abused to reach private networks or metadata services. The verifier conformance profile adds network safety requirements, but implementation defects remain possible.
-- Hosted-checker privacy leakage: submitting a guide URL to a hosted checker reveals interest in a project, version, or internal initiative. Public-web scope accepts this for the hosted flow, but the checker should disclose logging.
+- Hosted-checker privacy leakage: submitting a guide URL to a hosted checker reveals interest in a project, version, or internal initiative. Public-web scope accepts this for the hosted flow, but the checker should disclose any retained URL, host, path, fetch, agent-category, expected-level, achieved-level, or outcome telemetry and should avoid raw URLs, query strings, prompts, model responses, IP addresses, and stable visitor identifiers unless explicitly justified.
 - Denial of service against verifier: slow responses, large responses, redirect loops, many anchors, and decompression bombs can exhaust verifier resources. Timeouts and read limits reduce but do not eliminate abuse.
 
 ## Agent and runtime risks

@@ -310,13 +310,13 @@ Example:
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.2.0
+profile-version: 0.2.1
 guide-version: 1.0.0
 applies-to: example-project >=2.3.0, <3.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt
 repository-url: https://example.com/org/example-project
 source-path: /.well-known/assistant-guide.txt
-last-reviewed: 2026-05-21
+last-reviewed: 2026-05-22
 reviewed-by: security@example.com
 status: active
 recommended-verifier: https://example.com/check

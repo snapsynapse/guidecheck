@@ -43,9 +43,10 @@ from guidecheck_fetch import FetchError, safe_fetch  # noqa: E402
 
 
 HOSTED_NAME = "guidecheck-hosted"
-HOSTED_VERSION = "0.2.0"
+HOSTED_VERSION = "0.2.1"
 WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
+ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
     "This verifier evaluates Levels 1 through 3 only.",
     "Level 4 provenance and independent anchors are not implemented.",
@@ -58,6 +59,18 @@ _RATE_WINDOW = 60.0
 _RATE_MAX = 12
 _rate_hits: dict[str, list[float]] = {}
 
+AGENT_CHOICES = {
+    "unspecified": ("unspecified", "unspecified"),
+    "chatgpt": ("openai", "chatgpt"),
+    "codex": ("openai", "codex"),
+    "claude": ("anthropic", "claude"),
+    "gemini": ("google", "gemini"),
+    "cursor": ("cursor", "cursor"),
+    "copilot": ("github", "copilot"),
+    "local": ("local", "local"),
+    "other": ("other", "other"),
+}
+
 
 def _rate_ok(client_ip: str) -> bool:
     now = time.monotonic()
@@ -68,6 +81,137 @@ def _rate_ok(client_ip: str) -> bool:
     hits.append(now)
     _rate_hits[client_ip] = hits
     return True
+
+
+def _day(now: datetime) -> str:
+    return now.date().isoformat()
+
+
+def _duration_bucket(ms: int) -> str:
+    if ms < 500:
+        return "under-500ms"
+    if ms < 1000:
+        return "500ms-1s"
+    if ms < 3000:
+        return "1-3s"
+    if ms < 10000:
+        return "3-10s"
+    if ms < 30000:
+        return "10-30s"
+    return "over-30s"
+
+
+def _target_info(url: str | None) -> dict:
+    if not url:
+        return {
+            "target_host": "unknown",
+            "target_path_kind": "unknown",
+            "target_scheme": "unknown",
+        }
+    parts = urlsplit(url)
+    path = parts.path or "/"
+    if path == WELL_KNOWN_PATH:
+        path_kind = "well-known"
+    elif path in ("", "/"):
+        path_kind = "root"
+    else:
+        path_kind = "custom"
+    host = (parts.hostname or "unknown").lower()
+    if host.startswith("www."):
+        host = host[4:]
+    return {
+        "target_host": host,
+        "target_path_kind": path_kind,
+        "target_scheme": parts.scheme or "unknown",
+    }
+
+
+def _analytics_context(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        payload = {}
+    raw_agent = payload.get("agent")
+    agent_key = raw_agent if isinstance(raw_agent, str) else "unspecified"
+    agent_key = agent_key.strip().lower()
+    if agent_key not in AGENT_CHOICES:
+        agent_key = "unspecified"
+    provider, family = AGENT_CHOICES[agent_key]
+
+    raw_level = payload.get("requested_level")
+    requested_level = raw_level if isinstance(raw_level, int) and raw_level in (1, 2, 3) else None
+    return {
+        "agent_provider": provider,
+        "agent_model_family": family,
+        "requested_level": requested_level,
+    }
+
+
+def _failure_category(outcome: str, findings: list[gv.Finding] | None = None, error_code: str | None = None) -> str:
+    if error_code:
+        if error_code in {"scheme", "bad-request"}:
+            return "request_invalid"
+        if error_code == "rate-limited":
+            return "rate_limited"
+        return "fetch_failed"
+    if outcome == "not-found":
+        return "not_found"
+    if outcome == "not-a-guide":
+        return "not_plain_text"
+    if outcome != "evaluated":
+        return outcome
+    blocker_ids = [f.id for f in findings or [] if f.severity == "error"]
+    if not blocker_ids:
+        return "none"
+    if any(fid.startswith("byte-profile.") or fid.startswith("construct.") for fid in blocker_ids):
+        return "byte_profile"
+    if any(fid.startswith("metadata.") for fid in blocker_ids):
+        return "metadata"
+    if any(fid.startswith("action.") for fid in blocker_ids):
+        return "actions"
+    if any(fid.startswith("content.") for fid in blocker_ids):
+        return "required_content"
+    return "other_blocking_findings"
+
+
+def _log_product_event(
+    *,
+    now: datetime,
+    started: float,
+    status: int,
+    outcome: str,
+    payload: dict | None = None,
+    checked_url: str | None = None,
+    auto_resolved: bool | None = None,
+    achieved_level: int | None = None,
+    findings: list[gv.Finding] | None = None,
+    error_code: str | None = None,
+) -> None:
+    payload_context = _analytics_context(payload)
+    event = {
+        "event": ANALYTICS_EVENT,
+        "day": _day(now),
+        "route": "/api/verify",
+        "status": status,
+        "outcome": outcome,
+        "failure_category": _failure_category(outcome, findings, error_code),
+        "duration_bucket": _duration_bucket(int((time.monotonic() - started) * 1000)),
+        "auto_resolved": bool(auto_resolved),
+        "achieved_level": achieved_level,
+        "conformance_delta": (
+            achieved_level - payload_context["requested_level"]
+            if achieved_level is not None and payload_context["requested_level"] is not None
+            else None
+        ),
+    }
+    event.update(payload_context)
+    if (
+        event["outcome"] == "evaluated"
+        and event["failure_category"] == "none"
+        and isinstance(event["conformance_delta"], int)
+        and event["conformance_delta"] < 0
+    ):
+        event["failure_category"] = "below_requested_level"
+    event.update(_target_info(checked_url))
+    print(json.dumps(event, sort_keys=True), flush=True)
 
 
 def resolve_target_url(submitted: str) -> tuple[str, bool]:
@@ -260,10 +404,28 @@ class handler(BaseHTTPRequestHandler):
         self._error(405, "method-not-allowed", "send a POST request with a JSON body")
 
     def do_POST(self) -> None:
+        started = time.monotonic()
+        payload: dict | None = None
+        checked_url: str | None = None
+        auto_resolved: bool | None = None
+
+        def fail(status: int, code: str, message: str) -> None:
+            _log_product_event(
+                now=datetime.now(timezone.utc),
+                started=started,
+                status=status,
+                outcome="error",
+                payload=payload,
+                checked_url=checked_url,
+                auto_resolved=auto_resolved,
+                error_code=code,
+            )
+            self._error(status, code, message)
+
         forwarded = self.headers.get("x-forwarded-for", "")
         client_ip = forwarded.split(",")[0].strip() or self.client_address[0]
         if not _rate_ok(client_ip):
-            self._error(429, "rate-limited", "too many requests; try again shortly")
+            fail(429, "rate-limited", "too many requests; try again shortly")
             return
 
         try:
@@ -271,7 +433,7 @@ class handler(BaseHTTPRequestHandler):
         except ValueError:
             length = 0
         if length <= 0 or length > MAX_REQUEST_BODY:
-            self._error(400, "bad-request", "the request body is missing or too large")
+            fail(400, "bad-request", "the request body is missing or too large")
             return
 
         raw = self.rfile.read(length)
@@ -279,15 +441,16 @@ class handler(BaseHTTPRequestHandler):
             payload = json.loads(raw)
             url = payload["url"]
         except (json.JSONDecodeError, KeyError, TypeError):
-            self._error(400, "bad-request", "the body must be JSON with a string url field")
+            fail(400, "bad-request", "the body must be JSON with a string url field")
             return
         if not isinstance(url, str) or not url.strip():
-            self._error(400, "bad-request", "the body must be JSON with a string url field")
+            fail(400, "bad-request", "the body must be JSON with a string url field")
             return
         url = url.strip()
 
         if not url.lower().startswith("https://"):
-            self._error(400, "scheme", "the guide URL must use https")
+            checked_url = url
+            fail(400, "scheme", "the guide URL must use https")
             return
 
         checked_url, auto_resolved = resolve_target_url(url)
@@ -295,21 +458,50 @@ class handler(BaseHTTPRequestHandler):
         try:
             fetched = safe_fetch(checked_url)
         except FetchError as exc:
-            self._error(400, exc.code, exc.message)
+            fail(400, exc.code, exc.message)
             return
         except Exception:
-            self._error(502, "fetch-failed", "the guide could not be fetched")
+            fail(502, "fetch-failed", "the guide could not be fetched")
             return
 
         now = datetime.now(timezone.utc)
         if fetched.status != 200:
+            _log_product_event(
+                now=now,
+                started=started,
+                status=200,
+                outcome="not-found",
+                payload=payload,
+                checked_url=checked_url,
+                auto_resolved=auto_resolved,
+            )
             self._write_json(200, build_not_found(url, checked_url, auto_resolved, fetched, now))
             return
         if looks_like_html(fetched.body):
+            _log_product_event(
+                now=now,
+                started=started,
+                status=200,
+                outcome="not-a-guide",
+                payload=payload,
+                checked_url=checked_url,
+                auto_resolved=auto_resolved,
+            )
             self._write_json(200, build_not_a_guide(url, checked_url, auto_resolved, fetched, now))
             return
 
         findings, achieved_level, _ = gv.evaluate_guide(fetched.body, None, now)
+        _log_product_event(
+            now=now,
+            started=started,
+            status=200,
+            outcome="evaluated",
+            payload=payload,
+            checked_url=checked_url,
+            auto_resolved=auto_resolved,
+            achieved_level=min(achieved_level, 3),
+            findings=findings,
+        )
         self._write_json(
             200,
             build_evaluated(url, checked_url, auto_resolved, fetched, findings, achieved_level, now),

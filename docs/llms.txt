@@ -25,6 +25,7 @@ AI setup guides reach assistants through HTML, PDFs, docs sites, and copied term
 - GitHub: https://github.com/snapsynapse/guidecheck
 - Homepage: https://guidecheck.org/
 - Verifier: https://guidecheck.org/verify
+- Hosted verifier privacy: Product telemetry is limited to target host, path category, selected agent category, expected level, achieved level, outcome, failure category, and coarse duration. It does not store full submitted URLs, query strings, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.
 
 ## Related patterns
 

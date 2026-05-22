@@ -184,7 +184,7 @@
 <main id="main-content">
 <section class="hero">
   <div class="container">
-    <span class="badge">Verifier &middot; profile 0.2.0</span>
+    <span class="badge">Verifier &middot; profile 0.2.1</span>
     <h1>Verify an assistant-guide.txt file</h1>
     <p class="lead">A verifier checks a guide against the Human-Verifiable Assistant Guide profile and reports what it found. It confirms form. The human still confirms meaning.</p>
   </div>
@@ -194,7 +194,7 @@
   <div class="container">
     <div class="panel" id="verifier">
       <h2>Check a guide</h2>
-      <p>Enter the public https URL of an <code>assistant-guide.txt</code> file, or just a site URL. The hosted verifier fetches it, runs the GuideCheck checks, and reports what it found. Given a site root, it checks the standard <code>/.well-known/assistant-guide.txt</code> path. It evaluates Levels 1 through 3 only.</p>
+      <p>Enter the public https URL of an <code>assistant-guide.txt</code> file, or just a site URL. The hosted verifier fetches it, runs the GuideCheck checks, and reports what it found. Given a site root, it checks the standard <code>/.well-known/assistant-guide.txt</code> path. It evaluates Levels 1 through 3 only. The optional agent and expected-level fields help identify compatibility gaps across agent families.</p>
       <form id="verify-form" class="verify-form" novalidate>
         <label for="guide-url">Guide URL</label>
         <div class="verify-input-row">
@@ -202,7 +202,32 @@
                  spellcheck="false" placeholder="https://example.com/.well-known/assistant-guide.txt" required>
           <button type="submit" id="verify-submit" class="btn btn-primary">Verify</button>
         </div>
-        <p class="verify-hint">https only. The verifier does not store submitted URLs. See the privacy note below.</p>
+        <div class="verify-options-row">
+          <div class="verify-option">
+            <label for="agent-used">Agent used</label>
+            <select id="agent-used" name="agent">
+              <option value="unspecified">Not specified</option>
+              <option value="chatgpt">ChatGPT</option>
+              <option value="codex">Codex</option>
+              <option value="claude">Claude</option>
+              <option value="gemini">Gemini</option>
+              <option value="cursor">Cursor</option>
+              <option value="copilot">GitHub Copilot</option>
+              <option value="local">Local model</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="verify-option">
+            <label for="requested-level">Expected level</label>
+            <select id="requested-level" name="requested_level">
+              <option value="">Not specified</option>
+              <option value="3">Level 3</option>
+              <option value="2">Level 2</option>
+              <option value="1">Level 1</option>
+            </select>
+          </div>
+        </div>
+        <p class="verify-hint">https only. Product telemetry keeps the target host, path category, selected agent category, expected level, achieved level, outcome, failure category, and coarse duration. It does not store full submitted URLs, query strings, prompts, model responses, IP addresses, or stable visitor identifiers.</p>
       </form>
 
       <div id="verify-status" class="verify-status" role="status" aria-live="polite" hidden></div>
@@ -255,7 +280,7 @@
 
     <h2>What a verifier reports</h2>
     <p>A GuideCheck conformance claim is valid only when backed by verifier output, the guide SHA-256, the achieved level, and the findings.</p>
-    <pre>verifier: human-verifiable-assistant-guide-verifier 0.2.0
+    <pre>verifier: human-verifiable-assistant-guide-verifier 0.2.1
 guide-url: https://example.com/.well-known/assistant-guide.txt
 guide-sha256: a1b2c3d4 ... (review the guide before use)
 achieved-level: 3
@@ -271,7 +296,7 @@ note: conformance is not safety</pre>
     <p>This hosted verifier evaluates GuideCheck Levels 1 through 3. It does not fetch sidecar manifests, check independent provenance anchors (Level 4), or evaluate runtime conformance (Level 5). Every response carries a <code>hosted_limitations</code> field that states this.</p>
 
     <h2>Privacy</h2>
-    <p>The guide URL you submit is sent to this site's server so it can fetch the file you named. Submitted URLs are not stored by the verifier and are kept out of its request logs. The hosting platform keeps standard short-lived request logs &mdash; timestamp, client IP, and the <code>/api/verify</code> path &mdash; for abuse prevention; those logs do not contain the guide URL.</p>
+    <p>The guide URL you submit is sent to this site's server so it can fetch the file you named. The verifier keeps product telemetry limited to the target host, whether the path was the standard well-known path or a custom path, the selected agent category, expected level, achieved level, outcome, failure category, and coarse duration. It does not store full submitted URLs, query strings, prompts, model responses, IP addresses, or stable visitor identifiers in product telemetry. The optional agent and expected-level fields are used to find compatibility gaps, such as an agent family often expecting Level 3 but receiving Level 1. The hosting platform keeps standard short-lived request logs &mdash; timestamp, client IP, and the <code>/api/verify</code> path &mdash; for abuse prevention; those logs do not contain the guide URL.</p>
 
     <h2>Build your own verifier</h2>
     <p>GuideCheck never presents its hosted verifier as the only authoritative one, and never as a root of trust. Anyone may build a conformant verifier; the fixture suite is how independent implementations stay in agreement. See <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">verifier-conformance.md</a>.</p>
@@ -281,7 +306,7 @@ note: conformance is not safety</pre>
 
 <footer>
   <div class="container">
-    <p>GuideCheck v0.2.0 &middot; A PAICE Foundation standard &middot; <a href="https://guidecheck.org/">guidecheck.org</a> &middot; <a href="https://github.com/snapsynapse/guidecheck" target="_blank" rel="noopener">GitHub</a> &middot; <a href="/llms.txt">llms.txt</a></p>
+    <p>GuideCheck v0.2.1 &middot; A PAICE Foundation standard &middot; <a href="https://guidecheck.org/">guidecheck.org</a> &middot; <a href="https://github.com/snapsynapse/guidecheck" target="_blank" rel="noopener">GitHub</a> &middot; <a href="/llms.txt">llms.txt</a></p>
   </div>
 </footer>
 
