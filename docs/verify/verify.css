@@ -39,6 +39,18 @@
 .verify-headline.is-pass { border-color: #1f7a4d; background: #eef8f1; color: #145c39; }
 .verify-headline.is-fail { border-color: #b1502a; background: #fbf0ea; color: #8a3a1c; }
 
+.verify-fetched {
+  font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted);
+  margin: 0.85rem 0 0; word-break: break-all;
+}
+
+.verify-message {
+  margin-top: 1rem; font-size: 0.92rem; color: var(--text); line-height: 1.55;
+  background: var(--bg); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent); border-radius: 6px;
+  padding: 0.85rem 1rem; word-break: break-word;
+}
+
 .verify-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
 .verify-table th, .verify-table td {
   text-align: left; padding: 0.5rem 0.6rem;

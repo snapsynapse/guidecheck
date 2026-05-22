@@ -194,7 +194,7 @@
   <div class="container">
     <div class="panel" id="verifier">
       <h2>Check a guide</h2>
-      <p>Enter the public https URL of an <code>assistant-guide.txt</code> file. The hosted verifier fetches it, runs the GuideCheck checks, and reports what it found. It evaluates Levels 1 through 3 only.</p>
+      <p>Enter the public https URL of an <code>assistant-guide.txt</code> file, or just a site URL. The hosted verifier fetches it, runs the GuideCheck checks, and reports what it found. Given a site root, it checks the standard <code>/.well-known/assistant-guide.txt</code> path. It evaluates Levels 1 through 3 only.</p>
       <form id="verify-form" class="verify-form" novalidate>
         <label for="guide-url">Guide URL</label>
         <div class="verify-input-row">
@@ -210,12 +210,16 @@
 
       <div id="verify-results" class="verify-results" hidden>
         <p id="verify-headline" class="verify-headline"></p>
+        <p id="verify-fetched" class="verify-fetched" hidden></p>
+        <div id="verify-message" class="verify-message" hidden></div>
 
-        <h3>Compact report</h3>
-        <pre id="verify-compact"></pre>
+        <div id="verify-detail" hidden>
+          <h3>Compact report</h3>
+          <pre id="verify-compact"></pre>
 
-        <h3 id="verify-findings-heading">Findings</h3>
-        <div id="verify-findings"></div>
+          <h3 id="verify-findings-heading">Findings</h3>
+          <div id="verify-findings"></div>
+        </div>
 
         <h3>Raw verifier output</h3>
         <pre id="verify-json"></pre>

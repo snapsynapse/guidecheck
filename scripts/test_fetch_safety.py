@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Offline safety tests for the hosted verifier's public-web fetch.
+Offline tests for the hosted verifier's public-web fetch and input handling.
 
-These exercise scripts/guidecheck_fetch without making outbound network
-connections: scheme rejection, the IP blocklist, registered-domain scope, and
-rejection of localhost, loopback, private, link-local, and cloud metadata
-targets. Run with: make test-fetch-safety
+These exercise scripts/guidecheck_fetch and api/verify without making outbound
+network connections: scheme rejection, the IP blocklist, registered-domain
+scope, rejection of localhost, loopback, private, link-local, and cloud
+metadata targets, bare-origin URL resolution, and HTML-document detection.
+Run with: make test-fetch-safety
 """
 
 from __future__ import annotations
@@ -15,8 +16,10 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "api"))
 
 import guidecheck_fetch as gf
+import verify as hv
 
 
 PASSED = 0
@@ -82,11 +85,33 @@ def test_ssrf_targets() -> None:
     expect_fetch_error("ipv6 loopback", "https://[::1]/guide.txt", "blocked-target")
 
 
+def test_resolve_target_url() -> None:
+    well_known = "https://example.com/.well-known/assistant-guide.txt"
+    cases = [
+        ("https://example.com/", well_known, True),
+        ("https://example.com", well_known, True),
+        ("https://example.com/docs/guide.txt", "https://example.com/docs/guide.txt", False),
+        (well_known, well_known, False),
+    ]
+    for submitted, expect_url, expect_resolved in cases:
+        url, resolved = hv.resolve_target_url(submitted)
+        check(f"resolve {submitted}", url == expect_url and resolved == expect_resolved)
+
+
+def test_looks_like_html() -> None:
+    check("html doctype", hv.looks_like_html(b"<!DOCTYPE html>\n<html></html>"))
+    check("html tag", hv.looks_like_html(b'  \n<html lang="en">'))
+    check("plain guide", not hv.looks_like_html(b"Assistant Guide: Example\n\nTask scope\n"))
+    check("empty body", not hv.looks_like_html(b""))
+
+
 def main() -> int:
     test_registered_domain()
     test_ip_blocklist()
     test_scheme_rejection()
     test_ssrf_targets()
+    test_resolve_target_url()
+    test_looks_like_html()
     print(f"\n{PASSED} passed, {FAILED} failed")
     return 1 if FAILED else 0
 

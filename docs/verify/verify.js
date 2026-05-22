@@ -10,6 +10,9 @@
   var errorEl = document.getElementById("verify-error");
   var results = document.getElementById("verify-results");
   var headline = document.getElementById("verify-headline");
+  var fetchedEl = document.getElementById("verify-fetched");
+  var messageEl = document.getElementById("verify-message");
+  var detailEl = document.getElementById("verify-detail");
   var compact = document.getElementById("verify-compact");
   var findingsEl = document.getElementById("verify-findings");
   var jsonEl = document.getElementById("verify-json");
@@ -41,6 +44,25 @@
 
   function plural(n, word) {
     return n + " " + word + (n === 1 ? "" : "s");
+  }
+
+  function renderFetched(data) {
+    var f = data.fetch;
+    if (!f) { hide(fetchedEl); return; }
+    var ct = (f.headers && f.headers["content-type"]) || "unknown";
+    var parts = [
+      "Fetched " + f.final_url,
+      "HTTP " + f.http_status,
+      "content-type " + ct
+    ];
+    if (typeof f.bytes === "number") {
+      parts.push(f.bytes.toLocaleString() + " bytes");
+    }
+    if (data.input && data.input.auto_resolved) {
+      parts.push("(you entered a site URL; checked the standard path)");
+    }
+    fetchedEl.textContent = parts.join("  ·  ");
+    show(fetchedEl);
   }
 
   function renderFindings(findings) {
@@ -92,8 +114,15 @@
     findingsEl.appendChild(table);
   }
 
-  function renderResult(data) {
-    lastJson = data;
+  function renderNotice(title, message, cls) {
+    headline.className = "verify-headline " + cls;
+    headline.textContent = title;
+    messageEl.textContent = message || "";
+    show(messageEl);
+    hide(detailEl);
+  }
+
+  function renderEvaluated(data) {
     var guide = data.guide || {};
     var summary = data.summary || {};
     var blocking = summary.blocking_findings || 0;
@@ -104,8 +133,36 @@
       ? "Achieved Level " + (guide.achieved_level || 0) + " · no blocking findings"
       : "Not conformant · " + plural(blocking, "blocking finding");
 
+    if (data.location_note) {
+      messageEl.textContent = data.location_note;
+      show(messageEl);
+    } else {
+      hide(messageEl);
+    }
+
     compact.textContent = data.compact_report || "";
     renderFindings(data.findings);
+    show(detailEl);
+  }
+
+  function renderResult(data) {
+    lastJson = data;
+    renderFetched(data);
+
+    if (data.outcome === "evaluated") {
+      renderEvaluated(data);
+    } else if (data.outcome === "not-found") {
+      renderNotice("No guide found", data.message, "is-fail");
+    } else if (data.outcome === "not-a-guide") {
+      renderNotice("Not an assistant-guide.txt", data.message, "is-fail");
+    } else {
+      renderNotice(
+        "Unexpected response",
+        "The verifier returned an unrecognized outcome.",
+        "is-fail"
+      );
+    }
+
     jsonEl.textContent = JSON.stringify(data, null, 2);
     show(results);
   }
@@ -144,7 +201,7 @@
         showError(res.body.error.message || "The guide could not be verified.");
         return;
       }
-      if (!res.ok || !res.body) {
+      if (!res.body || !res.body.outcome) {
         showError("The verifier returned an unexpected response (HTTP " + res.status + ").");
         return;
       }

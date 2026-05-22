@@ -1,17 +1,25 @@
 """
 GuideCheck hosted verifier API.
 
-POST /api/verify with a JSON body { "url": "https://..." } and the function
-fetches the guide over the public web, runs the GuideCheck Level 1-3 checks,
-and returns verifier JSON plus a compact report.
+POST /api/verify with { "url": "https://..." }. The function resolves the
+target, fetches it over the public web with SSRF protections, classifies the
+outcome, and for a real guide artifact runs the GuideCheck Level 1-3 checks.
 
-This hosted verifier evaluates Levels 1 through 3 only. It does not fetch
-sidecar manifests, check independent provenance anchors (Level 4), or evaluate
-runtime conformance (Level 5). The response always carries an explicit
-hosted_limitations field saying so.
+A bare origin (no path) is resolved to the standard guide location at
+/.well-known/assistant-guide.txt, so a user can paste a site URL and still
+get a useful answer.
 
-Check logic is shared with the local reference verifier via
-scripts/guidecheck_verify.evaluate_guide, so hosted and local results agree.
+Outcomes (HTTP 200, body carries "outcome"):
+- evaluated    a plain-text guide was fetched and checked
+- not-found    the target returned a non-200 status
+- not-a-guide  the target returned an HTML page, not a plain-text guide
+
+Genuine failures (bad request, https/SSRF rejection, DNS, timeout, rate
+limit) return HTTP 4xx with an {"error": ...} body.
+
+This hosted verifier evaluates Levels 1 through 3 only and always returns a
+hosted_limitations field. Check logic is shared with the local reference
+verifier via scripts/guidecheck_verify.evaluate_guide.
 """
 
 from __future__ import annotations
@@ -23,6 +31,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
+from urllib.parse import urlsplit, urlunsplit
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _SCRIPTS = os.path.join(_ROOT, "scripts")
@@ -35,6 +44,7 @@ from guidecheck_fetch import FetchError, safe_fetch  # noqa: E402
 
 HOSTED_NAME = "guidecheck-hosted"
 HOSTED_VERSION = "0.1.0"
+WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
 HOSTED_LIMITATIONS = [
     "This verifier evaluates Levels 1 through 3 only.",
@@ -60,6 +70,63 @@ def _rate_ok(client_ip: str) -> bool:
     return True
 
 
+def resolve_target_url(submitted: str) -> tuple[str, bool]:
+    """Resolve the URL to fetch.
+
+    A bare origin (empty path or '/') is rewritten to the well-known guide
+    location. Returns (url_to_fetch, auto_resolved).
+    """
+    parts = urlsplit(submitted)
+    if parts.path in ("", "/") and not parts.query:
+        resolved = urlunsplit((parts.scheme, parts.netloc, WELL_KNOWN_PATH, "", ""))
+        return resolved, True
+    return submitted, False
+
+
+def looks_like_html(body: bytes) -> bool:
+    """True if the body is an HTML document rather than a plain-text guide."""
+    head = body[:1024].lstrip().lower()
+    return b"<!doctype html" in head or b"<html" in head
+
+
+def well_known_for(url: str) -> str:
+    """Return the canonical guide URL for the origin of the given URL."""
+    parts = urlsplit(url)
+    return urlunsplit((parts.scheme, parts.netloc, WELL_KNOWN_PATH, "", ""))
+
+
+def _verifier_block() -> dict:
+    return {
+        "name": HOSTED_NAME,
+        "version": HOSTED_VERSION,
+        "verifier_profile": gv.VERIFIER_PROFILE,
+        "verifier_profile_version": gv.VERIFIER_PROFILE_VERSION,
+        "guide_profile": gv.GUIDE_PROFILE,
+        "guide_profile_version": gv.GUIDE_PROFILE_VERSION,
+    }
+
+
+def _input_block(submitted: str, checked: str, auto_resolved: bool) -> dict:
+    return {
+        "evaluation_mode": "public-web",
+        "url": checked,
+        "submitted_url": submitted,
+        "auto_resolved": auto_resolved,
+    }
+
+
+def _fetch_block(fetched, now: datetime) -> dict:
+    return {
+        "final_url": fetched.final_url,
+        "fetched_at": now.isoformat().replace("+00:00", "Z"),
+        "http_status": fetched.status,
+        "headers": fetched.headers,
+        "redirects": fetched.redirects,
+        "tls_valid": fetched.tls_valid,
+        "bytes": len(fetched.body),
+    }
+
+
 def _compact_report(result: dict) -> str:
     guide = result["guide"]
     summary = result["summary"]
@@ -77,33 +144,70 @@ def _compact_report(result: dict) -> str:
     )
 
 
-def build_response(url, fetched, findings, achieved_level, now):
-    """Assemble the hosted verifier response. Achieved level is capped at 3."""
+def _location_note(checked: str) -> str | None:
+    """Guidance when a guide was verified at a non-canonical path."""
+    if urlsplit(checked).path == WELL_KNOWN_PATH:
+        return None
+    return (
+        f"This guide was verified at {checked}, which is not the standard "
+        f"location. A conformant guide must be named assistant-guide.txt and "
+        f"served at {well_known_for(checked)} so assistants can discover it. "
+        f"Move or copy the file there."
+    )
+
+
+def build_not_found(submitted, checked, auto_resolved, fetched, now) -> dict:
+    well_known = well_known_for(checked)
+    if checked == well_known:
+        message = (
+            f"No assistant-guide.txt was found at {checked} (HTTP "
+            f"{fetched.status}). That is the standard location GuideCheck "
+            f"checks. If this site publishes an install guide under another "
+            f"name or path, rename it to assistant-guide.txt and serve it there."
+        )
+    else:
+        message = (
+            f"No file was found at {checked} (HTTP {fetched.status}). A "
+            f"conformant guide is served at {well_known}."
+        )
+    return {
+        "verifier": _verifier_block(),
+        "input": _input_block(submitted, checked, auto_resolved),
+        "outcome": "not-found",
+        "fetch": _fetch_block(fetched, now),
+        "message": message,
+        "hosted_limitations": list(HOSTED_LIMITATIONS),
+    }
+
+
+def build_not_a_guide(submitted, checked, auto_resolved, fetched, now) -> dict:
+    content_type = fetched.headers.get("content-type", "unknown")
+    message = (
+        f"{checked} returned an HTML web page (content-type: {content_type}), "
+        f"not a plain-text assistant-guide.txt. A conformant guide is a plain "
+        f"ASCII .txt file, not HTML. If this site has an install guide, publish "
+        f"it as plain text named assistant-guide.txt at {well_known_for(checked)}."
+    )
+    return {
+        "verifier": _verifier_block(),
+        "input": _input_block(submitted, checked, auto_resolved),
+        "outcome": "not-a-guide",
+        "fetch": _fetch_block(fetched, now),
+        "message": message,
+        "hosted_limitations": list(HOSTED_LIMITATIONS),
+    }
+
+
+def build_evaluated(submitted, checked, auto_resolved, fetched, findings, achieved_level, now) -> dict:
     data = fetched.body
     blocking = sum(1 for f in findings if f.severity == "error")
     warnings = sum(1 for f in findings if f.severity == "warning")
     infos = sum(1 for f in findings if f.severity == "info")
     result: dict = {
-        "verifier": {
-            "name": HOSTED_NAME,
-            "version": HOSTED_VERSION,
-            "verifier_profile": gv.VERIFIER_PROFILE,
-            "verifier_profile_version": gv.VERIFIER_PROFILE_VERSION,
-            "guide_profile": gv.GUIDE_PROFILE,
-            "guide_profile_version": gv.GUIDE_PROFILE_VERSION,
-        },
-        "input": {
-            "evaluation_mode": "public-web",
-            "url": url,
-        },
-        "fetch": {
-            "final_url": fetched.final_url,
-            "fetched_at": now.isoformat().replace("+00:00", "Z"),
-            "http_status": fetched.status,
-            "headers": fetched.headers,
-            "redirects": fetched.redirects,
-            "tls_valid": fetched.tls_valid,
-        },
+        "verifier": _verifier_block(),
+        "input": _input_block(submitted, checked, auto_resolved),
+        "outcome": "evaluated",
+        "fetch": _fetch_block(fetched, now),
         "guide": {
             "bytes": len(data),
             "sha256": hashlib.sha256(data).hexdigest(),
@@ -118,6 +222,9 @@ def build_response(url, fetched, findings, achieved_level, now):
         "findings": [f.as_dict() for f in findings],
         "hosted_limitations": list(HOSTED_LIMITATIONS),
     }
+    note = _location_note(checked)
+    if note:
+        result["location_note"] = note
     result["compact_report"] = _compact_report(result)
     return result
 
@@ -183,8 +290,10 @@ class handler(BaseHTTPRequestHandler):
             self._error(400, "scheme", "the guide URL must use https")
             return
 
+        checked_url, auto_resolved = resolve_target_url(url)
+
         try:
-            fetched = safe_fetch(url)
+            fetched = safe_fetch(checked_url)
         except FetchError as exc:
             self._error(400, exc.code, exc.message)
             return
@@ -192,14 +301,16 @@ class handler(BaseHTTPRequestHandler):
             self._error(502, "fetch-failed", "the guide could not be fetched")
             return
 
+        now = datetime.now(timezone.utc)
         if fetched.status != 200:
-            self._error(
-                400,
-                "http-status",
-                f"the guide URL returned HTTP {fetched.status}",
-            )
+            self._write_json(200, build_not_found(url, checked_url, auto_resolved, fetched, now))
+            return
+        if looks_like_html(fetched.body):
+            self._write_json(200, build_not_a_guide(url, checked_url, auto_resolved, fetched, now))
             return
 
-        now = datetime.now(timezone.utc)
         findings, achieved_level, _ = gv.evaluate_guide(fetched.body, None, now)
-        self._write_json(200, build_response(url, fetched, findings, achieved_level, now))
+        self._write_json(
+            200,
+            build_evaluated(url, checked_url, auto_resolved, fetched, findings, achieved_level, now),
+        )
