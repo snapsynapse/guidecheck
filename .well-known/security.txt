@@ -1,0 +1,5 @@
+Contact: mailto:security@guidecheck.org
+Expires: 2027-05-21T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://guidecheck.org/.well-known/security.txt
+Policy: https://guidecheck.org/SECURITY.md

@@ -1,0 +1,3 @@
+Assistant Guide: non-ascii fixture
+
+This line contains a non-ASCII byte: é here.

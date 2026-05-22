@@ -1,0 +1,25 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*~
+
+# Build and tooling output
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# Local environment
+.env
+.env.*
+*.local
+
+# Verifier scratch output
+/out/
+*.verifier-output.json

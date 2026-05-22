@@ -1,0 +1,3 @@
+Assistant Guide: crlf fixture
+
+This file uses CRLF line endings, which the byte profile forbids.

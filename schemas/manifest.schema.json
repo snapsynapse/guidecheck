@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/manifest.schema.json",
+  "title": "Assistant Guide Manifest",
+  "description": "Sidecar manifest for an assistant-guide.txt artifact at Level 4.",
+  "type": "object",
+  "required": [
+    "guide-path",
+    "guide-version",
+    "guide-sha256",
+    "guide-bytes",
+    "immutable-release-url"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "guide-path": {
+      "type": "string",
+      "description": "Path or URL component identifying the guide resource.",
+      "minLength": 1
+    },
+    "guide-version": {
+      "type": "string",
+      "description": "Publisher-owned SemVer for the guide.",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+].*)?$"
+    },
+    "guide-sha256": {
+      "type": "string",
+      "description": "Lowercase hex SHA-256 over the exact guide bytes.",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "guide-bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8192,
+      "description": "Byte count of the guide file. Must match guide size limit at Level 2+."
+    },
+    "immutable-release-url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to an immutable release reference (tag, immutable archive)."
+    },
+    "signature": {
+      "type": "string",
+      "description": "Reference to a signed artifact for the guide or manifest. Recommended at Level 4."
+    },
+    "profile": {
+      "type": "string",
+      "description": "Guide profile identifier (e.g., human-verifiable-assistant-guide)."
+    },
+    "profile-version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+].*)?$"
+    },
+    "canonical-url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "repository-url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "released-at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "changelog-url": {
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}

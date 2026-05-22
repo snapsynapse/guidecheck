@@ -1,0 +1,8 @@
+{
+  "description": "Guide contains a tab character. The byte profile forbids tabs, so Level 2 and above fail. Level 1 is still achievable.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "blocking_finding_ids": ["byte-profile.no-tabs"],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

@@ -1,0 +1,7 @@
+Assistant Guide: tab fixture
+
+Task scope
+	This line begins with a tab character, which the byte profile forbids.
+
+Before acting
+1. Verify with a conformant verifier.
