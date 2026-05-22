@@ -77,6 +77,10 @@ Candidates for 0.2.0 and later. Not commitments.
 - Add immutable release URLs and a static fixture for the tagged 0.2.0 release.
 - Implement public-web content-variation checks in the hosted verifier; the
   fixture scenario exists, but the hosted checker does not yet re-fetch.
+- Add public-web header findings for missing or incompatible `Content-Type`,
+  missing `X-Content-Type-Options: nosniff`, and missing HSTS where hosting
+  supports it.
+- Add signed verifier-report envelopes for hosted checker and CI consumption.
 
 ## Documentation work
 
@@ -88,6 +92,8 @@ Candidates for 0.2.0 and later. Not commitments.
 - Add examples for package registry metadata in npm, PyPI, Cargo, and generic
   registries.
 - Add a short threat-model primer for maintainers adding new finding ids.
+- Expand the verifier examples page with full passing, failing, `not-found`,
+  and warning-bearing JSON reports generated from current fixtures.
 
 ## Implementation work
 
@@ -106,10 +112,15 @@ Candidates for 0.2.0 and later. Not commitments.
   expected files using a pinned portable tool.
 - Add public-web replay fixtures through local HTTP servers for redirects,
   content-type headers, response size limits, and content variation.
+- Replace modeled public-fetch scenarios with replayable public-web fixtures
+  where practical, while keeping non-network deterministic tests as the default
+  CI path.
 - Add deterministic tests for manifest parsing and cross-channel hash anchor
   handling.
 - Add tests for registry-url parsing across npm, PyPI, Cargo, and generic
   registry records.
+- Add hosted verifier implementation support for the existing
+  `fetch.content-variation` fixture warning.
 
 ## Release readiness
 
