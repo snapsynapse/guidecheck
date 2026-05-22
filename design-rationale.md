@@ -122,6 +122,13 @@ The distinction between integrity fetches (manifest, cross-channel anchors, repo
 
 The canonical HTTP location is /.well-known/assistant-guide.txt. The repository copy at the repository root is recommended but secondary.
 
+The naming split is intentional:
+
+- GuideCheck is the standard, verifier ecosystem, and public site.
+- `assistant-guide.txt` is the artifact.
+- The Human-Verifiable Assistant Guide profile defines the artifact's conformance rules.
+- A GuideCheck conformance claim requires verifier output, guide hash, achieved level, and findings.
+
 Two reasons to anchor at /.well-known/. First, RFC 8615 establishes this prefix for site-wide standards files, and adopters familiar with security.txt, openid-configuration, change-password, and dnt-policy will look there. Second, anchoring at a path rather than a filename at root prevents collisions with publisher-specific files named assistant-guide.txt that are not conforming.
 
 The repository copy serves a different purpose: it gives the verifier and any reviewer a comparison anchor against what is served, catching drift between source-of-truth and live HTTP. Both copies should hold identical content. Divergence is a finding the verifier reports.

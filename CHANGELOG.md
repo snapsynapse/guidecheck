@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows Keep a Changelog conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
+All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows Keep a Changelog conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
 ## 0.1.0 - 2026-05-21
 

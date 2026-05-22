@@ -1,6 +1,6 @@
 # Fixture Suite
 
-The conformance test corpus for the Human-Verifiable Assistant Guide Verifier Conformance Profile. A verifier is conformant for a verifier-profile version only if it passes the fixture suite for that version (verifier-conformance section 29).
+The conformance test corpus for the GuideCheck Verifier Conformance Profile. A verifier is conformant for a verifier-profile version only if it passes the fixture suite for that version (verifier-conformance section 29).
 
 ## Layout
 
@@ -13,7 +13,7 @@ Fixtures live under `valid/` or `invalid/` by whether the input is a conforming 
 
 ## Expected result format
 
-`expected.json` specifies normalized expectations, not a byte-for-byte full report. Conformant verifiers may differ in wording but MUST agree on:
+`expected.json` specifies normalized expectations, not a byte-for-byte full report. The expected-result schema lives at `schemas/fixture-expected.schema.json`. Conformant verifiers may differ in wording but MUST agree on:
 
 - `achieved_level`
 - `blocking_finding_ids`: the set of `error`-severity finding ids
@@ -60,4 +60,4 @@ Contributions that add a fixture must include `guide.txt` and `expected.json` an
 
 ## Finding ids
 
-The finding ids used in `expected.json` files (for example `byte-profile.no-tabs`) are provisional for v0.1.0. A canonical finding-id registry, mapping every blocking check to a stable id, is planned before the fixture suite becomes a hard conformance gate. Until then, treat the ids in this suite as the working set.
+The finding ids used in `expected.json` files are defined in `finding-ids.md`. The current registry covers the starter fixture suite. New fixtures that introduce new required finding ids must update the registry in the same change.

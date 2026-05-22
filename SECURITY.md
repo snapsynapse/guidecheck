@@ -1,6 +1,6 @@
 # Security Policy
 
-The Human-Verifiable Assistant Guide profile is a security-relevant standard. Reports about weaknesses in the profile, the verifier conformance profile, the schemas, or a published guide are welcome.
+GuideCheck is a security-relevant standards project. Reports about weaknesses in the Human-Verifiable Assistant Guide profile, the verifier conformance profile, the schemas, or a published guide are welcome.
 
 ## Reporting
 

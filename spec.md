@@ -1,9 +1,11 @@
-# Human-Verifiable Assistant Guide Profile
+# GuideCheck Human-Verifiable Assistant Guide Profile
 Status: Draft for review
 
 ## 1. Purpose
 
-This specification defines the Human-Verifiable Assistant Guide profile for `assistant-guide.txt`, a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions.
+GuideCheck is the standards project for the Human-Verifiable Assistant Guide profile. This specification defines the profile for `assistant-guide.txt`, a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions.
+
+GuideCheck is the standard, verifier ecosystem, and public site. `assistant-guide.txt` is the artifact. A conforming artifact claims conformance through profile metadata and verifier evidence, not through a branded filename.
 
 The profile exists to reduce a specific trust gap: a human may believe they are approving visible operational guidance while an assistant ingests additional instructions hidden or transformed by a presentation layer.
 
@@ -224,9 +226,9 @@ Before acting:
 4. Do not execute actions before confirmation.
 ```
 
-The guide MAY list a recommended hosted verifier via the `recommended-verifier` metadata field. It MUST NOT state or imply that only one verifier is authoritative. A conformant verifier is one that satisfies the Human-Verifiable Assistant Guide Verifier Conformance Profile for the applicable profile version.
+The guide MAY list a recommended hosted verifier via the `recommended-verifier` metadata field. It MUST NOT state or imply that only one verifier is authoritative. A conformant verifier is one that satisfies the GuideCheck Verifier Conformance Profile for the applicable profile version.
 
-When a guide lists `recommended-verifier`, the URL SHOULD be on the same registered domain as `canonical-url`, unless the guide explicitly identifies the verifier as third-party or the verifier is the standard primary verifier published by the standards project for the applicable profile version. The standard primary verifier is exempt from off-domain verifier warnings because it is part of the standard's own conformance ecosystem, not an arbitrary third-party verifier. For guide-profile version 0.1.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation as the standards project for this profile. Verifiers SHOULD treat that URL as the standard primary verifier and apply the off-domain warning to all other `recommended-verifier` values not matching `canonical-url`.
+When a guide lists `recommended-verifier`, the URL SHOULD be on the same registered domain as `canonical-url`, unless the guide explicitly identifies the verifier as third-party or the verifier is the standard primary verifier published by the standards project for the applicable profile version. The standard primary verifier is exempt from off-domain verifier warnings because it is part of the standard's own conformance ecosystem, not an arbitrary third-party verifier. For guide-profile version 0.1.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by GuideCheck as the standards project for this profile. Verifiers SHOULD treat that URL as the standard primary verifier and apply the off-domain warning to all other `recommended-verifier` values not matching `canonical-url`.
 
 Assistants fetching public guides MUST NOT send cookies, browser session state, authorization headers, or other ambient credentials. Public guide fetches MUST be unauthenticated and reproducible.
 
@@ -903,30 +905,17 @@ A future revision of this specification may revisit this position if Unicode sec
 
 ## 26. Verifier Output Schema
 
-A verifier SHOULD emit machine-readable output alongside any human-readable report. The minimum schema is:
+A verifier SHOULD emit machine-readable output alongside any human-readable report. The normative machine-readable output shape is defined by the Verifier Conformance Profile section 27 and by `schemas/verifier-output.schema.json`.
 
+The top-level JSON-compatible form is:
 ```text
 {
-  "guide_url": "https://example.com/.well-known/assistant-guide.txt",
-  "final_url": "https://example.com/.well-known/assistant-guide.txt",
-  "fetched_at": "2026-05-21T00:00:00Z",
-  "http_status": 200,
-  "headers": { "content-type": "text/plain; charset=utf-8" },
-  "bytes": 4821,
-  "sha256": "<hex>",
-  "profile_version": "0.1.0",
-  "claimed_level": 3,
-  "achieved_level": 3,
-  "findings": [
-    {
-      "id": "byte-profile.no-tabs",
-      "severity": "error|warning|info",
-      "section": "8",
-      "line": 42,
-      "message": "tab character at column 3",
-      "remediation": "replace tab with spaces"
-    }
-  ]
+  "verifier": {},
+  "input": {},
+  "fetch": {},
+  "guide": {},
+  "summary": {},
+  "findings": []
 }
 ```
 

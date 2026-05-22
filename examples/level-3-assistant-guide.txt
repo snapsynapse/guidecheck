@@ -74,9 +74,9 @@ class: persistence-changing, networked, code-executing
 approval: required
 command: npm install --global example-cli@2
 runner: shell
+cwd: .
 egress: registry.npmjs.org
-notes: Installs the CLI globally. Networked and may run package
-  lifecycle scripts, so it is code-executing and approval-gated.
+notes: Installs globally. Networked package lifecycle scripts are code-executing and approval-gated.
 [/action]
 
 [action]

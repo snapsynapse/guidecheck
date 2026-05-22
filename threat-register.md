@@ -2,7 +2,7 @@
 
 Status: Working notes. Companion to spec.md and design-rationale.md.
 
-This document enumerates known risk classes in the verifier-guide-agent setup defined by the Human-Verifiable Assistant Guide profile. Some risks are mitigated by the current design, some are reduced, and some remain outside the scope of the profile. The list exists to guide documentation, fixture design, hosted-checker hardening, and future spec work.
+This document enumerates known risk classes in the verifier-guide-agent setup defined by GuideCheck's Human-Verifiable Assistant Guide profile. Some risks are mitigated by the current design, some are reduced, and some remain outside the scope of the profile. The list exists to guide documentation, fixture design, hosted-checker hardening, and future spec work.
 
 Risks here are not redundant with section 27 of the spec (Residual Threats). Section 27 names the high-level out-of-scope categories that adopters must understand. This document records the operational risk classes underneath those categories that fixture authors, verifier implementers, and runtime designers must address in their own work.
 

@@ -1,7 +1,7 @@
 guide-path: /.well-known/assistant-guide.txt
 guide-version: 1.0.0
-guide-sha256: 084ec8df929052d176d25984e5ec3443ef195ac8be4e1fd27e7350192a29781d
-guide-bytes: 5156
+guide-sha256: daba306746a7c4f0d6fe9c4667b692c031c7c62150b3f9990aba9ffee752c0d4
+guide-bytes: 5135
 immutable-release-url: https://example.com/org/example-cli/releases/v2.4.1
 profile: human-verifiable-assistant-guide
 profile-version: 0.1.0

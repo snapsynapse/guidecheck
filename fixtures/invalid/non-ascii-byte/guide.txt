@@ -1,3 +1,23 @@
 Assistant Guide: non-ascii fixture
 
+[assistant-guide-metadata]
+identifier: assistant-guide
+profile: human-verifiable-assistant-guide
+profile-version: 0.1.0
+guide-version: 1.0.0
+applies-to: non-ascii-fixture
+canonical-url: https://example.com/.well-known/assistant-guide.txt
+repository-url: https://example.com/org/non-ascii-fixture
+last-reviewed: 2026-05-21
+[/assistant-guide-metadata]
+
+Task scope
+This fixture is a public readable text guide used to isolate a Level 2 byte-profile failure.
+
+Before acting
+1. Verify this guide with the recommended verifier or another conformant verifier.
+2. Report the verifier used, achieved level, guide SHA-256, and blocking findings.
+3. Ask the user for confirmation before actions.
+4. Do not execute actions before confirmation.
+
 This line contains a non-ASCII byte: é here.

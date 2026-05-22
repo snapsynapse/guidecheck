@@ -1,11 +1,11 @@
 # INTENT
 
-Status: Authoritative for the Human-Verifiable Assistant Guide standard.
+Status: Authoritative for the GuideCheck standard.
 Scope: Standards-level strategy for this component. Portfolio-level strategy lives in the PAICE Foundation INTENT. Where this document and a higher-scope document disagree, the higher scope wins for portfolio questions and this document wins for standard-level questions.
 
 ## What this standard is
 
-The Human-Verifiable Assistant Guide profile defines `assistant-guide.txt`: a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions. It exists to close one specific trust gap. A human may believe they are approving the operational guidance they can see, while an assistant ingests additional instructions hidden or transformed by a presentation layer.
+GuideCheck defines the Human-Verifiable Assistant Guide profile for `assistant-guide.txt`: a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions. It exists to close one specific trust gap. A human may believe they are approving the operational guidance they can see, while an assistant ingests additional instructions hidden or transformed by a presentation layer.
 
 The standard makes the instruction surface visible, bounded, and practical to review before an assistant acts on it. It does not make instructions safe.
 
@@ -36,7 +36,7 @@ The standard does not replace sandboxing, least privilege, code signing, package
 
 The conformance ladder is additive and honest. Each level states exactly what it has checked and what it has not. Level 4 adds verifiable provenance but not a safety claim. Level 5 is explicitly a guide-plus-runtime claim, not a guide-only claim, because runtime behavior cannot be asserted by a file.
 
-A conformant verifier is a testable implementation claim. The fixture suite is the conformance target. The standard publishes a primary verifier at guidecheck.org/verify for usability but never presents it as the only authoritative verifier. Anyone may build a conformant verifier; the fixture suite is how independent implementations stay in agreement.
+A conformant verifier is a testable implementation claim. The fixture suite is the conformance target. GuideCheck publishes a primary verifier at https://guidecheck.org/verify for usability but never presents it as the only authoritative verifier. Anyone may build a conformant verifier; the fixture suite is how independent implementations stay in agreement.
 
 ## Admission criteria for changes
 
@@ -67,7 +67,7 @@ Tracked in `spec.md` section 29 and `verifier-conformance.md` section 32. The li
 
 ## Relationship to the PAICE portfolio
 
-This is a PAICE Foundation standard. It sits alongside the other open-spec components in the portfolio and follows the same posture: vendor-neutral, portable, security and interoperability as baseline. The verifier at guidecheck.org/verify is the standard's own conformance checker, not a commercial gate. Portfolio-level decisions about positioning and sequencing are owned by the PAICE Foundation INTENT, not this document.
+GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec components in the portfolio and follows the same posture: vendor-neutral, portable, security and interoperability as baseline. The verifier at https://guidecheck.org/verify is the standard's own conformance checker, not a commercial gate. Portfolio-level decisions about positioning and sequencing are owned by the PAICE Foundation INTENT, not this document.
 
 ## Versioning and authority
 
@@ -75,4 +75,4 @@ The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The 
 
 ## Changelog
 
-- 2026-05-21: Initial INTENT for the Human-Verifiable Assistant Guide standard, drafted alongside the v0.1.0 bootstrap.
+- 2026-05-21: Initial INTENT for the GuideCheck standard, drafted alongside the v0.1.0 bootstrap.

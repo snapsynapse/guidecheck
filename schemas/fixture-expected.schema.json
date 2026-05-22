@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/fixture-expected.schema.json",
+  "title": "Fixture Expected Result",
+  "description": "Normalized expectations for a GuideCheck verifier conformance fixture.",
+  "type": "object",
+  "required": [
+    "evaluation_mode",
+    "achieved_level",
+    "blocking_finding_ids",
+    "required_warning_ids",
+    "level5_ready"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evaluation_mode": {
+      "type": "string",
+      "enum": ["public-web", "local-file"]
+    },
+    "achieved_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4
+    },
+    "guide_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "guide_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8192
+    },
+    "blocking_finding_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$"
+      },
+      "uniqueItems": true
+    },
+    "required_warning_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$"
+      },
+      "uniqueItems": true
+    },
+    "level5_ready": {
+      "type": "boolean"
+    }
+  }
+}

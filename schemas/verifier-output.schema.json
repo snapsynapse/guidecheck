@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://guidecheck.org/schemas/verifier-output.schema.json",
   "title": "Verifier Output",
-  "description": "Machine-readable output for the Human-Verifiable Assistant Guide Verifier Conformance Profile.",
+  "description": "Machine-readable output for the GuideCheck Verifier Conformance Profile.",
   "type": "object",
   "required": ["verifier", "input", "guide", "summary", "findings"],
   "additionalProperties": true,

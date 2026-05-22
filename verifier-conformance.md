@@ -1,8 +1,8 @@
-# Human-Verifiable Assistant Guide Verifier Conformance Profile
+# GuideCheck Verifier Conformance Profile
 Status: Draft for review
 
 ## 1. Purpose
-This specification defines the Human-Verifiable Assistant Guide Verifier Conformance Profile for tools that evaluate `assistant-guide.txt` artifacts against the Human-Verifiable Assistant Guide profile.
+This specification defines the GuideCheck Verifier Conformance Profile for tools that evaluate `assistant-guide.txt` artifacts against the Human-Verifiable Assistant Guide profile.
 A conformant verifier answers four questions:
 - What bytes were evaluated?
 - What conformance level did those bytes achieve?
@@ -227,12 +227,15 @@ The verifier SHOULD check optional fields when present:
 - `valid-until`
 - `recommended-verifier`
 - `verifier-conformance`
+- `registry-url`
 - `manifest-url`
 The verifier MUST validate URL fields as ASCII URLs with ASCII hostnames. Internationalized domain names MUST be expressed in punycode A-label form.
 The verifier MUST flag unusually long metadata values as warnings.
-The verifier SHOULD warn when `canonical-url`, `repository-url`, `manifest-url`, or `recommended-verifier` use unrelated registered domains without explanation.
+The verifier SHOULD warn when `canonical-url`, `repository-url`, `registry-url`, `manifest-url`, or `recommended-verifier` use unrelated registered domains without explanation.
 The verifier SHOULD warn when `recommended-verifier` is not on the same registered domain as `canonical-url`, unless the guide explicitly identifies it as third-party or the URL matches the standard primary verifier for the applicable verifier-profile version.
 The verifier MUST NOT warn solely because `recommended-verifier` differs from `canonical-url` when `recommended-verifier` matches the standard primary verifier configured for the applicable profile version.
+When package-registry metadata is used as an independent Level 4 anchor, the verifier MUST require `registry-url` and MUST validate that it identifies a specific registry record rather than a registry homepage or search result.
+When `registry-url` is absent and no other Level 4 independent anchor is available, the verifier SHOULD emit an informational finding for Level 3 and a blocking finding for Level 4.
 
 ## 15. Verification Instruction Checks
 For Level 1 and above, the verifier MUST check that a compact verification instruction appears before action instructions.

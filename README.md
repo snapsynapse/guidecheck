@@ -1,9 +1,17 @@
-# Human-Verifiable Assistant Guide
+# GuideCheck
 
-A constrained plain-text profile for `assistant-guide.txt`: assistant-facing install, implementation, remediation, migration, and operational instructions that a human can review in full before an assistant acts on them.
+GuideCheck is the standards project for the Human-Verifiable Assistant Guide profile: a constrained plain-text profile for `assistant-guide.txt`, covering assistant-facing install, implementation, remediation, migration, and operational instructions that a human can review in full before an assistant acts on them.
 
 Canonical site: https://guidecheck.org/
 Verifier: https://guidecheck.org/verify
+
+## Naming model
+
+- The standards project, public checker, ecosystem, and site are GuideCheck.
+- The artifact is `assistant-guide.txt`.
+- The profile is the Human-Verifiable Assistant Guide profile.
+- A conformant file is an `assistant-guide.txt` artifact that satisfies a specific profile version.
+- A GuideCheck conformance claim is valid only when backed by verifier output, guide hash, achieved level, and findings.
 
 ## Conformance is not safety
 
@@ -26,15 +34,16 @@ For high-consequence tasks, projects need a constrained instruction surface that
 
 ## Documents
 
-- `spec.md` — the normative Human-Verifiable Assistant Guide profile
-- `verifier-conformance.md` — the normative profile for tools that verify guides
-- `design-rationale.md` — why the design choices were made
-- `threat-register.md` — known risk classes for fixture, verifier, and runtime authors
-- `schemas/` — JSON Schema for the manifest and verifier output
-- `examples/` — sample conforming guides and a sample manifest
-- `fixtures/` — verifier conformance test corpus
-- `INTENT.md` — standards-level strategy, invariants, and recalibration gates
-- `archive/` — genesis documents, non-normative
+- `spec.md` - the normative Human-Verifiable Assistant Guide profile
+- `verifier-conformance.md` - the normative profile for tools that verify guides
+- `design-rationale.md` - why the design choices were made
+- `threat-register.md` - known risk classes for fixture, verifier, and runtime authors
+- `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
+- `finding-ids.md` - registry for fixture-required verifier finding ids
+- `examples/` - sample conforming guides and a sample manifest
+- `fixtures/` - verifier conformance test corpus
+- `INTENT.md` - standards-level strategy, invariants, and recalibration gates
+- `archive/` - genesis documents, non-normative
 
 ## Conformance levels
 

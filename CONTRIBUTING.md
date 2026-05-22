@@ -1,6 +1,6 @@
 # Contributing
 
-The Human-Verifiable Assistant Guide profile is a security-relevant standard. Changes are reviewed with that in mind.
+GuideCheck is a security-relevant standards project. Changes to the Human-Verifiable Assistant Guide profile are reviewed with that in mind.
 
 ## What lives where
 
