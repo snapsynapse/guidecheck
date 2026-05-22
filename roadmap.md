@@ -7,9 +7,11 @@ items are visible without being treated as commitments.
 
 ## Near-term actions
 
-- Treat the first reference verifier milestone as Level 1 through Level 3 only.
-  Do not claim Level 4, hosted verifier, or Level 5 conformance from this
-  milestone.
+- The reference verifier CLI and the hosted public-web verifier both cover
+  Level 1 through Level 3 only. The hosted verifier is live as a preview at
+  https://guidecheck.org/verify; do not present it as fully conformant, and do
+  not claim Level 4 or Level 5 conformance, until the supporting fixture suites
+  are complete.
 - Promote generated eval cases into static fixtures where they should become
   hard verifier conformance gates.
 - Add valid Level 1 and Level 4 static fixtures with complete `expected.json`
@@ -48,8 +50,10 @@ items are visible without being treated as commitments.
 
 ## Implementation work
 
-- Maintain the local-file reference verifier CLI for Levels 1 through 3 before
-  attempting Level 4 provenance or hosted public-web verification.
+- Maintain the local-file reference verifier CLI and the hosted public-web
+  verifier for Levels 1 through 3 on shared check logic. Do not extend either
+  to Level 4 provenance or Level 5 runtime conformance until the supporting
+  fixtures exist.
 - Keep `scripts/eval_guidecheck.py` as a regression harness and reference map,
   not the verifier implementation.
 - Continue separating the reference verifier from repository regression checks
