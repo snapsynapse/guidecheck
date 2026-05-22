@@ -108,6 +108,11 @@ Run the local regression suite with:
 make eval
 ```
 
+Run the full local verification suite with:
+```text
+make test
+```
+
 The eval runner checks the static fixture corpus plus generated edge cases
 for byte profile, metadata, action blocks, command restrictions, prohibited
 patterns, manifest mismatch, and public-fetch safety. It is a repository

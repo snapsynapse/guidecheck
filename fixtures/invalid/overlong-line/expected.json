@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/byte-overlong-line.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "96af888b86c00facfce6528865f2bdc2479264ec9d7c647087afe7fdd6bbaeac",
+  "guide_bytes": 5258,
+  "blocking_finding_ids": [
+    "byte-profile.line-length"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

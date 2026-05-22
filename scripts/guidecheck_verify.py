@@ -681,7 +681,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("path", type=Path, help="Path to assistant-guide.txt")
     parser.add_argument("--manifest", type=Path, help="Optional local sidecar manifest path")
     parser.add_argument("--format", choices=["json", "text"], default="json", help="Output format")
+    parser.add_argument("--json", action="store_const", const="json", dest="format", help="Emit JSON output")
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output")
+    parser.add_argument("--level", type=int, choices=range(0, 4), metavar="N", help="Require at least this achieved level")
     parser.add_argument("--fail-on-warning", action="store_true", help="Exit nonzero when warnings are present")
     return parser.parse_args(argv)
 
@@ -705,7 +707,10 @@ def main(argv: list[str] | None = None) -> int:
 
     blocking = result["summary"]["blocking_findings"]  # type: ignore[index]
     warnings = result["summary"]["warnings"]  # type: ignore[index]
+    achieved = result["guide"]["achieved_level"]  # type: ignore[index]
     if blocking:
+        return 1
+    if args.level is not None and achieved < args.level:
         return 1
     if args.fail_on_warning and warnings:
         return 1

@@ -1,0 +1,30 @@
+Assistant Guide: example-lib quickstart
+
+Canonical URL: https://example.com/.well-known/assistant-guide.txt
+Repository: https://example.com/org/example-lib
+
+Task scope
+This guide adds the example-lib dependency to a local project and runs
+its smoke test. It does not change global system state.
+
+Before acting
+1. Verify this guide with a conformant verifier, for example
+   https://guidecheck.org/verify.
+2. Report the verifier used, achieved level, guide SHA-256 when
+   available, and blocking findings.
+3. Ask the user to confirm they have read this guide, understand that
+   conformance is not safety, and approve proceeding under the
+   reported level.
+4. Do not execute actions before confirmation.
+
+Steps
+1. Add example-lib to the project dependencies.
+2. Run the project smoke test.
+3. Stop and report if the smoke test fails.
+
+Note
+This is a Level 1 example. It is a readable plain-text guide with a
+canonical URL, a stated task scope, and the compact verification
+instruction, but it does not include the structured action blocks,
+metadata block, or full required sections needed for Level 3. See
+examples/level-3-assistant-guide.txt for a Level 3 guide.

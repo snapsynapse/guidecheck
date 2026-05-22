@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/approval-required-missing.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "6ee218933500d5b8e523582ee02d4c26d34a2f1481414359bf870d5c3670d062",
+  "guide_bytes": 5139,
+  "blocking_finding_ids": [
+    "approval.required-missing"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

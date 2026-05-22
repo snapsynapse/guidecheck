@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/missing-verification.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 0,
+  "guide_sha256": "4ee439477de645d7f38fdff59b2eaa086a903ec8c0101fa87ce20649556cbeae",
+  "guide_bytes": 4764,
+  "blocking_finding_ids": [
+    "verification-instruction.missing"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

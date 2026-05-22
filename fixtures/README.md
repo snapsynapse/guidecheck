@@ -39,25 +39,35 @@ Example:
 ## Status
 
 This is the v0.2.0 starter set. The full suite enumerated in
-verifier-conformance section 29 is in progress. Cases still to add:
+verifier-conformance section 29 is in progress.
 
-- valid Level 1, Level 4
-- guide over 8192 bytes
-- guide with overlong lines
-- guide missing the compact verification instruction
-- guide with metadata errors
-- guide with missing required sections
-- guide with malformed action blocks
-- guide with missing approval gates
-- guide with networked action missing egress
-- guide with code-executing action omitted
-- guide with shell runner lacking rationale
-- guide with chained-guide instruction
-- guide with encoded execution instruction
-- guide with manifest hash mismatch
+The current static corpus includes:
+
+- valid Level 2 and Level 3 examples
+- a real-world PrompterKit Level 3 guide captured from
+  `https://prompterkit.app/.well-known/assistant-guide.txt`
+- byte-profile failures for tabs, CRLF, non-ASCII, overlong lines, and oversize guides
+- compact verification instruction failure
+- metadata URL failure and revoked status
+- missing required section
+- malformed or incomplete action block
+- missing approval gate
+- networked action missing egress
+- shell runner warning
+- chained-guide and encoded-execution prohibitions
+- manifest hash mismatch
+
+Cases still to add:
+
+- valid Level 4
+- valid Level 1
+- additional metadata parser-confusion cases
+- duplicate action ids and invalid action enum values
+- code-executing action omitted
+- environment variable and cwd failures
+- command chaining, substitution, pipes, redirection, and destructive glob failures
 - guide with cross-channel hash divergence
-- guide with revoked status
-- guide with stale last-reviewed
+- guide with stale or malformed dates
 - hosted-fetch SSRF cases
 - redirect chain cases
 - TLS failure cases

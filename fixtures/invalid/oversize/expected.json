@@ -1,0 +1,13 @@
+{
+  "description": "Static fixture promoted from generated/byte-oversize.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "6c4b060402e18207c95319c14dc4c4c38f4e5a5b0c5b0152f0958b6ef7481aa8",
+  "guide_bytes": 13336,
+  "blocking_finding_ids": [
+    "byte-profile.line-length",
+    "byte-profile.size-limit"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

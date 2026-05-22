@@ -1,0 +1,14 @@
+{
+  "description": "Static fixture promoted from generated/metadata-revoked.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "6355187165b4f1cd8bcd6e8e98c764240eda359aae44c89636300b2701fd4043",
+  "guide_bytes": 5136,
+  "blocking_finding_ids": [
+    "metadata.status.revoked"
+  ],
+  "required_warning_ids": [
+    "metadata.superseded-by.missing"
+  ],
+  "level5_ready": false
+}

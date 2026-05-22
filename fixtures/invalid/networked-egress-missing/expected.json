@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/networked-egress-missing.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "c726ba7ba7687217bae3d155b36b5c2e5e4e19182a1067521d28abb335f5593d",
+  "guide_bytes": 5108,
+  "blocking_finding_ids": [
+    "egress.missing"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

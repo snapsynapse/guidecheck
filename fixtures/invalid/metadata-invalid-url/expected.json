@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/metadata-invalid-url.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "fc9990e0bc4b33a9cd205665283fdf4dc6c6317380abbc325ba386effbca81bc",
+  "guide_bytes": 5134,
+  "blocking_finding_ids": [
+    "metadata.url.invalid"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

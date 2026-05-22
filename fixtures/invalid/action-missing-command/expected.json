@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/action-missing-command.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "dee68ff680a03dc4225fa3d662582c9b0b470f25c40f8850cacb96779441700b",
+  "guide_bytes": 5104,
+  "blocking_finding_ids": [
+    "action-block.missing-required"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

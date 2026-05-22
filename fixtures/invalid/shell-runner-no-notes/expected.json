@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/shell-no-notes.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "2786543654f9e103b989eaaaa08c6d1dbf40d39fd16b5a0eff794de39aaf6e97",
+  "guide_bytes": 5034,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "runner.shell.missing-rationale"
+  ],
+  "level5_ready": false
+}

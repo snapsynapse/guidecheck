@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/required-section-missing.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "aeb102b790459f184760f879b1c8fb7040d9060ff8933411090a18ed3558ef6c",
+  "guide_bytes": 4675,
+  "blocking_finding_ids": [
+    "content.required.threat-model"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

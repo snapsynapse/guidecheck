@@ -1,0 +1,12 @@
+{
+  "description": "Real-world PrompterKit Level 3 guide captured from https://prompterkit.app/.well-known/assistant-guide.txt for deterministic local conformance coverage.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "bebdebef7f00066b641f6b4de97b45ffe62be47e3db9196baea79cd93965504f",
+  "guide_bytes": 7288,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "action-block.class.code-executing-missing"
+  ],
+  "level5_ready": false
+}

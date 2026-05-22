@@ -13,6 +13,11 @@ Direct script invocation is also supported:
 python3 scripts/eval_guidecheck.py
 ```
 
+Run the complete local test set with:
+```text
+make test
+```
+
 ## Status
 
 The eval runner is not the normative verifier. It is a regression harness
@@ -40,6 +45,10 @@ The runner has three inputs:
 - static fixture directories under `fixtures/`
 - generated local-file guide mutations derived from the valid Level 3 fixture
 - generated public-fetch scenarios that model URL, TLS, redirect, and SSRF risks
+
+Additional Makefile targets check the reference verifier fixture contract,
+fixture and verifier-output structure, hosted API behavior with stubbed fetches,
+and deterministic fetch replay cases for redirects and response size limits.
 
 The static fixture checks assert the normalized `expected.json` contract:
 

@@ -1,0 +1,10 @@
+{
+  "description": "Static fixture promoted from generated/valid-level-2-from-level1-example.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "4f4572ae39d805732520c227afefae0e0c6dc197bac1785c6a4a902c3cf3b316",
+  "guide_bytes": 1165,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

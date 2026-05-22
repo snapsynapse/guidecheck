@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture promoted from generated/prohibited-chain.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "2e61c6b1e6b596250a4b54d6adb1a5098cd1258ddfa08299eadd57de86848179",
+  "guide_bytes": 5181,
+  "blocking_finding_ids": [
+    "prohibited.chained-guide"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}
