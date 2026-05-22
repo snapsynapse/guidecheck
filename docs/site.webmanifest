@@ -1,0 +1,21 @@
+{
+  "name": "GuideCheck",
+  "short_name": "GuideCheck",
+  "description": "The Human-Verifiable Assistant Guide standard.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "minimal-ui",
+  "orientation": "any",
+  "theme_color": "#0b6a62",
+  "background_color": "#ffffff",
+  "lang": "en-US",
+  "categories": ["reference", "developer-tools"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+# GuideCheck
+
+> The Human-Verifiable Assistant Guide standard.
+
+GuideCheck defines a constrained plain-text profile for assistant-guide.txt: the install, setup, remediation, migration, and operational instructions an AI assistant will act on. The artifact is strict ASCII, capped at 8 KiB, and structured into explicit action blocks so a human can review the entire instruction surface before an assistant follows it. Conformance verifies form, not safety.
+
+## Concepts
+
+- assistant-guide.txt: A plain-text artifact served at /.well-known/assistant-guide.txt carrying assistant-facing instructions for one bounded task.
+- Human-Verifiable Assistant Guide profile: The normative constraints (ASCII byte profile, 8 KiB cap, action model) that make the instruction surface reviewable.
+- Conformance ladder: Six additive levels (0-5), from plain-text availability through verifiable provenance to a runtime-enforced execution contract.
+- Conformance is not safety: A verifier confirms form and selected provenance signals; it never asserts a guide is safe or a publisher trustworthy.
+- Cross-channel hash: Provenance anchored on an independent control plane, so a guide's identity is checkable without a central registry or oracle.
+
+## Key files
+
+- [Specification](https://github.com/snapsynapse/guidecheck/blob/main/spec.md): The normative Human-Verifiable Assistant Guide profile.
+- [Verifier conformance](https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md): The normative profile for tools that verify guides.
+- [Changelog](https://github.com/snapsynapse/guidecheck/blob/main/CHANGELOG.md): Version history.
+- [Landing page](https://guidecheck.org/): Canonical homepage.
+
+## Links
+
+- GitHub: https://github.com/snapsynapse/guidecheck
+- Homepage: https://guidecheck.org/
+- Verifier: https://guidecheck.org/verify
+
+## Related patterns
+
+- [Graceful Boundaries](https://gracefulboundaries.dev/): Structured machine-readable refusal, a sibling PAICE Foundation standard.
+- [Knowledge as Code](https://knowledge-as-code.com/): Markdown-canonical knowledge management.
+- [Skill Provenance](https://skillprovenance.dev/): Version identity and integrity for agent skill bundles.
+- [HardGuard25](https://hardguard25.com/): A human-safe identifier alphabet.

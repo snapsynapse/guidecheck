@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Verifier &mdash; GuideCheck</title>
+  <meta name="description" content="The GuideCheck verifier checks an assistant-guide.txt file against the Human-Verifiable Assistant Guide profile and reports the achieved conformance level, guide hash, and findings.">
+  <meta name="keywords" content="guidecheck verifier, assistant-guide.txt verifier, conformance check, human-verifiable assistant guide">
+  <meta name="author" content="Sam Rogers">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="theme-color" content="#0b6a62">
+  <link rel="canonical" href="https://guidecheck.org/verify/">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="mask-icon" href="/favicon.svg" color="#0b6a62">
+  <link rel="apple-touch-icon" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="alternate" type="text/plain" href="https://guidecheck.org/llms.txt" title="LLM-readable summary">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GuideCheck">
+  <meta property="og:title" content="GuideCheck Verifier">
+  <meta property="og:description" content="Check an assistant-guide.txt file against the Human-Verifiable Assistant Guide profile.">
+  <meta property="og:image" content="https://guidecheck.org/imgs/og.png">
+  <meta property="og:image:alt" content="GuideCheck &mdash; the assistant-guide.txt artifact shown in full as plain text, beside a six-rung conformance ladder">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="634">
+  <meta property="og:url" content="https://guidecheck.org/verify/">
+  <meta property="og:locale" content="en_US">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GuideCheck Verifier">
+  <meta name="twitter:description" content="Check an assistant-guide.txt file against the Human-Verifiable Assistant Guide profile.">
+  <meta name="twitter:image" content="https://guidecheck.org/imgs/og.png">
+  <meta name="twitter:site" content="@snapsynapse">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f5f7f8;
+      --text: #15181f;
+      --text-muted: #515b67;
+      --accent: #0b6a62;
+      --accent-hover: #0a544d;
+      --border: #d9dee2;
+      --code-bg: #f5f7f8;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --mono: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+      --max-width: 820px;
+      --radius: 10px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    .skip-link {
+      position: absolute; left: -9999px; top: 0;
+      background: var(--accent); color: #fff; padding: 0.5rem 1rem; z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
+
+    nav {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0; position: sticky; top: 0; background: var(--bg); z-index: 10;
+    }
+    nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    nav .logo {
+      font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none;
+      letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 0.55rem;
+    }
+    nav .logo svg { color: var(--accent); flex: 0 0 auto; }
+    nav .links { display: flex; align-items: center; gap: 1.5rem; font-size: 0.9rem; }
+    nav .links a { color: var(--text-muted); }
+    nav .links a:hover { color: var(--text); text-decoration: none; }
+
+    section { padding: 3.5rem 0; }
+    .hero { padding: 4rem 0 2.5rem; }
+    h1 { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.02em; font-weight: 800; margin-bottom: 1rem; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.01em; }
+    p { margin-bottom: 1rem; color: var(--text-muted); }
+    p:last-child { margin-bottom: 0; }
+    p a { text-decoration: underline; text-underline-offset: 2px; }
+    .lead { font-size: 1.15rem; }
+
+    .panel {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
+      margin: 1.5rem 0;
+    }
+    .panel h2 { margin-bottom: 0.75rem; }
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    ul { margin: 0 0 1rem 1.25rem; color: var(--text-muted); }
+    li { margin-bottom: 0.35rem; }
+    li:last-child { margin-bottom: 0; }
+
+    pre {
+      background: var(--code-bg);
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.55;
+      border: 1px solid var(--border);
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    code { font-family: var(--mono); font-size: 0.88em; color: var(--accent); }
+
+    .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .btn {
+      display: inline-block; padding: 0.75rem 1.5rem; border-radius: 6px;
+      font-weight: 600; font-size: 0.95rem; transition: background 0.15s, color 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: #ffffff; }
+    .btn-primary:hover { background: var(--accent-hover); text-decoration: none; color: #ffffff; }
+    .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+    .btn-secondary:hover { background: var(--accent); color: #ffffff; text-decoration: none; }
+    .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .btn-primary:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0; font-size: 0.85rem; color: var(--text-muted);
+    }
+    footer a { text-decoration: underline; text-underline-offset: 2px; }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.75rem; }
+      nav .links a:not(.home) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<nav aria-label="Main navigation">
+  <div class="container">
+    <a href="/" class="logo" aria-label="GuideCheck home">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+        <path d="M13 6.5 H7 V25.5 H13" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19 6.5 H25 V25.5 H19" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11.5 16.4 L14.8 20 L20.5 11.6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>GuideCheck</span>
+    </a>
+    <div class="links">
+      <a href="/#profile">Profile</a>
+      <a href="/#levels">Levels</a>
+      <a href="/" class="home">Home</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main-content">
+<section class="hero">
+  <div class="container">
+    <span class="badge">Verifier &middot; profile 0.1.0</span>
+    <h1>Verify an assistant-guide.txt file</h1>
+    <p class="lead">A verifier checks a guide against the Human-Verifiable Assistant Guide profile and reports what it found. It confirms form. The human still confirms meaning.</p>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="panel">
+      <h2>Interactive verifier</h2>
+      <p>The hosted verifier at this URL is in development alongside the v0.1.0 draft. Until it ships, verify guides with any conformant verifier built against the verifier conformance profile and its fixture corpus.</p>
+      <div class="cta-row">
+        <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" class="btn btn-primary" target="_blank" rel="noopener">Verifier conformance profile</a>
+        <a href="https://github.com/snapsynapse/guidecheck/tree/main/fixtures" class="btn btn-secondary" target="_blank" rel="noopener">Fixture corpus</a>
+      </div>
+    </div>
+
+    <h2>What a verifier checks</h2>
+    <ul>
+      <li>Reachability of the guide at <code>/.well-known/assistant-guide.txt</code> and the compact verification instruction.</li>
+      <li>The strict ASCII byte profile, the 8 KiB size cap, and absence of disallowed constructs.</li>
+      <li>Required sections, the assistant safety contract, and explicit approval gates.</li>
+      <li>Provenance signals: the sidecar manifest and the cross-channel hash, where present.</li>
+    </ul>
+
+    <h2>What a verifier reports</h2>
+    <p>A GuideCheck conformance claim is valid only when backed by verifier output, the guide SHA-256, the achieved level, and the findings.</p>
+    <pre>verifier: human-verifiable-assistant-guide-verifier 0.1.0
+guide-url: https://example.com/.well-known/assistant-guide.txt
+guide-sha256: a1b2c3d4 ... (review the guide before use)
+achieved-level: 3
+findings:
+  - 0 blocking
+  - 1 advisory: last-reviewed older than 90 days
+note: conformance is not safety</pre>
+
+    <h2>Conformance is not safety</h2>
+    <p>A passing result, at any level, does not mean a guide is safe to follow or that its publisher is trustworthy. It means the file has the form the profile requires. Read the guide in full, apply the security practices a competent operator would already apply, and keep the human in the approval loop.</p>
+
+    <h2>Build your own verifier</h2>
+    <p>GuideCheck never presents its hosted verifier as the only authoritative one, and never as a root of trust. Anyone may build a conformant verifier; the fixture suite is how independent implementations stay in agreement. See <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">verifier-conformance.md</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>GuideCheck v0.1.0 &middot; A PAICE Foundation standard &middot; <a href="https://guidecheck.org/">guidecheck.org</a> &middot; <a href="https://github.com/snapsynapse/guidecheck" target="_blank" rel="noopener">GitHub</a> &middot; <a href="/llms.txt">llms.txt</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

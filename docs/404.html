@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found &mdash; GuideCheck</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0b6a62">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://guidecheck.org/">
+  <style>
+    :root {
+      --accent:  #0b6a62;
+      --bg:      #f8f9fa;
+      --surface: #ffffff;
+      --text:    #1a1d24;
+      --muted:   #515b67;
+      --border:  rgba(0,0,0,.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:      #0d0f14;
+        --surface: #161921;
+        --text:    #e4e8f0;
+        --muted:   #8890a4;
+        --border:  rgba(255,255,255,.08);
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .logo-wrap { margin-bottom: 1.75rem; opacity: .55; }
+
+    .code {
+      font-size: clamp(4rem, 20vw, 8rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent);
+      letter-spacing: -.04em;
+      margin-bottom: .5rem;
+    }
+    h1 {
+      font-size: clamp(1.25rem, 4vw, 1.75rem);
+      font-weight: 600;
+      margin-bottom: .75rem;
+    }
+    p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 40ch;
+      margin: 0 auto 1.5rem;
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      padding: 1rem 1.25rem;
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: .8rem;
+      line-height: 1.55;
+      color: var(--text);
+      text-align: left;
+      max-width: 28rem;
+      margin: 0 auto 2rem;
+      overflow-x: auto;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: .9375rem;
+      text-decoration: none;
+      padding: .65rem 1.4rem;
+      border-radius: .5rem;
+      transition: filter .15s;
+    }
+    .home-btn:hover { filter: brightness(1.12); }
+    .home-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 1.25rem;
+      font-size: .8125rem;
+      color: var(--muted);
+    }
+    footer a {
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: .2em;
+    }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <div class="logo-wrap" aria-hidden="true">
+    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13 6.5 H7 V25.5 H13" stroke="#0b6a62" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M19 6.5 H25 V25.5 H19" stroke="#0b6a62" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M11.5 16.4 L14.8 20 L20.5 11.6" stroke="#0b6a62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <div class="code" aria-hidden="true">404</div>
+
+  <h1>Page not found</h1>
+  <p>This URL does not exist on GuideCheck. No conformant guide lives here.</p>
+
+  <pre>[assistant-guide-metadata]
+identifier: assistant-guide
+profile: human-verifiable-assistant-guide
+status: not-found
+achieved-level: 0
+[/assistant-guide-metadata]</pre>
+
+  <a href="https://guidecheck.org/" class="home-btn">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M6.5 3L2 8l4.5 5M2 8h12" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Return home
+  </a>
+
+  <footer>
+    <a href="https://guidecheck.org/">GuideCheck</a>
+  </footer>
+
+</body>
+</html>

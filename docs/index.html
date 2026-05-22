@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>GuideCheck &mdash; Human-Verifiable Assistant Guide standard</title>
+  <meta name="description" content="GuideCheck defines a constrained plain-text profile for assistant-guide.txt: the install, setup, and remediation instructions an AI assistant acts on, bounded so a human can review them in full first.">
+  <meta name="keywords" content="guidecheck, assistant-guide.txt, human-verifiable assistant guide, AI setup guide, prompt injection defense, well-known assistant guide, assistant instruction profile, conformance verifier, ASCII instruction surface">
+  <meta name="author" content="Sam Rogers">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="theme-color" content="#0b6a62">
+  <link rel="canonical" href="https://guidecheck.org/">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="mask-icon" href="/favicon.svg" color="#0b6a62">
+  <link rel="apple-touch-icon" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="alternate" type="text/plain" href="https://guidecheck.org/llms.txt" title="LLM-readable summary">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="GuideCheck">
+  <meta property="og:title" content="GuideCheck">
+  <meta property="og:description" content="The Human-Verifiable Assistant Guide standard. A constrained plain-text profile for the instructions an AI assistant acts on.">
+  <meta property="og:image" content="https://guidecheck.org/imgs/og.png">
+  <meta property="og:image:alt" content="GuideCheck &mdash; the assistant-guide.txt artifact shown in full as plain text with [action] blocks, beside a six-rung conformance ladder">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="634">
+  <meta property="og:url" content="https://guidecheck.org/">
+  <meta property="og:locale" content="en_US">
+  <meta property="article:published_time" content="2026-05-21T00:00:00Z">
+  <meta property="article:modified_time" content="2026-05-21T00:00:00Z">
+  <meta property="article:author" content="Sam Rogers">
+  <meta property="article:publisher" content="https://paice.work/">
+  <meta property="article:section" content="Open Standards">
+  <meta property="article:tag" content="guidecheck">
+  <meta property="article:tag" content="assistant-guide-txt">
+  <meta property="article:tag" content="human-verifiable-assistant-guide">
+  <meta property="article:tag" content="prompt-injection-defense">
+  <meta property="article:tag" content="ai-setup-guide">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GuideCheck">
+  <meta name="twitter:description" content="The Human-Verifiable Assistant Guide standard. A constrained plain-text profile for the instructions an AI assistant acts on.">
+  <meta name="twitter:image" content="https://guidecheck.org/imgs/og.png">
+  <meta name="twitter:site" content="@snapsynapse">
+  <meta name="twitter:creator" content="@snapsynapse">
+
+  <!-- Identity verification (IndieWeb rel=me): claim ownership of external profiles -->
+  <link rel="me" href="https://github.com/snapsynapse">
+  <link rel="me" href="https://linkedin.com/in/samrogers">
+
+  <!-- JSON-LD: TechArticle -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "GuideCheck",
+    "alternativeHeadline": "The Human-Verifiable Assistant Guide standard",
+    "description": "GuideCheck defines the Human-Verifiable Assistant Guide profile for assistant-guide.txt: a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions. It is ASCII-only and capped at 8 KiB so a human can review the entire instruction surface before an assistant acts on it.",
+    "inLanguage": "en",
+    "url": "https://guidecheck.org/",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://guidecheck.org/" },
+    "datePublished": "2026-05-21",
+    "dateModified": "2026-05-21",
+    "author": {
+      "@type": "Person",
+      "name": "Sam Rogers",
+      "url": "https://paice.work/",
+      "affiliation": { "@type": "Organization", "name": "PAICE.work PBC" }
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PAICE.work PBC",
+      "url": "https://paice.work/",
+      "logo": { "@type": "ImageObject", "url": "https://paice.work/logo.png" }
+    },
+    "image": "https://guidecheck.org/imgs/og.png",
+    "keywords": ["guidecheck", "assistant-guide.txt", "human-verifiable assistant guide", "prompt injection defense", "AI setup guide", "conformance verifier", "well-known assistant guide"],
+    "isPartOf": { "@type": "CreativeWork", "name": "PAICE.work Open Standards" },
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "copyrightHolder": { "@type": "Organization", "name": "PAICE.work PBC" },
+    "copyrightYear": 2026,
+    "citation": [
+      { "@type": "WebPage", "name": "Graceful Boundaries", "url": "https://gracefulboundaries.dev/" },
+      { "@type": "WebPage", "name": "Knowledge as Code", "url": "https://knowledge-as-code.com/" },
+      { "@type": "WebPage", "name": "Skill Provenance", "url": "https://skillprovenance.dev/" },
+      { "@type": "WebPage", "name": "HardGuard25", "url": "https://hardguard25.com/" }
+    ]
+  }
+  </script>
+
+  <!-- JSON-LD: DefinedTerm (stake the term) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "GuideCheck",
+    "alternateName": ["guidecheck", "Human-Verifiable Assistant Guide", "assistant-guide.txt"],
+    "description": "GuideCheck is a constrained plain-text profile for assistant-guide.txt, an assistant-facing instruction artifact. It is strict ASCII, capped at 8 KiB, and structured into explicit action blocks so a human can review the entire instruction surface in one sitting before an assistant acts on it.",
+    "url": "https://guidecheck.org/",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "PAICE.work Open Standards",
+      "url": "https://paice.work/"
+    },
+    "sameAs": [
+      "https://github.com/snapsynapse/guidecheck"
+    ]
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f5f7f8;
+      --surface2: #e9edef;
+      --text: #15181f;
+      --text-muted: #515b67;
+      --accent: #0b6a62;
+      --accent-hover: #0a544d;
+      --border: #d9dee2;
+      --green: #15803d;
+      --red: #b91c1c;
+      --code-bg: #f5f7f8;
+      --code-text: #15181f;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --mono: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+      --max-width: 960px;
+      --radius: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    /* Skip link (a11y) */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
+
+    /* Nav */
+    nav {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    nav .logo svg { color: var(--accent); flex: 0 0 auto; }
+    nav .logo:hover svg { color: var(--accent-hover); }
+    nav .links { display: flex; align-items: center; gap: 1.5rem; font-size: 0.9rem; }
+    nav .links a { color: var(--text-muted); }
+    nav .links a:hover { color: var(--text); text-decoration: none; }
+
+    /* GitHub star button */
+    .gh-star {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-alt);
+      color: var(--text) !important;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: border-color 0.1s ease, transform 0.05s ease;
+    }
+    .gh-star:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+    .gh-star svg { flex: 0 0 auto; color: #b8860b; }
+    .gh-star span { white-space: nowrap; }
+
+    /* Byline */
+    .byline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0.75rem 0 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.9rem;
+      align-items: center;
+      justify-content: center;
+    }
+    .byline .sep { color: var(--text-muted); }
+    .byline a { color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 2px; }
+    .byline a:hover { color: var(--accent-hover); text-decoration-color: var(--accent-hover); }
+    .byline .version {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: var(--bg-alt);
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+
+    /* Canonical note */
+    .canonical-note {
+      margin-top: 2.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .canonical-note strong { color: var(--text); }
+    .canonical-note a { text-decoration: underline; text-underline-offset: 2px; }
+
+    /* Sections */
+    section { padding: 4rem 0; }
+    section.alt { background: var(--bg-alt); }
+
+    h1 { font-size: 2.75rem; line-height: 1.15; letter-spacing: -0.02em; font-weight: 800; }
+    h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: -0.01em; }
+    h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* Hero */
+    .hero { padding: 5rem 0 4rem; text-align: center; }
+    .hero h1 { margin-bottom: 1rem; }
+    .hero .subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 1.5rem;
+    }
+    .hero .hook {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-img {
+      display: block;
+      width: 100%;
+      max-width: 860px;
+      height: auto;
+      margin: 0 auto 2.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    /* Pillars */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      text-align: left;
+    }
+    .pillar {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+    .pillar h3 { color: var(--accent); font-size: 1rem; }
+    .pillar p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0; }
+
+    /* Safety callout */
+    .callout {
+      margin: 2rem 0 0;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      border-radius: 8px;
+    }
+    .callout h3 { color: var(--red); }
+    .callout p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 0; }
+
+    /* Buttons */
+    .cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.15s, color 0.15s;
+    }
+    /* White text on --accent gives ~5.1:1 contrast (WCAG AA) */
+    .btn-primary { background: var(--accent); color: #ffffff; }
+    .btn-primary:hover { background: var(--accent-hover); text-decoration: none; color: #ffffff; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .btn-secondary:hover { background: var(--accent); color: #ffffff; text-decoration: none; }
+
+    /* Code blocks */
+    .code-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .code-block { text-align: left; }
+    .code-block h3 { font-size: 0.95rem; margin-bottom: 0.75rem; }
+    .code-block .annotation {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      font-style: italic;
+    }
+    /* Explicit focus rings — browser default is invisible against colored button backgrounds. */
+    .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .btn-primary:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      border: 1px solid var(--border);
+    }
+    code { font-family: var(--mono); font-size: 0.88em; color: var(--accent); }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+    th, td {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    th { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    td.level {
+      font-family: var(--mono);
+      color: var(--accent);
+      width: 64px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    /* Demo callout */
+    .demo-block {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .demo-preview {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      padding: 1.25rem;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--accent);
+      margin: 1.25rem 0 1.5rem;
+      text-align: left;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-meta p { margin-bottom: 0.25rem; }
+    .footer-meta a { text-decoration: underline; text-underline-offset: 2px; }
+    .footer-links a { text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--border); }
+    .footer-links a:hover { text-decoration-color: var(--accent-hover); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      .hero { padding: 3rem 0 2.5rem; }
+      .pillars { grid-template-columns: 1fr; }
+      .code-grid { grid-template-columns: 1fr; }
+      nav .links { display: none; }
+      nav .links.mobile-compact { display: flex; gap: 0.75rem; }
+      .footer-grid { flex-direction: column; }
+      pre { font-size: 0.75rem; }
+    }
+    @media (max-width: 520px) {
+      nav .links.mobile-compact a:not(.gh-star) { display: none; }
+      nav .container { gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<nav aria-label="Main navigation">
+  <div class="container">
+    <a href="/" class="logo" aria-label="GuideCheck home">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+        <path d="M13 6.5 H7 V25.5 H13" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19 6.5 H25 V25.5 H19" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11.5 16.4 L14.8 20 L20.5 11.6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>GuideCheck</span>
+    </a>
+    <div class="links mobile-compact">
+      <a href="#profile">Profile</a>
+      <a href="#levels">Levels</a>
+      <a href="#adopt">Adopt</a>
+      <a href="/verify/">Verify</a>
+      <a href="https://github.com/snapsynapse/guidecheck" class="gh-star" target="_blank" rel="noopener" aria-label="Star snapsynapse/guidecheck on GitHub">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
+        </svg>
+        <span>Star on GitHub</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main id="main-content">
+<section class="hero">
+  <div class="container">
+    <h1>Every instruction, in plain sight.</h1>
+    <p class="subtitle">GuideCheck defines the Human-Verifiable Assistant Guide profile &mdash; a constrained plain-text artifact for the install, setup, and remediation instructions an AI assistant will act on.</p>
+    <!-- Byline rel-attribute rule: combine values into a single rel attribute (rel="noopener author"). HTML allows only one rel per element; a second rel is silently dropped. -->
+    <p class="byline">
+      By <a href="https://linkedin.com/in/samrogers" target="_blank" rel="noopener author">Sam Rogers</a>, <a href="https://snapsynapse.com" target="_blank" rel="noopener">Snap Synapse</a>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      Published <time datetime="2026-05-21">May 21, 2026</time>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      Updated <time datetime="2026-05-21">May 21, 2026</time>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <span class="version">v0.1.0</span>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank">CC&nbsp;BY&nbsp;4.0</a>
+    </p>
+    <p class="hook">AI-assisted setup guidance reaches assistants through HTML, rendered Markdown, PDFs, and copied terminal output. Those surfaces can carry text a model ingests but a human never sees &mdash; hidden comments, white-on-white text, invisible Unicode controls. For high-consequence tasks, the instruction surface should be something a human can read in full first.</p>
+
+    <img class="hero-img" src="/imgs/og.png" width="1200" height="634" alt="The assistant-guide.txt artifact shown in full as plain text: a filename header, three [action] blocks reading Identify user intent, Formulate plan, and Generate response, and an End of file marker, beside a six-rung conformance ladder numbered 0 to 5.">
+
+    <div class="cta-row">
+      <a href="https://github.com/snapsynapse/guidecheck/blob/main/spec.md" class="btn btn-primary" target="_blank" rel="noopener">Read the Specification</a>
+      <a href="/verify/" class="btn btn-secondary">Verify a guide</a>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="profile">
+  <div class="container">
+    <h2>What the profile defines</h2>
+    <p>The profile describes one artifact: a <code>.txt</code> file named <code>assistant-guide.txt</code>, served at <code>/.well-known/assistant-guide.txt</code>. It carries assistant-facing install, implementation, remediation, migration, and operational instructions for a single bounded task. Three properties make that surface reviewable.</p>
+
+    <div class="pillars">
+      <div class="pillar">
+        <h3>Bounded and reviewable</h3>
+        <p>A strict ASCII byte profile and an 8 KiB size cap, so the whole instruction surface can be read in one sitting &mdash; no hidden bytes, no homoglyphs, no offscreen text.</p>
+      </div>
+      <div class="pillar">
+        <h3>Structured actions</h3>
+        <p>Explicit <code>[action]</code> blocks with declared classes, approval gates, and command restrictions. The assistant executes blocks, never loose prose.</p>
+      </div>
+      <div class="pillar">
+        <h3>Verifiable provenance</h3>
+        <p>A sidecar manifest plus cross-channel hash publication, so a guide's identity can be confirmed without trusting any single hosted service.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h3>Conformance is not safety</h3>
+      <p>Conformance to this profile, at any level, does not mean a guide is safe to follow, that the publisher is trustworthy, or that an assistant may skip the security practices a competent operator would already apply. A verifier confirms form. The human confirms meaning. The standard is one layer in a defense stack &mdash; it does not replace sandboxing, least privilege, or human approval.</p>
+    </div>
+  </div>
+</section>
+
+<section id="levels">
+  <div class="container">
+    <h2>Six conformance levels</h2>
+    <p>The conformance ladder is additive and honest. Each level states exactly what it has checked and what it has not. Higher levels add structure and provenance &mdash; never a safety claim.</p>
+    <table>
+      <thead>
+        <tr><th>Level</th><th>What it establishes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="level">0</td><td>Instructions are only available through surfaces that can hide or transform text.</td></tr>
+        <tr><td class="level">1</td><td>A plain-text guide exists, is reachable, and carries the compact verification instruction.</td></tr>
+        <tr><td class="level">2</td><td>Strict ASCII byte profile, size limits, and no disallowed constructs.</td></tr>
+        <tr><td class="level">3</td><td>Assistant safety contract, all required sections, and explicit approval gates.</td></tr>
+        <tr><td class="level">4</td><td>Verifiable provenance: a sidecar manifest and a cross-channel hash on an independent control plane.</td></tr>
+        <tr><td class="level">5</td><td>A guide plus a conformant assistant runtime that mechanically enforces the execution contract.</td></tr>
+      </tbody>
+    </table>
+    <p>Level&nbsp;4 adds verifiable provenance but not a safety claim. Level&nbsp;5 is explicitly a guide-plus-runtime claim, not a guide-only claim, because runtime behavior cannot be asserted by a file.</p>
+  </div>
+</section>
+
+<section class="alt" id="adopt">
+  <div class="container">
+    <h2>Adopt the profile</h2>
+    <p>Publishing a conformant guide is plain-text work. Write the artifact, serve it at the well-known path, and check it against the verifier conformance profile. No registry, no account, no central oracle.</p>
+
+    <div class="code-grid">
+      <div class="code-block">
+        <h3>assistant-guide.txt</h3>
+<pre>[assistant-guide-metadata]
+identifier: assistant-guide
+profile: human-verifiable-assistant-guide
+profile-version: 0.1.0
+guide-version: 0.1.0
+applies-to: example-project 1.x
+canonical-url: https://example.com/.well-known/assistant-guide.txt
+source-path: /.well-known/assistant-guide.txt
+last-reviewed: 2026-05-21
+status: active
+recommended-verifier: https://guidecheck.org/verify
+[/assistant-guide-metadata]</pre>
+        <p class="annotation">Strict ASCII, 8 KiB maximum, plain text only &mdash; no HTML, no Markdown, no hidden bytes.</p>
+      </div>
+
+      <div class="code-block">
+        <h3>Serve and verify</h3>
+<pre># Serve the artifact at the well-known path
+GET /.well-known/assistant-guide.txt
+
+# Run a conformant verifier against the URL.
+# Output reports: guide SHA-256, achieved
+# level, and any blocking findings.
+
+# A conformance claim is valid only when
+# backed by verifier output, guide hash,
+# achieved level, and findings.</pre>
+        <p class="annotation">Anyone may build a conformant verifier. The fixture suite keeps independent implementations in agreement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="verify">
+  <div class="container">
+    <div class="demo-block">
+      <h2>Verify a guide</h2>
+      <p>GuideCheck publishes a primary verifier for usability &mdash; never as the only authoritative verifier and never as a root of trust. It reports what it checked and what it did not.</p>
+      <div class="demo-preview">verifier: human-verifiable-assistant-guide-verifier 0.1.0
+guide-sha256: a1b2c3 ... reviewed before use
+achieved-level: 3
+findings: 0 blocking, 1 advisory
+note: conformance is not safety &mdash; read the guide</div>
+      <div class="cta-row">
+        <a href="/verify/" class="btn btn-primary">Open the verifier &rarr;</a>
+        <a href="https://github.com/snapsynapse/guidecheck" class="btn btn-secondary" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+
+    <aside class="canonical-note" role="note">
+      <strong>Canonical reference.</strong> This page is the authoritative home of the
+      GuideCheck standard and the Human-Verifiable Assistant Guide profile. The normative
+      documents are <a href="https://github.com/snapsynapse/guidecheck/blob/main/spec.md" target="_blank" rel="noopener">spec.md</a>
+      and <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">verifier-conformance.md</a>.
+      Any cross-posts on other platforms are derived from this source and should cite
+      <a href="https://guidecheck.org/">guidecheck.org</a> as canonical.
+      Profile version 0.1.0, draft for review. Last substantive revision:
+      <time datetime="2026-05-21">2026-05-21</time>.
+      <a href="https://github.com/snapsynapse/guidecheck/commits/main/spec.md" target="_blank" rel="noopener">Revision history &rarr;</a>
+    </aside>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-meta">
+        <p>GuideCheck v0.1.0 &middot; <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank">CC BY 4.0</a> (spec) &middot; <a href="https://github.com/snapsynapse/guidecheck/blob/main/LICENSE-MIT" target="_blank" rel="noopener">MIT</a> (code)</p>
+        <p>A PAICE Foundation standard by <a href="https://linkedin.com/in/samrogers" target="_blank" rel="noopener author">Sam Rogers</a>.</p>
+        <p style="margin-top: 0.5rem;">See also: <a href="https://gracefulboundaries.dev/" target="_blank" rel="noopener">Graceful Boundaries</a> &middot; <a href="https://knowledge-as-code.com/" target="_blank" rel="noopener">Knowledge as Code</a> &middot; <a href="https://skillprovenance.dev/" target="_blank" rel="noopener">Skill Provenance</a> &middot; <a href="https://hardguard25.com/" target="_blank" rel="noopener">HardGuard25</a></p>
+      </div>
+      <div class="footer-links">
+        <a href="/verify/">Verifier</a>
+        <a href="https://github.com/snapsynapse/guidecheck" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/snapsynapse/guidecheck/blob/main/spec.md" target="_blank" rel="noopener">Specification</a>
+        <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">Verifier profile</a>
+        <a href="https://github.com/snapsynapse/guidecheck/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+        <a href="https://github.com/snapsynapse/guidecheck/commits/main/spec.md" target="_blank" rel="noopener">Revisions</a>
+        <a href="/.well-known/assistant-guide.txt">assistant-guide.txt</a>
+        <a href="/llms.txt">llms.txt</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
