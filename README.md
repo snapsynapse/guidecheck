@@ -1,5 +1,6 @@
 # GuideCheck
 
+AI setup guides can hide instructions a model reads but a human never sees.
 GuideCheck is the standards project for the Human-Verifiable Assistant Guide
 profile: a constrained plain-text profile for `assistant-guide.txt`, covering
 assistant-facing install, implementation, remediation, migration, and
@@ -64,6 +65,9 @@ that a human can review in full before authorizing an assistant to follow it.
 - `evals/` - local eval documentation for fixture and generated checks
 - `scripts/eval_guidecheck.py` - dependency-free local eval runner
 - `roadmap.md` - future actions and undecided questions
+- `CHANGELOG.md` - profile and companion-document change history
+- `CONTRIBUTING.md` - how to propose a profile change
+- `SECURITY.md` - how to report a security weakness privately
 - `examples/` - sample conforming guides and a sample manifest
 - `fixtures/` - verifier conformance test corpus
 - `INTENT.md` - standards-level strategy, invariants, and recalibration gates
@@ -146,6 +150,12 @@ expectation contract by `scripts/check_reference_verifier.py`.
 ## Status
 
 Draft for review, profile version 0.1.0. See `CHANGELOG.md`.
+
+## Contributing
+
+GuideCheck is a security-relevant standards project. See `CONTRIBUTING.md` for
+how to propose a profile change, and `SECURITY.md` to report a weakness
+privately.
 
 ## License
 

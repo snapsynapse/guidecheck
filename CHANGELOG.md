@@ -1,8 +1,10 @@
 # Changelog
 
-All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows Keep a Changelog conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
+All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
-## 0.1.0 - 2026-05-21
+## [Unreleased]
+
+## [0.1.0] - 2026-05-21
 
 Initial draft for review.
 
@@ -35,3 +37,6 @@ Initial draft for review.
 
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
+
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.1.0

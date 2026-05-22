@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and discussion
+    url: https://github.com/snapsynapse/guidecheck/discussions
+    about: Ask and answer questions about the profile and verifiers here.
+  - name: Report a security weakness
+    url: https://github.com/snapsynapse/guidecheck/blob/main/SECURITY.md
+    about: Do not file a public issue for a vulnerability. Follow SECURITY.md.
