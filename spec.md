@@ -1,6 +1,47 @@
 # GuideCheck Human-Verifiable Assistant Guide Profile
 Status: Draft for review
 
+## How to read this document
+
+This is the normative specification. It defines exactly what a conforming `assistant-guide.txt` artifact must be. It is a precise reference, not an introduction.
+
+- Deciding whether to adopt GuideCheck, or publishing your first guide: start with `ADOPTION.md`. It explains the conformance ladder, gives a level-by-level path, and carries the guide-author checklist. Return here for the exact requirements.
+- Writing a guide: sections 6 through 17 define the artifact, its structure, and its constraints.
+- Building a verifier: sections 21 and 26 here, then the normative `verifier-conformance.md`.
+- Assessing risk and coverage: sections 14 and 27 here, then `threat-register.md`. Operator practice during a real install is in `operator-guide.md`.
+- Understanding why the design is shaped this way: `design-rationale.md`.
+
+## Contents
+
+1. [Purpose](#1-purpose)
+2. [Terminology](#2-terminology)
+3. [Problem Statement](#3-problem-statement)
+4. [Design Goals](#4-design-goals)
+5. [Non-Goals](#5-non-goals)
+6. [Core Artifact](#6-core-artifact)
+7. [Authority Model](#7-authority-model)
+8. [Byte-Level Profile](#8-byte-level-profile)
+9. [Disallowed Constructs](#9-disallowed-constructs)
+10. [Required Sections](#10-required-sections)
+11. [Guide Metadata](#11-guide-metadata)
+12. [Action Classification](#12-action-classification)
+13. [Stop-and-Ask Conditions](#13-stop-and-ask-conditions)
+14. [Threat Model](#14-threat-model)
+15. [Untrusted Content Handling](#15-untrusted-content-handling)
+16. [Public Information Safety](#16-public-information-safety)
+17. [Risky Pattern Guidance](#17-risky-pattern-guidance)
+18. [Conformance Levels](#18-conformance-levels)
+19. [Discovery](#19-discovery)
+20. [HTTP Serving Requirements](#20-http-serving-requirements)
+21. [Verifier Requirements](#21-verifier-requirements)
+22. [Acceptance Checklist](#22-acceptance-checklist)
+23. [Lifecycle and Change Management](#23-lifecycle-and-change-management)
+24. [Relationship to Existing Work](#24-relationship-to-existing-work)
+25. [Locale](#25-locale)
+26. [Verifier Output Schema](#26-verifier-output-schema)
+27. [Residual Threats](#27-residual-threats)
+28. [Operator Responsibilities and Defense in Depth](#28-operator-responsibilities-and-defense-in-depth)
+
 ## 1. Purpose
 
 GuideCheck is the standards project for the Human-Verifiable Assistant Guide profile. This specification defines the profile for `assistant-guide.txt`, a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions.
@@ -28,7 +69,7 @@ The following practices remain mandatory regardless of conformance level:
 - keep operating-system and network egress controls in place; do not let an assistant suppress permission prompts
 - treat any "safe" or "trusted" claim inside a guide as the publisher's marketing, not as evidence
 
-Section 28 expands these into a defense-in-depth checklist. Section 27 enumerates residual threats this profile does not address. Adopters are expected to read both.
+The companion `operator-guide.md`, pointed to from section 28, expands these into a defense-in-depth checklist. Section 27 enumerates residual threats this profile does not address. Adopters are expected to read both.
 
 ## 2. Terminology
 
@@ -55,19 +96,9 @@ Publisher
 
 ## 3. Problem Statement
 
-AI-assisted setup and implementation guides are often distributed through HTML pages, rendered Markdown, PDFs, docs sites, copied issue comments, terminal output, screenshots, or other rich media. Those surfaces can contain content that a model sees but a human may not notice, including:
+AI-assisted setup and operational guides reach assistants through HTML, rendered Markdown, PDFs, docs sites, copied issue comments, terminal output, and screenshots. Those surfaces can carry content a model ingests but a human never sees: hidden comments, offscreen or invisible text, control characters, terminal escape sequences, and buried instruction blocks. The human reviews the rendered output; the model ingests the raw source; nothing guarantees they are the same document.
 
-- hidden HTML comments
-- offscreen CSS
-- white-on-white text
-- script-inserted content
-- metadata or alternate text
-- remote embeds
-- invisible Unicode controls
-- terminal escape sequences
-- long buried instruction blocks
-
-For high-consequence tasks, projects need a constrained instruction surface that a human can review in full before authorizing an assistant to follow it.
+For high-consequence tasks, projects need a constrained instruction surface that a human can review in full before authorizing an assistant to follow it. `ADOPTION.md` and `design-rationale.md` expand on the problem and the reasoning; this profile defines the artifact that closes the gap.
 
 ## 4. Design Goals
 
@@ -96,7 +127,7 @@ This profile does not:
 
 A conforming guide is a `.txt` file named `assistant-guide.txt`.
 
-The canonical filename is `assistant-guide.txt`. When served over HTTP, the canonical well-known path is `/.well-known/assistant-guide.txt`. A repository copy at the repository root is RECOMMENDED. Publishers MAY serve the same content at both locations; the well-known path takes precedence for HTTP discovery.
+The canonical filename is `assistant-guide.txt`. When served over HTTP, the canonical well-known path is `/.well-known/assistant-guide.txt`. A repository copy at the repository root is RECOMMENDED. Publishers MAY serve the guide at both the well-known path and the repository root. When both are served, the two copies MUST be byte-identical; a divergence is a forge and confusion vector, and the repository-file provenance anchor of section 11 depends on the copies matching. A verifier that can reach both copies MUST emit a failure on any divergence. The well-known path takes precedence for HTTP discovery.
 
 The guide gives an assistant a bounded task prompt, safety rules, action classes, allowed commands or command patterns, stop-and-ask conditions, and acceptance criteria.
 
@@ -228,7 +259,7 @@ Before acting:
 
 The guide MAY list a recommended hosted verifier via the `recommended-verifier` metadata field. It MUST NOT state or imply that only one verifier is authoritative. A conformant verifier is one that satisfies the GuideCheck Verifier Conformance Profile for the applicable profile version.
 
-When a guide lists `recommended-verifier`, the URL SHOULD be on the same registered domain as `canonical-url`, unless the guide explicitly identifies the verifier as third-party or the verifier is the standard primary verifier published by the standards project for the applicable profile version. The standard primary verifier is exempt from off-domain verifier warnings because it is part of the standard's own conformance ecosystem, not an arbitrary third-party verifier. For guide-profile version 0.1.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by GuideCheck as the standards project for this profile. Verifiers SHOULD treat that URL as the standard primary verifier and apply the off-domain warning to all other `recommended-verifier` values not matching `canonical-url`.
+When a guide lists `recommended-verifier`, the URL SHOULD be on the same registered domain as `canonical-url`, unless the guide explicitly identifies the verifier as third-party or the verifier is the standard primary verifier published by the standards project for the applicable profile version. The standard primary verifier is exempt from off-domain verifier warnings because it is part of the standard's own conformance ecosystem, not an arbitrary third-party verifier. For guide-profile version 0.2.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by GuideCheck as the standards project for this profile. Verifiers SHOULD treat that URL as the standard primary verifier and apply the off-domain warning to all other `recommended-verifier` values not matching `canonical-url`.
 
 Assistants fetching public guides MUST NOT send cookies, browser session state, authorization headers, or other ambient credentials. Public guide fetches MUST be unauthenticated and reproducible.
 
@@ -272,14 +303,14 @@ Optional fields:
 
 ### Version-range syntax
 
-The `verifier-conformance` field uses a SemVer range expressed in npm-compatible operator form: `<name> <op><version>[, <op><version>]`. Allowed operators are `=`, `>=`, `>`, `<=`, `<`, `~`, and `^`. Multiple constraints are comma-separated and combined with logical AND. Example: `human-verifiable-assistant-guide-verifier >=0.1.0, <0.2.0`. Whitespace between operator and version is optional. Verifiers that do not implement the full operator set MUST report unsupported operators as warnings and fall back to exact-version matching.
+The `verifier-conformance` field uses a SemVer range expressed in npm-compatible operator form: `<name> <op><version>[, <op><version>]`. Allowed operators are `=`, `>=`, `>`, `<=`, `<`, `~`, and `^`. Multiple constraints are comma-separated and combined with logical AND. Example: `human-verifiable-assistant-guide-verifier >=0.2.0, <0.3.0`. Whitespace between operator and version is optional. Verifiers that do not implement the full operator set MUST report unsupported operators as warnings and fall back to exact-version matching.
 
 Example:
 ```text
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.1.0
+profile-version: 0.2.0
 guide-version: 1.0.0
 applies-to: example-project >=2.3.0, <3.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt
@@ -289,13 +320,15 @@ last-reviewed: 2026-05-21
 reviewed-by: security@example.com
 status: active
 recommended-verifier: https://example.com/check
-verifier-conformance: human-verifiable-assistant-guide-verifier >=0.1.0
+verifier-conformance: human-verifiable-assistant-guide-verifier >=0.2.0
 [/assistant-guide-metadata]
 ```
 
 All URL values MUST resolve to ASCII hostnames. Internationalized domain names MUST be expressed in punycode (A-label) form. Verifiers MUST reject metadata containing non-ASCII bytes in URL fields; this is already implied by the byte profile but is restated here because URL fields are operationally load-bearing.
 
 URL paths are case-sensitive and SHOULD use the canonical lowercase form.
+
+`canonical-url` is the URL at which the guide itself is served. `repository-url` is the root of the publisher's source repository, where the guide's source and revision history live (for example `https://github.com/example/example-project`). It is a single field; it is not a project landing page, a documentation site, or a marketing page. The repository-file provenance anchor in the cross-channel section below resolves `source-path` against `repository-url`; a `repository-url` that does not point at a source repository disables that anchor.
 
 ### Profile and guide versioning
 
@@ -314,6 +347,7 @@ guide-sha256: <hex-encoded sha256 of the assistant-guide.txt bytes>
 guide-bytes: <integer byte count>
 immutable-release-url: https://example.com/org/example-project/releases/v2.3.1
 signature: optional-reference-to-signed-artifact
+transparency-log-url: optional-url-to-a-public-append-only-log-entry
 ```
 
 The hash identifies which version of the file a verifier has examined. The hash does not assert that the file is safe. A verifier that fetches both `assistant-guide.txt` and its manifest MUST recompute the SHA-256 over the fetched bytes and report any mismatch as a Level 4 conformance failure while still permitting Level 3 evaluation of the file contents on their own merits.
@@ -395,6 +429,12 @@ Assistant-Guide-SHA256: <64-hex>
 
 An unsigned security.txt does NOT count as an independent channel because it lives on the same origin as the guide. A signed security.txt counts because the trust anchor is the signing key, not the file.
 
+#### Public append-only transparency log
+
+A publisher MAY anchor `guide-sha256` in a public append-only transparency log, for example a Sigstore Rekor entry, a certificate-transparency-style log, or a git-backed append-only log hosted under independent credentials. The log entry MUST record `guide-sha256` and `canonical-url`, and MUST be retrievable from a stable, publicly readable URL. Verifiers discover the entry through the optional manifest field `transparency-log-url`.
+
+A transparency log counts as an independent control plane when it is operated under credentials distinct from the web host and its entries cannot be silently rewritten or deleted. Append-only semantics raise the forge cost beyond a plain mirror: an attacker cannot retroactively replace the anchored hash without leaving the original entry visible. A verifier that retrieves a log entry MUST compare its hash against the manifest hash and MUST emit a failure on divergence, the same as for any other independent channel.
+
 #### Discovery aids that are NOT evidence
 
 The following surfaces are permitted for human and tool discovery but MUST NOT be treated by verifiers as forge-resistant evidence of the hash, because they share the same origin as the guide:
@@ -418,11 +458,9 @@ A Level 3 or higher guide MUST classify actions into these categories at minimum
 
 The `normal` class is mutually exclusive with the other classes. Any action that is networked, destructive, privileged, persistence-changing, data-accessing, or code-executing is not normal.
 
-Privileged, destructive, persistence-changing, and data-accessing actions MUST require explicit human approval before execution.
+Privileged, destructive, persistence-changing, data-accessing, and code-executing actions MUST require explicit human approval before execution at Level 3 and above. Running project, dependency, or build code executes arbitrary logic under the operator's authority, so it is gated at the same level as the other high-consequence classes.
 
 Networked actions SHOULD require approval unless the user has already approved the source and purpose.
-
-Code-executing actions SHOULD require approval at Level 4 and MUST require approval at Level 5.
 
 ### Action block shape
 
@@ -447,7 +485,7 @@ Fields:
 - `runner` (optional): `argv` or `shell`
 - `notes` (optional): single-line rationale
 
-Actions whose class list includes `privileged`, `destructive`, `persistence-changing`, or `data-accessing` MUST set `approval: required`. A verifier MUST emit a failure when this constraint is violated. Prose discussion around action blocks remains permitted.
+Actions whose class list includes `privileged`, `destructive`, `persistence-changing`, `data-accessing`, or `code-executing` MUST set `approval: required`. A verifier MUST emit a failure when this constraint is violated. Prose discussion around action blocks remains permitted.
 
 ### Command field restrictions
 
@@ -471,7 +509,7 @@ Level 4 guides SHOULD include `runner: argv` or `runner: shell` on every action.
 
 `runner: argv` means the command is executed by directly invoking the named program with its arguments, without spawning a shell interpreter. The runtime tokenizes the `command` field by whitespace into program and argument vector; no shell metacharacters are interpreted.
 
-`runner: shell` means a POSIX-compatible shell (`/bin/sh` semantics) interprets the command. On non-POSIX hosts the runtime SHOULD declare the resolved shell in its compact report. A future revision of this profile may add explicit `runner: powershell` and `runner: cmd` values for Windows-native execution; v0.1 leaves Windows shell semantics out of scope, and publishers targeting Windows SHOULD prefer `runner: argv` until those values are defined.
+`runner: shell` means a POSIX-compatible shell (`/bin/sh` semantics) interprets the command. On non-POSIX hosts the runtime SHOULD declare the resolved shell in its compact report. A future revision of this profile may add explicit `runner: powershell` and `runner: cmd` values for Windows-native execution; v0.2 leaves Windows shell semantics out of scope, and publishers targeting Windows SHOULD prefer `runner: argv` until those values are defined.
 
 Any command that relies on shell behavior, including pipes or redirection, SHOULD declare `runner: shell`, include a narrow rationale in `notes`, and require approval. Level 5 runtimes MUST enforce those requirements before invoking a shell.
 
@@ -683,7 +721,7 @@ Level 3 plus verifiable provenance evidence.
 Required at Level 4:
 
 - sidecar manifest at `manifest-url` with `guide-sha256`, `guide-bytes`, and `immutable-release-url`
-- the `guide-sha256` MUST be cross-published on at least one independent control plane as defined in section 11 (DNS TXT, package registry metadata, public repository file, or signed security.txt)
+- the `guide-sha256` MUST be cross-published on at least one independent control plane as defined in section 11 (DNS TXT, package registry metadata, public repository file, signed security.txt, or public append-only transparency log)
 - the verifier MUST report which channels were checked and MUST emit a failure on any cross-channel hash divergence
 
 Recommended at Level 4:
@@ -695,7 +733,6 @@ Level 4 guides SHOULD prepare for Level 5 runtime enforcement by:
 
 - using `runner: argv` or `runner: shell` on every action
 - marking every `networked` action as `approval: required`
-- marking every `code-executing` action as `approval: required`
 - keeping action commands executable without a shell where practical
 - declaring narrow `cwd`, `env`, and `egress` fields wherever applicable
 - avoiding package lifecycle scripts, generated-code execution, and local-script execution unless the action is explicitly classified as `code-executing`
@@ -809,7 +846,7 @@ A verifier for this profile SHOULD:
 - compare the fetched bytes against the `guide-sha256` value in the manifest at Level 4
 - enumerate every cross-channel hash anchor it can find (DNS TXT `_assistant-guide.<domain>`, package registry metadata, public repository file, signed security.txt) and compare each against the manifest hash; emit a failure on divergence and an info finding when no independent channel is present at Level 3 or above
 - record which channels were checked and which were unreachable; absence of an optional channel is an info finding, not an error
-- compare `last-reviewed` and `valid-until` against the current date and warn on staleness
+- report the `last-reviewed` age as an informational finding, and warn when `valid-until` is in the past or malformed; there is no fixed `last-reviewed` expiry, because only the publisher's `valid-until` is a non-arbitrary staleness signal
 - emit structured evidence and remediation, not only a score
 
 A verifier MUST NOT execute commands from the guide.
@@ -971,62 +1008,6 @@ For a Level 5 deployment, on a guide that conforms at Level 4 and was reviewed b
 
 ## 28. Operator Responsibilities and Defense in Depth
 
-This profile is one layer in a defense stack. It is the layer that prevents a presentation surface from hiding instructions from a human while feeding them to an assistant. It is not, by itself, a secure install procedure. The practices below remain the operator's responsibility regardless of how high a guide scores against this profile.
+This profile is one layer in a defense stack. It is the layer that prevents a presentation surface from hiding instructions from a human while feeding them to an assistant. It is not, by itself, a secure install procedure. Reading the full guide, least-privilege sandboxing, out-of-band publisher verification, backups before destructive actions, and disposable test environments remain the operator's responsibility regardless of how high a guide scores against this profile.
 
-### Before authorizing the assistant
-
-- Read the full guide. The size limits in section 8 exist so that "read the full guide" is realistic. If the guide is too long to read, treat that as a finding.
-- Confirm the canonical URL with the publisher through a channel that does not depend on the same web property. For high-consequence operations, prefer a signed release note, a code-signing key fingerprint, or a person you trust who can vouch for the publisher.
-- Compare the `applies-to` field against the version of the software you actually have. A guide written for `>=2.3.0, <3.0.0` is not a guide for your `3.1.0` install.
-- Check `status` and `valid-until`. A `deprecated` or expired guide is a stop, not a warning.
-- Decide your tolerance per action class before you start. Pre-committing to "I will not approve any `privileged` action today" prevents in-the-moment approval drift.
-
-### While the assistant is acting
-
-- Keep the assistant on least-privilege tool permissions. A guide that fits this profile still needs a sandbox underneath it.
-- Do not let the assistant raise its own permissions, disable sandboxing, or batch approvals across action ids. Section 12 forbids the guide from asking; the runtime should also forbid the assistant from doing.
-- Watch the verbatim action block at each approval prompt. If the displayed command does not match what the assistant is about to run, stop and investigate.
-- Maintain operating-system permission prompts. If the OS asks for elevation, that question is for you, not the assistant.
-- Log executed actions. Post-hoc review is the only defense against approval-fatigue mistakes.
-
-### Around the assistant
-
-- Back up state before any destructive or persistence-changing action. The guide may declare a command non-destructive; your backup is what protects you when the declaration is wrong.
-- Run unfamiliar guides in a disposable environment first: a VM, a container, a scratch workstation, a non-production cluster. Promotion to production is a separate decision.
-- Apply network egress controls at the host or network layer. The `egress` field in a guide is a declaration; your firewall is the enforcement.
-- Keep secrets out of the assistant's reach. Section 16 forbids secrets in the guide; you still must not hand the assistant a session that has unrestricted access to credentials stores.
-
-### What this profile does not replace
-
-- code signing, release attestation, and software bill of materials for the underlying project
-- package manager trust policy and lockfile review
-- vulnerability scanning of the dependencies the guide installs
-- security review of the underlying software itself
-- incident response, monitoring, and audit
-- organizational change-management for production systems
-
-If you are deploying AI-assisted installs at scale, treat conforming guides as one control among many. A program built on this profile alone is under-defended.
-
-### Anti-pattern: verifier as oracle
-
-Do not run a guide through a verifier, see a green result, and skip reading it. The verifier is a filter that catches a specific class of presentation-layer and structural attacks. It cannot detect a publisher who has decided to harm you in plain ASCII. Your reading is the control that catches that case.
-
-### Anti-pattern: trust transference
-
-A guide is not trustworthy because:
-
-- it is on a domain that hosts other things you trust
-- it has a high conformance level
-- a verifier returned no findings
-- it is referenced from a popular `llms.txt`
-- an assistant said it looked fine
-
-A guide is provisionally trustworthy when its publisher is known, its content matches your expectations for the task, its actions are scoped and approval-gated, and the surrounding operational controls (backups, sandbox, least privilege, signed releases) are in place. Conformance contributes to that judgment. It does not constitute it.
-
-## 29. Open Questions
-
-- Should a future Level 6 require code signature and a transparency-log entry on top of Level 5?
-- Should future profiles require signed verifier reports for hosted checkers, CI, or assistant-runtime consumption?
-- Should guide manifests be published to an append-only transparency log?
-- Should fixture-suite releases be signed once verifier conformance becomes stable?
-- Should Level 5 runtimes publish attestation or fixture-suite conformance reports?
+The operator practices that accompany this profile are maintained as a non-normative companion: see `operator-guide.md`. It covers what to do before authorizing the assistant, while the assistant is acting, and around the assistant; what this profile does not replace; and the verifier-as-oracle and trust-transference anti-patterns. Adopters are expected to read it alongside section 27.

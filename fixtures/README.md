@@ -38,7 +38,7 @@ Example:
 
 ## Status
 
-This is the v0.1.0 starter set. The full suite enumerated in
+This is the v0.2.0 starter set. The full suite enumerated in
 verifier-conformance section 29 is in progress. Cases still to add:
 
 - valid Level 1, Level 4

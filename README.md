@@ -10,6 +10,9 @@ acts on them.
 Canonical site: https://guidecheck.org/
 Verifier: https://guidecheck.org/verify
 
+New here: `ADOPTION.md` is the practical on-ramp. It explains the conformance
+ladder, gives a level-by-level path, and carries the guide-author checklist.
+
 ## Naming model
 
 - The standards project, public checker, ecosystem, and site are GuideCheck.
@@ -26,7 +29,7 @@ Conformance to this profile, at any level, does not mean a guide is safe to
 follow, that the publisher is trustworthy, or that the assistant may proceed
 without the security practices a competent operator would already apply. A
 verifier confirms form. The human confirms meaning. Read `spec.md` section 1
-and section 28 before adopting.
+and `operator-guide.md` before adopting.
 
 ## The problem
 
@@ -64,9 +67,11 @@ that a human can review in full before authorizing an assistant to follow it.
 
 ## Documents
 
+- `ADOPTION.md` - the practical on-ramp: conformance ladder, level-by-level path, guide-author checklist
 - `spec.md` - the normative Human-Verifiable Assistant Guide profile
 - `verifier-conformance.md` - the normative profile for tools that verify guides
 - `design-rationale.md` - why the design choices were made
+- `operator-guide.md` - non-normative defense-in-depth practices for operators
 - `threat-register.md` - known risk classes for fixture, verifier, and runtime authors
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
 - `finding-ids.md` - registry for fixture-required verifier finding ids
@@ -159,7 +164,7 @@ expectation contract by `scripts/check_reference_verifier.py`.
 
 ## Status
 
-Draft for review, profile version 0.1.0. See `CHANGELOG.md`.
+Draft for review, profile version 0.2.0. See `CHANGELOG.md`.
 
 This is an early-stage open standard. The most useful feedback right now is
 whether the hidden-instruction problem maps to real operational risk in your

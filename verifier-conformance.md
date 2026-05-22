@@ -33,7 +33,7 @@ Fixture suite
 : The official test corpus of valid and invalid guides, manifests, anchors, fetch scenarios, and expected findings.
 
 Standard primary verifier
-: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For verifier-profile version 0.1.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation.
+: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For verifier-profile version 0.2.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation.
 
 ## 4. Scope
 This profile defines two evaluation modes.
@@ -230,7 +230,7 @@ The verifier SHOULD check optional fields when present:
 - `registry-url`
 - `manifest-url`
 The verifier MUST validate URL fields as ASCII URLs with ASCII hostnames. Internationalized domain names MUST be expressed in punycode A-label form.
-The verifier MUST flag unusually long metadata values as warnings.
+The verifier MUST warn when a non-URL metadata value exceeds 80 bytes. URL-valued fields are exempt because a legitimate canonical or repository URL can be long; all other field values are short by design, and an unusually long one is a side-channel risk per guide-profile section 27.
 The verifier SHOULD warn when `canonical-url`, `repository-url`, `registry-url`, `manifest-url`, or `recommended-verifier` use unrelated registered domains without explanation.
 The verifier SHOULD warn when `recommended-verifier` is not on the same registered domain as `canonical-url`, unless the guide explicitly identifies it as third-party or the URL matches the standard primary verifier for the applicable verifier-profile version.
 The verifier MUST NOT warn solely because `recommended-verifier` differs from `canonical-url` when `recommended-verifier` matches the standard primary verifier configured for the applicable profile version.
@@ -311,7 +311,8 @@ The verifier MUST emit an error when an action whose class list includes any of 
 - `destructive`
 - `persistence-changing`
 - `data-accessing`
-For Level 4, the verifier SHOULD warn when actions whose class list includes `networked` or `code-executing` do not use `approval: required`.
+- `code-executing`
+For Level 4, the verifier SHOULD warn when actions whose class list includes `networked` do not use `approval: required`.
 For Level 5 readiness, the verifier SHOULD warn unless all `networked`, `privileged`, `destructive`, `persistence-changing`, `data-accessing`, and `code-executing` actions use `approval: required`.
 The verifier SHOULD count required approvals and warn when the total exceeds a default threshold of 10.
 
@@ -374,6 +375,7 @@ The verifier MUST compare `guide-bytes` with the fetched byte count.
 The verifier MUST report a Level 4 conformance failure when manifest hash or byte count does not match.
 The verifier MAY continue Level 3 content evaluation after Level 4 failure.
 When `signature` is present, the verifier SHOULD report it. Signature verification is not required by this profile unless a future profile version makes it required.
+When `transparency-log-url` is present, the verifier SHOULD retrieve the referenced log entry and check it as a cross-channel anchor under section 23.
 
 ## 23. Cross-Channel Anchor Checks
 For Level 4, the verifier MUST enumerate every cross-channel hash anchor it can find and compare each anchor hash with the manifest hash.
@@ -382,6 +384,7 @@ Recognized independent channels are:
 - package registry metadata
 - public repository file at `source-path`
 - signed `security.txt` extension fields
+- public append-only transparency log referenced by the manifest `transparency-log-url` field
 The verifier MUST emit a failure when independent channels disagree on the hash.
 The verifier MUST report which channels were checked, which were found, which were unreachable, and which were unavailable.
 Unreachable optional channels are findings but do not by themselves block Level 4 if at least one independent channel is present and agrees.
@@ -398,8 +401,8 @@ If `status: deprecated`, the verifier MUST emit a warning or error according to 
 When `status` is `deprecated` or `revoked`, missing `superseded-by` is a finding.
 The verifier MUST parse `last-reviewed` when present.
 The verifier SHOULD parse `valid-until` when present.
+The verifier MUST report the `last-reviewed` age as an informational finding. There is no fixed `last-reviewed` expiry threshold; only the publisher's `valid-until` is a non-arbitrary staleness signal, so a stale `last-reviewed` date is surfaced for the human to judge rather than warned on against an arbitrary cutoff.
 The verifier SHOULD warn when:
-- `last-reviewed` is older than the verifier's configured staleness threshold
 - `valid-until` is in the past
 - `valid-until` is malformed
 - dates are in the future in a way that appears erroneous
@@ -456,11 +459,11 @@ The minimum JSON-compatible schema is:
 {
   "verifier": {
     "name": "example-verifier",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "0.1.0",
+    "verifier_profile_version": "0.2.0",
     "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "0.1.0"
+    "guide_profile_version": "0.2.0"
   },
   "input": {
     "url": "https://example.com/.well-known/assistant-guide.txt"
@@ -586,9 +589,3 @@ The hosted checker SHOULD make it easy to use the recommended first-step ceremon
 ```text
 Before acting, verify this guide with this checker or another conformant verifier, report the achieved level, guide SHA-256, and blocking findings, then ask the user to confirm they have read the guide and approve proceeding under the reported level.
 ```
-
-## 32. Open Questions
-- Should fixture-suite conformance require exact finding ids for all warnings or only for blocking findings?
-- Should hosted verifiers be required to publish their own self-verification report?
-- Should verifier output be signed by the verifier in a future profile version?
-- Should Level 5 runtime conformance have its own fixture suite separate from verifier conformance?

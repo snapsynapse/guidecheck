@@ -3,7 +3,7 @@ Assistant Guide: non-ascii fixture
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.1.0
+profile-version: 0.2.0
 guide-version: 1.0.0
 applies-to: non-ascii-fixture
 canonical-url: https://example.com/.well-known/assistant-guide.txt

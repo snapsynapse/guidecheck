@@ -1,6 +1,6 @@
 # Finding ID Registry
 
-Status: draft for GuideCheck 0.1.0.
+Status: draft for GuideCheck 0.2.0.
 
 This registry defines stable finding ids used by the current verifier
 conformance fixtures and local evals. Verifiers MAY emit additional finding

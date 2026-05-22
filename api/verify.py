@@ -43,7 +43,7 @@ from guidecheck_fetch import FetchError, safe_fetch  # noqa: E402
 
 
 HOSTED_NAME = "guidecheck-hosted"
-HOSTED_VERSION = "0.1.0"
+HOSTED_VERSION = "0.2.0"
 WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
 HOSTED_LIMITATIONS = [

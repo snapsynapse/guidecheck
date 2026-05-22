@@ -4,6 +4,32 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-21
+
+Open-question resolution and restructure. Profile and verifier-profile versions are bumped from 0.1.0; the constraint tightenings below make this a 0.2.0, not a 0.1.x patch.
+
+### Added
+
+- `ADOPTION.md`, a practical adoption guide with the conformance ladder, a level-by-level path, and the guide-author checklist
+- `operator-guide.md`, the non-normative defense-in-depth practices, lifted from spec section 28
+- public append-only transparency log recognized as an independent cross-channel provenance anchor, discovered through the manifest `transparency-log-url` field (spec section 11, verifier-conformance section 23)
+- a how-to-read guide and linked contents at the top of `spec.md`
+
+### Changed
+
+- profile and verifier-profile versions bumped to 0.2.0; the reference verifier, hosted verifier, examples, fixtures, and canonical pages report 0.2.0
+- `code-executing` actions now require explicit approval at Level 3, consistent with the other high-consequence action classes (spec section 12, verifier-conformance section 18)
+- the reference verifier and the eval harness enforce `code-executing` approval at Level 3 and report `last-reviewed` age as an informational finding
+- guide copies served at both the well-known path and the repository root must be byte-identical (spec section 6)
+- `repository-url` is defined as the source repository root, a single field, not a project page (spec section 11)
+- staleness reporting keys off the publisher's `valid-until`; `last-reviewed` age is reported as informational with no arbitrary expiry threshold (spec section 21, verifier-conformance section 24)
+- verifiers warn on non-URL metadata values longer than 80 bytes, replacing an unspecified length check (verifier-conformance section 14)
+- `spec.md` problem statement trimmed; operator responsibilities moved out to `operator-guide.md`
+
+### Removed
+
+- the Open Questions sections from `spec.md` and `verifier-conformance.md`; resolved and future items now live in `roadmap.md`
+
 ## [0.1.0] - 2026-05-21
 
 Initial draft for review.
@@ -38,5 +64,6 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.2.0
 [0.1.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.1.0

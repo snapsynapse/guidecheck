@@ -53,7 +53,7 @@ A change that adds an optional field or a compatible verifier check is a minor v
 
 ## Recalibration gates
 
-The following decisions are settled for v0.1 but are explicitly open to revision when a stated condition is met. Until the condition is met, the decision stands and is not relitigated.
+The following decisions are settled for v0.2 but are explicitly open to revision when a stated condition is met. Until the condition is met, the decision stands and is not relitigated.
 
 - 8 KiB size cap. Revisit only if field data from real adopters shows the cap is forcing decomposition in cases where bundling is the safer pattern. Relaxing a cap is easy; tightening one after adoption is hard, so the default is to hold.
 - ASCII-only byte profile. Revisit only if Unicode security tooling and assistant-runtime field-boundary enforcement both mature significantly. The bar is high and deliberate.
@@ -63,7 +63,7 @@ The following decisions are settled for v0.1 but are explicitly open to revision
 
 ## Open questions
 
-Tracked in `spec.md` section 29 and `verifier-conformance.md` section 32. The live items are a possible higher provenance tier requiring signature and transparency-log evidence, a canonical finding-id registry, fixture-suite signing, and Level 5 runtime attestation. None of these block v0.1.
+Tracked in `roadmap.md` under Future profile directions. The live items are a possible higher provenance tier requiring signature and transparency-log evidence, a canonical finding-id registry, fixture-suite signing, and Level 5 runtime attestation. None of these block v0.2. The 2026-05-21 review resolved the prior open-question lists; see `roadmap.md` under Resolved in the 0.1.0 review.
 
 ## Relationship to the PAICE portfolio
 
@@ -71,7 +71,7 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 ## Versioning and authority
 
-The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.1.0, draft for review. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.2.0, draft for review. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
 
 ## Changelog
 

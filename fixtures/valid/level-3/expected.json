@@ -2,7 +2,7 @@
   "description": "A complete Level 3 guide with metadata, required sections, action blocks, and approval gates. Evaluated in local-file mode, so Level 4 fetch evidence is not asserted.",
   "evaluation_mode": "local-file",
   "achieved_level": 3,
-  "guide_sha256": "daba306746a7c4f0d6fe9c4667b692c031c7c62150b3f9990aba9ffee752c0d4",
+  "guide_sha256": "c41bd90b483d8cc269c9978540a2c38302ab7edbda1f8eb7905f544666067bf8",
   "guide_bytes": 5135,
   "blocking_finding_ids": [],
   "required_warning_ids": [],

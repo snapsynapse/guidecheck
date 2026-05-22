@@ -36,6 +36,7 @@ APPROVAL_REQUIRED_CLASSES = {
     "destructive",
     "persistence-changing",
     "data-accessing",
+    "code-executing",
 }
 REQUIRED_METADATA = {
     "identifier",
@@ -631,6 +632,17 @@ def generated_cases() -> list[Case]:
             [],
         ),
         Case(
+            "generated/code-executing-approval-missing",
+            replace_once(
+                base,
+                "id: install\nclass: persistence-changing, networked, code-executing\napproval: required",
+                "id: install\nclass: code-executing\napproval: not-required",
+            ).encode(),
+            2,
+            ["approval.required-missing"],
+            [],
+        ),
+        Case(
             "generated/networked-egress-missing",
             replace_once(base, "egress: registry.npmjs.org\n", "").encode(),
             2,
@@ -784,7 +796,7 @@ def generated_cases() -> list[Case]:
             [],
             manifest=replace_once(
                 VALID_MANIFEST.read_text(),
-                "daba306746a7c4f0d6fe9c4667b692c031c7c62150b3f9990aba9ffee752c0d4",
+                "c41bd90b483d8cc269c9978540a2c38302ab7edbda1f8eb7905f544666067bf8",
                 "0" * 64,
             ),
         ),

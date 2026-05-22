@@ -14,6 +14,7 @@ AI setup guides reach assistants through HTML, PDFs, docs sites, and copied term
 
 ## Key files
 
+- [Adoption guide](https://github.com/snapsynapse/guidecheck/blob/main/ADOPTION.md): The practical on-ramp: conformance ladder, level-by-level path, guide-author checklist.
 - [Specification](https://github.com/snapsynapse/guidecheck/blob/main/spec.md): The normative Human-Verifiable Assistant Guide profile.
 - [Verifier conformance](https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md): The normative profile for tools that verify guides.
 - [Changelog](https://github.com/snapsynapse/guidecheck/blob/main/CHANGELOG.md): Version history.

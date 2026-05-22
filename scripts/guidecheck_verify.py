@@ -20,14 +20,13 @@ from urllib.parse import urlparse
 
 
 VERIFIER_NAME = "guidecheck-reference-local"
-VERIFIER_VERSION = "0.1.0"
+VERIFIER_VERSION = "0.2.0"
 VERIFIER_PROFILE = "human-verifiable-assistant-guide-verifier"
-VERIFIER_PROFILE_VERSION = "0.1.0"
+VERIFIER_PROFILE_VERSION = "0.2.0"
 GUIDE_PROFILE = "human-verifiable-assistant-guide"
-GUIDE_PROFILE_VERSION = "0.1.0"
-DEFAULT_STALENESS_DAYS = 366
+GUIDE_PROFILE_VERSION = "0.2.0"
 DEFAULT_APPROVAL_WARNING_THRESHOLD = 10
-DEFAULT_METADATA_VALUE_WARNING_LENGTH = 240
+DEFAULT_METADATA_VALUE_WARNING_LENGTH = 80
 
 ALLOWED_CLASSES = {
     "normal",
@@ -43,6 +42,7 @@ APPROVAL_REQUIRED_CLASSES = {
     "destructive",
     "persistence-changing",
     "data-accessing",
+    "code-executing",
 }
 REQUIRED_METADATA = {
     "identifier",
@@ -374,7 +374,7 @@ def parse_metadata(text: str, findings: list[Finding], today: date) -> dict[str,
     if missing:
         add_finding(findings, "metadata.missing-required", "error", "required metadata fields are missing", evidence=",".join(missing))
     for key, value in meta.items():
-        if len(value) > DEFAULT_METADATA_VALUE_WARNING_LENGTH:
+        if key not in URL_FIELDS and len(value) > DEFAULT_METADATA_VALUE_WARNING_LENGTH:
             add_finding(findings, "metadata.value.long", "warning", f"metadata value for {key} is unusually long")
     for key in URL_FIELDS:
         if key in meta and not is_ascii_https_url(meta[key]):
@@ -399,8 +399,7 @@ def check_dates(meta: dict[str, str], findings: list[Finding], today: date) -> N
             add_finding(findings, "metadata.last-reviewed.invalid", "warning", "last-reviewed date is malformed")
         else:
             age = (today - parsed).days
-            if age > DEFAULT_STALENESS_DAYS:
-                add_finding(findings, "metadata.last-reviewed.stale", "warning", "last-reviewed is older than staleness threshold")
+            add_finding(findings, "metadata.last-reviewed.age", "info", f"last-reviewed is {age} days old")
             if age < -7:
                 add_finding(findings, "metadata.last-reviewed.future", "warning", "last-reviewed date appears to be in the future")
     if "valid-until" in meta:
@@ -641,7 +640,6 @@ def output_for(evaluation: Evaluation) -> dict[str, object]:
         },
         "local_evaluation": {
             "evaluated_at": evaluation.evaluated_at.isoformat().replace("+00:00", "Z"),
-            "staleness_threshold_days": DEFAULT_STALENESS_DAYS,
         },
         "summary": {
             "blocking_findings": blocking,

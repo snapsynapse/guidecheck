@@ -35,7 +35,7 @@ CONNECT_TIMEOUT = 5.0
 READ_TIMEOUT = 8.0
 TOTAL_DEADLINE = 12.0
 MAX_REDIRECTS = 5
-USER_AGENT = "guidecheck-hosted/0.1.0 (+https://guidecheck.org/verify/)"
+USER_AGENT = "guidecheck-hosted/0.2.0 (+https://guidecheck.org/verify/)"
 
 # Best-effort multi-label public suffixes so a redirect from example.co.uk to
 # evil.co.uk is treated as cross-domain. This is a curated subset, not the full
