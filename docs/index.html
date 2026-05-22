@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>GuideCheck &mdash; Human-Verifiable Assistant Guide standard</title>
-  <meta name="description" content="GuideCheck defines a constrained plain-text profile for assistant-guide.txt: the install, setup, and remediation instructions an AI assistant acts on, bounded so a human can review them in full first.">
+  <meta name="description" content="AI setup guides can hide instructions a model reads but a human never sees. GuideCheck is the plain-text standard that makes an assistant's instruction surface reviewable before it acts.">
   <meta name="keywords" content="guidecheck, assistant-guide.txt, human-verifiable assistant guide, AI setup guide, prompt injection defense, well-known assistant guide, assistant instruction profile, conformance verifier, ASCII instruction surface">
   <meta name="author" content="Sam Rogers">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -23,7 +23,7 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="GuideCheck">
   <meta property="og:title" content="GuideCheck">
-  <meta property="og:description" content="The Human-Verifiable Assistant Guide standard. A constrained plain-text profile for the instructions an AI assistant acts on.">
+  <meta property="og:description" content="AI assistants act on setup instructions humans never see. GuideCheck makes the instruction surface plain text, bounded, and reviewable before the assistant runs it.">
   <meta property="og:image" content="https://guidecheck.org/imgs/og.png">
   <meta property="og:image:alt" content="GuideCheck &mdash; the assistant-guide.txt artifact shown in full as plain text with [action] blocks, beside a six-rung conformance ladder">
   <meta property="og:image:width" content="1200">
@@ -44,7 +44,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GuideCheck">
-  <meta name="twitter:description" content="The Human-Verifiable Assistant Guide standard. A constrained plain-text profile for the instructions an AI assistant acts on.">
+  <meta name="twitter:description" content="AI assistants act on setup instructions humans never see. GuideCheck makes the instruction surface plain text, bounded, and reviewable before the assistant runs it.">
   <meta name="twitter:image" content="https://guidecheck.org/imgs/og.png">
   <meta name="twitter:site" content="@snapsynapse">
   <meta name="twitter:creator" content="@snapsynapse">
@@ -60,7 +60,7 @@
     "@type": "TechArticle",
     "headline": "GuideCheck",
     "alternativeHeadline": "The Human-Verifiable Assistant Guide standard",
-    "description": "GuideCheck defines the Human-Verifiable Assistant Guide profile for assistant-guide.txt: a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions. It is ASCII-only and capped at 8 KiB so a human can review the entire instruction surface before an assistant acts on it.",
+    "description": "AI-assisted setup guides reach assistants through HTML, PDFs, docs sites, and copied terminal output, surfaces that can hide text from a human while feeding it to the model. A tool-using assistant then runs those hidden instructions with the operator's authority. GuideCheck defines the Human-Verifiable Assistant Guide profile for assistant-guide.txt, a strict-ASCII, 8 KiB-capped plain-text artifact that makes the entire instruction surface reviewable before an assistant acts on it.",
     "inLanguage": "en",
     "url": "https://guidecheck.org/",
     "mainEntityOfPage": { "@type": "WebPage", "@id": "https://guidecheck.org/" },
@@ -457,7 +457,7 @@
       <span>GuideCheck</span>
     </a>
     <div class="links mobile-compact">
-      <a href="#profile">Profile</a>
+      <a href="#problem">The risk</a>
       <a href="#levels">Levels</a>
       <a href="#adopt">Adopt</a>
       <a href="/verify/">Verify</a>
@@ -474,8 +474,8 @@
 <main id="main-content">
 <section class="hero">
   <div class="container">
-    <h1>Every instruction, in plain sight.</h1>
-    <p class="subtitle">GuideCheck defines the Human-Verifiable Assistant Guide profile &mdash; a constrained plain-text artifact for the install, setup, and remediation instructions an AI assistant will act on.</p>
+    <h1>Your AI assistant just followed instructions you never saw.</h1>
+    <p class="subtitle">AI setup guides reach assistants through HTML, rendered Markdown, PDFs, and copied terminal output. Every one of those surfaces can carry text a model reads but a human never sees.</p>
     <!-- Byline rel-attribute rule: combine values into a single rel attribute (rel="noopener author"). HTML allows only one rel per element; a second rel is silently dropped. -->
     <p class="byline">
       By <a href="https://linkedin.com/in/samrogers" target="_blank" rel="noopener author">Sam Rogers</a>, <a href="https://snapsynapse.com" target="_blank" rel="noopener">Snap Synapse</a>
@@ -488,7 +488,7 @@
       <span class="sep" aria-hidden="true">&middot;</span>
       <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank">CC&nbsp;BY&nbsp;4.0</a>
     </p>
-    <p class="hook">AI-assisted setup guidance reaches assistants through HTML, rendered Markdown, PDFs, and copied terminal output. Those surfaces can carry text a model ingests but a human never sees &mdash; hidden comments, white-on-white text, invisible Unicode controls. For high-consequence tasks, the instruction surface should be something a human can read in full first.</p>
+    <p class="hook">You approve the guide you can read. The assistant acts on the guide it was fed &mdash; hidden parts included. GuideCheck is the open standard that forces those to be the same plain-text document: small enough, and strict enough, to review in full first.</p>
 
     <img class="hero-img" src="/imgs/og.png" width="1200" height="634" alt="The assistant-guide.txt artifact shown in full as plain text: a filename header, three [action] blocks reading Identify user intent, Formulate plan, and Generate response, and an End of file marker, beside a six-rung conformance ladder numbered 0 to 5.">
 
@@ -499,23 +499,50 @@
   </div>
 </section>
 
-<section class="alt" id="profile">
+<section class="alt" id="problem">
   <div class="container">
-    <h2>What the profile defines</h2>
-    <p>The profile describes one artifact: a <code>.txt</code> file named <code>assistant-guide.txt</code>, served at <code>/.well-known/assistant-guide.txt</code>. It carries assistant-facing install, implementation, remediation, migration, and operational instructions for a single bounded task. Three properties make that surface reviewable.</p>
+    <h2>The instructions you see are not the instructions your assistant runs</h2>
+    <p>A presentation layer sits between a guide's author and the assistant that acts on it. HTML, rendered Markdown, PDFs, documentation sites, copied issue comments, terminal output, screenshots &mdash; each can transform, append to, or conceal content on its way to the model. The human reviews the rendered output. The model ingests the raw source. Nothing guarantees those are the same document.</p>
 
     <div class="pillars">
       <div class="pillar">
-        <h3>Bounded and reviewable</h3>
-        <p>A strict ASCII byte profile and an 8 KiB size cap, so the whole instruction surface can be read in one sitting &mdash; no hidden bytes, no homoglyphs, no offscreen text.</p>
+        <h3>Invisible to the eye</h3>
+        <p>Hidden HTML comments, offscreen CSS, zero-height elements, white-on-white text, script-inserted content. Rendered to nothing for the human; delivered as plain instructions to the model.</p>
       </div>
       <div class="pillar">
-        <h3>Structured actions</h3>
-        <p>Explicit <code>[action]</code> blocks with declared classes, approval gates, and command restrictions. The assistant executes blocks, never loose prose.</p>
+        <h3>Invisible in the bytes</h3>
+        <p>Bidi controls, zero-width characters, and homoglyphs that read one way to a person and another to a tokenizer. Terminal escape sequences that rewrite what a copied command appears to say.</p>
       </div>
       <div class="pillar">
-        <h3>Verifiable provenance</h3>
-        <p>A sidecar manifest plus cross-channel hash publication, so a guide's identity can be confirmed without trusting any single hosted service.</p>
+        <h3>Buried in plain sight</h3>
+        <p>A directive deep in a long guide the reviewer skimmed, or an instruction block below the fold no human scrolled to. Technically visible. Genuinely reviewed, no.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h3>Why this is not cosmetic</h3>
+      <p>A tool-using assistant has real blast radius. It runs shell commands, edits files, installs packages, and calls APIs with the operator's credentials. A hidden instruction is not a rendering quirk &mdash; it is an unreviewed command executed under your authority. The concrete outcomes are a credential exfiltrated, a destructive command run, or a malicious dependency installed, while the human believed they had read and approved the entire guide.</p>
+    </div>
+  </div>
+</section>
+
+<section id="profile">
+  <div class="container">
+    <h2>How GuideCheck closes the gap</h2>
+    <p>GuideCheck removes the presentation layer. The profile describes one artifact &mdash; a plain-text file named <code>assistant-guide.txt</code>, served at <code>/.well-known/assistant-guide.txt</code> &mdash; carrying assistant-facing install, implementation, remediation, migration, and operational instructions for a single bounded task. Three properties make that surface something a human can actually review, each closing one of the failure modes above.</p>
+
+    <div class="pillars">
+      <div class="pillar">
+        <h3>Bounded, so you can read all of it</h3>
+        <p>A strict ASCII byte profile and an 8 KiB size cap. No hidden bytes, no homoglyphs, no offscreen text &mdash; and short enough to read in full in one sitting, not skim.</p>
+      </div>
+      <div class="pillar">
+        <h3>Structured, so nothing is buried</h3>
+        <p>Instructions live in explicit <code>[action]</code> blocks with declared classes, approval gates, and command restrictions. The assistant executes blocks, never loose prose &mdash; there is no below the fold.</p>
+      </div>
+      <div class="pillar">
+        <h3>Verifiable, so it cannot be swapped</h3>
+        <p>A sidecar manifest and cross-channel hash publication let a guide's identity be confirmed without trusting any single hosted service.</p>
       </div>
     </div>
 
@@ -526,7 +553,7 @@
   </div>
 </section>
 
-<section id="levels">
+<section class="alt" id="levels">
   <div class="container">
     <h2>Six conformance levels</h2>
     <p>The conformance ladder is additive and honest. Each level states exactly what it has checked and what it has not. Higher levels add structure and provenance &mdash; never a safety claim.</p>
@@ -547,7 +574,7 @@
   </div>
 </section>
 
-<section class="alt" id="adopt">
+<section id="adopt">
   <div class="container">
     <h2>Adopt the profile</h2>
     <p>Publishing a conformant guide is plain-text work. Write the artifact, serve it at the well-known path, and check it against the verifier conformance profile. No registry, no account, no central oracle.</p>
@@ -588,7 +615,7 @@ GET /.well-known/assistant-guide.txt
   </div>
 </section>
 
-<section id="verify">
+<section class="alt" id="verify">
   <div class="container">
     <div class="demo-block">
       <h2>Verify a guide</h2>

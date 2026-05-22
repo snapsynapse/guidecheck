@@ -2,7 +2,7 @@
 
 > The Human-Verifiable Assistant Guide standard.
 
-GuideCheck defines a constrained plain-text profile for assistant-guide.txt: the install, setup, remediation, migration, and operational instructions an AI assistant will act on. The artifact is strict ASCII, capped at 8 KiB, and structured into explicit action blocks so a human can review the entire instruction surface before an assistant follows it. Conformance verifies form, not safety.
+AI setup guides reach assistants through HTML, PDFs, docs sites, and copied terminal output, surfaces that can hide text a model reads but a human never sees. A tool-using assistant then runs those hidden instructions with the operator's credentials: a credential exfiltrated, a destructive command run, a malicious dependency installed, while the human believed they had reviewed the guide. GuideCheck closes this gap. It defines a constrained plain-text profile for assistant-guide.txt: strict ASCII, capped at 8 KiB, structured into explicit action blocks, so a human can review the entire instruction surface before an assistant follows it. Conformance verifies form, not safety.
 
 ## Concepts
 
