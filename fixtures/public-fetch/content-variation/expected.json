@@ -1,0 +1,10 @@
+{
+  "description": "Public-web verification should detect content variation between harmless request profiles when implemented.",
+  "evaluation_mode": "public-web",
+  "achieved_level": 0,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "fetch.content-variation"
+  ],
+  "level5_ready": false
+}

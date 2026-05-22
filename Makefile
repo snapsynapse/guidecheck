@@ -1,4 +1,4 @@
-.PHONY: eval verify-fixtures validate-contracts test-fetch-safety test-hosted-api test-fetch-replay test-cli-contract test
+.PHONY: eval verify-fixtures validate-contracts check-guide-artifacts test-fetch-safety test-hosted-api test-fetch-replay test-cli-contract test
 
 eval:
 	python3 scripts/eval_guidecheck.py
@@ -8,6 +8,9 @@ verify-fixtures:
 
 validate-contracts:
 	python3 scripts/validate_contracts.py
+
+check-guide-artifacts:
+	python3 scripts/check_guide_artifacts.py
 
 test-fetch-safety:
 	python3 scripts/test_fetch_safety.py
@@ -21,4 +24,4 @@ test-fetch-replay:
 test-cli-contract:
 	python3 scripts/test_cli_contract.py
 
-test: eval verify-fixtures validate-contracts test-fetch-safety test-hosted-api test-fetch-replay test-cli-contract
+test: eval verify-fixtures validate-contracts check-guide-artifacts test-fetch-safety test-hosted-api test-fetch-replay test-cli-contract

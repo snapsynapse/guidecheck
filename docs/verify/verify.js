@@ -17,6 +17,8 @@
   var findingsEl = document.getElementById("verify-findings");
   var jsonEl = document.getElementById("verify-json");
   var downloadBtn = document.getElementById("verify-download");
+  var copyCompactBtn = document.getElementById("verify-copy-compact");
+  var copyStatus = document.getElementById("verify-copy-status");
 
   var lastJson = null;
 
@@ -35,6 +37,7 @@
     hide(statusEl);
     errorEl.textContent = "";
     statusEl.textContent = "";
+    if (copyStatus) { copyStatus.textContent = ""; }
   }
 
   function showError(message) {
@@ -130,8 +133,8 @@
 
     headline.className = "verify-headline " + (pass ? "is-pass" : "is-fail");
     headline.textContent = pass
-      ? "Achieved Level " + (guide.achieved_level || 0) + " · no blocking findings"
-      : "Not conformant · " + plural(blocking, "blocking finding");
+      ? "Achieved Level " + (guide.achieved_level || 0) + " · 0 blocking · " + plural(summary.warnings || 0, "warning")
+      : "Not conformant · " + plural(blocking, "blocking finding") + " · " + plural(summary.warnings || 0, "warning");
 
     if (data.location_note) {
       messageEl.textContent = data.location_note;
@@ -226,4 +229,20 @@
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
   });
+
+  if (copyCompactBtn) {
+    copyCompactBtn.addEventListener("click", function () {
+      var text = compact.textContent || "";
+      if (!text) { return; }
+      if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        copyStatus.textContent = "Copy is unavailable in this browser.";
+        return;
+      }
+      navigator.clipboard.writeText(text).then(function () {
+        copyStatus.textContent = "Copied.";
+      }).catch(function () {
+        copyStatus.textContent = "Copy failed.";
+      });
+    });
+  }
 })();

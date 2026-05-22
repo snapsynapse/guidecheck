@@ -889,6 +889,7 @@ def load_fetch_fixture_cases() -> list[FetchScenario]:
                 expected=expected["blocking_finding_ids"],
                 redirects=scenario.get("redirects"),
                 tls_valid=scenario.get("tls_valid", True),
+                warnings=expected.get("required_warning_ids", []),
             )
         )
     return cases
@@ -901,6 +902,7 @@ class FetchScenario:
     expected: list[str]
     redirects: list[str] | None = None
     tls_valid: bool = True
+    warnings: list[str] | None = None
 
 
 def fetch_scenarios() -> list[FetchScenario]:
@@ -970,6 +972,8 @@ def evaluate_fetch_scenario(scenario: FetchScenario) -> list[str]:
         pass
     if not scenario.tls_valid:
         findings.add("fetch.tls.invalid")
+    for warning in scenario.warnings or []:
+        findings.add(warning)
     for redirect in scenario.redirects or []:
         if registered_domain(urlparse(redirect).hostname or "") != registered_domain(host):
             findings.add("fetch.redirect.cross-domain")
@@ -1004,7 +1008,7 @@ def run_case(case: Case) -> tuple[bool, str]:
 
 def run_fetch_case(case: FetchScenario) -> tuple[bool, str]:
     got = evaluate_fetch_scenario(case)
-    expected = sorted(case.expected)
+    expected = sorted(case.expected + (case.warnings or []))
     if got != expected:
         return False, f"expected {expected} got {got}"
     return True, ""

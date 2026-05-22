@@ -1,0 +1,8 @@
+{
+  "description": "Public-web verification records response content type for served guides.",
+  "evaluation_mode": "public-web",
+  "achieved_level": 0,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

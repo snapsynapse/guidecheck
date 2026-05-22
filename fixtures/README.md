@@ -44,7 +44,7 @@ verifier-conformance section 29 is in progress.
 The current static corpus includes:
 
 - valid Level 1, Level 2, and Level 3 examples
-- a real-world PrompterKit Level 3 guide captured from
+- GuideCheck's own repository guide and a real-world PrompterKit Level 3 guide captured from
   `https://prompterkit.app/.well-known/assistant-guide.txt`
 - byte-profile failures for tabs, CRLF, non-ASCII, NUL, ANSI escape, other controls, overlong lines, and oversize guides
 - disallowed constructs for HTML, Markdown images, data URLs, and JavaScript
@@ -59,7 +59,7 @@ The current static corpus includes:
 - command chaining, substitution, non-normal pipes, destructive glob, cwd, and env failures
 - chained-guide, next-guide, guide-rewrite, skip-approval, and encoded-execution prohibitions
 - manifest hash and byte-count mismatch
-- public-fetch SSRF, TLS, and cross-domain redirect scenarios
+- public-fetch SSRF, TLS, cross-domain redirect, header, and content-variation scenarios
 
 Cases still to add:
 
@@ -67,7 +67,7 @@ Cases still to add:
 - guide with cross-channel hash divergence
 - additional metadata parser-confusion cases
 - public-fetch redirect-chain details beyond the modeled cross-domain case
-- public-fetch header and content-variation cases
+- implementation of public-web content-variation checks in the hosted verifier
 - Level 4 anchor scenarios for DNS, registry, repository, signed security.txt, and transparency logs
 
 Some additional mutation cases remain covered by generated local evals in

@@ -139,6 +139,7 @@ files.
 | `fetch.scheme.http` | error | Public-web verification input uses HTTP. |
 | `fetch.tls.invalid` | error | TLS validation fails. |
 | `fetch.redirect.cross-domain` | error | A redirect crosses registered domains. |
+| `fetch.content-variation` | warning | Re-fetching with a harmless alternate request profile returned different guide bytes. |
 | `fetch.ssrf.localhost` | error | A hosted verifier target is localhost. |
 | `fetch.ssrf.private-ip` | error | A hosted verifier target resolves to private or local IP space. |
 | `fetch.ssrf.metadata-ip` | error | A hosted verifier target is a cloud metadata address. |

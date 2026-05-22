@@ -216,6 +216,10 @@
         <div id="verify-detail" hidden>
           <h3>Compact report</h3>
           <pre id="verify-compact"></pre>
+          <div class="cta-row verify-copy-row">
+            <button type="button" id="verify-copy-compact" class="btn btn-secondary">Copy compact report</button>
+            <span id="verify-copy-status" class="verify-copy-status" role="status" aria-live="polite"></span>
+          </div>
 
           <h3 id="verify-findings-heading">Findings</h3>
           <div id="verify-findings"></div>
@@ -231,7 +235,8 @@
 
     <p>This hosted verifier is one conformant verifier, not a root of trust. You may use it or any other verifier built against the
       <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">verifier conformance profile</a>
-      and its <a href="https://github.com/snapsynapse/guidecheck/tree/main/fixtures" target="_blank" rel="noopener">fixture corpus</a>.</p>
+      and its <a href="https://github.com/snapsynapse/guidecheck/tree/main/fixtures" target="_blank" rel="noopener">fixture corpus</a>.
+      Verifier authors can also review <a href="/verifier-examples">example outputs</a>.</p>
 
     <h2>What a verifier checks</h2>
     <ul>

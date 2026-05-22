@@ -100,6 +100,16 @@ def test_evaluated() -> None:
     check("evaluated limitations", len(body.get("hosted_limitations", [])) == 3)
 
 
+def test_evaluated_with_warnings() -> None:
+    data = (ROOT / "fixtures" / "valid" / "prompterkit-level-3" / "guide.txt").read_bytes()
+    url = "https://example.com/.well-known/assistant-guide.txt"
+    request = run_post({"url": url}, lambda checked: fetched(checked, 200, data))
+    body = request.body or {}
+    check("evaluated warnings status", request.status == 200)
+    check("evaluated warnings retained", body.get("summary", {}).get("warnings") == 2)
+    check("evaluated warnings still proceed", "Proceed? yes" in body.get("compact_report", ""))
+
+
 def test_auto_resolved_origin() -> None:
     data = (ROOT / "fixtures" / "valid" / "level-3" / "guide.txt").read_bytes()
     request = run_post({"url": "https://example.com/"}, lambda checked: fetched(checked, 200, data))
@@ -175,6 +185,7 @@ def test_rate_limit() -> None:
 
 def main() -> int:
     test_evaluated()
+    test_evaluated_with_warnings()
     test_auto_resolved_origin()
     test_noncanonical_location_note()
     test_not_found()

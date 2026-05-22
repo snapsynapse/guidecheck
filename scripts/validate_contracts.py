@@ -173,6 +173,15 @@ def validate_public_fetch_scenario(errors: list[str], fixture_dir: Path) -> None
             fail(errors, scenario_path, "redirects must be an array of strings")
     if "tls_valid" in scenario and not isinstance(scenario["tls_valid"], bool):
         fail(errors, scenario_path, "tls_valid must be boolean")
+    if "headers" in scenario and not (
+        isinstance(scenario["headers"], dict)
+        and all(isinstance(key, str) and isinstance(value, str) for key, value in scenario["headers"].items())
+    ):
+        fail(errors, scenario_path, "headers must be an object of strings")
+    if "variant_bodies" in scenario:
+        bodies = scenario["variant_bodies"]
+        if not isinstance(bodies, list) or len(bodies) != 2 or not all(isinstance(item, str) for item in bodies):
+            fail(errors, scenario_path, "variant_bodies must be an array of two strings")
 
 
 def main() -> int:

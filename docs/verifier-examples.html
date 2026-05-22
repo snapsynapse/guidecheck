@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verifier Output Examples &mdash; GuideCheck</title>
+  <meta name="description" content="Compact and machine-readable GuideCheck verifier output examples for verifier authors and assistant-runtime integrators.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://guidecheck.org/verifier-examples">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f5f7f8;
+      --text: #15181f;
+      --text-muted: #515b67;
+      --accent: #0b6a62;
+      --border: #d9dee2;
+      --code-bg: #f5f7f8;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --mono: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+      --max-width: 860px;
+    }
+    body { font-family: var(--font); color: var(--text); background: var(--bg); line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
+    nav { border-bottom: 1px solid var(--border); padding: 1rem 0; }
+    nav .container { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+    nav .logo { font-weight: 700; color: var(--text); }
+    nav .links { display: flex; gap: 1rem; font-size: 0.9rem; }
+    main { padding: 3rem 0; }
+    h1 { font-size: 2rem; line-height: 1.15; margin-bottom: 1rem; }
+    h2 { font-size: 1.2rem; margin: 2rem 0 0.75rem; }
+    p { color: var(--text-muted); margin-bottom: 1rem; }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      margin: 0.75rem 0 1rem;
+    }
+    code { font-family: var(--mono); color: var(--accent); }
+    footer { border-top: 1px solid var(--border); padding: 2rem 0; color: var(--text-muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+<nav aria-label="Main navigation">
+  <div class="container">
+    <a href="/" class="logo">GuideCheck</a>
+    <div class="links">
+      <a href="/verify">Verifier</a>
+      <a href="https://github.com/snapsynapse/guidecheck">GitHub</a>
+    </div>
+  </div>
+</nav>
+<main>
+  <div class="container">
+    <h1>Verifier Output Examples</h1>
+    <p>These examples show the shape verifier authors and assistant runtimes should expect. The exact wording may differ, but the compact report and JSON output must come from the same evidence.</p>
+
+    <h2>Passing Level 3 Compact Report</h2>
+    <pre>Verifier: guidecheck-reference-local 0.2.0
+Guide: assistant-guide.txt
+Level: 3
+SHA-256: 65a90dd704b26aa856ff91bc1ebb524829c41546bd78f3b33b1dfa2efedb2b09
+Blocking findings: 0
+Warnings: 0
+Hash pinned: no
+Proceed? yes</pre>
+
+    <h2>Failing Compact Report</h2>
+    <pre>Verifier: guidecheck-reference-local 0.2.0
+Guide: fixtures/invalid/missing-verification/guide.txt
+Level: 0
+SHA-256: 4a0d...
+Blocking findings: 1
+Warnings: 0
+Hash pinned: no
+Proceed? no</pre>
+
+    <h2>Machine-Readable Shape</h2>
+    <pre>{
+  "verifier": {
+    "name": "guidecheck-reference-local",
+    "version": "0.2.0",
+    "verifier_profile": "human-verifiable-assistant-guide-verifier",
+    "verifier_profile_version": "0.2.0",
+    "guide_profile": "human-verifiable-assistant-guide",
+    "guide_profile_version": "0.2.0"
+  },
+  "input": {
+    "evaluation_mode": "local-file",
+    "path": "assistant-guide.txt"
+  },
+  "guide": {
+    "bytes": 8168,
+    "sha256": "65a90dd704b26aa856ff91bc1ebb524829c41546bd78f3b33b1dfa2efedb2b09",
+    "achieved_level": 3,
+    "level5_ready": false
+  },
+  "summary": {
+    "blocking_findings": 0,
+    "warnings": 0,
+    "infos": 1
+  },
+  "findings": []
+}</pre>
+
+    <h2>Hosted Not-a-Guide Response</h2>
+    <pre>{
+  "outcome": "not-a-guide",
+  "input": {
+    "evaluation_mode": "public-web",
+    "url": "https://example.com/.well-known/assistant-guide.txt",
+    "submitted_url": "https://example.com/",
+    "auto_resolved": true
+  },
+  "fetch": {
+    "http_status": 200,
+    "headers": {
+      "content-type": "text/html"
+    }
+  },
+  "message": "The target returned an HTML web page, not a plain-text assistant-guide.txt."
+}</pre>
+
+    <p>Normative output fields are defined in <a href="/schemas/verifier-output.schema.json">verifier-output.schema.json</a>. Fixture expectations live in <a href="https://github.com/snapsynapse/guidecheck/tree/main/fixtures">the fixture corpus</a>.</p>
+  </div>
+</main>
+<footer>
+  <div class="container">GuideCheck is a PAICE Foundation standard.</div>
+</footer>
+</body>
+</html>

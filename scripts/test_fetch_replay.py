@@ -108,6 +108,14 @@ def test_success() -> None:
     check("success content-type", result.headers["content-type"] == "text/plain; charset=utf-8")
 
 
+def test_header_capture() -> None:
+    result = with_fake_fetch(
+        [FakeResponse(200, {"Content-Type": "text/plain; charset=utf-8", "Content-Length": "18"}, b"Assistant Guide: X\n")],
+        "https://example.com/.well-known/assistant-guide.txt",
+    )
+    check("headers capture content-type", result.headers == {"content-type": "text/plain; charset=utf-8"})
+
+
 def test_same_domain_redirect() -> None:
     result = with_fake_fetch(
         [
@@ -166,13 +174,27 @@ def test_size_limits() -> None:
     )
 
 
+def test_content_variation_model() -> None:
+    first = with_fake_fetch(
+        [FakeResponse(200, {"Content-Type": "text/plain"}, b"Assistant Guide: A\n")],
+        "https://example.com/.well-known/assistant-guide.txt",
+    )
+    second = with_fake_fetch(
+        [FakeResponse(200, {"Content-Type": "text/plain"}, b"Assistant Guide: B\n")],
+        "https://example.com/.well-known/assistant-guide.txt",
+    )
+    check("content variation detectable", first.body != second.body)
+
+
 def main() -> int:
     test_success()
+    test_header_capture()
     test_same_domain_redirect()
     test_cross_domain_redirect()
     test_bad_redirect()
     test_too_many_redirects()
     test_size_limits()
+    test_content_variation_model()
     print(f"\n{PASSED} passed, {FAILED} failed")
     return 1 if FAILED else 0
 

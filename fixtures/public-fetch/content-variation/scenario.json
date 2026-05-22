@@ -1,0 +1,7 @@
+{
+  "url": "https://example.com/.well-known/assistant-guide.txt",
+  "variant_bodies": [
+    "Assistant Guide: A\n",
+    "Assistant Guide: B\n"
+  ]
+}

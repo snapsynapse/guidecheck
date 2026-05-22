@@ -48,7 +48,8 @@ The runner has three inputs:
 
 Additional Makefile targets check the reference verifier fixture contract,
 fixture and verifier-output structure, hosted API behavior with stubbed fetches,
-and deterministic fetch replay cases for redirects and response size limits.
+repository guide artifact byte profiles, and deterministic fetch replay cases
+for redirects, response size limits, headers, and content variation.
 
 The static fixture checks assert the normalized `expected.json` contract:
 

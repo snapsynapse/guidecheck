@@ -73,3 +73,13 @@
 .sev-tag.info { color: #2a5a7a; border-color: #8fb6d8; background: #eef4fa; }
 
 .verify-none { color: var(--text-muted); font-size: 0.85rem; margin: 0.3rem 0 0; }
+
+.verify-copy-row {
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.verify-copy-status {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}

@@ -118,6 +118,8 @@ for byte profile, metadata, action blocks, command restrictions, prohibited
 patterns, manifest mismatch, and public-fetch safety. It is a repository
 regression harness, not the normative verifier. See `evals/README.md`.
 
+CI runs the same `make test` target on pushes to `main` and pull requests.
+
 ## Verifier scope
 
 Verifier work is intentionally scoped to Levels 1 through 3. Two verifiers

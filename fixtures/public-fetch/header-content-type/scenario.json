@@ -1,0 +1,6 @@
+{
+  "url": "https://example.com/.well-known/assistant-guide.txt",
+  "headers": {
+    "content-type": "text/plain; charset=utf-8"
+  }
+}

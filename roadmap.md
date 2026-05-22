@@ -68,27 +68,15 @@ Candidates for 0.2.0 and later. Not commitments.
   https://guidecheck.org/verify; do not present it as fully conformant, and do
   not claim Level 4 or Level 5 conformance, until the supporting fixture suites
   are complete.
-- Promote generated eval cases into static fixtures where they should become
-  hard verifier conformance gates.
-- Add valid Level 1 and Level 4 static fixtures with complete `expected.json`
-  files.
-- Add manifest mismatch, over-size, overlong-line, missing verification,
-  metadata-error, missing-section, malformed-action, approval-gate, egress,
-  shell-runner, chained-guide, encoded-execution, revoked, and stale-date
-  fixture directories.
-- Add public-fetch fixture descriptions for SSRF, redirect, TLS, and header
-  scenarios, even if live network replay remains implementation-specific.
-- Add a static fixture for GuideCheck's own `assistant-guide.txt` once the
-  public deployment URL and repository URL are settled.
+- Add valid Level 4 static fixtures with complete `expected.json` files once
+  the Level 4 anchor checks are implemented.
 - Add a Level 4 manifest for GuideCheck's own guide after an independent hash
   anchor is published.
 - Add a signed or otherwise independently anchored `security.txt` plan before
   claiming it as a Level 4 channel.
-- Add a schema-backed validation path for fixture `expected.json` once a
-  portable JSON Schema validator is chosen.
-- Add CI that runs `make eval`, JSON parse checks, and byte-profile checks for
-  guide artifacts.
 - Add immutable release URLs and a static fixture for the tagged 0.2.0 release.
+- Implement public-web content-variation checks in the hosted verifier; the
+  fixture scenario exists, but the hosted checker does not yet re-fetch.
 
 ## Documentation work
 
@@ -99,7 +87,6 @@ Candidates for 0.2.0 and later. Not commitments.
   machine-readable output.
 - Add examples for package registry metadata in npm, PyPI, Cargo, and generic
   registries.
-- Document how generated evals map to future static fixture names.
 - Add a short threat-model primer for maintainers adding new finding ids.
 
 ## Implementation work
@@ -108,12 +95,6 @@ Candidates for 0.2.0 and later. Not commitments.
   verifier for Levels 1 through 3 on shared check logic. Do not extend either
   to Level 4 provenance or Level 5 runtime conformance until the supporting
   fixtures exist.
-- Implement the verifier CLI name, flags, exit codes, and input object pinned
-  in the resolved-decisions section above.
-- Sync the reference verifier and `scripts/eval_guidecheck.py` to the resolved
-  verifier behavior: enforce `code-executing` approval gating at Level 3, and
-  report `last-reviewed` age as info with no expiry threshold. Add the matching
-  approval-gate and staleness fixtures.
 - Keep `scripts/eval_guidecheck.py` as a regression harness and reference map,
   not the verifier implementation.
 - Continue separating the reference verifier from repository regression checks
