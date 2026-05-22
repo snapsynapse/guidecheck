@@ -52,6 +52,9 @@ that a human can review in full before authorizing an assistant to follow it.
 - AI platform and MLOps engineers who operationalize assistant workflows.
 - Technical policy and compliance professionals working on evidence,
   reviewability, and control design.
+- Anyone who wants to take basic precautions against prompt injection and other
+  well-known security issues when using AI agents to install software or take
+  other autonomous actions.
 
 ## What this profile defines
 
