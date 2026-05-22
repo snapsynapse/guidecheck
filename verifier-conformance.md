@@ -1,5 +1,4 @@
 # GuideCheck Verifier Conformance Profile
-Status: Draft for review
 
 ## 1. Purpose
 This specification defines the GuideCheck Verifier Conformance Profile for tools that evaluate `assistant-guide.txt` artifacts against the Human-Verifiable Assistant Guide profile.

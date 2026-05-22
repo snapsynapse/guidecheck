@@ -4,7 +4,7 @@ GuideCheck is a security-relevant standards project. Reports about weaknesses in
 
 ## Reporting
 
-Email security@guidecheck.org.
+Email security@paice.work.
 
 Do not open a public issue for a security report. Public disclosure before a fix or a documented mitigation can put adopters at risk.
 

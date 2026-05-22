@@ -1,5 +1,4 @@
 # GuideCheck Human-Verifiable Assistant Guide Profile
-Status: Draft for review
 
 ## How to read this document
 

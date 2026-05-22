@@ -10,7 +10,7 @@ canonical-url: https://guidecheck.org/.well-known/assistant-guide.txt
 repository-url: https://github.com/snapsynapse/guidecheck
 source-path: /.well-known/assistant-guide.txt
 last-reviewed: 2026-05-22
-reviewed-by: security@guidecheck.org
+reviewed-by: security@paice.work
 status: active
 recommended-verifier: https://guidecheck.org/verify
 verifier-conformance: human-verifiable-assistant-guide-verifier >=0.2.0, <0.3.0

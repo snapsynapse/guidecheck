@@ -45,7 +45,7 @@ implementation-detail outcomes are pinned here as specs to build against.
 
 ## Future profile directions
 
-Candidates for 0.2.0 and later. Not commitments.
+Candidates for 0.3.0 and later. Not commitments.
 
 - A higher provenance tier above Level 5 requiring a code signature and a
   transparency-log entry. The conformance ladder stays 0 to 5 for now;
