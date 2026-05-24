@@ -490,7 +490,7 @@ class handler(BaseHTTPRequestHandler):
             self._write_json(200, build_not_a_guide(url, checked_url, auto_resolved, fetched, now))
             return
 
-        findings, achieved_level, _ = gv.evaluate_guide(fetched.body, None, now)
+        findings, achieved_level, _, _, _ = gv.evaluate_guide(fetched.body, now=now)
         _log_product_event(
             now=now,
             started=started,

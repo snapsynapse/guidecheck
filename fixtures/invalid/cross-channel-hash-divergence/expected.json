@@ -1,0 +1,12 @@
+{
+  "description": "A Level 4 candidate whose manifest matches the guide but whose independent DNS TXT-style anchor disagrees.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "720c8933dc0684220e8d75a145f84b56591e67f16847a48b626f9de4991acfd1",
+  "guide_bytes": 3367,
+  "blocking_finding_ids": [
+    "anchor.independent.mismatch"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

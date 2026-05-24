@@ -63,13 +63,12 @@ Candidates for 0.3.0 and later. Not commitments.
 
 ## Near-term actions
 
-- The reference verifier CLI and the hosted public-web verifier both cover
-  Level 1 through Level 3 only. The hosted verifier is live as a preview at
-  https://guidecheck.org/verify; do not present it as fully conformant, and do
-  not claim Level 4 or Level 5 conformance, until the supporting fixture suites
-  are complete.
-- Add valid Level 4 static fixtures with complete `expected.json` files once
-  the Level 4 anchor checks are implemented.
+- The reference verifier CLI covers Level 1 through Level 4 in local-file mode
+  when sidecar manifest and independent-anchor evidence are supplied. The
+  hosted public-web verifier still covers Level 1 through Level 3 only. The
+  hosted verifier is live as a preview at https://guidecheck.org/verify; do not
+  present it as fully conformant, and do not claim hosted Level 4 or Level 5
+  conformance, until the supporting public-web fixture suites are complete.
 - Add a Level 4 manifest for GuideCheck's own guide after an independent hash
   anchor is published.
 - Add a signed or otherwise independently anchored `security.txt` plan before
@@ -97,10 +96,10 @@ Candidates for 0.3.0 and later. Not commitments.
 
 ## Implementation work
 
-- Maintain the local-file reference verifier CLI and the hosted public-web
-  verifier for Levels 1 through 3 on shared check logic. Do not extend either
-  to Level 4 provenance or Level 5 runtime conformance until the supporting
-  fixtures exist.
+- Maintain the local-file reference verifier CLI for Levels 1 through 4 and
+  the hosted public-web verifier for Levels 1 through 3 on shared content
+  checks. Do not extend the hosted verifier to Level 4 provenance or either
+  verifier to Level 5 runtime conformance until the supporting fixtures exist.
 - Keep `scripts/eval_guidecheck.py` as a regression harness and reference map,
   not the verifier implementation.
 - Continue separating the reference verifier from repository regression checks
@@ -115,8 +114,7 @@ Candidates for 0.3.0 and later. Not commitments.
 - Replace modeled public-fetch scenarios with replayable public-web fixtures
   where practical, while keeping non-network deterministic tests as the default
   CI path.
-- Add deterministic tests for manifest parsing and cross-channel hash anchor
-  handling.
+- Add deterministic tests for the remaining cross-channel hash anchor types.
 - Add tests for registry-url parsing across npm, PyPI, Cargo, and generic
   registry records.
 - Add hosted verifier implementation support for the existing

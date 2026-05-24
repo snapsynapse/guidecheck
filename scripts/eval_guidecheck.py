@@ -393,27 +393,100 @@ def parse_manifest(text: str) -> dict[str, str]:
     return result
 
 
-def check_manifest(data: bytes, manifest_text: str | None, findings: list[Finding]) -> None:
+def check_manifest(data: bytes, manifest_text: str | None, findings: list[Finding]) -> tuple[bool, str | None]:
     if manifest_text is None:
-        return
+        return False, None
     manifest = parse_manifest(manifest_text)
     required = {"guide-path", "guide-version", "guide-sha256", "guide-bytes", "immutable-release-url"}
     missing = required - set(manifest)
     if missing:
         finding(findings, "manifest.missing-required", "error", ",".join(sorted(missing)))
-    if manifest.get("guide-sha256") and manifest["guide-sha256"] != sha256(data):
+    hash_match = manifest.get("guide-sha256") == sha256(data)
+    bytes_match = False
+    if manifest.get("guide-sha256") and not hash_match:
         finding(findings, "manifest.hash-mismatch", "error", "manifest hash mismatch")
     if manifest.get("guide-bytes"):
         try:
-            if int(manifest["guide-bytes"]) != len(data):
+            bytes_match = int(manifest["guide-bytes"]) == len(data)
+            if not bytes_match:
                 finding(findings, "manifest.bytes-mismatch", "error", "manifest byte count mismatch")
         except ValueError:
             finding(findings, "manifest.bytes-invalid", "error", "manifest byte count invalid")
-    if "manifest-url" in decode_text(data) and "registry-url" not in decode_text(data):
+    return (not missing and hash_match and bytes_match, manifest.get("guide-sha256"))
+
+
+def extract_anchor_sha256(channel: str, text: str) -> str | None:
+    if channel == "repository-file":
+        return sha256(text.encode())
+    if channel == "package-registry":
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError:
+            data = None
+        found = find_json_sha256(data) if data is not None else None
+        if found:
+            return found
+    for pattern in (
+        r"\bsha256=([0-9a-f]{64})\b",
+        r"\bguide-sha256:\s*([0-9a-f]{64})\b",
+        r"\bAssistant-Guide-SHA256:\s*([0-9a-f]{64})\b",
+        r'"sha256"\s*:\s*"([0-9a-f]{64})"',
+    ):
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return match.group(1).lower()
+    return None
+
+
+def find_json_sha256(value: object) -> str | None:
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key == "sha256" and isinstance(item, str) and re.fullmatch(r"[0-9a-f]{64}", item):
+                return item
+            found = find_json_sha256(item)
+            if found:
+                return found
+    elif isinstance(value, list):
+        for item in value:
+            found = find_json_sha256(item)
+            if found:
+                return found
+    return None
+
+
+def check_anchors(
+    manifest_hash: str | None,
+    anchor_texts: dict[str, str],
+    findings: list[Finding],
+    *,
+    level4_claimed: bool,
+) -> tuple[bool, bool]:
+    if manifest_hash is None:
+        return False, False
+    matches = False
+    mismatches = False
+    for channel, text in sorted(anchor_texts.items()):
+        observed = extract_anchor_sha256(channel, text)
+        if observed is None:
+            continue
+        if observed == manifest_hash:
+            matches = True
+        else:
+            mismatches = True
+            finding(findings, "anchor.independent.mismatch", "error", channel)
+    if level4_claimed and not anchor_texts:
         finding(findings, "anchor.independent.missing", "error", "no independent anchor")
+    elif level4_claimed and anchor_texts and not matches and not mismatches:
+        finding(findings, "anchor.independent.missing", "error", "no independent anchor hash")
+    return matches, mismatches
 
 
-def evaluate_bytes(data: bytes, manifest_text: str | None = None) -> EvalResult:
+def evaluate_bytes(
+    data: bytes,
+    manifest_text: str | None = None,
+    anchor_texts: dict[str, str] | None = None,
+) -> EvalResult:
+    anchor_texts = anchor_texts or {}
     findings: list[Finding] = []
     text = decode_text(data)
     check_byte_profile(data, findings)
@@ -429,7 +502,14 @@ def evaluate_bytes(data: bytes, manifest_text: str | None = None) -> EvalResult:
         check_sections(text, findings)
         check_actions(actions, findings)
     check_prohibited(text, findings)
-    check_manifest(data, manifest_text, findings)
+    manifest_valid, manifest_hash = check_manifest(data, manifest_text, findings)
+    level4_claimed = bool(meta.get("manifest-url"))
+    anchor_matches, anchor_mismatches = check_anchors(
+        manifest_hash,
+        anchor_texts,
+        findings,
+        level4_claimed=level4_claimed,
+    )
 
     error_ids = {f.id for f in findings if f.severity == "error"}
     l1_blockers = {
@@ -441,9 +521,14 @@ def evaluate_bytes(data: bytes, manifest_text: str | None = None) -> EvalResult:
     byte_blockers = {fid for fid in error_ids if fid.startswith("byte-profile.") or fid.startswith("construct.")}
     if achieved >= 1 and not byte_blockers:
         achieved = 2
-    level3_blockers = error_ids - byte_blockers - l1_blockers
+    level4_blockers = {
+        fid for fid in error_ids if fid.startswith("manifest.") or fid.startswith("anchor.")
+    }
+    level3_blockers = error_ids - byte_blockers - l1_blockers - level4_blockers
     if achieved >= 2 and "[assistant-guide-metadata]" in text and actions and not level3_blockers:
         achieved = 3
+    if achieved >= 3 and level4_claimed and manifest_valid and anchor_matches and not anchor_mismatches:
+        achieved = 4
     if "metadata.status.revoked" in error_ids:
         achieved = min(achieved, 1)
     return EvalResult(achieved, sha256(data), len(data), findings)
@@ -457,6 +542,7 @@ class Case:
     blocking: list[str]
     warnings: list[str]
     manifest: str | None = None
+    anchors: dict[str, str] | None = None
     expected_sha256: str | None = None
     expected_bytes: int | None = None
     expected_level5_ready: bool | None = None
@@ -818,7 +904,7 @@ def generated_cases() -> list[Case]:
         Case(
             "generated/manifest-hash-mismatch",
             base.encode(),
-            2,
+            3,
             ["manifest.hash-mismatch"],
             [],
             manifest=replace_once(
@@ -830,7 +916,7 @@ def generated_cases() -> list[Case]:
         Case(
             "generated/manifest-bytes-mismatch",
             base.encode(),
-            2,
+            3,
             ["manifest.bytes-mismatch"],
             [],
             manifest=replace_once(
@@ -857,11 +943,17 @@ def load_fixture_cases() -> list[Case]:
             continue
         expected = json.loads(expected_path.read_text())
         manifest_path = fixture_dir / "manifest.txt"
+        anchor_dir = fixture_dir / "anchors"
+        anchors = {
+            anchor_path.stem: anchor_path.read_text()
+            for anchor_path in sorted(anchor_dir.glob("*.txt"))
+        } if anchor_dir.is_dir() else None
         cases.append(
             Case(
                 name=str(fixture_dir.relative_to(ROOT)),
                 data=guide_path.read_bytes(),
                 manifest=manifest_path.read_text() if manifest_path.exists() else None,
+                anchors=anchors,
                 expected_level=expected["achieved_level"],
                 blocking=expected["blocking_finding_ids"],
                 warnings=expected["required_warning_ids"],
@@ -986,7 +1078,7 @@ def registered_domain(host: str) -> str:
 
 
 def run_case(case: Case) -> tuple[bool, str]:
-    result = evaluate_bytes(case.data, case.manifest)
+    result = evaluate_bytes(case.data, case.manifest, case.anchors)
     failures: list[str] = []
     if result.achieved_level != case.expected_level:
         failures.append(f"level expected {case.expected_level} got {result.achieved_level}")

@@ -23,7 +23,7 @@ make test
 The eval runner is not the normative verifier. It is a regression harness
 for this repository and a reference map for verifier authors. It covers:
 
-- valid Level 1/2 and Level 3 local-file guides
+- valid Level 1/2, Level 3, and Level 4 local-file guides
 - byte-profile failures
 - disallowed constructs
 - compact verification instruction checks
@@ -32,7 +32,7 @@ for this repository and a reference map for verifier authors. It covers:
 - action block parsing and approval gates
 - command, cwd, env, and egress checks
 - prohibited chaining and encoded-execution patterns
-- manifest hash and byte-count mismatch checks
+- manifest hash, byte-count mismatch, missing-anchor, and anchor-divergence checks
 - local public-fetch safety scenarios for HTTP, SSRF, TLS, and redirects
 
 The authoritative conformance target remains the fixture suite described in
@@ -93,8 +93,8 @@ Generated eval cases should be promoted into static fixtures when:
 - the generated mutation is too subtle to remain embedded in script code
 
 Promotion means creating a fixture directory with `guide.txt`, optional
-`manifest.txt`, and `expected.json`, then updating `fixtures/README.md` and
-`finding-ids.md` in the same change.
+`manifest.txt`, optional `anchors/` evidence files, and `expected.json`, then
+updating `fixtures/README.md` and `finding-ids.md` in the same change.
 
 ## Maintenance rules
 

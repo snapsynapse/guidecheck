@@ -1,7 +1,7 @@
 {
   "description": "Static fixture promoted from generated/manifest-bytes-mismatch.",
   "evaluation_mode": "local-file",
-  "achieved_level": 2,
+  "achieved_level": 3,
   "guide_sha256": "c41bd90b483d8cc269c9978540a2c38302ab7edbda1f8eb7905f544666067bf8",
   "guide_bytes": 5135,
   "blocking_finding_ids": [

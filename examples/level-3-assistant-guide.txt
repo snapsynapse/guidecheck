@@ -9,6 +9,7 @@ applies-to: example-cli >=2.0.0, <3.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt
 repository-url: https://example.com/org/example-cli
 source-path: /.well-known/assistant-guide.txt
+manifest-url: https://example.com/.well-known/assistant-guide-manifest.txt
 last-reviewed: 2026-05-22
 reviewed-by: security@example.com
 status: active

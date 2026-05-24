@@ -1,0 +1,12 @@
+{
+  "description": "A Level 4 candidate whose guide and manifest match but no independent anchor evidence is supplied.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "d60e74eeb17f10509bbd9c0a1110eed810d49cc62597eefe3d483299bdd7f7a5",
+  "guide_bytes": 3276,
+  "blocking_finding_ids": [
+    "anchor.independent.missing"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

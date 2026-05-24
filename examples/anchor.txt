@@ -1,0 +1,1 @@
+v=1; sha256=6188797e3c7d2c55cc0f2cf09c1a1202ff8d3d094a315558b8ae4d563a7f0cf5; url=https://example.com/.well-known/assistant-guide.txt

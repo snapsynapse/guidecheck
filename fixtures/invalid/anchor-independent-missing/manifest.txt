@@ -1,0 +1,11 @@
+guide-path: /.well-known/assistant-guide.txt
+guide-version: 1.0.0
+guide-sha256: d60e74eeb17f10509bbd9c0a1110eed810d49cc62597eefe3d483299bdd7f7a5
+guide-bytes: 3276
+immutable-release-url: https://example.com/org/example-tool/releases/v1.0.0
+profile: human-verifiable-assistant-guide
+profile-version: 0.2.0
+canonical-url: https://example.com/.well-known/assistant-guide.txt
+repository-url: https://example.com/org/example-tool
+released-at: 2026-05-21T00:00:00Z
+changelog-url: https://example.com/org/example-tool/blob/main/CHANGELOG.md

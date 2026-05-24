@@ -14,6 +14,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "scripts" / "guidecheck_verify.py"
 VALID = ROOT / "fixtures" / "valid" / "level-3" / "guide.txt"
+VALID_LEVEL4 = ROOT / "fixtures" / "valid" / "level-4" / "guide.txt"
+VALID_LEVEL4_MANIFEST = ROOT / "fixtures" / "valid" / "level-4" / "manifest.txt"
+VALID_LEVEL4_ANCHOR = ROOT / "fixtures" / "valid" / "level-4" / "anchors" / "dns-txt.txt"
+MISSING_ANCHOR = ROOT / "fixtures" / "invalid" / "anchor-independent-missing" / "guide.txt"
+MISSING_ANCHOR_MANIFEST = ROOT / "fixtures" / "invalid" / "anchor-independent-missing" / "manifest.txt"
 INVALID = ROOT / "fixtures" / "invalid" / "missing-verification" / "guide.txt"
 PASSED = 0
 FAILED = 0
@@ -61,8 +66,26 @@ def test_json_pretty_flag() -> None:
 
 def test_level_assertion() -> None:
     valid = run(str(VALID), "--level", "3")
+    valid_level4 = run(
+        str(VALID_LEVEL4),
+        "--manifest",
+        str(VALID_LEVEL4_MANIFEST),
+        "--anchor",
+        f"dns-txt={VALID_LEVEL4_ANCHOR}",
+        "--level",
+        "4",
+    )
+    missing_anchor = run(
+        str(MISSING_ANCHOR),
+        "--manifest",
+        str(MISSING_ANCHOR_MANIFEST),
+        "--level",
+        "4",
+    )
     invalid = run(str(INVALID), "--level", "1")
     check("level assertion pass", valid.returncode == 0)
+    check("level 4 assertion pass", valid_level4.returncode == 0, valid_level4.stderr)
+    check("level 4 missing anchor fail", missing_anchor.returncode == 1)
     check("level assertion fail", invalid.returncode == 1)
 
 

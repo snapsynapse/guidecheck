@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-GuideCheck reference verifier CLI for local-file Levels 1 through 3.
+GuideCheck reference verifier CLI for local-file Levels 1 through 4.
 
-This verifier intentionally does not claim Level 4 provenance, hosted public-web
-verification, or Level 5 runtime conformance.
+This verifier intentionally does not claim hosted public-web Level 4
+verification or Level 5 runtime conformance.
 """
 
 from __future__ import annotations
@@ -27,6 +27,13 @@ GUIDE_PROFILE = "human-verifiable-assistant-guide"
 GUIDE_PROFILE_VERSION = "0.2.1"
 DEFAULT_APPROVAL_WARNING_THRESHOLD = 10
 DEFAULT_METADATA_VALUE_WARNING_LENGTH = 80
+ANCHOR_CHANNELS = {
+    "dns-txt",
+    "package-registry",
+    "repository-file",
+    "signed-security-txt",
+    "transparency-log",
+}
 
 ALLOWED_CLASSES = {
     "normal",
@@ -106,15 +113,60 @@ class Finding:
 
 
 @dataclass
+class ManifestEvidence:
+    sha256: str
+    fetched: bool
+    hash_match: bool
+    bytes_match: bool
+    valid: bool
+    guide_sha256: str | None
+
+    def as_dict(self) -> dict[str, object]:
+        result: dict[str, object] = {
+            "sha256": self.sha256,
+            "fetched": self.fetched,
+            "hash_match": self.hash_match,
+            "bytes_match": self.bytes_match,
+            "valid": self.valid,
+        }
+        if self.guide_sha256 is not None:
+            result["guide_sha256"] = self.guide_sha256
+        return result
+
+
+@dataclass
+class AnchorEvidence:
+    channel: str
+    status: str
+    observed_sha256: str | None = None
+    evidence_path: str | None = None
+
+    def as_dict(self) -> dict[str, object]:
+        result: dict[str, object] = {
+            "channel": self.channel,
+            "status": self.status,
+        }
+        if self.observed_sha256 is not None:
+            result["observed_sha256"] = self.observed_sha256
+        if self.evidence_path is not None:
+            result["evidence_path"] = self.evidence_path
+        return result
+
+
+@dataclass
 class Evaluation:
     path: Path
     data: bytes
     manifest_path: Path | None
     manifest_text: str | None
+    anchor_paths: dict[str, Path]
+    anchor_texts: dict[str, str]
     evaluated_at: datetime
     findings: list[Finding]
     achieved_level: int
     level5_ready: bool
+    manifest_evidence: ManifestEvidence | None
+    cross_channel_anchors: list[AnchorEvidence]
 
     @property
     def sha256(self) -> str:
@@ -530,7 +582,7 @@ def parse_manifest(text: str) -> dict[str, str]:
     return result
 
 
-def check_manifest(data: bytes, manifest_text: str | None, findings: list[Finding]) -> dict[str, object] | None:
+def check_manifest(data: bytes, manifest_text: str | None, findings: list[Finding]) -> ManifestEvidence | None:
     if manifest_text is None:
         return None
     manifest = parse_manifest(manifest_text)
@@ -550,27 +602,138 @@ def check_manifest(data: bytes, manifest_text: str | None, findings: list[Findin
                 add_finding(findings, "manifest.bytes-mismatch", "error", "manifest guide-bytes does not match guide bytes")
         except ValueError:
             add_finding(findings, "manifest.bytes-invalid", "error", "manifest guide-bytes is not an integer")
-    if "manifest-url" in decode_text(data) and "registry-url" not in decode_text(data):
-        add_finding(findings, "anchor.independent.missing", "error", "no independent anchor is available for Level 4")
-    return {
-        "sha256": hashlib.sha256(manifest_text.encode("utf-8")).hexdigest(),
-        "fetched": False,
-        "hash_match": hash_match,
-        "bytes_match": bytes_match,
-    }
+    return ManifestEvidence(
+        sha256=hashlib.sha256(manifest_text.encode("utf-8")).hexdigest(),
+        fetched=False,
+        hash_match=hash_match,
+        bytes_match=bytes_match,
+        valid=not missing and hash_match and bytes_match,
+        guide_sha256=manifest.get("guide-sha256"),
+    )
+
+
+def extract_anchor_sha256(channel: str, text: str) -> str | None:
+    if channel == "repository-file":
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    if channel == "package-registry":
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError:
+            data = None
+        found = find_json_sha256(data) if data is not None else None
+        if found:
+            return found
+
+    patterns = [
+        r"\bsha256=([0-9a-f]{64})\b",
+        r"\bguide-sha256:\s*([0-9a-f]{64})\b",
+        r"\bAssistant-Guide-SHA256:\s*([0-9a-f]{64})\b",
+        r'"sha256"\s*:\s*"([0-9a-f]{64})"',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return match.group(1).lower()
+    return None
+
+
+def find_json_sha256(value: object) -> str | None:
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key == "sha256" and isinstance(item, str) and re.fullmatch(r"[0-9a-f]{64}", item):
+                return item
+            found = find_json_sha256(item)
+            if found:
+                return found
+    elif isinstance(value, list):
+        for item in value:
+            found = find_json_sha256(item)
+            if found:
+                return found
+    return None
+
+
+def check_anchors(
+    manifest_evidence: ManifestEvidence | None,
+    anchor_texts: dict[str, str],
+    anchor_paths: dict[str, Path],
+    findings: list[Finding],
+    *,
+    level4_claimed: bool,
+) -> list[AnchorEvidence]:
+    if manifest_evidence is None or manifest_evidence.guide_sha256 is None:
+        return []
+
+    anchors: list[AnchorEvidence] = []
+    for channel, text in sorted(anchor_texts.items()):
+        evidence_path = str(anchor_paths[channel]) if channel in anchor_paths else None
+        observed = extract_anchor_sha256(channel, text)
+        if observed is None:
+            anchors.append(
+                AnchorEvidence(
+                    channel=channel,
+                    status="absent",
+                    evidence_path=evidence_path,
+                )
+            )
+            continue
+        status = "present-matches" if observed == manifest_evidence.guide_sha256 else "present-mismatch"
+        anchors.append(
+            AnchorEvidence(
+                channel=channel,
+                status=status,
+                observed_sha256=observed,
+                evidence_path=evidence_path,
+            )
+        )
+        if status == "present-mismatch":
+            add_finding(
+                findings,
+                "anchor.independent.mismatch",
+                "error",
+                "independent anchor hash does not match manifest guide-sha256",
+                section="verifier-conformance.23",
+                evidence=channel,
+            )
+
+    if level4_claimed and not anchors:
+        add_finding(
+            findings,
+            "anchor.independent.missing",
+            "error",
+            "no independent anchor is available for Level 4",
+            section="verifier-conformance.23",
+            remediation="publish the guide hash on DNS TXT, package registry metadata, repository file, signed security.txt, or a transparency log",
+        )
+    elif level4_claimed and anchors and not any(anchor.status == "present-matches" for anchor in anchors):
+        if not any(anchor.status == "present-mismatch" for anchor in anchors):
+            add_finding(
+                findings,
+                "anchor.independent.missing",
+                "error",
+                "no independent anchor hash was found for Level 4",
+                section="verifier-conformance.23",
+            )
+    return anchors
 
 
 def evaluate_guide(
     data: bytes,
     manifest_text: str | None = None,
+    anchor_texts: dict[str, str] | None = None,
+    anchor_paths: dict[str, Path] | None = None,
     now: datetime | None = None,
-) -> tuple[list[Finding], int, bool]:
-    """Run Level 1-3 checks on raw guide bytes.
+) -> tuple[list[Finding], int, bool, ManifestEvidence | None, list[AnchorEvidence]]:
+    """Run Level 1-4 local checks on raw guide bytes.
 
-    Returns (findings, achieved_level, level5_ready). Shared by the local-file
-    CLI and the hosted public-web API so both apply identical check logic.
+    Returns (findings, achieved_level, level5_ready, manifest evidence,
+    cross-channel anchor evidence). Shared by the local-file CLI and the
+    hosted public-web API so both apply identical content checks.
     """
     evaluated_at = now or datetime.now(timezone.utc)
+    anchor_texts = anchor_texts or {}
+    anchor_paths = anchor_paths or {}
     findings: list[Finding] = []
     text = decode_text(data)
 
@@ -587,7 +750,15 @@ def evaluate_guide(
         check_sections(text, findings)
         check_actions(actions, findings)
     check_prohibited(text, findings)
-    check_manifest(data, manifest_text, findings)
+    manifest_evidence = check_manifest(data, manifest_text, findings)
+    level4_claimed = bool(meta.get("manifest-url"))
+    cross_channel_anchors = check_anchors(
+        manifest_evidence,
+        anchor_texts,
+        anchor_paths,
+        findings,
+        level4_claimed=level4_claimed,
+    )
 
     error_ids = {f.id for f in findings if f.severity == "error"}
     l1_blockers = {"verification-instruction.missing"}
@@ -597,21 +768,61 @@ def evaluate_guide(
     byte_blockers = {fid for fid in error_ids if fid.startswith("byte-profile.") or fid.startswith("construct.")}
     if achieved >= 1 and not byte_blockers:
         achieved = 2
-    level3_blockers = error_ids - byte_blockers - l1_blockers
+    level4_blockers = {
+        fid for fid in error_ids if fid.startswith("manifest.") or fid.startswith("anchor.")
+    }
+    level3_blockers = error_ids - byte_blockers - l1_blockers - level4_blockers
     if achieved >= 2 and "[assistant-guide-metadata]" in text and actions and not level3_blockers:
         achieved = 3
+    anchor_matches = any(anchor.status == "present-matches" for anchor in cross_channel_anchors)
+    anchor_mismatches = any(anchor.status == "present-mismatch" for anchor in cross_channel_anchors)
+    if (
+        achieved >= 3
+        and level4_claimed
+        and manifest_evidence is not None
+        and manifest_evidence.valid
+        and anchor_matches
+        and not anchor_mismatches
+    ):
+        achieved = 4
     if "metadata.status.revoked" in error_ids:
         achieved = min(achieved, 1)
 
-    return findings, achieved, False
+    return findings, achieved, False, manifest_evidence, cross_channel_anchors
 
 
-def evaluate_local_file(path: Path, manifest_path: Path | None = None, now: datetime | None = None) -> Evaluation:
+def evaluate_local_file(
+    path: Path,
+    manifest_path: Path | None = None,
+    anchor_paths: dict[str, Path] | None = None,
+    now: datetime | None = None,
+) -> Evaluation:
     data = path.read_bytes()
     manifest_text = manifest_path.read_text(encoding="utf-8") if manifest_path else None
+    anchor_paths = anchor_paths or {}
+    anchor_texts = {channel: anchor_path.read_text(encoding="utf-8") for channel, anchor_path in anchor_paths.items()}
     evaluated_at = now or datetime.now(timezone.utc)
-    findings, achieved, level5_ready = evaluate_guide(data, manifest_text, evaluated_at)
-    return Evaluation(path, data, manifest_path, manifest_text, evaluated_at, findings, achieved, level5_ready)
+    findings, achieved, level5_ready, manifest_evidence, cross_channel_anchors = evaluate_guide(
+        data,
+        manifest_text,
+        anchor_texts,
+        anchor_paths,
+        evaluated_at,
+    )
+    return Evaluation(
+        path,
+        data,
+        manifest_path,
+        manifest_text,
+        anchor_paths,
+        anchor_texts,
+        evaluated_at,
+        findings,
+        achieved,
+        level5_ready,
+        manifest_evidence,
+        cross_channel_anchors,
+    )
 
 
 def output_for(evaluation: Evaluation) -> dict[str, object]:
@@ -650,9 +861,19 @@ def output_for(evaluation: Evaluation) -> dict[str, object]:
     }
     if evaluation.manifest_path:
         result["input"]["manifest_path"] = str(evaluation.manifest_path)  # type: ignore[index]
-    manifest = check_manifest(evaluation.data, evaluation.manifest_text, [])
-    if manifest is not None:
-        result["manifest"] = {"path": str(evaluation.manifest_path), **manifest}
+    if evaluation.anchor_paths:
+        result["input"]["anchor_paths"] = {
+            channel: str(path) for channel, path in sorted(evaluation.anchor_paths.items())
+        }  # type: ignore[index]
+    if evaluation.manifest_evidence is not None:
+        result["manifest"] = {
+            "path": str(evaluation.manifest_path),
+            **evaluation.manifest_evidence.as_dict(),
+        }
+    if evaluation.cross_channel_anchors:
+        result["cross_channel_anchors"] = [
+            anchor.as_dict() for anchor in evaluation.cross_channel_anchors
+        ]
     result["compact_report"] = compact_report(result)
     return result
 
@@ -670,20 +891,41 @@ def compact_report(result: dict[str, object]) -> str:
             f"SHA-256: {guide['sha256']}",  # type: ignore[index]
             f"Blocking findings: {summary['blocking_findings']}",  # type: ignore[index]
             f"Warnings: {summary['warnings']}",  # type: ignore[index]
-            "Hash pinned: no",
+            f"Hash pinned: {'yes' if guide['achieved_level'] >= 4 else 'no'}",  # type: ignore[index]
             f"Proceed? {'yes' if summary['blocking_findings'] == 0 else 'no'}",  # type: ignore[index]
         ]
     )
 
 
+def parse_anchor_arg(value: str) -> tuple[str, Path]:
+    if "=" not in value:
+        raise argparse.ArgumentTypeError("anchor must use CHANNEL=PATH")
+    channel, raw_path = value.split("=", 1)
+    if channel not in ANCHOR_CHANNELS:
+        choices = ", ".join(sorted(ANCHOR_CHANNELS))
+        raise argparse.ArgumentTypeError(f"unknown anchor channel {channel!r}; expected one of {choices}")
+    path = Path(raw_path)
+    if not path.is_file():
+        raise argparse.ArgumentTypeError(f"anchor file not found: {path}")
+    return channel, path
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Verify a local assistant-guide.txt through GuideCheck Level 3.")
+    parser = argparse.ArgumentParser(description="Verify a local assistant-guide.txt through GuideCheck Level 4.")
     parser.add_argument("path", type=Path, help="Path to assistant-guide.txt")
     parser.add_argument("--manifest", type=Path, help="Optional local sidecar manifest path")
+    parser.add_argument(
+        "--anchor",
+        action="append",
+        type=parse_anchor_arg,
+        default=[],
+        metavar="CHANNEL=PATH",
+        help="Optional local independent anchor evidence; repeatable. Channels: dns-txt, package-registry, repository-file, signed-security-txt, transparency-log",
+    )
     parser.add_argument("--format", choices=["json", "text"], default="json", help="Output format")
     parser.add_argument("--json", action="store_const", const="json", dest="format", help="Emit JSON output")
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output")
-    parser.add_argument("--level", type=int, choices=range(0, 4), metavar="N", help="Require at least this achieved level")
+    parser.add_argument("--level", type=int, choices=range(0, 5), metavar="N", help="Require at least this achieved level")
     parser.add_argument("--fail-on-warning", action="store_true", help="Exit nonzero when warnings are present")
     return parser.parse_args(argv)
 
@@ -697,7 +939,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"guidecheck_verify: manifest not found: {args.manifest}", file=sys.stderr)
         return 2
 
-    evaluation = evaluate_local_file(args.path, args.manifest)
+    anchor_paths = dict(args.anchor)
+    evaluation = evaluate_local_file(args.path, args.manifest, anchor_paths)
     result = output_for(evaluation)
     if args.format == "text":
         print(result["compact_report"])

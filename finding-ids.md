@@ -131,6 +131,7 @@ files.
 | `manifest.bytes-mismatch` | error | Manifest `guide-bytes` does not match guide bytes. |
 | `manifest.bytes-invalid` | error | Manifest `guide-bytes` is not an integer. |
 | `anchor.independent.missing` | error | Level 4 provenance lacks an independent anchor. |
+| `anchor.independent.mismatch` | error | An independent anchor hash does not match the manifest hash. |
 
 ## Public fetch safety
 

@@ -4,6 +4,18 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+### Added
+
+- local-file reference verifier support for Level 4 manifest and
+  independent-anchor evidence, including `--anchor CHANNEL=PATH`
+- static valid Level 4, missing-anchor, and cross-channel hash divergence fixtures
+- verifier output for local cross-channel anchor evidence
+
+### Changed
+
+- manifest failures now block Level 4 without lowering otherwise valid Level 3
+  content evaluation
+
 ## [0.2.1] - 2026-05-22
 
 ### Added

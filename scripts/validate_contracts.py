@@ -91,6 +91,7 @@ def validate_verifier_output(errors: list[str], fixture_dir: Path) -> None:
     evaluation = gv.evaluate_local_file(
         fixture_dir / "guide.txt",
         fixture_dir / "manifest.txt" if (fixture_dir / "manifest.txt").exists() else None,
+        crv.fixture_anchor_paths(fixture_dir),
     )
     output = gv.output_for(evaluation)
     label = fixture_dir / "expected.json"

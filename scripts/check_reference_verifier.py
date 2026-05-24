@@ -20,13 +20,30 @@ def fixture_dirs() -> list[Path]:
     return sorted(path.parent for path in FIXTURES.glob("*/*/expected.json"))
 
 
+def fixture_anchor_paths(path: Path) -> dict[str, Path]:
+    anchor_dir = path / "anchors"
+    if not anchor_dir.is_dir():
+        return {}
+    anchors: dict[str, Path] = {}
+    for anchor_path in sorted(anchor_dir.glob("*.txt")):
+        channel = anchor_path.stem
+        if channel in guidecheck_verify.ANCHOR_CHANNELS:
+            anchors[channel] = anchor_path
+    return anchors
+
+
 def compare_fixture(path: Path) -> list[str]:
     expected = json.loads((path / "expected.json").read_text(encoding="utf-8"))
     if expected["evaluation_mode"] != "local-file":
         return []
     guide = path / "guide.txt"
     manifest = path / "manifest.txt"
-    evaluation = guidecheck_verify.evaluate_local_file(guide, manifest if manifest.exists() else None)
+    anchors = fixture_anchor_paths(path)
+    evaluation = guidecheck_verify.evaluate_local_file(
+        guide,
+        manifest if manifest.exists() else None,
+        anchors,
+    )
     output = guidecheck_verify.output_for(evaluation)
     actual_blocking = sorted(
         finding["id"] for finding in output["findings"] if finding["severity"] == "error"

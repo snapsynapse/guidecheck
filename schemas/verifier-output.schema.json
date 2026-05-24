@@ -112,7 +112,8 @@
               "dns-txt",
               "package-registry",
               "repository-file",
-              "signed-security-txt"
+              "signed-security-txt",
+              "transparency-log"
             ]
           },
           "status": {
@@ -120,6 +121,7 @@
             "enum": ["present-matches", "present-mismatch", "unreachable", "absent"]
           },
           "evidence_url": { "type": "string", "format": "uri" },
+          "evidence_path": { "type": "string", "minLength": 1 },
           "observed_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
         }
       }

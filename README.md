@@ -118,19 +118,21 @@ make test
 
 The eval runner checks the static fixture corpus plus generated edge cases
 for byte profile, metadata, action blocks, command restrictions, prohibited
-patterns, manifest mismatch, and public-fetch safety. It is a repository
-regression harness, not the normative verifier. See `evals/README.md`.
+patterns, Level 4 manifest and anchor evidence, and public-fetch safety. It is
+a repository regression harness, not the normative verifier. See
+`evals/README.md`.
 
 CI runs the same `make test` target on pushes to `main` and pull requests.
 
 ## Verifier scope
 
-Verifier work is intentionally scoped to Levels 1 through 3. Two verifiers
-exist, and both run the same check logic:
+Verifier work is split by evaluation mode. Two verifiers exist:
 
-- a local-file reference CLI, `scripts/guidecheck_verify.py`
+- a local-file reference CLI, `scripts/guidecheck_verify.py`, which evaluates
+  Levels 1 through 4 when local manifest and independent-anchor evidence are
+  supplied
 - a hosted public-web verifier at https://guidecheck.org/verify, which fetches
-  a guide by URL and applies the same Level 1-3 checks. The hosted verifier
+  a guide by URL and applies the Level 1-3 checks. The hosted verifier
   also accepts optional agent category and expected-level inputs so product
   telemetry can show where specific agent families routinely miss expected
   conformance levels.
@@ -145,9 +147,18 @@ Both verifiers:
   command restrictions, prohibited patterns, status, and staleness
 - emit machine-readable verifier output plus the compact human-readable report
 
+The local reference CLI additionally checks Level 4 sidecar manifests, guide
+hash and byte-count matches, and local independent-anchor evidence supplied
+with `--anchor`.
+
 Run the local reference verifier with:
 ```text
 python3 scripts/guidecheck_verify.py assistant-guide.txt --pretty
+```
+
+Run a local Level 4 check with sidecar evidence:
+```text
+python3 scripts/guidecheck_verify.py assistant-guide.txt --manifest manifest.txt --anchor dns-txt=anchor.txt --level 4 --pretty
 ```
 
 Run the static fixture check for the reference verifier with:
@@ -161,9 +172,7 @@ yet complete, and the hosted implementation has not been shown to pass it.
 
 Temporary limitations:
 
-- no public conformance claim beyond Level 3
-- no Level 4 provenance claim until manifest and independent-anchor fixtures
-  are complete
+- no hosted public-web conformance claim beyond Level 3
 - the hosted verifier is a Level 1-3 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`, but public-web
   fetch replay fixtures, redirect cases, and TLS cases are still outstanding
