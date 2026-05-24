@@ -619,10 +619,11 @@ GET /.well-known/assistant-guide.txt
   <div class="container">
     <div class="demo-block">
       <h2>Verify a guide</h2>
-      <p>GuideCheck publishes a primary verifier for usability &mdash; never as the only authoritative verifier and never as a root of trust. It reports what it checked and what it did not. Optional agent and expected-level fields help identify compatibility gaps without storing full submitted URLs, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.</p>
+      <p>GuideCheck publishes a primary verifier for usability &mdash; never as the only authoritative verifier and never as a root of trust. It reports what it checked and what it did not. Guide files score up to Level 4 of 4; Level 5 is a separate runtime enforcement claim. Optional agent and expected-level fields help identify compatibility gaps without storing full submitted URLs, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.</p>
       <div class="demo-preview">verifier: human-verifiable-assistant-guide-verifier 0.2.1
 guide-sha256: a1b2c3 ... reviewed before use
-achieved-level: 3
+achieved-level: 4
+level5-ready: true
 findings: 0 blocking, 1 advisory
 note: conformance is not safety &mdash; read the guide</div>
       <div class="cta-row">

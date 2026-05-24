@@ -104,6 +104,10 @@ that a human can review in full before authorizing an assistant to follow it.
 - Level 5: a guide plus a conformant assistant runtime that mechanically
   enforces the execution contract
 
+Level 4 is the highest score for the guide file itself. Level 5 is not a
+higher guide-file score; it is a separate runtime enforcement claim for a
+deployment that executes a Level 4 guide.
+
 ## Local Evals
 
 Run the local regression suite with:
@@ -156,6 +160,10 @@ Both verifiers may report `level5_ready: true` for a Level 4 guide that also
 passes the guide-side preparation checks for runtime enforcement. This is not
 an achieved Level 5 claim; Level 5 still requires a conformant assistant
 runtime.
+
+User-facing score language should treat this as `Guide score: Level 4 of 4`
+plus `Runtime readiness: Level 5-ready`. Avoid `Level 4 of 5`, `almost Level
+5`, or similar phrasing that implies the guide file is missing a final point.
 
 Run the local reference verifier with:
 ```text

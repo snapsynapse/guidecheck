@@ -194,7 +194,7 @@
   <div class="container">
     <div class="panel" id="verifier">
       <h2>Check a guide</h2>
-      <p>Enter the public https URL of an <code>assistant-guide.txt</code> file, or just a site URL. The hosted verifier fetches it, runs the GuideCheck checks, and reports what it found. Given a site root, it checks the standard <code>/.well-known/assistant-guide.txt</code> path. This hosted verifier evaluates Levels 1 through 4 when a guide publishes a fetchable manifest and a supported independent anchor. The optional agent and expected-level fields help identify compatibility gaps across agent families.</p>
+      <p>Enter the public https URL of an <code>assistant-guide.txt</code> file, or just a site URL. The hosted verifier fetches it, runs the GuideCheck checks, and reports what it found. Given a site root, it checks the standard <code>/.well-known/assistant-guide.txt</code> path. This hosted verifier scores guide files up to Level 4 of 4 when a guide publishes a fetchable manifest and a supported independent anchor. Level 5 is a separate runtime enforcement claim. The optional agent and expected-level fields help identify compatibility gaps across agent families.</p>
       <form id="verify-form" class="verify-form" novalidate>
         <label for="guide-url">Guide URL</label>
         <div class="verify-input-row">
@@ -272,6 +272,7 @@
       Verifier authors can also review <a href="/verifier-examples">example outputs</a>.</p>
 
     <h2>What a verifier checks</h2>
+    <p>For a guide file, Level 4 is the highest score. Level 5 is not a higher guide-file score; it is a separate claim that a conformant assistant runtime mechanically enforced a Level 4 guide during execution.</p>
     <ul>
       <li>Reachability of the guide at <code>/.well-known/assistant-guide.txt</code> and the compact verification instruction.</li>
       <li>The strict ASCII byte profile, the 8 KiB size cap, and absence of disallowed constructs.</li>
@@ -280,7 +281,7 @@
     </ul>
 
     <h2>What a verifier reports</h2>
-    <p>A GuideCheck conformance claim is valid only when backed by verifier output, the guide SHA-256, the achieved level, and the findings. For Level 4 guides, verifier output may also report <code>level5_ready</code>. That is a guide-side readiness signal, not a Level 5 runtime conformance claim.</p>
+    <p>A GuideCheck conformance claim is valid only when backed by verifier output, the guide SHA-256, the achieved level, and the findings. For Level 4 guides, verifier output may also report <code>level5_ready</code>. That means the guide has reached the highest guide-file score and is prepared for a Level 5 runtime check. It is not an achieved Level 5 claim.</p>
     <pre>verifier: human-verifiable-assistant-guide-verifier 0.2.1
 guide-url: https://example.com/.well-known/assistant-guide.txt
 guide-sha256: a1b2c3d4 ... (review the guide before use)
@@ -295,7 +296,7 @@ note: conformance is not safety</pre>
     <p>A passing result, at any level, does not mean a guide is safe to follow or that its publisher is trustworthy. It means the file has the form the profile requires. Read the guide in full, apply the security practices a competent operator would already apply, and keep the human in the approval loop.</p>
 
     <h2>What this hosted verifier covers</h2>
-    <p>This hosted verifier evaluates GuideCheck Levels 1 through 4. For Level 4, it fetches the declared sidecar manifest and currently supports package-registry metadata and transparency-log anchors. It may report <code>level5_ready</code> when a Level 4 guide satisfies the guide-side runtime preparation checks. It does not yet fetch DNS TXT, repository-file, or signed <code>security.txt</code> anchors, and it does not evaluate runtime conformance (Level 5). Every hosted response carries a <code>hosted_limitations</code> field that states its scope.</p>
+    <p>This hosted verifier evaluates guide-file conformance from Level 1 through Level 4. For Level 4, it fetches the declared sidecar manifest and currently supports package-registry metadata and transparency-log anchors. It may report <code>level5_ready</code> when a Level 4 guide satisfies the guide-side runtime preparation checks. It does not yet fetch DNS TXT, repository-file, or signed <code>security.txt</code> anchors, and it does not evaluate runtime conformance (Level 5). Every hosted response carries a <code>hosted_limitations</code> field that states its scope.</p>
 
     <h2>Privacy</h2>
     <p>The guide URL you submit is sent to this site's server so it can fetch the file you named. The verifier keeps product telemetry limited to the target host, whether the path was the standard well-known path or a custom path, the selected agent category, expected level, achieved level, outcome, failure category, and coarse duration. It does not store full submitted URLs, query strings, prompts, model responses, IP addresses, or stable visitor identifiers in product telemetry. The optional agent and expected-level fields are used to find compatibility gaps, such as an agent family often expecting Level 3 but receiving Level 1. The hosting platform keeps standard short-lived request logs &mdash; timestamp, client IP, and the <code>/api/verify</code> path &mdash; for abuse prevention; those logs do not contain the guide URL.</p>

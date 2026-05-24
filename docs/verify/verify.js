@@ -137,12 +137,14 @@
     var pass = blocking === 0;
     var readiness = "";
     if (achievedLevel >= 4) {
-      readiness = guide.level5_ready ? " - Level 5-ready" : " - not Level 5-ready";
+      readiness = guide.level5_ready
+        ? " - Runtime readiness: Level 5-ready"
+        : " - Runtime readiness: not Level 5-ready";
     }
 
     headline.className = "verify-headline " + (pass ? "is-pass" : "is-fail");
     headline.textContent = pass
-      ? "Achieved Level " + achievedLevel + " · 0 blocking · " + plural(summary.warnings || 0, "warning") + readiness
+      ? "Guide score: Level " + achievedLevel + " of 4 · 0 blocking · " + plural(summary.warnings || 0, "warning") + readiness
       : "Not conformant · " + plural(blocking, "blocking finding") + " · " + plural(summary.warnings || 0, "warning") + readiness;
 
     if (data.location_note) {

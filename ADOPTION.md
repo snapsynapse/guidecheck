@@ -62,6 +62,11 @@ safety claim.
 A guide is not obliged to reach Level 3 in one step. Publishing at Level 1 or
 2 first is a valid and useful state.
 
+For teams seeking the highest guide-file score, the target is Level 4 of 4.
+If verifier output also says `level5_ready: true`, the guide is prepared for a
+Level 5 runtime check. The checker should not present this as `Level 4 of 5`
+or as a missing point.
+
 ## How to reach each level
 
 ### Level 1: plain text available

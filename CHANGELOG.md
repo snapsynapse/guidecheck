@@ -22,6 +22,8 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   content evaluation
 - hosted verifier result copy now surfaces Level 5 readiness without presenting
   it as achieved Level 5
+- public score language now frames Level 4 as the highest guide-file score and
+  Level 5 as separate runtime enforcement
 
 ## [0.2.1] - 2026-05-22
 
