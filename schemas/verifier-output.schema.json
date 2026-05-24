@@ -76,7 +76,10 @@
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "claimed_level": { "type": "integer", "minimum": 0, "maximum": 5 },
         "achieved_level": { "type": "integer", "minimum": 0, "maximum": 4 },
-        "level5_ready": { "type": "boolean" }
+        "level5_ready": {
+          "type": "boolean",
+          "description": "Guide-side readiness signal for Level 4 guides. True does not mean achieved Level 5."
+        }
       }
     },
     "manifest": {

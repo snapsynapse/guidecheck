@@ -132,13 +132,18 @@
   function renderEvaluated(data) {
     var guide = data.guide || {};
     var summary = data.summary || {};
+    var achievedLevel = guide.achieved_level || 0;
     var blocking = summary.blocking_findings || 0;
     var pass = blocking === 0;
+    var readiness = "";
+    if (achievedLevel >= 4) {
+      readiness = guide.level5_ready ? " - Level 5-ready" : " - not Level 5-ready";
+    }
 
     headline.className = "verify-headline " + (pass ? "is-pass" : "is-fail");
     headline.textContent = pass
-      ? "Achieved Level " + (guide.achieved_level || 0) + " · 0 blocking · " + plural(summary.warnings || 0, "warning")
-      : "Not conformant · " + plural(blocking, "blocking finding") + " · " + plural(summary.warnings || 0, "warning");
+      ? "Achieved Level " + achievedLevel + " · 0 blocking · " + plural(summary.warnings || 0, "warning") + readiness
+      : "Not conformant · " + plural(blocking, "blocking finding") + " · " + plural(summary.warnings || 0, "warning") + readiness;
 
     if (data.location_note) {
       messageEl.textContent = data.location_note;

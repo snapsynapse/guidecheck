@@ -14,11 +14,14 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   anchors, and transparency-log anchors
 - Level 5 readiness reporting for Level 4 guides, including static ready and
   not-ready fixtures
+- hosted API coverage for Level 4 guides that are not Level 5-ready
 
 ### Changed
 
 - manifest failures now block Level 4 without lowering otherwise valid Level 3
   content evaluation
+- hosted verifier result copy now surfaces Level 5 readiness without presenting
+  it as achieved Level 5
 
 ## [0.2.1] - 2026-05-22
 

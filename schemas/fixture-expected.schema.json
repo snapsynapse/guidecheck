@@ -51,7 +51,8 @@
       "uniqueItems": true
     },
     "level5_ready": {
-      "type": "boolean"
+      "type": "boolean",
+      "description": "Expected guide-side Level 5 readiness signal. True does not mean achieved Level 5."
     }
   }
 }
