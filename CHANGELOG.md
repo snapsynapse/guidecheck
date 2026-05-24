@@ -15,6 +15,8 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 - Level 5 readiness reporting for Level 4 guides, including static ready and
   not-ready fixtures
 - hosted API coverage for Level 4 guides that are not Level 5-ready
+- hosted verifier public-web warnings for content variation and missing or
+  incompatible response headers
 
 ### Changed
 
@@ -24,6 +26,10 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   it as achieved Level 5
 - public score language now frames Level 4 as the highest guide-file score and
   Level 5 as separate runtime enforcement
+- public-web fetch replay tests now capture reportable response headers and
+  exercise hosted content-variation checks
+- adoption guidance now includes npm, PyPI, Cargo, and generic package
+  registry metadata examples for Level 4 anchors
 
 ## [0.2.1] - 2026-05-22
 

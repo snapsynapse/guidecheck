@@ -189,8 +189,8 @@ Temporary limitations:
 - no hosted support yet for DNS TXT, repository-file, or signed `security.txt`
   Level 4 anchors
 - the hosted verifier is a Level 1-4 preview; its SSRF and abuse controls are
-  covered by unit tests in `scripts/test_fetch_safety.py`, but public-web
-  fetch replay fixtures, redirect cases, and TLS cases are still outstanding
+  covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
+  redirects, response size limits, header capture, and content variation
 - no Level 5 runtime conformance claim; Level 5 remains out of scope for the
   reference verifier
 

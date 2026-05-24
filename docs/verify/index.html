@@ -276,6 +276,7 @@
     <ul>
       <li>Reachability of the guide at <code>/.well-known/assistant-guide.txt</code> and the compact verification instruction.</li>
       <li>The strict ASCII byte profile, the 8 KiB size cap, and absence of disallowed constructs.</li>
+      <li>Public-web fetch evidence, including response headers and content variation across harmless request profiles.</li>
       <li>Required sections, the assistant safety contract, and explicit approval gates.</li>
       <li>Level 4 provenance signals: sidecar manifest evidence plus supported independent anchors.</li>
     </ul>
@@ -296,7 +297,7 @@ note: conformance is not safety</pre>
     <p>A passing result, at any level, does not mean a guide is safe to follow or that its publisher is trustworthy. It means the file has the form the profile requires. Read the guide in full, apply the security practices a competent operator would already apply, and keep the human in the approval loop.</p>
 
     <h2>What this hosted verifier covers</h2>
-    <p>This hosted verifier evaluates guide-file conformance from Level 1 through Level 4. For Level 4, it fetches the declared sidecar manifest and currently supports package-registry metadata and transparency-log anchors. It may report <code>level5_ready</code> when a Level 4 guide satisfies the guide-side runtime preparation checks. It does not yet fetch DNS TXT, repository-file, or signed <code>security.txt</code> anchors, and it does not evaluate runtime conformance (Level 5). Every hosted response carries a <code>hosted_limitations</code> field that states its scope.</p>
+    <p>This hosted verifier evaluates guide-file conformance from Level 1 through Level 4. It reports advisory findings for missing or incompatible public-web response headers and for guide bytes that vary across harmless request profiles. For Level 4, it fetches the declared sidecar manifest and currently supports package-registry metadata and transparency-log anchors. It may report <code>level5_ready</code> when a Level 4 guide satisfies the guide-side runtime preparation checks. It does not yet fetch DNS TXT, repository-file, or signed <code>security.txt</code> anchors, and it does not evaluate runtime conformance (Level 5). Every hosted response carries a <code>hosted_limitations</code> field that states its scope.</p>
 
     <h2>Privacy</h2>
     <p>The guide URL you submit is sent to this site's server so it can fetch the file you named. The verifier keeps product telemetry limited to the target host, whether the path was the standard well-known path or a custom path, the selected agent category, expected level, achieved level, outcome, failure category, and coarse duration. It does not store full submitted URLs, query strings, prompts, model responses, IP addresses, or stable visitor identifiers in product telemetry. The optional agent and expected-level fields are used to find compatibility gaps, such as an agent family often expecting Level 3 but receiving Level 1. The hosting platform keeps standard short-lived request logs &mdash; timestamp, client IP, and the <code>/api/verify</code> path &mdash; for abuse prevention; those logs do not contain the guide URL.</p>

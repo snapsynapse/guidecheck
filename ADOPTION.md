@@ -116,6 +116,37 @@ or as a missing point.
 3. Confirm a verifier reports both the manifest match and one agreeing
    independent anchor.
 
+Package registry examples:
+
+- npm `package.json`:
+```text
+"assistantGuide": {
+  "url": "https://example.com/.well-known/assistant-guide.txt",
+  "sha256": "<64-hex>"
+}
+```
+- PyPI `pyproject.toml`:
+```text
+[project.urls]
+Assistant-Guide = "https://example.com/.well-known/assistant-guide.txt"
+```
+  Carry the hash in the sidecar manifest referenced by the guide metadata.
+- Cargo `Cargo.toml`:
+```text
+[package.metadata.assistant-guide]
+url = "https://example.com/.well-known/assistant-guide.txt"
+sha256 = "<64-hex>"
+```
+- Generic registry metadata:
+```text
+assistantGuide.url = "https://example.com/.well-known/assistant-guide.txt"
+assistantGuide.sha256 = "<64-hex>"
+```
+
+When package registry metadata is the chosen independent anchor, include a
+`registry-url` in the guide metadata that points to a specific package record,
+not a registry homepage or search result.
+
 ### Level 5: runtime-enforced execution
 
 Level 5 is not a guide-only claim. A guide author prepares for it by reaching

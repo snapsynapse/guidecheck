@@ -75,11 +75,6 @@ Candidates for 0.3.0 and later. Not commitments.
 - Add a signed or otherwise independently anchored `security.txt` plan before
   claiming it as a Level 4 channel.
 - Add immutable release URLs and a static fixture for the tagged 0.2.0 release.
-- Implement public-web content-variation checks in the hosted verifier; the
-  fixture scenario exists, but the hosted checker does not yet re-fetch.
-- Add public-web header findings for missing or incompatible `Content-Type`,
-  missing `X-Content-Type-Options: nosniff`, and missing HSTS where hosting
-  supports it.
 - Add signed verifier-report envelopes for hosted checker and CI consumption.
 
 ## Documentation work
@@ -89,8 +84,6 @@ Candidates for 0.3.0 and later. Not commitments.
   section numbers.
 - Expand verifier author guidance with examples of compact reports and full
   machine-readable output.
-- Add examples for package registry metadata in npm, PyPI, Cargo, and generic
-  registries.
 - Add a short threat-model primer for maintainers adding new finding ids.
 - Expand the verifier examples page with full passing, failing, `not-found`,
   and warning-bearing JSON reports generated from current fixtures.
@@ -110,16 +103,14 @@ Candidates for 0.3.0 and later. Not commitments.
 - Extend schema and fixture coverage as the local-file CLI contract evolves.
 - Add exact JSON Schema validation for manifest, verifier output, and fixture
   expected files using a pinned portable tool.
-- Add public-web replay fixtures through local HTTP servers for redirects,
-  content-type headers, response size limits, and content variation.
+- Add public-web replay fixtures through local HTTP servers for TLS edge cases
+  and additional header variants.
 - Replace modeled public-fetch scenarios with replayable public-web fixtures
   where practical, while keeping non-network deterministic tests as the default
   CI path.
 - Add deterministic tests for the remaining cross-channel hash anchor types.
 - Add tests for registry-url parsing across npm, PyPI, Cargo, and generic
   registry records.
-- Add hosted verifier implementation support for the existing
-  `fetch.content-variation` fixture warning.
 
 ## Release readiness
 

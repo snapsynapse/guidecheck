@@ -36,6 +36,12 @@ READ_TIMEOUT = 8.0
 TOTAL_DEADLINE = 12.0
 MAX_REDIRECTS = 5
 USER_AGENT = "guidecheck-hosted/0.2.1 (+https://guidecheck.org/verify/)"
+REPORT_HEADERS = {
+    "content-type",
+    "x-content-type-options",
+    "strict-transport-security",
+    "content-length",
+}
 
 # Best-effort multi-label public suffixes so a redirect from example.co.uk to
 # evil.co.uk is treated as cross-domain. This is a curated subset, not the full
@@ -136,18 +142,23 @@ def _open_tls(host: str, port: int, ip: str) -> ssl.SSLSocket:
         raise
 
 
-def _request_headers() -> dict[str, str]:
+def _request_headers(request_profile: str = "default") -> dict[str, str]:
     # No cookies, no authorization, no ambient credentials. Identity encoding
     # keeps the size cap exact and avoids decompression bombs.
+    user_agent = USER_AGENT
+    accept = "text/plain, */*;q=0.1"
+    if request_profile == "variation":
+        user_agent = "guidecheck-hosted-variation/0.2.1 (+https://guidecheck.org/verify/)"
+        accept = "text/plain;q=1.0, application/octet-stream;q=0.2, */*;q=0.1"
     return {
-        "User-Agent": USER_AGENT,
-        "Accept": "text/plain, */*;q=0.1",
+        "User-Agent": user_agent,
+        "Accept": accept,
         "Accept-Encoding": "identity",
         "Connection": "close",
     }
 
 
-def safe_fetch(url: str) -> FetchResult:
+def safe_fetch(url: str, request_profile: str = "default") -> FetchResult:
     """Fetch a public guide URL with SSRF, size, redirect, and timeout limits.
 
     Raises FetchError with a sanitized message on any rejection or failure.
@@ -195,7 +206,7 @@ def safe_fetch(url: str) -> FetchResult:
         conn = http.client.HTTPSConnection(host, port, timeout=READ_TIMEOUT)
         conn.sock = tls
         try:
-            conn.request("GET", path, headers=_request_headers())
+            conn.request("GET", path, headers=_request_headers(request_profile))
             response = conn.getresponse()
             status = response.status
 
@@ -216,11 +227,15 @@ def safe_fetch(url: str) -> FetchResult:
             if len(body) > MAX_BYTES:
                 raise FetchError("too-large", "the guide exceeds the size limit")
 
-            content_type = response.getheader("Content-Type", "")
+            headers = {
+                key.lower(): value
+                for key, value in response.getheaders()
+                if key.lower() in REPORT_HEADERS
+            }
             return FetchResult(
                 final_url=current,
                 status=status,
-                headers={"content-type": content_type} if content_type else {},
+                headers=headers,
                 body=body,
                 redirects=redirects,
                 tls_valid=True,

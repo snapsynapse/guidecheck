@@ -67,7 +67,7 @@ Cases still to add:
 
 - additional metadata parser-confusion cases
 - public-fetch redirect-chain details beyond the modeled cross-domain case
-- implementation of public-web content-variation checks in the hosted verifier
+- additional replay fixtures for TLS edge cases and public-web header variants
 - additional Level 4 anchor scenarios for registry, repository, signed security.txt, and transparency logs
 
 Some additional mutation cases remain covered by generated local evals in

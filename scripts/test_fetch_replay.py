@@ -41,6 +41,9 @@ class FakeResponse:
     def getheader(self, name: str, default: str | None = None) -> str | None:
         return self.headers.get(name, default)
 
+    def getheaders(self) -> list[tuple[str, str]]:
+        return list(self.headers.items())
+
     def read(self, size: int | None = None) -> bytes:
         if size is None:
             return self.body
@@ -110,10 +113,23 @@ def test_success() -> None:
 
 def test_header_capture() -> None:
     result = with_fake_fetch(
-        [FakeResponse(200, {"Content-Type": "text/plain; charset=utf-8", "Content-Length": "18"}, b"Assistant Guide: X\n")],
+        [
+            FakeResponse(
+                200,
+                {
+                    "Content-Type": "text/plain; charset=utf-8",
+                    "Content-Length": "18",
+                    "Set-Cookie": "session=secret",
+                },
+                b"Assistant Guide: X\n",
+            )
+        ],
         "https://example.com/.well-known/assistant-guide.txt",
     )
-    check("headers capture content-type", result.headers == {"content-type": "text/plain; charset=utf-8"})
+    check(
+        "headers capture content-type",
+        result.headers == {"content-type": "text/plain; charset=utf-8", "content-length": "18"},
+    )
 
 
 def test_same_domain_redirect() -> None:

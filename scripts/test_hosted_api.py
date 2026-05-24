@@ -65,11 +65,24 @@ class FakeRequest:
         )
 
 
-def fetched(url: str, status: int, body: bytes, content_type: str = "text/plain; charset=utf-8"):
+def fetched(
+    url: str,
+    status: int,
+    body: bytes,
+    content_type: str = "text/plain; charset=utf-8",
+    headers: dict[str, str] | None = None,
+):
+    response_headers = {
+        "content-type": content_type,
+        "x-content-type-options": "nosniff",
+        "strict-transport-security": "max-age=31536000",
+    }
+    if headers is not None:
+        response_headers = headers
     return SimpleNamespace(
         final_url=url,
         status=status,
-        headers={"content-type": content_type},
+        headers=response_headers,
         body=body,
         redirects=[],
         tls_valid=True,
@@ -257,6 +270,40 @@ def test_noncanonical_location_note() -> None:
     check("noncanonical location note", "location_note" in body)
 
 
+def test_header_warnings() -> None:
+    data = (ROOT / "fixtures" / "valid" / "level-3" / "guide.txt").read_bytes()
+    url = "https://example.com/.well-known/assistant-guide.txt"
+    request = run_post(
+        {"url": url},
+        lambda checked: fetched(checked, 200, data, headers={"content-type": "text/plain"}),
+    )
+    body = request.body or {}
+    warnings = [finding["id"] for finding in body.get("findings", []) if finding["severity"] == "warning"]
+    check("header warnings status", request.status == 200)
+    check("header content-type warning", "header.content-type.incompatible" in warnings)
+    check("header nosniff warning", "header.x-content-type-options.missing" in warnings)
+    check("header hsts warning", "header.hsts.missing" in warnings)
+
+
+def test_content_variation_warning() -> None:
+    first = (ROOT / "fixtures" / "valid" / "level-3" / "guide.txt").read_bytes()
+    second = first.replace(b"Assistant Guide: example-cli local install", b"Assistant Guide: changed-cli local install")
+    url = "https://example.com/.well-known/assistant-guide.txt"
+    calls = 0
+
+    def fake_fetch(checked, request_profile="default"):
+        nonlocal calls
+        calls += 1
+        return fetched(checked, 200, second if request_profile == "variation" else first)
+
+    request = run_post({"url": url}, fake_fetch)
+    body = request.body or {}
+    warnings = [finding["id"] for finding in body.get("findings", []) if finding["severity"] == "warning"]
+    check("content variation status", request.status == 200)
+    check("content variation refetched", calls >= 2)
+    check("content variation warning", "fetch.content-variation" in warnings)
+
+
 def test_not_found() -> None:
     request = run_post(
         {"url": "https://example.com/"},
@@ -319,6 +366,8 @@ def main() -> int:
     test_evaluated_level4_missing_anchor()
     test_auto_resolved_origin()
     test_noncanonical_location_note()
+    test_header_warnings()
+    test_content_variation_warning()
     test_not_found()
     test_not_a_guide()
     test_errors()

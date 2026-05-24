@@ -256,6 +256,88 @@ def _body_text(body: bytes) -> str:
     return body.decode("utf-8", errors="replace")
 
 
+def _header_findings(fetched) -> list[gv.Finding]:
+    headers = {str(k).lower(): str(v) for k, v in (fetched.headers or {}).items()}
+    findings: list[gv.Finding] = []
+    content_type = headers.get("content-type", "")
+    content_type_lower = content_type.lower()
+    if not content_type:
+        findings.append(
+            gv.Finding(
+                "header.content-type.missing",
+                "warning",
+                "served guide response is missing Content-Type",
+                section="verifier-conformance.12",
+            )
+        )
+    elif "text/plain" not in content_type_lower or "charset=utf-8" not in content_type_lower:
+        findings.append(
+            gv.Finding(
+                "header.content-type.incompatible",
+                "warning",
+                "served guide response should use Content-Type: text/plain; charset=utf-8",
+                section="verifier-conformance.12",
+                evidence=content_type,
+            )
+        )
+    xcto = headers.get("x-content-type-options", "")
+    if xcto.lower() != "nosniff":
+        findings.append(
+            gv.Finding(
+                "header.x-content-type-options.missing",
+                "warning",
+                "served guide response should include X-Content-Type-Options: nosniff",
+                section="verifier-conformance.12",
+            )
+        )
+    if "strict-transport-security" not in headers:
+        findings.append(
+            gv.Finding(
+                "header.hsts.missing",
+                "warning",
+                "served guide response should include Strict-Transport-Security when hosting supports it",
+                section="verifier-conformance.12",
+            )
+        )
+    return findings
+
+
+def _content_variation_findings(url: str, fetched) -> list[gv.Finding]:
+    try:
+        refetched = safe_fetch(url, request_profile="variation")
+    except TypeError:
+        refetched = safe_fetch(url)
+    except FetchError as exc:
+        return [
+            gv.Finding(
+                "fetch.content-variation.unchecked",
+                "warning",
+                "content variation check could not re-fetch the guide",
+                section="verifier-conformance.9",
+                evidence=exc.code,
+            )
+        ]
+    except Exception:
+        return [
+            gv.Finding(
+                "fetch.content-variation.unchecked",
+                "warning",
+                "content variation check could not re-fetch the guide",
+                section="verifier-conformance.9",
+            )
+        ]
+    if refetched.status != fetched.status or refetched.body != fetched.body:
+        return [
+            gv.Finding(
+                "fetch.content-variation",
+                "warning",
+                "guide bytes varied between harmless public fetch profiles",
+                section="verifier-conformance.9",
+            )
+        ]
+    return []
+
+
 def _fetch_text_evidence(url: str, evidence_kind: str, findings: list[gv.Finding]) -> str | None:
     try:
         fetched = safe_fetch(url)
@@ -610,6 +692,8 @@ class handler(BaseHTTPRequestHandler):
             self._write_json(200, build_not_a_guide(url, checked_url, auto_resolved, fetched, now))
             return
 
+        hosted_fetch_findings = _header_findings(fetched)
+        hosted_fetch_findings.extend(_content_variation_findings(checked_url, fetched))
         manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(fetched.body)
         findings, achieved_level, level5_ready, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
             fetched.body,
@@ -619,6 +703,7 @@ class handler(BaseHTTPRequestHandler):
         )
         if manifest_evidence is not None:
             manifest_evidence.fetched = True
+        findings.extend(hosted_fetch_findings)
         findings.extend(hosted_evidence_findings)
         _log_product_event(
             now=now,
