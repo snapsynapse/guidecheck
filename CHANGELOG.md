@@ -4,6 +4,8 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-24
+
 ### Added
 
 - local-file reference verifier support for Level 4 manifest and
@@ -106,7 +108,8 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.3.0
 [0.2.1]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.2.0
 [0.1.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.1.0

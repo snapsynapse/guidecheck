@@ -66,7 +66,7 @@
     <p>Hosted-verifier product telemetry is separate from verifier output. It may record sanitized operational fields such as target host, path category, selected agent category, expected level, achieved level, outcome, failure category, and coarse duration, but those fields are not part of the normative verifier report consumed by an assistant runtime.</p>
 
     <h2>Passing Level 3 Compact Report</h2>
-    <pre>Verifier: guidecheck-reference-local 0.2.1
+    <pre>Verifier: guidecheck-reference-local 0.3.0
 Guide: assistant-guide.txt
 Level: 3
 SHA-256: 65a90dd704b26aa856ff91bc1ebb524829c41546bd78f3b33b1dfa2efedb2b09
@@ -76,7 +76,7 @@ Hash pinned: no
 Proceed? yes</pre>
 
     <h2>Passing Level 4 Compact Report</h2>
-    <pre>Verifier: guidecheck-reference-local 0.2.1
+    <pre>Verifier: guidecheck-reference-local 0.3.0
 Guide: fixtures/valid/level-4/guide.txt
 Level: 4
 SHA-256: 720c8933dc0684220e8d75a145f84b56591e67f16847a48b626f9de4991acfd1
@@ -86,7 +86,7 @@ Hash pinned: yes
 Proceed? yes</pre>
 
     <h2>Failing Compact Report</h2>
-    <pre>Verifier: guidecheck-reference-local 0.2.1
+    <pre>Verifier: guidecheck-reference-local 0.3.0
 Guide: fixtures/invalid/missing-verification/guide.txt
 Level: 0
 SHA-256: 4a0d...
@@ -99,11 +99,11 @@ Proceed? no</pre>
     <pre>{
   "verifier": {
     "name": "guidecheck-reference-local",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "0.2.1",
+    "verifier_profile_version": "0.3.0",
     "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "0.2.1"
+    "guide_profile_version": "0.3.0"
   },
   "input": {
     "evaluation_mode": "local-file",

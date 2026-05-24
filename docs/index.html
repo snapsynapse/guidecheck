@@ -482,9 +482,9 @@
       <span class="sep" aria-hidden="true">&middot;</span>
       Published <time datetime="2026-05-21">May 21, 2026</time>
       <span class="sep" aria-hidden="true">&middot;</span>
-      Updated <time datetime="2026-05-22">May 22, 2026</time>
+      Updated <time datetime="2026-05-24">May 24, 2026</time>
       <span class="sep" aria-hidden="true">&middot;</span>
-      <span class="version">v0.2.1</span>
+      <span class="version">v0.3.0</span>
       <span class="sep" aria-hidden="true">&middot;</span>
       <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank">CC&nbsp;BY&nbsp;4.0</a>
     </p>
@@ -585,8 +585,8 @@
 <pre>[assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.2.1
-guide-version: 0.2.1
+profile-version: 0.3.0
+guide-version: 0.3.0
 applies-to: example-project 1.x
 canonical-url: https://example.com/.well-known/assistant-guide.txt
 source-path: /.well-known/assistant-guide.txt
@@ -620,7 +620,7 @@ GET /.well-known/assistant-guide.txt
     <div class="demo-block">
       <h2>Verify a guide</h2>
       <p>GuideCheck publishes a primary verifier for usability &mdash; never as the only authoritative verifier and never as a root of trust. It reports what it checked and what it did not. Guide files score up to Level 4 of 4; Level 5 is a separate runtime enforcement claim. Optional agent and expected-level fields help identify compatibility gaps without storing full submitted URLs, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.</p>
-      <div class="demo-preview">verifier: human-verifiable-assistant-guide-verifier 0.2.1
+      <div class="demo-preview">verifier: human-verifiable-assistant-guide-verifier 0.3.0
 guide-sha256: a1b2c3 ... reviewed before use
 achieved-level: 4
 level5-ready: true
@@ -639,11 +639,11 @@ note: conformance is not safety &mdash; read the guide</div>
       and <a href="https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md" target="_blank" rel="noopener">verifier-conformance.md</a>.
       Any cross-posts on other platforms are derived from this source and should cite
       <a href="https://guidecheck.org/">guidecheck.org</a> as canonical.
-      Profile version 0.2.1, draft for review. Last substantive revision:
-      <time datetime="2026-05-22">2026-05-22</time>.
+      Profile version 0.3.0, draft for review. Last substantive revision:
+      <time datetime="2026-05-24">2026-05-24</time>.
       <a href="https://github.com/snapsynapse/guidecheck/commits/main/spec.md" target="_blank" rel="noopener">Revision history &rarr;</a>
       Feedback from AI governance, security, and platform practitioners is wanted
-      while the profile sits at 0.2.1:
+      while the profile sits at 0.3.0:
       <a href="https://github.com/snapsynapse/guidecheck/issues" target="_blank" rel="noopener">open an issue</a>
       or <a href="https://github.com/snapsynapse/guidecheck/discussions" target="_blank" rel="noopener">start a discussion</a>.
     </aside>
@@ -655,7 +655,7 @@ note: conformance is not safety &mdash; read the guide</div>
   <div class="container">
     <div class="footer-grid">
       <div class="footer-meta">
-        <p>GuideCheck v0.2.1 &middot; <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank">CC BY 4.0</a> (spec) &middot; <a href="https://github.com/snapsynapse/guidecheck/blob/main/LICENSE-MIT" target="_blank" rel="noopener">MIT</a> (code)</p>
+        <p>GuideCheck v0.3.0 &middot; <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank">CC BY 4.0</a> (spec) &middot; <a href="https://github.com/snapsynapse/guidecheck/blob/main/LICENSE-MIT" target="_blank" rel="noopener">MIT</a> (code)</p>
         <p>Part of the <a href="https://paice.foundation/" target="_blank" rel="noopener">PAICE Portfolio</a>.</p>
         <p style="margin-top: 0.5rem;">See also: <a href="https://gracefulboundaries.dev/" target="_blank" rel="noopener">Graceful Boundaries</a> &middot; <a href="https://knowledge-as-code.com/" target="_blank" rel="noopener">Knowledge as Code</a> &middot; <a href="https://skillprovenance.dev/" target="_blank" rel="noopener">Skill Provenance</a> &middot; <a href="https://hardguard25.com/" target="_blank" rel="noopener">HardGuard25</a></p>
       </div>
