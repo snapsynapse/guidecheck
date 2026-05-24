@@ -132,10 +132,10 @@ Verifier work is split by evaluation mode. Two verifiers exist:
   Levels 1 through 4 when local manifest and independent-anchor evidence are
   supplied
 - a hosted public-web verifier at https://guidecheck.org/verify, which fetches
-  a guide by URL and applies the Level 1-3 checks. The hosted verifier
-  also accepts optional agent category and expected-level inputs so product
-  telemetry can show where specific agent families routinely miss expected
-  conformance levels.
+  a guide by URL and applies Level 1-4 checks when supported public-web
+  provenance evidence is available. The hosted verifier also accepts optional
+  agent category and expected-level inputs so product telemetry can show where
+  specific agent families routinely miss expected conformance levels.
 
 Both verifiers:
 
@@ -147,9 +147,10 @@ Both verifiers:
   command restrictions, prohibited patterns, status, and staleness
 - emit machine-readable verifier output plus the compact human-readable report
 
-The local reference CLI additionally checks Level 4 sidecar manifests, guide
-hash and byte-count matches, and local independent-anchor evidence supplied
-with `--anchor`.
+Both verifiers check Level 4 sidecar manifests plus guide hash and byte-count
+matches. The local reference CLI accepts local independent-anchor evidence with
+`--anchor`. The hosted verifier fetches supported public-web anchors:
+package-registry metadata and transparency-log entries.
 
 Run the local reference verifier with:
 ```text
@@ -172,8 +173,9 @@ yet complete, and the hosted implementation has not been shown to pass it.
 
 Temporary limitations:
 
-- no hosted public-web conformance claim beyond Level 3
-- the hosted verifier is a Level 1-3 preview; its SSRF and abuse controls are
+- no hosted support yet for DNS TXT, repository-file, or signed `security.txt`
+  Level 4 anchors
+- the hosted verifier is a Level 1-4 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`, but public-web
   fetch replay fixtures, redirect cases, and TLS cases are still outstanding
 - no Level 5 runtime conformance claim; Level 5 remains out of scope for the

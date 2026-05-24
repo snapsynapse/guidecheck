@@ -3,7 +3,8 @@ GuideCheck hosted verifier API.
 
 POST /api/verify with { "url": "https://..." }. The function resolves the
 target, fetches it over the public web with SSRF protections, classifies the
-outcome, and for a real guide artifact runs the GuideCheck Level 1-3 checks.
+outcome, and for a real guide artifact runs the GuideCheck Level 1-4 checks
+where supported public-web provenance evidence is available.
 
 A bare origin (no path) is resolved to the standard guide location at
 /.well-known/assistant-guide.txt, so a user can paste a site URL and still
@@ -17,9 +18,10 @@ Outcomes (HTTP 200, body carries "outcome"):
 Genuine failures (bad request, https/SSRF rejection, DNS, timeout, rate
 limit) return HTTP 4xx with an {"error": ...} body.
 
-This hosted verifier evaluates Levels 1 through 3 only and always returns a
-hosted_limitations field. Check logic is shared with the local reference
-verifier via scripts/guidecheck_verify.evaluate_guide.
+This hosted verifier evaluates Levels 1 through 4, with a scoped Level 4
+anchor set, and always returns a hosted_limitations field. Check logic is
+shared with the local reference verifier via
+scripts/guidecheck_verify.evaluate_guide.
 """
 
 from __future__ import annotations
@@ -48,8 +50,8 @@ WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
 ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
-    "This verifier evaluates Levels 1 through 3 only.",
-    "Level 4 provenance and independent anchors are not implemented.",
+    "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
+    "Hosted Level 4 currently supports package-registry and transparency-log anchors; DNS TXT, repository-file, and signed security.txt anchors are not fetched.",
     "Level 5 runtime conformance is not evaluated.",
 ]
 
@@ -137,7 +139,7 @@ def _analytics_context(payload: dict | None) -> dict:
     provider, family = AGENT_CHOICES[agent_key]
 
     raw_level = payload.get("requested_level")
-    requested_level = raw_level if isinstance(raw_level, int) and raw_level in (1, 2, 3) else None
+    requested_level = raw_level if isinstance(raw_level, int) and raw_level in (1, 2, 3, 4) else None
     return {
         "agent_provider": provider,
         "agent_model_family": family,
@@ -169,6 +171,8 @@ def _failure_category(outcome: str, findings: list[gv.Finding] | None = None, er
         return "actions"
     if any(fid.startswith("content.") for fid in blocker_ids):
         return "required_content"
+    if any(fid.startswith("manifest.") or fid.startswith("anchor.") for fid in blocker_ids):
+        return "provenance"
     return "other_blocking_findings"
 
 
@@ -239,6 +243,105 @@ def well_known_for(url: str) -> str:
     return urlunsplit((parts.scheme, parts.netloc, WELL_KNOWN_PATH, "", ""))
 
 
+def _guide_metadata(body: bytes) -> dict[str, str]:
+    blocks, _ = gv.parse_key_block(
+        gv.decode_text(body),
+        "[assistant-guide-metadata]",
+        "[/assistant-guide-metadata]",
+    )
+    return blocks[0] if len(blocks) == 1 else {}
+
+
+def _body_text(body: bytes) -> str:
+    return body.decode("utf-8", errors="replace")
+
+
+def _fetch_text_evidence(url: str, evidence_kind: str, findings: list[gv.Finding]) -> str | None:
+    try:
+        fetched = safe_fetch(url)
+    except FetchError as exc:
+        severity = "error" if evidence_kind == "manifest" else "warning"
+        fid = "manifest.fetch-failed" if evidence_kind == "manifest" else "anchor.independent.unreachable"
+        findings.append(
+            gv.Finding(
+                fid,
+                severity,
+                f"{evidence_kind} could not be fetched",
+                section="verifier-conformance.22" if evidence_kind == "manifest" else "verifier-conformance.23",
+                evidence=exc.code,
+            )
+        )
+        return None
+    except Exception:
+        severity = "error" if evidence_kind == "manifest" else "warning"
+        fid = "manifest.fetch-failed" if evidence_kind == "manifest" else "anchor.independent.unreachable"
+        findings.append(
+            gv.Finding(
+                fid,
+                severity,
+                f"{evidence_kind} could not be fetched",
+                section="verifier-conformance.22" if evidence_kind == "manifest" else "verifier-conformance.23",
+            )
+        )
+        return None
+
+    if fetched.status != 200:
+        severity = "error" if evidence_kind == "manifest" else "warning"
+        fid = "manifest.fetch-failed" if evidence_kind == "manifest" else "anchor.independent.unreachable"
+        findings.append(
+            gv.Finding(
+                fid,
+                severity,
+                f"{evidence_kind} returned HTTP {fetched.status}",
+                section="verifier-conformance.22" if evidence_kind == "manifest" else "verifier-conformance.23",
+            )
+        )
+        return None
+    if looks_like_html(fetched.body):
+        severity = "error" if evidence_kind == "manifest" else "warning"
+        fid = "manifest.fetch-failed" if evidence_kind == "manifest" else "anchor.independent.unreachable"
+        findings.append(
+            gv.Finding(
+                fid,
+                severity,
+                f"{evidence_kind} returned HTML instead of plain text evidence",
+                section="verifier-conformance.22" if evidence_kind == "manifest" else "verifier-conformance.23",
+            )
+        )
+        return None
+    return _body_text(fetched.body)
+
+
+def _hosted_level4_evidence(body: bytes) -> tuple[str | None, dict[str, str], list[gv.Finding]]:
+    metadata = _guide_metadata(body)
+    manifest_url = metadata.get("manifest-url")
+    extra_findings: list[gv.Finding] = []
+    anchor_texts: dict[str, str] = {}
+    manifest_text: str | None = None
+
+    if not manifest_url:
+        return None, anchor_texts, extra_findings
+
+    manifest_text = _fetch_text_evidence(manifest_url, "manifest", extra_findings)
+    if manifest_text is None:
+        return None, anchor_texts, extra_findings
+
+    registry_url = metadata.get("registry-url")
+    if registry_url:
+        registry_text = _fetch_text_evidence(registry_url, "package-registry anchor", extra_findings)
+        if registry_text is not None:
+            anchor_texts["package-registry"] = registry_text
+
+    manifest = gv.parse_manifest(manifest_text)
+    transparency_url = manifest.get("transparency-log-url")
+    if transparency_url:
+        transparency_text = _fetch_text_evidence(transparency_url, "transparency-log anchor", extra_findings)
+        if transparency_text is not None:
+            anchor_texts["transparency-log"] = transparency_text
+
+    return manifest_text, anchor_texts, extra_findings
+
+
 def _verifier_block() -> dict:
     return {
         "name": HOSTED_NAME,
@@ -282,7 +385,7 @@ def _compact_report(result: dict) -> str:
             f"SHA-256: {guide['sha256']}",
             f"Blocking findings: {summary['blocking_findings']}",
             f"Warnings: {summary['warnings']}",
-            "Hash pinned: no",
+            f"Hash pinned: {'yes' if guide['achieved_level'] >= 4 else 'no'}",
             f"Proceed? {'yes' if summary['blocking_findings'] == 0 else 'no'}",
         ]
     )
@@ -342,7 +445,17 @@ def build_not_a_guide(submitted, checked, auto_resolved, fetched, now) -> dict:
     }
 
 
-def build_evaluated(submitted, checked, auto_resolved, fetched, findings, achieved_level, now) -> dict:
+def build_evaluated(
+    submitted,
+    checked,
+    auto_resolved,
+    fetched,
+    findings,
+    achieved_level,
+    now,
+    manifest_evidence=None,
+    cross_channel_anchors=None,
+) -> dict:
     data = fetched.body
     blocking = sum(1 for f in findings if f.severity == "error")
     warnings = sum(1 for f in findings if f.severity == "warning")
@@ -355,7 +468,7 @@ def build_evaluated(submitted, checked, auto_resolved, fetched, findings, achiev
         "guide": {
             "bytes": len(data),
             "sha256": hashlib.sha256(data).hexdigest(),
-            "achieved_level": min(achieved_level, 3),
+            "achieved_level": achieved_level,
             "level5_ready": False,
         },
         "summary": {
@@ -366,6 +479,12 @@ def build_evaluated(submitted, checked, auto_resolved, fetched, findings, achiev
         "findings": [f.as_dict() for f in findings],
         "hosted_limitations": list(HOSTED_LIMITATIONS),
     }
+    if manifest_evidence is not None:
+        result["manifest"] = manifest_evidence.as_dict()
+    if cross_channel_anchors:
+        result["cross_channel_anchors"] = [
+            anchor.as_dict() for anchor in cross_channel_anchors
+        ]
     note = _location_note(checked)
     if note:
         result["location_note"] = note
@@ -490,7 +609,16 @@ class handler(BaseHTTPRequestHandler):
             self._write_json(200, build_not_a_guide(url, checked_url, auto_resolved, fetched, now))
             return
 
-        findings, achieved_level, _, _, _ = gv.evaluate_guide(fetched.body, now=now)
+        manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(fetched.body)
+        findings, achieved_level, _, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
+            fetched.body,
+            manifest_text,
+            anchor_texts,
+            now=now,
+        )
+        if manifest_evidence is not None:
+            manifest_evidence.fetched = True
+        findings.extend(hosted_evidence_findings)
         _log_product_event(
             now=now,
             started=started,
@@ -499,10 +627,20 @@ class handler(BaseHTTPRequestHandler):
             payload=payload,
             checked_url=checked_url,
             auto_resolved=auto_resolved,
-            achieved_level=min(achieved_level, 3),
+            achieved_level=achieved_level,
             findings=findings,
         )
         self._write_json(
             200,
-            build_evaluated(url, checked_url, auto_resolved, fetched, findings, achieved_level, now),
+            build_evaluated(
+                url,
+                checked_url,
+                auto_resolved,
+                fetched,
+                findings,
+                achieved_level,
+                now,
+                manifest_evidence,
+                cross_channel_anchors,
+            ),
         )

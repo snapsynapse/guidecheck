@@ -65,10 +65,11 @@ Candidates for 0.3.0 and later. Not commitments.
 
 - The reference verifier CLI covers Level 1 through Level 4 in local-file mode
   when sidecar manifest and independent-anchor evidence are supplied. The
-  hosted public-web verifier still covers Level 1 through Level 3 only. The
-  hosted verifier is live as a preview at https://guidecheck.org/verify; do not
-  present it as fully conformant, and do not claim hosted Level 4 or Level 5
-  conformance, until the supporting public-web fixture suites are complete.
+  hosted public-web verifier covers Level 1 through Level 4 for supported
+  public-web anchors: package-registry metadata and transparency-log entries.
+  The hosted verifier is live as a preview at https://guidecheck.org/verify;
+  do not present it as fully conformant, and do not claim Level 5 conformance,
+  until the supporting runtime fixture suites are complete.
 - Add a Level 4 manifest for GuideCheck's own guide after an independent hash
   anchor is published.
 - Add a signed or otherwise independently anchored `security.txt` plan before
@@ -97,9 +98,9 @@ Candidates for 0.3.0 and later. Not commitments.
 ## Implementation work
 
 - Maintain the local-file reference verifier CLI for Levels 1 through 4 and
-  the hosted public-web verifier for Levels 1 through 3 on shared content
-  checks. Do not extend the hosted verifier to Level 4 provenance or either
-  verifier to Level 5 runtime conformance until the supporting fixtures exist.
+  the hosted public-web verifier for Levels 1 through 4 on shared content and
+  provenance checks. Do not extend either verifier to Level 5 runtime
+  conformance until the supporting fixtures exist.
 - Keep `scripts/eval_guidecheck.py` as a regression harness and reference map,
   not the verifier implementation.
 - Continue separating the reference verifier from repository regression checks

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import io
 import json
+import hashlib
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -110,6 +111,83 @@ def test_evaluated_with_warnings() -> None:
     check("evaluated warnings still proceed", "Proceed? yes" in body.get("compact_report", ""))
 
 
+def test_evaluated_level4_package_registry() -> None:
+    base = (ROOT / "fixtures" / "valid" / "level-4" / "guide.txt").read_text(encoding="utf-8")
+    guide_url = "https://example.com/.well-known/assistant-guide.txt"
+    manifest_url = "https://example.com/.well-known/assistant-guide-manifest.txt"
+    registry_url = "https://registry.npmjs.org/example-verifier/1.0.0"
+    guide_text = base.replace(
+        "manifest-url: https://example.com/.well-known/assistant-guide-manifest.txt",
+        f"registry-url: {registry_url}\nmanifest-url: {manifest_url}",
+    )
+    guide_data = guide_text.encode("utf-8")
+    guide_sha = hashlib.sha256(guide_data).hexdigest()
+    manifest = "\n".join(
+        [
+            "guide-path: /.well-known/assistant-guide.txt",
+            "guide-version: 1.0.0",
+            f"guide-sha256: {guide_sha}",
+            f"guide-bytes: {len(guide_data)}",
+            "immutable-release-url: https://example.com/org/example-verifier/releases/v1.0.0",
+            "profile: human-verifiable-assistant-guide",
+            "profile-version: 0.2.0",
+            f"canonical-url: {guide_url}",
+            "repository-url: https://example.com/org/example-verifier",
+            "released-at: 2026-05-21T00:00:00Z",
+            "",
+        ]
+    ).encode("utf-8")
+    registry = json.dumps(
+        {"assistantGuide": {"url": guide_url, "sha256": guide_sha}},
+        sort_keys=True,
+    ).encode("utf-8")
+
+    def fake_fetch(checked):
+        if checked == guide_url:
+            return fetched(checked, 200, guide_data)
+        if checked == manifest_url:
+            return fetched(checked, 200, manifest)
+        if checked == registry_url:
+            return fetched(checked, 200, registry, "application/json")
+        raise AssertionError(f"unexpected fetch {checked}")
+
+    request = run_post({"url": guide_url, "requested_level": 4}, fake_fetch)
+    body = request.body or {}
+    anchors = body.get("cross_channel_anchors", [])
+    check("level4 status", request.status == 200)
+    check("level4 achieved", body.get("guide", {}).get("achieved_level") == 4)
+    check("level4 hash pinned", "Hash pinned: yes" in body.get("compact_report", ""))
+    check("level4 manifest valid", body.get("manifest", {}).get("valid") is True)
+    check("level4 manifest fetched", body.get("manifest", {}).get("fetched") is True)
+    check(
+        "level4 registry anchor",
+        bool(anchors) and anchors[0].get("channel") == "package-registry"
+        and anchors[0].get("status") == "present-matches",
+    )
+
+
+def test_evaluated_level4_missing_anchor() -> None:
+    guide_url = "https://example.com/.well-known/assistant-guide.txt"
+    manifest_url = "https://example.com/.well-known/assistant-guide-manifest.txt"
+    guide = (ROOT / "fixtures" / "invalid" / "anchor-independent-missing" / "guide.txt").read_bytes()
+    manifest = (ROOT / "fixtures" / "invalid" / "anchor-independent-missing" / "manifest.txt").read_bytes()
+
+    def fake_fetch(checked):
+        if checked == guide_url:
+            return fetched(checked, 200, guide)
+        if checked == manifest_url:
+            return fetched(checked, 200, manifest)
+        raise AssertionError(f"unexpected fetch {checked}")
+
+    request = run_post({"url": guide_url, "requested_level": 4}, fake_fetch)
+    body = request.body or {}
+    blockers = [finding["id"] for finding in body.get("findings", []) if finding["severity"] == "error"]
+    check("level4 missing anchor status", request.status == 200)
+    check("level4 missing anchor level", body.get("guide", {}).get("achieved_level") == 3)
+    check("level4 missing anchor blocker", "anchor.independent.missing" in blockers)
+    check("level4 missing anchor no proceed", "Proceed? no" in body.get("compact_report", ""))
+
+
 def test_auto_resolved_origin() -> None:
     data = (ROOT / "fixtures" / "valid" / "level-3" / "guide.txt").read_bytes()
     request = run_post({"url": "https://example.com/"}, lambda checked: fetched(checked, 200, data))
@@ -186,6 +264,8 @@ def test_rate_limit() -> None:
 def main() -> int:
     test_evaluated()
     test_evaluated_with_warnings()
+    test_evaluated_level4_package_registry()
+    test_evaluated_level4_missing_anchor()
     test_auto_resolved_origin()
     test_noncanonical_location_note()
     test_not_found()

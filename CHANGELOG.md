@@ -10,6 +10,8 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   independent-anchor evidence, including `--anchor CHANNEL=PATH`
 - static valid Level 4, missing-anchor, and cross-channel hash divergence fixtures
 - verifier output for local cross-channel anchor evidence
+- hosted verifier Level 4 support for sidecar manifest fetches, package-registry
+  anchors, and transparency-log anchors
 
 ### Changed
 
