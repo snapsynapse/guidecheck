@@ -152,6 +152,11 @@ matches. The local reference CLI accepts local independent-anchor evidence with
 `--anchor`. The hosted verifier fetches supported public-web anchors:
 package-registry metadata and transparency-log entries.
 
+Both verifiers may report `level5_ready: true` for a Level 4 guide that also
+passes the guide-side preparation checks for runtime enforcement. This is not
+an achieved Level 5 claim; Level 5 still requires a conformant assistant
+runtime.
+
 Run the local reference verifier with:
 ```text
 python3 scripts/guidecheck_verify.py assistant-guide.txt --pretty

@@ -12,6 +12,8 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 - verifier output for local cross-channel anchor evidence
 - hosted verifier Level 4 support for sidecar manifest fetches, package-registry
   anchors, and transparency-log anchors
+- Level 5 readiness reporting for Level 4 guides, including static ready and
+  not-ready fixtures
 
 ### Changed
 

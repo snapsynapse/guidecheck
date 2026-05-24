@@ -527,6 +527,51 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
         add_finding(findings, "approval.required.too-many", "warning", "guide contains many required approvals")
 
 
+def check_level5_readiness(actions: list[dict[str, str]], findings: list[Finding]) -> bool:
+    before = len(findings)
+    for action in actions:
+        classes = action_classes(action)
+        action_id = action.get("id", "")
+        if "runner" not in action:
+            add_finding(
+                findings,
+                "level5.runner.missing",
+                "warning",
+                "Level 5 readiness expects every executable action to declare runner",
+                section="verifier-conformance.18",
+                evidence=action_id,
+            )
+        if "networked" in classes and action.get("approval") != "required":
+            add_finding(
+                findings,
+                "level5.networked-approval.missing",
+                "warning",
+                "Level 5 readiness expects networked actions to require approval",
+                section="verifier-conformance.18",
+                evidence=action_id,
+            )
+        if action.get("runner") == "shell" and action.get("approval") != "required":
+            add_finding(
+                findings,
+                "level5.shell-approval.missing",
+                "warning",
+                "Level 5 readiness expects shell actions to require approval",
+                section="verifier-conformance.19",
+                evidence=action_id,
+            )
+    readiness_warning_ids = {
+        "action-block.class.code-executing-missing",
+        "runner.shell.missing-rationale",
+        "level5.runner.missing",
+        "level5.networked-approval.missing",
+        "level5.shell-approval.missing",
+    }
+    return not any(
+        finding.severity == "warning" and finding.id in readiness_warning_ids
+        for finding in findings[before:] + findings[:before]
+    )
+
+
 def command_executes_code(command: str) -> bool:
     return bool(re.search(r"\b(npm|pnpm|yarn|pytest|python|node|make|just|go test|cargo)\b", command))
 
@@ -788,7 +833,9 @@ def evaluate_guide(
     if "metadata.status.revoked" in error_ids:
         achieved = min(achieved, 1)
 
-    return findings, achieved, False, manifest_evidence, cross_channel_anchors
+    level5_ready = check_level5_readiness(actions, findings) if achieved >= 4 else False
+
+    return findings, achieved, level5_ready, manifest_evidence, cross_channel_anchors
 
 
 def evaluate_local_file(

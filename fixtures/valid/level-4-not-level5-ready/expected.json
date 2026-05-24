@@ -1,0 +1,12 @@
+{
+  "description": "A complete Level 4 guide that is not Level 5-ready because an executable action lacks runner.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 4,
+  "guide_sha256": "59704158a8d4225e2ec5c88b8e4b05de7d94cb0eaec443d25807b16e0a9d2584",
+  "guide_bytes": 3354,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "level5.runner.missing"
+  ],
+  "level5_ready": false
+}

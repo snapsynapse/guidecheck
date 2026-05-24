@@ -156,6 +156,7 @@ def test_evaluated_level4_package_registry() -> None:
     anchors = body.get("cross_channel_anchors", [])
     check("level4 status", request.status == 200)
     check("level4 achieved", body.get("guide", {}).get("achieved_level") == 4)
+    check("level4 level5-ready", body.get("guide", {}).get("level5_ready") is True)
     check("level4 hash pinned", "Hash pinned: yes" in body.get("compact_report", ""))
     check("level4 manifest valid", body.get("manifest", {}).get("valid") is True)
     check("level4 manifest fetched", body.get("manifest", {}).get("fetched") is True)

@@ -338,6 +338,29 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
         check_command(action, classes, findings)
 
 
+def check_level5_readiness(actions: list[dict[str, str]], findings: list[Finding]) -> bool:
+    for action in actions:
+        classes = action_classes(action)
+        action_id = action.get("id", "")
+        if "runner" not in action:
+            finding(findings, "level5.runner.missing", "warning", action_id)
+        if "networked" in classes and action.get("approval") != "required":
+            finding(findings, "level5.networked-approval.missing", "warning", action_id)
+        if action.get("runner") == "shell" and action.get("approval") != "required":
+            finding(findings, "level5.shell-approval.missing", "warning", action_id)
+    readiness_warning_ids = {
+        "action-block.class.code-executing-missing",
+        "runner.shell.missing-rationale",
+        "level5.runner.missing",
+        "level5.networked-approval.missing",
+        "level5.shell-approval.missing",
+    }
+    return not any(
+        item.severity == "warning" and item.id in readiness_warning_ids
+        for item in findings
+    )
+
+
 def command_executes_code(command: str) -> bool:
     return bool(re.search(r"\b(npm|pnpm|yarn|pytest|python|node|make|just|go test|cargo)\b", command))
 
@@ -531,7 +554,8 @@ def evaluate_bytes(
         achieved = 4
     if "metadata.status.revoked" in error_ids:
         achieved = min(achieved, 1)
-    return EvalResult(achieved, sha256(data), len(data), findings)
+    level5_ready = check_level5_readiness(actions, findings) if achieved >= 4 else False
+    return EvalResult(achieved, sha256(data), len(data), findings, level5_ready=level5_ready)
 
 
 @dataclass

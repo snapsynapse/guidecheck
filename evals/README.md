@@ -33,6 +33,7 @@ for this repository and a reference map for verifier authors. It covers:
 - command, cwd, env, and egress checks
 - prohibited chaining and encoded-execution patterns
 - manifest hash, byte-count mismatch, missing-anchor, and anchor-divergence checks
+- Level 5 readiness reporting for otherwise valid Level 4 guides
 - local public-fetch safety scenarios for HTTP, SSRF, TLS, and redirects
 
 The authoritative conformance target remains the fixture suite described in

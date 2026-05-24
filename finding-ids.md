@@ -110,6 +110,14 @@ files.
 | `egress.wildcard-too-broad` | error | An egress wildcard is broader than one subdomain level. |
 | `runner.shell.missing-rationale` | warning | A shell runner lacks a narrow rationale in `notes`. |
 
+## Level 5 readiness
+
+| ID | Severity | Trigger |
+|---|---|---|
+| `level5.runner.missing` | warning | A Level 4 guide has an executable action without a `runner` field. |
+| `level5.networked-approval.missing` | warning | A Level 4 guide has a networked action that does not require approval. |
+| `level5.shell-approval.missing` | warning | A Level 4 guide has a shell-runner action that does not require approval. |
+
 ## Prohibited patterns
 
 | ID | Severity | Trigger |

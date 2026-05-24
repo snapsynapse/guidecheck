@@ -151,6 +151,13 @@ Level 4
 - [ ] `guide-sha256` cross-published on at least one independent channel
 - [ ] a verifier confirms the manifest match and one agreeing anchor
 
+Level 5 readiness
+- [ ] every action declares `runner`
+- [ ] every networked action uses `approval: required`
+- [ ] shell actions use `runner: shell`, require approval, and include a narrow `notes` rationale
+- [ ] applicable `cwd`, `env`, and `egress` fields are narrow and explicit
+- [ ] verifier output reports `level5_ready: true`
+
 ## Conformance is not safety
 
 Conformance to this profile, at any level, does not mean a guide is safe to

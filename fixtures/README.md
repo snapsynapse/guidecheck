@@ -60,6 +60,7 @@ The current static corpus includes:
 - chained-guide, next-guide, guide-rewrite, skip-approval, and encoded-execution prohibitions
 - manifest hash and byte-count mismatch
 - missing independent anchor and cross-channel hash divergence
+- Level 5 readiness true and false cases for otherwise valid Level 4 guides
 - public-fetch SSRF, TLS, cross-domain redirect, header, and content-variation scenarios
 
 Cases still to add:

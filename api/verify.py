@@ -452,6 +452,7 @@ def build_evaluated(
     fetched,
     findings,
     achieved_level,
+    level5_ready,
     now,
     manifest_evidence=None,
     cross_channel_anchors=None,
@@ -469,7 +470,7 @@ def build_evaluated(
             "bytes": len(data),
             "sha256": hashlib.sha256(data).hexdigest(),
             "achieved_level": achieved_level,
-            "level5_ready": False,
+            "level5_ready": level5_ready,
         },
         "summary": {
             "blocking_findings": blocking,
@@ -610,7 +611,7 @@ class handler(BaseHTTPRequestHandler):
             return
 
         manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(fetched.body)
-        findings, achieved_level, _, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
+        findings, achieved_level, level5_ready, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
             fetched.body,
             manifest_text,
             anchor_texts,
@@ -639,6 +640,7 @@ class handler(BaseHTTPRequestHandler):
                 fetched,
                 findings,
                 achieved_level,
+                level5_ready,
                 now,
                 manifest_evidence,
                 cross_channel_anchors,
