@@ -84,6 +84,21 @@ Candidates for 0.3.0 and later. Not commitments.
   section numbers.
 - Expand verifier author guidance with examples of compact reports and full
   machine-readable output.
+- Add a non-normative AOS integration note describing how GuideCheck verifier
+  output, guide hashes, action ids, approval decisions, and stop conditions
+  can feed OWASP Agent Observability Standard trace, guardian, and AgBOM
+  surfaces. The note must not make AOS a GuideCheck conformance dependency or
+  imply OWASP endorsement.
+- Maintain the non-normative MCP integration note in `docs/mcp-integration.md`
+  describing where `assistant-guide.txt` can add value for MCP server
+  installation guides, server manifests, tool permission review, resource
+  exposure review, and MCP-host runtime enforcement. Keep the profile
+  vendor-neutral and avoid making MCP a required transport or discovery
+  mechanism.
+- Maintain the non-normative A2A integration note in `docs/a2a-integration.md`
+  describing where GuideCheck can add value for Agent Card review,
+  delegated-task instructions, remote-agent provenance, approval boundaries,
+  and A2A task artifacts that instruct an assistant to act.
 - Add a short threat-model primer for maintainers adding new finding ids.
 - Expand the verifier examples page with full passing, failing, `not-found`,
   and warning-bearing JSON reports generated from current fixtures.
@@ -111,6 +126,15 @@ Candidates for 0.3.0 and later. Not commitments.
 - Add deterministic tests for the remaining cross-channel hash anchor types.
 - Add tests for registry-url parsing across npm, PyPI, Cargo, and generic
   registry records.
+- Prototype an optional runtime-policy mapping that turns verified
+  GuideCheck action blocks into enforcement decisions for tool calls, MCP
+  tool invocations, and delegated A2A tasks. Treat this as Level 5 design
+  research until the runtime conformance fixture suite exists.
+- Add example machine-readable event records for guide verification, action
+  selection, approval prompts, approval results, command execution, egress
+  checks, and stop-condition denials so AOS-compatible or other observability
+  systems can consume GuideCheck evidence without treating the hosted verifier
+  as a central oracle.
 
 ## Release readiness
 
