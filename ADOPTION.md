@@ -6,6 +6,10 @@ operational terms, and how to publish a conforming guide one level at a time.
 For the exact normative requirements, `spec.md` is authoritative; this guide
 points into it.
 
+GuideCheck is a trust boundary protocol for agent instruction surfaces. It
+helps ensure the instructions humans approve are the same instructions agents
+execute.
+
 ## Who this is for
 
 Adopt GuideCheck if you publish instructions an AI assistant will act on:
@@ -15,9 +19,14 @@ Adopt GuideCheck if you publish instructions an AI assistant will act on:
 - remediation and incident playbooks
 - support and operations runbooks
 - agent skill installation guidance
+- MCP server installation, configuration, tool review, and resource review
+  guidance
+- A2A companion guidance for delegated tasks, returned artifacts, and
+  remote-agent operating boundaries
 
 It is relevant to maintainers who ship those guides, to security and platform
-engineers who review them, and to verifier authors building tooling.
+engineers who review them, to MCP and A2A implementers working across agent
+trust boundaries, and to verifier authors building tooling.
 
 ## Why this exists
 
@@ -26,6 +35,12 @@ PDFs, docs sites, copied terminal output, and screenshots. Each of those
 surfaces can carry text a model ingests but a human never sees. A tool-using
 assistant then runs those instructions with the operator's authority: it
 executes commands, edits files, installs packages, and calls APIs.
+
+That is a review-integrity problem. The human may approve one instruction
+surface while the assistant executes another. In operational terms, the
+failure can look like credential exposure, a destructive command, a malicious
+dependency install, disabled safeguards, broader MCP tool access, or a remote
+agent returning instructions that were never reviewed as executable guidance.
 
 GuideCheck removes the presentation layer. It defines one artifact, a
 plain-text file named `assistant-guide.txt`, small enough and strict enough

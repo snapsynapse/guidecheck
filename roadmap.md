@@ -99,6 +99,14 @@ Candidates for 0.3.0 and later. Not commitments.
   describing where GuideCheck can add value for Agent Card review,
   delegated-task instructions, remote-agent provenance, approval boundaries,
   and A2A task artifacts that instruct an assistant to act.
+- Add an ecosystem relationship map showing how GuideCheck fits with
+  Graceful Boundaries, Skill Provenance, Turnfile, Siteline, AI Posture, MCP,
+  A2A, and AOS as delegated-agent trust infrastructure.
+- Add a machine-onboarding page that summarizes GuideCheck's purpose,
+  conformance limits, integration surfaces, and canonical docs for assistants
+  and search systems without changing normative requirements.
+- Add or refine a compact comparison of rendered review, raw-source review,
+  and GuideCheck review integrity for public-facing education.
 - Add a short threat-model primer for maintainers adding new finding ids.
 - Expand the verifier examples page with full passing, failing, `not-found`,
   and warning-bearing JSON reports generated from current fixtures.

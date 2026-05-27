@@ -23,6 +23,10 @@ __pycache__/
 .env.*
 *.local
 
+# Local handoff notes
+handoff/
+handoffs/
+
 # Verifier scratch output
 /out/
 *.verifier-output.json

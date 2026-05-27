@@ -1,11 +1,21 @@
 # GuideCheck
 
-AI setup guides can hide instructions a model reads but a human never sees.
+GuideCheck is a trust boundary protocol for agent instruction surfaces. It
+ensures the instructions humans approve are the same instructions agents
+execute.
+
+AI setup guides can hide instructions a model reads but a human never sees. A
+tool-using assistant may then run those hidden instructions with delegated
+authority: credentials exposed, destructive commands run, malicious
+dependencies installed, or safeguards disabled while the human believes the
+guide was reviewed.
+
 GuideCheck is the standards project for the Human-Verifiable Assistant Guide
 profile: a constrained plain-text profile for `assistant-guide.txt`, covering
 assistant-facing install, implementation, remediation, migration, and
 operational instructions that a human can review in full before an assistant
-acts on them.
+acts on them. The core claim is review integrity: the reviewed instruction
+surface and the executed instruction surface should be one bounded artifact.
 
 Canonical site: https://guidecheck.org/
 Verifier: https://guidecheck.org/verify
@@ -42,6 +52,8 @@ blocks.
 
 For high-consequence tasks, projects need a constrained instruction surface
 that a human can review in full before authorizing an assistant to follow it.
+The problem is a trust-boundary failure: humans approve one surface while
+agents may execute another.
 
 ## Who this is for
 
@@ -50,6 +62,10 @@ that a human can review in full before authorizing an assistant to follow it.
 - Security engineers concerned with prompt injection and hidden instruction
   channels.
 - AI platform and MLOps engineers who operationalize assistant workflows.
+- MCP server authors and host implementers who need reviewable install,
+  configuration, tool, resource, and approval boundaries.
+- A2A implementers evaluating how delegated tasks, returned artifacts, and
+  remote-agent instructions should cross trust boundaries.
 - Technical policy and compliance professionals working on evidence,
   reviewability, and control design.
 - Anyone who wants to take basic precautions against prompt injection and other
@@ -76,6 +92,8 @@ that a human can review in full before authorizing an assistant to follow it.
 - `design-rationale.md` - why the design choices were made
 - `operator-guide.md` - non-normative defense-in-depth practices for operators
 - `threat-register.md` - known risk classes for fixture, verifier, and runtime authors
+- `docs/mcp-integration.md` - non-normative MCP integration patterns
+- `docs/a2a-integration.md` - non-normative A2A integration patterns
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
 - `finding-ids.md` - registry for fixture-required verifier finding ids
 - `assistant-guide.txt` - repository copy of the GuideCheck adoption guide

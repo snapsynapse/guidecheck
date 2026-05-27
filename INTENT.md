@@ -5,13 +5,13 @@ Scope: Standards-level strategy for this component. Portfolio-level strategy liv
 
 ## What this standard is
 
-GuideCheck defines the Human-Verifiable Assistant Guide profile for `assistant-guide.txt`: a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions. It exists to close one specific trust gap. A human may believe they are approving the operational guidance they can see, while an assistant ingests additional instructions hidden or transformed by a presentation layer.
+GuideCheck defines the Human-Verifiable Assistant Guide profile for `assistant-guide.txt`: a constrained plain-text artifact for assistant-facing install, implementation, remediation, migration, and operational instructions. It is a trust boundary protocol for agent instruction surfaces. It exists to close one specific trust gap. A human may believe they are approving the operational guidance they can see, while an assistant ingests additional instructions hidden or transformed by a presentation layer.
 
-The standard makes the instruction surface visible, bounded, and practical to review before an assistant acts on it. It does not make instructions safe.
+The standard makes the instruction surface visible, bounded, and practical to review before an assistant acts on it. It preserves review integrity by helping ensure the instructions humans approve are the same instructions agents execute. It does not make instructions safe.
 
 ## Why it exists
 
-AI-assisted setup guidance is increasingly consumed by tool-using assistants with real blast radius. The surfaces that carry that guidance, including HTML, rendered Markdown, PDFs, and copied terminal output, can hide content from the human while feeding it to the model. No existing convention solves this. `llms.txt` points assistants at documentation but defines no safety profile. `robots.txt` and `security.txt` are single-purpose and carry no assistant-executable instructions. The gap is real and the consequences are operational, not cosmetic.
+AI-assisted setup guidance is increasingly consumed by tool-using assistants with real blast radius. The surfaces that carry that guidance, including HTML, rendered Markdown, PDFs, and copied terminal output, can hide content from the human while feeding it to the model. No existing convention solves this. `llms.txt` points assistants at documentation but defines no safety profile. `robots.txt` and `security.txt` are single-purpose and carry no assistant-executable instructions. The gap is real and the consequences are operational, not cosmetic: delegated authority can be diverted into credential exposure, destructive commands, malicious dependency installation, disabled safeguards, or unreviewed tool and agent delegation.
 
 ## Design invariants
 

@@ -1,8 +1,8 @@
 # GuideCheck
 
-> The Human-Verifiable Assistant Guide standard.
+> Trust boundary protocol for agent instruction surfaces.
 
-AI setup guides reach assistants through HTML, PDFs, docs sites, and copied terminal output, surfaces that can hide text a model reads but a human never sees. A tool-using assistant then runs those hidden instructions with the operator's credentials: a credential exfiltrated, a destructive command run, a malicious dependency installed, while the human believed they had reviewed the guide. GuideCheck closes this gap. It defines a constrained plain-text profile for assistant-guide.txt: strict ASCII, capped at 8 KiB, structured into explicit action blocks, so a human can review the entire instruction surface before an assistant follows it. Conformance verifies form, not safety.
+GuideCheck ensures the instructions humans approve are the same instructions agents execute. AI setup guides reach assistants through HTML, PDFs, docs sites, and copied terminal output, surfaces that can hide text a model reads but a human never sees. A tool-using assistant then runs those hidden instructions with delegated authority: a credential exposed, a destructive command run, a malicious dependency installed, or safeguards disabled while the human believed they had reviewed the guide. GuideCheck closes this review-integrity gap. It defines a constrained plain-text profile for assistant-guide.txt: strict ASCII, capped at 8 KiB, structured into explicit action blocks, so a human can review the entire instruction surface before an assistant follows it. Conformance verifies form, not safety.
 
 ## Concepts
 
@@ -11,6 +11,7 @@ AI setup guides reach assistants through HTML, PDFs, docs sites, and copied term
 - Conformance ladder: Six additive levels (0-5), from plain-text availability through verifiable provenance to a runtime-enforced execution contract.
 - Conformance is not safety: A verifier confirms form and selected provenance signals; it never asserts a guide is safe or a publisher trustworthy.
 - Cross-channel hash: Provenance anchored on an independent control plane, so a guide's identity is checkable without a central registry or oracle.
+- Trust boundary: The boundary between reviewed human instructions and executable agent instructions.
 
 ## Key files
 
@@ -18,6 +19,8 @@ AI setup guides reach assistants through HTML, PDFs, docs sites, and copied term
 - [Specification](https://github.com/snapsynapse/guidecheck/blob/main/spec.md): The normative Human-Verifiable Assistant Guide profile.
 - [Verifier conformance](https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md): The normative profile for tools that verify guides.
 - [Changelog](https://github.com/snapsynapse/guidecheck/blob/main/CHANGELOG.md): Version history.
+- [MCP integration](https://github.com/snapsynapse/guidecheck/blob/main/docs/mcp-integration.md): Non-normative patterns for MCP server authors and host implementers.
+- [A2A integration](https://github.com/snapsynapse/guidecheck/blob/main/docs/a2a-integration.md): Non-normative patterns for delegated agent tasks and returned artifacts.
 - [Landing page](https://guidecheck.org/): Canonical homepage.
 
 ## Links
