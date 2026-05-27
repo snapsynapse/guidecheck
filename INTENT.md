@@ -71,7 +71,7 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 ## Versioning and authority
 
-The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.3.0, draft for review. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.3.1, draft for review. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
 
 ## Changelog
 

@@ -4,6 +4,23 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-05-27
+
+### Added
+
+- MCP and A2A integration notes for agent ecosystem positioning
+- database MCP server Level 3 example guide
+- homepage trust-boundary sequence and delegated-authority positioning
+
+### Changed
+
+- profile, verifier, hosted verifier, examples, and public pages now report
+  0.3.1
+- public positioning now frames GuideCheck as a trust boundary protocol for
+  agent instruction surfaces while preserving the conformance-is-not-safety
+  limitation
+- `.gitignore` now excludes local handoff note directories
+
 ## [0.3.0] - 2026-05-24
 
 ### Added
@@ -108,7 +125,8 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/snapsynapse/guidecheck/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.3.0
 [0.2.1]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/snapsynapse/guidecheck/releases/tag/v0.2.0
