@@ -19,6 +19,7 @@ GuideCheck ensures the instructions humans approve are the same instructions age
 - [Specification](https://github.com/snapsynapse/guidecheck/blob/main/spec.md): The normative Human-Verifiable Assistant Guide profile.
 - [Verifier conformance](https://github.com/snapsynapse/guidecheck/blob/main/verifier-conformance.md): The normative profile for tools that verify guides.
 - [Changelog](https://github.com/snapsynapse/guidecheck/blob/main/CHANGELOG.md): Version history.
+- [ACS integration](https://github.com/snapsynapse/guidecheck/blob/main/docs/acs-integration.md): Non-normative patterns for runtime control hooks and Guardian enforcement.
 - [MCP integration](https://github.com/snapsynapse/guidecheck/blob/main/docs/mcp-integration.md): Non-normative patterns for MCP server authors and host implementers.
 - [A2A integration](https://github.com/snapsynapse/guidecheck/blob/main/docs/a2a-integration.md): Non-normative patterns for delegated agent tasks and returned artifacts.
 - [Landing page](https://guidecheck.org/): Canonical homepage.

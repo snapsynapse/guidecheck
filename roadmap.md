@@ -89,6 +89,12 @@ Candidates for 0.3.0 and later. Not commitments.
   can feed OWASP Agent Observability Standard trace, guardian, and AgBOM
   surfaces. The note must not make AOS a GuideCheck conformance dependency or
   imply OWASP endorsement.
+- Maintain the non-normative ACS integration note in `docs/acs-integration.md`
+  describing how GuideCheck verifier output, action ids, approval gates,
+  egress declarations, and stop conditions can feed Agent Control Standard
+  runtime hooks, Guardian Agent verdicts, trace records, and AgBOM inventory.
+  Keep ACS as a runtime-control integration surface, not a GuideCheck
+  conformance dependency.
 - Maintain the non-normative MCP integration note in `docs/mcp-integration.md`
   describing where `assistant-guide.txt` can add value for MCP server
   installation guides, server manifests, tool permission review, resource
@@ -100,8 +106,8 @@ Candidates for 0.3.0 and later. Not commitments.
   delegated-task instructions, remote-agent provenance, approval boundaries,
   and A2A task artifacts that instruct an assistant to act.
 - Add an ecosystem relationship map showing how GuideCheck fits with
-  Graceful Boundaries, Skill Provenance, Turnfile, Siteline, AI Posture, MCP,
-  A2A, and AOS as delegated-agent trust infrastructure.
+  Graceful Boundaries, Skill Provenance, Turnfile, Siteline, AI Posture, ACS,
+  MCP, A2A, and AOS as delegated-agent trust infrastructure.
 - Add a machine-onboarding page that summarizes GuideCheck's purpose,
   conformance limits, integration surfaces, and canonical docs for assistants
   and search systems without changing normative requirements.

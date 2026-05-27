@@ -4,6 +4,11 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+### Added
+
+- non-normative ACS integration note for runtime control hooks, Guardian
+  enforcement, trace records, and AgBOM inventory
+
 ## [0.3.1] - 2026-05-27
 
 ### Added

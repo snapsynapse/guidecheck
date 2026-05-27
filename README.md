@@ -92,6 +92,7 @@ agents may execute another.
 - `design-rationale.md` - why the design choices were made
 - `operator-guide.md` - non-normative defense-in-depth practices for operators
 - `threat-register.md` - known risk classes for fixture, verifier, and runtime authors
+- `docs/acs-integration.md` - non-normative ACS runtime control patterns
 - `docs/mcp-integration.md` - non-normative MCP integration patterns
 - `docs/a2a-integration.md` - non-normative A2A integration patterns
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
