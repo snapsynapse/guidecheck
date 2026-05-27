@@ -1,0 +1,12 @@
+{
+  "description": "Static warning-bearing fixture for guides with too many required approvals.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "194b46d0034916d94afd697eba72091febebf8255e1a623e94b151634acf0db8",
+  "guide_bytes": 2931,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "approval.required.too-many"
+  ],
+  "level5_ready": false
+}

@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture for a metadata block missing a required field.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "ace945230b0357840a39b50161a28f8df9881c55c06be7c45f4c3ca81fc8753a",
+  "guide_bytes": 1889,
+  "blocking_finding_ids": [
+    "metadata.missing-required"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

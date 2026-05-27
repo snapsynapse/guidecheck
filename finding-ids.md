@@ -94,6 +94,7 @@ files.
 | `action-block.class.normal-mixed` | error | `normal` is combined with another class. |
 | `action-block.class.code-executing-missing` | warning | A command likely executes code but lacks `code-executing`. |
 | `approval.required-missing` | error | A sensitive action is not marked `approval: required`. |
+| `approval.required.too-many` | warning | A guide has more required approvals than the default warning threshold. |
 
 ## Command, filesystem, environment, and egress
 

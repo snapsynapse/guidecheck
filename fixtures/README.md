@@ -47,13 +47,16 @@ The current static corpus includes:
 - GuideCheck's own repository guide and a real-world PrompterKit Level 3 guide captured from
   `https://prompterkit.app/.well-known/assistant-guide.txt`
 - byte-profile failures for tabs, CRLF, non-ASCII, NUL, ANSI escape, other controls, overlong lines, and oversize guides
+- line-count failures above the 400-line limit
 - disallowed constructs for HTML, Markdown images, data URLs, and JavaScript
 - compact verification instruction failure
 - single-authority verifier language
 - metadata key, URL, status, date, and revoked-status failures
+- missing required metadata and registry URLs that do not identify a specific record
 - missing required section
 - malformed or incomplete action blocks, duplicate ids, and invalid enum values
 - missing approval gates, including `code-executing`
+- warning coverage for too many required approvals
 - networked action missing egress and broad egress wildcard
 - shell runner and missing `code-executing` warnings
 - command chaining, substitution, non-normal pipes, destructive glob, cwd, and env failures
@@ -68,7 +71,8 @@ Cases still to add:
 - additional metadata parser-confusion cases
 - public-fetch redirect-chain details beyond the modeled cross-domain case
 - additional replay fixtures for TLS edge cases and public-web header variants
-- additional Level 4 anchor scenarios for registry, repository, signed security.txt, and transparency logs
+- additional Level 4 anchor scenarios for package registry, repository-file,
+  signed security.txt, and transparency-log evidence
 
 Some additional mutation cases remain covered by generated local evals in
 `scripts/eval_guidecheck.py`. Promote a generated case into this static corpus

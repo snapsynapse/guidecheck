@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture for a guide above the 400-line Level 2 limit.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 1,
+  "guide_sha256": "dbf7001407828ab51f2b88c6747e6615ec6415e9b0adc3ad849076e9368eefa0",
+  "guide_bytes": 1332,
+  "blocking_finding_ids": [
+    "byte-profile.line-count"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

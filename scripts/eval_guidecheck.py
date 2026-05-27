@@ -57,6 +57,7 @@ URL_FIELDS = {
     "manifest-url",
     "superseded-by",
 }
+DEFAULT_APPROVAL_WARNING_THRESHOLD = 10
 SECTION_PATTERNS = {
     "content.required.title": [r"^Assistant Guide:"],
     "content.required.canonical-url": [r"canonical-url:", r"Canonical URL:"],
@@ -319,8 +320,11 @@ def action_classes(action: dict[str, str]) -> set[str]:
 
 
 def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> None:
+    required_approvals = 0
     for action in actions:
         classes = action_classes(action)
+        if action.get("approval") == "required":
+            required_approvals += 1
         if not classes or not classes <= ALLOWED_CLASSES:
             finding(findings, "action-block.class.invalid", "error", action.get("class", ""))
         if "normal" in classes and len(classes) > 1:
@@ -336,6 +340,8 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
         if action.get("runner") == "shell" and not action.get("notes"):
             finding(findings, "runner.shell.missing-rationale", "warning", action.get("id", ""))
         check_command(action, classes, findings)
+    if required_approvals > DEFAULT_APPROVAL_WARNING_THRESHOLD:
+        finding(findings, "approval.required.too-many", "warning", "guide contains many required approvals")
 
 
 def check_level5_readiness(actions: list[dict[str, str]], findings: list[Finding]) -> bool:

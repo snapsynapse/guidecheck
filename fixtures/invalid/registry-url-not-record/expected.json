@@ -1,0 +1,12 @@
+{
+  "description": "Static fixture for registry-url metadata that points to a registry root instead of a record.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "c24e57c55cab731f6af916df316eea8db2b5be370730213cda38edbe5986a2b7",
+  "guide_bytes": 1977,
+  "blocking_finding_ids": [
+    "metadata.registry-url.not-record"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

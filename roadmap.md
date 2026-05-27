@@ -58,6 +58,9 @@ Candidates for 0.3.0 and later. Not commitments.
 - A self-verification report published by hosted verifiers.
 - A separate Level 5 runtime-conformance fixture suite, distinct from the
   verifier-conformance fixture corpus, once Level 5 work begins.
+- Draft Level 5 planning lives in `docs/level-5-runtime-conformance.md` and
+  `docs/level-5-implementation-plan.md`. Keep these as non-normative design
+  notes until the Level 1-4 fixture and validation base is stronger.
 - Signing fixture-suite releases once `verifier-conformance.md` reaches a
   stable conformance target; tracked also in `CONTRIBUTING.md`.
 
@@ -76,6 +79,8 @@ Candidates for 0.3.0 and later. Not commitments.
   claiming it as a Level 4 channel.
 - Add immutable release URLs and a static fixture for the tagged 0.2.0 release.
 - Add signed verifier-report envelopes for hosted checker and CI consumption.
+- Track repo-local blockers before executable Level 5 work in
+  `docs/pre-level-5-readiness.md`.
 
 ## Documentation work
 
