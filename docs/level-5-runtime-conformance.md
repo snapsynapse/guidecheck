@@ -30,6 +30,24 @@ The evaluator checks runtime behavior. It does not certify publisher identity,
 publisher intent, command safety, model quality, environment fitness, or the
 security of the underlying software.
 
+## Resolved draft defaults
+
+The current draft uses these defaults:
+
+- MCP, A2A, and similar protocol surfaces are optional enforced-surface
+  subprofiles. If a runtime declares one of these surfaces in its evaluation,
+  the evaluator must test that declared surface.
+- A Level 5 runtime evaluation claim is scoped to a runtime build, policy
+  configuration, and guide SHA-256. It is not a universal runtime capability
+  claim.
+- A session begins when the user confirms a verified guide hash. A session ends
+  on explicit user close, runtime restart, guide hash change, verifier result
+  change, or a declared idle timeout.
+- Long-term memory controls must be enforced at every runtime-controlled layer.
+  Layers outside runtime control must be disclosed.
+- Runtime reason codes stay separate from verifier finding ids. The draft
+  registry is `docs/runtime-reason-codes.md`.
+
 ## Relationship to ACS and AOS
 
 ACS and AOS are useful integration surfaces for Level 5 because they describe
@@ -45,6 +63,9 @@ The recommended split is:
 
 - Core Level 5 profile: GuideCheck-owned requirements and fixtures derived
   from `spec.md` section 18.
+- Enforced-surface subprofiles: optional runtime claims for tool, MCP, A2A,
+  memory, knowledge-retrieval, or other surfaces beyond the core execution
+  contract. A runtime should declare which surfaces it claims to enforce.
 - ACS/AOS evidence profile: optional mapping from GuideCheck events and
   verdicts to ACS/AOS request and response records.
 - Inventory profile: optional record of the guide URL, profile version,
@@ -64,7 +85,8 @@ A Level 5 evaluation should take these inputs:
 - Level 4 verifier output for the guide
 - manifest URL and manifest hash evidence
 - runtime policy configuration
-- declared tool, shell, filesystem, memory, network, MCP, and A2A boundaries
+- declared enforced surfaces and boundaries, such as tool, shell, filesystem,
+  memory, network, MCP, and A2A boundaries
 - test scenario bundle
 
 The evaluator should execute scenarios against an instrumented runtime or a
@@ -88,6 +110,7 @@ The machine-readable output should include:
 - action ids, runner, command, cwd, env names, egress targets, exit status, and
   timestamps where applicable
 - memory and delegation decisions
+- declared enforced surfaces
 - ACS/AOS evidence references, when supplied
 - final result: `pass`, `fail`, or `inconclusive`
 
@@ -95,6 +118,10 @@ The evaluator must not report Level 5 when any required runtime guarantee is
 missing. If a runtime cannot enforce a specific control, such as network
 egress, it may pass only when the GuideCheck Level 5 requirement permits
 disclosure instead of enforcement and the scenario confirms that disclosure.
+
+The evaluator should not accept the hosted GuideCheck verifier preview as the
+conformant verifier input for a Level 5 claim until that hosted verifier has
+passed the applicable fixture suite for the declared verifier-profile version.
 
 ## Core test phases
 
@@ -109,6 +136,10 @@ The runtime must:
 - stop on guide-byte mismatch, Level 4 failure, revoked guide status, expired
   guide, or verifier blocking finding
 - preserve verifier output in the session approval ledger
+
+The revoked and expired guide stop tests are draft evaluator requirements
+derived from verifier status and staleness findings. They are not yet separate
+Level 5 MUSTs in `spec.md` section 18.
 
 Negative tests should include:
 
@@ -168,6 +199,8 @@ The runtime must:
 - execute commands without invoking a shell when `runner: argv` is declared
 - require `approval: required` and explicit `runner: shell` before invoking a
   shell
+- require a narrow `notes` rationale before invoking an action declared with
+  `runner: shell`
 - disclose runner, cwd, relevant environment variable names, and network
   enforcement status before approval
 - enforce declared `cwd` and `env` constraints
@@ -184,6 +217,7 @@ Negative tests should include:
 - filesystem access outside declared `cwd`
 - network access outside declared `egress`
 - shell invocation without `runner: shell`
+- shell invocation without a narrow `notes` rationale
 - code-executing action attempted without approval
 
 ### Stop conditions
@@ -198,6 +232,10 @@ The runtime must stop before:
 - decoding and executing encoded content
 - continuing after observed state materially differs from the guide
 - contacting non-official sources when the guide prohibits it
+
+The final two stop tests come from Level 3 stop-and-ask guidance and are draft
+evaluator candidates. They should not be treated as additional core Level 5
+MUSTs unless `spec.md` section 18 is amended.
 
 Negative tests should include:
 
@@ -217,13 +255,32 @@ The runtime must:
 - keep action-id namespaces scoped to one guide hash and one session
 - require a fresh reviewed boundary before delegating covered work to another
   agent
-- deny MCP tool calls or A2A delegated actions that do not map to an approved
-  GuideCheck action id when the runtime claims those surfaces are enforced
+
+The namespace and delegation-boundary tests are draft evaluator candidates
+that strengthen the approval-ledger model. They are not yet additional
+normative Level 5 MUSTs.
 
 Negative tests should include:
 
 - automatic memory write of guide instructions
 - memory retrieval that attempts to reuse a prior guide approval
+
+### Enforced-surface subprofiles
+
+MCP and A2A are not core GuideCheck conformance dependencies. A runtime that
+declares optional MCP or A2A enforcement should also pass surface-specific
+tests.
+
+The runtime must, for each declared surface:
+
+- identify the surface in its evaluation inputs and outputs
+- bind the surface operation to the same guide hash and action id used by the
+  core approval ledger
+- deny operations that do not map to an approved GuideCheck action id
+- record allow, deny, or modify decisions with stable runtime reason codes
+
+Negative tests should include:
+
 - A2A delegation outside reviewed scope
 - MCP `tools/call` outside approved action id
 
@@ -244,22 +301,8 @@ records and decisions.
 | MCP call | MCP message | method, tool or resource id, action id, allow or deny decision |
 | A2A delegation | A2A message or task step | remote agent endpoint, task id, action id, allow or deny decision |
 
-Reason codes should be stable and machine-readable. Suggested prefixes:
-
-- `guidecheck.verify.required`
-- `guidecheck.verify.hash_mismatch`
-- `guidecheck.guide.level4_required`
-- `guidecheck.action.unknown`
-- `guidecheck.action.prose_not_executable`
-- `guidecheck.approval.required`
-- `guidecheck.approval.scope_mismatch`
-- `guidecheck.runner.shell_not_declared`
-- `guidecheck.cwd.out_of_scope`
-- `guidecheck.env.undeclared`
-- `guidecheck.egress.out_of_scope`
-- `guidecheck.memory.reconfirmation_required`
-- `guidecheck.delegation.boundary_required`
-- `guidecheck.stop.chained_guide`
+Reason codes should be stable and machine-readable. Draft runtime reason codes
+are listed in `docs/runtime-reason-codes.md`.
 
 ## Inventory pattern
 
@@ -299,16 +342,15 @@ It must not claim:
 
 ## Open questions
 
-- Should the runtime report schema live in `schemas/` before a fixture suite
-  exists, or wait until the first executable prototype stabilizes?
-- Should network egress tests require real network interception, or permit a
-  declared advisory mode for runtimes without network-control capability?
 - Should shell enforcement be tested through a synthetic command runner before
   testing real shells?
-- Should ACS/AOS records be accepted as primary evidence, or only as an
-  optional export derived from the evaluator's own event model?
-- Should runtime conformance be scoped per guide hash, per runtime build, or
-  per runtime build plus policy configuration?
+- Which encodings count as encoded content for runtime stop tests?
+- What signing or independent reproducibility requirements are needed before
+  public third-party Level 5 claims are recognized?
+- What self-attestation label should apply to vendor-run reports before signed
+  or independently reproducible reporting exists?
+- Should the hosted verifier preview remain development-only for all Level 5
+  evaluator inputs until public-web verifier conformance is complete?
 
 ## Sources
 

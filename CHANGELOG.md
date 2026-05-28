@@ -4,10 +4,27 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-05-28
+
 ### Added
 
 - non-normative ACS integration note for runtime control hooks, Guardian
   enforcement, trace records, and AgBOM inventory
+- non-normative draft registry for Level 5 runtime reason codes, kept separate
+  from guide-side verifier finding ids
+
+### Changed
+
+- profile, verifier, hosted verifier, examples, and public pages now report
+  0.3.2
+- Level 5 draft material now records resolved defaults for claim scope, session
+  boundaries, optional enforced-surface subprofiles, memory controls, and
+  reason-code handling
+- verifier conformance now defines the canonical `level5_ready: true`
+  predicate as a guide-side preparation signal, not an achieved runtime level
+- roadmap and implementation planning now keep MCP and A2A as optional
+  enforced-surface design work unless a future spec promotes them to core
+  requirements
 
 ## [0.3.1] - 2026-05-27
 
@@ -130,7 +147,8 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/snapsynapse/guidecheck/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/snapsynapse/guidecheck/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.3.0
 [0.2.1]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.2.1

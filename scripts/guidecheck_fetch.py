@@ -35,7 +35,7 @@ CONNECT_TIMEOUT = 5.0
 READ_TIMEOUT = 8.0
 TOTAL_DEADLINE = 12.0
 MAX_REDIRECTS = 5
-USER_AGENT = "guidecheck-hosted/0.3.1 (+https://guidecheck.org/verify/)"
+USER_AGENT = "guidecheck-hosted/0.3.2 (+https://guidecheck.org/verify/)"
 REPORT_HEADERS = {
     "content-type",
     "x-content-type-options",
@@ -148,7 +148,7 @@ def _request_headers(request_profile: str = "default") -> dict[str, str]:
     user_agent = USER_AGENT
     accept = "text/plain, */*;q=0.1"
     if request_profile == "variation":
-        user_agent = "guidecheck-hosted-variation/0.3.1 (+https://guidecheck.org/verify/)"
+        user_agent = "guidecheck-hosted-variation/0.3.2 (+https://guidecheck.org/verify/)"
         accept = "text/plain;q=1.0, application/octet-stream;q=0.2, */*;q=0.1"
     return {
         "User-Agent": user_agent,

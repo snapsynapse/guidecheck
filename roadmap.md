@@ -53,11 +53,12 @@ Candidates for 0.3.0 and later. Not commitments.
   Level 6.
 - An optional signed verifier-report envelope for hosted checkers, CI, and
   assistant-runtime consumption.
+- A future Level 5 runtime conformance profile. Detailed sequencing lives in
+  `docs/level-5-implementation-plan.md`; roadmap entries here stay at the
+  milestone level.
 - A requirement that Level 5 runtimes publish an attestation or conformance
   report.
 - A self-verification report published by hosted verifiers.
-- A separate Level 5 runtime-conformance fixture suite, distinct from the
-  verifier-conformance fixture corpus, once Level 5 work begins.
 - Draft Level 5 planning lives in `docs/level-5-runtime-conformance.md` and
   `docs/level-5-implementation-plan.md`. Keep these as non-normative design
   notes until the Level 1-4 fixture and validation base is stronger.
@@ -145,10 +146,10 @@ Candidates for 0.3.0 and later. Not commitments.
 - Add deterministic tests for the remaining cross-channel hash anchor types.
 - Add tests for registry-url parsing across npm, PyPI, Cargo, and generic
   registry records.
-- Prototype an optional runtime-policy mapping that turns verified
-  GuideCheck action blocks into enforcement decisions for tool calls, MCP
-  tool invocations, and delegated A2A tasks. Treat this as Level 5 design
-  research until the runtime conformance fixture suite exists.
+- Treat runtime-policy mapping for tool calls, MCP tool invocations, and
+  delegated A2A tasks as optional Level 5 enforced-surface design research.
+  Do not make those surfaces core conformance dependencies without a future
+  profile decision.
 - Add example machine-readable event records for guide verification, action
   selection, approval prompts, approval results, command execution, egress
   checks, and stop-condition denials so AOS-compatible or other observability

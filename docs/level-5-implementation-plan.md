@@ -14,6 +14,8 @@ through Level 4 guide verifier.
   machine-readable reports, and optional ACS/AOS exports.
 - Keep ACS/AOS, MCP, A2A, OpenTelemetry, OCSF, and AgBOM as optional
   interoperability surfaces.
+- Keep MCP and A2A enforcement out of core Level 5 unless a future spec change
+  explicitly promotes them.
 
 ## Non-goals
 
@@ -32,8 +34,13 @@ Deliverables:
   profile once open questions are resolved.
 - Add stable terminology for runtime, harness, scenario, event, verdict,
   ledger, and evidence.
-- Decide whether runtime conformance is scoped per guide hash, runtime build,
-  runtime build plus policy configuration, or deployment.
+- Define `declared_enforced_surfaces` for optional tool, MCP, A2A, memory, or
+  knowledge-retrieval enforcement.
+- Scope runtime conformance to the runtime build, policy configuration, and
+  guide SHA-256.
+- Define the session boundary as starting after user confirmation of a verified
+  guide hash and ending on explicit close, runtime restart, guide hash change,
+  verifier result change, or a declared idle timeout.
 - Define claim language and non-claim language.
 
 Exit criteria:
@@ -56,11 +63,13 @@ Deliverables:
   `stopped`.
 - Define finding severities aligned with verifier output: `error`, `warning`,
   `info`.
+- Reference draft runtime reason codes from `docs/runtime-reason-codes.md`.
 
 Exit criteria:
 
 - The schema can represent every event required by the core test phases.
 - The schema can reference, but does not require, ACS/AOS records.
+- The schema records declared enforced surfaces without requiring MCP or A2A.
 - The compact report can be generated from the same evidence object.
 
 ## Phase 2: Scenario corpus
@@ -79,8 +88,8 @@ Deliverables:
   - egress enforcement or disclosure
   - stop conditions
   - memory storage
-  - MCP tool-call mapping
-  - A2A delegation boundary
+- Create optional enforced-surface scenarios for MCP tool-call mapping and A2A
+  delegation boundary only after the core scenario corpus is stable.
 - Add expected result files for each scenario.
 
 Exit criteria:
@@ -100,14 +109,14 @@ Deliverables:
 - Define required harness operations:
   - load guide bytes
   - provide verifier output
+  - provide runtime policy configuration
   - present compact report
   - simulate user confirmation
   - propose action
   - approve, deny, or cancel action
   - attempt tool call
   - attempt memory store
-  - attempt MCP call
-  - attempt A2A delegation
+  - attempt declared-surface operation
   - collect event log
 
 Exit criteria:
@@ -150,6 +159,8 @@ Deliverables:
   - A2A delegation denial
 - Validate example records against the current ACS/AOS JSON schema when the
   schema is locally available.
+- Add a non-dependency test showing the core evaluator passes when ACS/AOS
+  export is disabled and no ACS/AOS records are present.
 
 Exit criteria:
 
@@ -169,6 +180,8 @@ Deliverables:
 - Add examples of passing, failing, and inconclusive runtime reports.
 - Add a migration note for runtime implementers that already emit ACS/AOS
   records.
+- Keep detailed runtime sequencing in this plan and keep `roadmap.md` at the
+  level of milestones.
 
 Exit criteria:
 
@@ -203,6 +216,7 @@ Exit criteria:
 - `fixtures/runtime/`: future runtime scenario corpus.
 - `scripts/eval_runtime_level5.py`: future local evaluator.
 - `examples/runtime-reports/`: future human and JSON examples.
+- `docs/runtime-reason-codes.md`: draft runtime decision-code registry.
 
 ## Suggested first implementation slice
 

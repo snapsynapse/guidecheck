@@ -437,6 +437,16 @@ A guide achieves Level 4 when Level 3 is satisfied and:
 - every found independent anchor agrees with the manifest hash
 A verifier MUST NOT report achieved Level 5 for a guide alone. Level 5 is a deployment claim that combines Level 4 guide conformance with runtime enforcement. A verifier MAY report `level5_ready: true` when the guide satisfies Level 4 and all Level 5 preparation recommendations pass.
 
+For this verifier-profile version, `level5_ready: true` means:
+- achieved level is Level 4
+- every executable action declares `runner`
+- every action classed as `networked`, `privileged`, `destructive`, `persistence-changing`, `data-accessing`, or `code-executing` uses `approval: required`
+- every `runner: shell` action uses `approval: required`
+- every `runner: shell` action includes a narrow rationale in `notes`
+- commands that likely execute project code, dependency code, package scripts, build hooks, generated code, test suites, or local scripts are explicitly classed as `code-executing`
+
+The `level5_ready` signal is guide-side preparation only. It is not an achieved Level 5 claim, and it does not assert that any runtime enforced the guide.
+
 ## 26. Finding Severity
 The verifier MUST use these severities:
 - `error`: blocks the claimed or target conformance level
@@ -458,11 +468,11 @@ The minimum JSON-compatible schema is:
 {
   "verifier": {
     "name": "example-verifier",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "0.3.1",
+    "verifier_profile_version": "0.3.2",
     "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "0.3.1"
+    "guide_profile_version": "0.3.2"
   },
   "input": {
     "url": "https://example.com/.well-known/assistant-guide.txt"

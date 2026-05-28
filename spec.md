@@ -302,14 +302,14 @@ Optional fields:
 
 ### Version-range syntax
 
-The `verifier-conformance` field uses a SemVer range expressed in npm-compatible operator form: `<name> <op><version>[, <op><version>]`. Allowed operators are `=`, `>=`, `>`, `<=`, `<`, `~`, and `^`. Multiple constraints are comma-separated and combined with logical AND. Example: `human-verifiable-assistant-guide-verifier >=0.3.1, <0.4.0`. Whitespace between operator and version is optional. Verifiers that do not implement the full operator set MUST report unsupported operators as warnings and fall back to exact-version matching.
+The `verifier-conformance` field uses a SemVer range expressed in npm-compatible operator form: `<name> <op><version>[, <op><version>]`. Allowed operators are `=`, `>=`, `>`, `<=`, `<`, `~`, and `^`. Multiple constraints are comma-separated and combined with logical AND. Example: `human-verifiable-assistant-guide-verifier >=0.3.2, <0.4.0`. Whitespace between operator and version is optional. Verifiers that do not implement the full operator set MUST report unsupported operators as warnings and fall back to exact-version matching.
 
 Example:
 ```text
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.3.1
+profile-version: 0.3.2
 guide-version: 1.0.0
 applies-to: example-project >=2.3.0, <3.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt
@@ -319,7 +319,7 @@ last-reviewed: 2026-05-22
 reviewed-by: security@example.com
 status: active
 recommended-verifier: https://example.com/check
-verifier-conformance: human-verifiable-assistant-guide-verifier >=0.3.1
+verifier-conformance: human-verifiable-assistant-guide-verifier >=0.3.2
 [/assistant-guide-metadata]
 ```
 
@@ -735,6 +735,10 @@ Level 4 guides SHOULD prepare for Level 5 runtime enforcement by:
 - keeping action commands executable without a shell where practical
 - declaring narrow `cwd`, `env`, and `egress` fields wherever applicable
 - avoiding package lifecycle scripts, generated-code execution, and local-script execution unless the action is explicitly classified as `code-executing`
+
+Verifier output MAY report `level5_ready` for guide-side preparation. The
+canonical predicate for that boolean lives in the GuideCheck Verifier
+Conformance Profile. It is not an achieved Level 5 claim.
 
 ### Level 5: Runtime-enforced execution
 
