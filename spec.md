@@ -412,6 +412,7 @@ When the project ships as a package, the registry record SHOULD carry the hash. 
 Package registries are an independent control plane because publish credentials are typically distinct from web-host credentials and from DNS credentials.
 
 Verifiers discover the registry record through the metadata field `registry-url`. The value MUST be a URL to a specific registry record (for example `https://registry.npmjs.org/example-pkg/2.3.1` or `https://pypi.org/pypi/example-pkg/2.3.1/json`), not a registry homepage or search result. When `registry-url` is absent and the publisher relies on the package-registry channel for cross-channel hash publication, the verifier cannot find the anchor and the channel does not count toward the Level 4 cross-channel requirement.
+When registry metadata is JSON, verifiers MUST bind the hash to assistant-guide-specific metadata, such as an `assistantGuide` or `assistant-guide` object with a `sha256` field. A generic `sha256` field elsewhere in the registry record is not a GuideCheck anchor.
 
 #### Public repository file
 

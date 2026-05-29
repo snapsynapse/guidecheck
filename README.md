@@ -100,7 +100,7 @@ agents may execute another.
 - `docs/mcp-integration.md` - non-normative MCP integration patterns
 - `docs/a2a-integration.md` - non-normative A2A integration patterns
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
-- `finding-ids.md` - registry for fixture-required verifier finding ids
+- `finding-ids.md` - registry for fixture-required and emitted verifier finding ids
 - `assistant-guide.txt` - repository copy of the GuideCheck adoption guide
 - `.well-known/assistant-guide.txt` - canonical public copy of the adoption guide
 - `evals/` - local eval documentation for fixture and generated checks
@@ -220,7 +220,8 @@ Temporary limitations:
   Level 4 anchors
 - the hosted verifier is a Level 1-4 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
-  redirects, response size limits, header capture, and content variation
+  redirects, response size limits, header capture, and content variation; each
+  hosted request is capped by a five-fetch outbound budget
 - no Level 5 runtime conformance claim; Level 5 remains out of scope for the
   reference verifier
 

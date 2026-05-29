@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import ast
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
@@ -31,6 +32,28 @@ SCHEMA_FILES = [
     ROOT / "schemas" / "verifier-output.schema.json",
     ROOT / "schemas" / "fixture-expected.schema.json",
 ]
+FINDING_ID_PREFIXES = {
+    "action-block",
+    "approval",
+    "anchor",
+    "byte-profile",
+    "command",
+    "construct",
+    "content",
+    "egress",
+    "env",
+    "fetch",
+    "filesystem",
+    "header",
+    "level4",
+    "level5",
+    "manifest",
+    "metadata",
+    "network",
+    "prohibited",
+    "runner",
+    "verification-instruction",
+}
 
 
 def fail(errors: list[str], path: Path, message: str) -> None:
@@ -221,6 +244,26 @@ def registered_finding_ids() -> set[str]:
     return set(re.findall(r"`([a-z0-9][a-z0-9._-]*)`", text))
 
 
+def emitted_finding_ids() -> dict[str, set[str]]:
+    emitted: dict[str, set[str]] = {}
+    for path in (ROOT / "scripts" / "guidecheck_verify.py", ROOT / "api" / "verify.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        ids: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                value = node.value
+                prefix = value.split(".", 1)[0]
+                if (
+                    "." in value
+                    and not value.endswith(".")
+                    and prefix in FINDING_ID_PREFIXES
+                    and FINDING_ID.fullmatch(value)
+                ):
+                    ids.add(value)
+        emitted[str(path.relative_to(ROOT))] = ids
+    return emitted
+
+
 def validate_verifier_output(errors: list[str], fixture_dir: Path) -> None:
     if not (fixture_dir / "guide.txt").exists():
         return
@@ -330,6 +373,10 @@ def main() -> int:
             schemas[schema_path.name] = schema
 
     registered_ids = registered_finding_ids()
+    for rel_path, ids in emitted_finding_ids().items():
+        for finding_id in sorted(ids - registered_ids):
+            fail(errors, ROOT / rel_path, f"emitted finding id {finding_id} is not in finding-ids.md")
+
     fixture_dirs = crv.fixture_dirs()
     for fixture_dir in fixture_dirs:
         expected_path = fixture_dir / "expected.json"

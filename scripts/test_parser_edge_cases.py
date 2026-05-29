@@ -107,6 +107,15 @@ def expect_marker(label: str, text: str, should_flag_near_marker: bool) -> bool:
     return True
 
 
+def expect_anchor_hash(label: str, text: str, expected: str | None) -> bool:
+    got = gv.extract_anchor_sha256("package-registry", text)
+    if got != expected:
+        print(f"FAIL {label}: expected {expected!r} got {got!r}")
+        return False
+    print(f"PASS {label}")
+    return True
+
+
 def main() -> int:
     duplicate_key = replace_once(
         BASE_GUIDE,
@@ -277,6 +286,24 @@ def main() -> int:
         "exact action markers not flagged",
         "[action]\nid: a\nclass: normal\napproval: not-required\ncommand: echo hi\n[/action]\n",
         False,
+    )
+    good_hash = "a" * 64
+    bad_hash = "0" * 64
+    ok &= expect_anchor_hash(
+        "registry json ignores decoy hash",
+        f'{{"sha256":"{good_hash}","assistantGuide":{{"sha256":"{bad_hash}"}}}}',
+        bad_hash,
+    )
+    ok &= expect_anchor_hash(
+        "registry json assistant-guide hyphen key",
+        f'{{"assistant-guide":{{"sha256":"{good_hash}"}},"sha256":"{bad_hash}"}}',
+        good_hash,
+    )
+    ok &= expect_anchor_hash("registry json generic hash ignored", f'{{"sha256":"{good_hash}"}}', None)
+    ok &= expect_anchor_hash(
+        "registry toml assistant-guide hash",
+        f'[package.metadata.assistant-guide]\nsha256 = "{good_hash}"\n',
+        good_hash,
     )
 
     return 0 if ok else 1

@@ -22,13 +22,22 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
+from guidecheck_constants import (
+    GUIDECHECK_VERSION,
+    GUIDE_PROFILE as CONSTANT_GUIDE_PROFILE,
+    GUIDE_PROFILE_VERSION as CONSTANT_GUIDE_PROFILE_VERSION,
+    LOCAL_VERIFIER_NAME,
+    STANDARD_PRIMARY_VERIFIER,
+    VERIFIER_PROFILE as CONSTANT_VERIFIER_PROFILE,
+    VERIFIER_PROFILE_VERSION as CONSTANT_VERIFIER_PROFILE_VERSION,
+)
 
-VERIFIER_NAME = "guidecheck-reference-local"
-VERIFIER_VERSION = "0.4.0"
-VERIFIER_PROFILE = "human-verifiable-assistant-guide-verifier"
-VERIFIER_PROFILE_VERSION = "0.4.0"
-GUIDE_PROFILE = "human-verifiable-assistant-guide"
-GUIDE_PROFILE_VERSION = "0.4.0"
+VERIFIER_NAME = LOCAL_VERIFIER_NAME
+VERIFIER_VERSION = GUIDECHECK_VERSION
+VERIFIER_PROFILE = CONSTANT_VERIFIER_PROFILE
+VERIFIER_PROFILE_VERSION = CONSTANT_VERIFIER_PROFILE_VERSION
+GUIDE_PROFILE = CONSTANT_GUIDE_PROFILE
+GUIDE_PROFILE_VERSION = CONSTANT_GUIDE_PROFILE_VERSION
 DEFAULT_APPROVAL_WARNING_THRESHOLD = 10
 DEFAULT_METADATA_VALUE_WARNING_LENGTH = 80
 ANCHOR_CHANNELS = {
@@ -292,6 +301,24 @@ RECOGNIZED_REGISTRY_HOSTS = {
 }
 
 
+_MULTI_SUFFIXES = {
+    "co.uk", "org.uk", "gov.uk", "ac.uk", "me.uk", "ltd.uk", "plc.uk",
+    "co.jp", "or.jp", "ne.jp", "com.au", "net.au", "org.au", "edu.au",
+    "co.nz", "org.nz", "co.za", "com.br", "com.mx", "co.in", "co.kr",
+    "com.sg", "com.cn", "com.hk", "com.tw",
+}
+
+
+def registered_domain(host: str) -> str:
+    host = host.lower().strip(".")
+    labels = host.split(".")
+    if len(labels) <= 2:
+        return host
+    if ".".join(labels[-2:]) in _MULTI_SUFFIXES:
+        return ".".join(labels[-3:])
+    return ".".join(labels[-2:])
+
+
 def is_recognized_registry(value: str) -> bool:
     host = (urlparse(value).hostname or "").lower()
     return host in RECOGNIZED_REGISTRY_HOSTS
@@ -304,6 +331,16 @@ def looks_like_registry_record(value: str) -> bool:
     if "pypi.org" in parsed.netloc:
         return "/pypi/" in parsed.path and parsed.path.endswith("/json")
     return parsed.path not in {"", "/"}
+
+
+def same_registered_domain(left: str, right: str) -> bool:
+    left_host = (urlparse(left).hostname or "").lower()
+    right_host = (urlparse(right).hostname or "").lower()
+    if left_host.startswith("www."):
+        left_host = left_host[4:]
+    if right_host.startswith("www."):
+        right_host = right_host[4:]
+    return bool(left_host and right_host) and registered_domain(left_host) == registered_domain(right_host)
 
 
 def check_byte_profile(data: bytes, findings: list[Finding]) -> None:
@@ -492,6 +529,20 @@ def parse_metadata(text: str, findings: list[Finding], today: date) -> dict[str,
     for key in URL_FIELDS:
         if key in meta and not is_ascii_https_url(meta[key]):
             add_finding(findings, "metadata.url.invalid", "error", f"metadata URL field is invalid: {key}")
+    if (
+        is_ascii_https_url(meta.get("canonical-url", ""))
+        and is_ascii_https_url(meta.get("recommended-verifier", ""))
+        and meta["recommended-verifier"] != STANDARD_PRIMARY_VERIFIER
+        and not same_registered_domain(meta["canonical-url"], meta["recommended-verifier"])
+    ):
+        add_finding(
+            findings,
+            "metadata.recommended-verifier.off-domain",
+            "warning",
+            "recommended-verifier is not on the canonical URL's registered domain",
+            section="verifier-conformance.14",
+            evidence=meta["recommended-verifier"],
+        )
     status = meta.get("status", "active")
     if status not in {"active", "deprecated", "revoked"}:
         add_finding(findings, "metadata.status.invalid", "error", f"unsupported status: {status}")
@@ -827,9 +878,20 @@ def extract_anchor_sha256(channel: str, text: str) -> str | None:
             data = json.loads(text)
         except json.JSONDecodeError:
             data = None
-        found = find_json_sha256(data) if data is not None else None
+        found = find_assistant_guide_json_sha256(data) if data is not None else None
         if found:
             return found
+        if data is not None:
+            return None
+        package_patterns = [
+            r"(?is)\[package\.metadata\.assistant-guide\][^\[]*?\bsha256\s*=\s*\"([0-9a-f]{64})\"",
+            r"(?i)\bassistant[-_]?guide\.sha256\s*=\s*\"?([0-9a-f]{64})\"?",
+            r"(?i)\bAssistant-Guide-SHA256:\s*([0-9a-f]{64})\b",
+        ]
+        for pattern in package_patterns:
+            match = re.search(pattern, text)
+            if match:
+                return match.group(1).lower()
 
     patterns = [
         r"\bsha256=([0-9a-f]{64})\b",
@@ -844,17 +906,94 @@ def extract_anchor_sha256(channel: str, text: str) -> str | None:
     return None
 
 
-def find_json_sha256(value: object) -> str | None:
+def extract_anchor_url(channel: str, text: str) -> str | None:
+    if channel != "package-registry":
+        return None
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        data = None
+    if data is not None:
+        return find_assistant_guide_json_url(data)
+    patterns = [
+        r"(?is)\[package\.metadata\.assistant-guide\][^\[]*?\burl\s*=\s*\"([^\"]+)\"",
+        r"(?i)\bassistant[-_]?guide\.url\s*=\s*\"?([^\"\s]+)\"?",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1)
+    return None
+
+
+def find_assistant_guide_json_sha256(value: object) -> str | None:
+    """Return sha256 from assistant-guide-specific JSON metadata only."""
     if isinstance(value, dict):
         for key, item in value.items():
-            if key == "sha256" and isinstance(item, str) and re.fullmatch(r"[0-9a-f]{64}", item):
-                return item
-            found = find_json_sha256(item)
+            normalized = re.sub(r"[^a-z0-9]", "", key.lower())
+            if normalized == "assistantguide":
+                found = sha256_in_json_value(item)
+                if found:
+                    return found
+            found = find_assistant_guide_json_sha256(item)
             if found:
                 return found
     elif isinstance(value, list):
         for item in value:
-            found = find_json_sha256(item)
+            found = find_assistant_guide_json_sha256(item)
+            if found:
+                return found
+    return None
+
+
+def find_assistant_guide_json_url(value: object) -> str | None:
+    if isinstance(value, dict):
+        for key, item in value.items():
+            normalized = re.sub(r"[^a-z0-9]", "", key.lower())
+            if normalized == "assistantguide":
+                found = url_in_json_value(item)
+                if found:
+                    return found
+            found = find_assistant_guide_json_url(item)
+            if found:
+                return found
+    elif isinstance(value, list):
+        for item in value:
+            found = find_assistant_guide_json_url(item)
+            if found:
+                return found
+    return None
+
+
+def url_in_json_value(value: object) -> str | None:
+    if isinstance(value, dict):
+        item = value.get("url")
+        if isinstance(item, str) and item:
+            return item
+        for child in value.values():
+            found = url_in_json_value(child)
+            if found:
+                return found
+    elif isinstance(value, list):
+        for child in value:
+            found = url_in_json_value(child)
+            if found:
+                return found
+    return None
+
+
+def sha256_in_json_value(value: object) -> str | None:
+    if isinstance(value, dict):
+        item = value.get("sha256")
+        if isinstance(item, str) and re.fullmatch(r"[0-9a-f]{64}", item):
+            return item
+        for child in value.values():
+            found = sha256_in_json_value(child)
+            if found:
+                return found
+    elif isinstance(value, list):
+        for child in value:
+            found = sha256_in_json_value(child)
             if found:
                 return found
     return None
@@ -867,6 +1006,7 @@ def check_anchors(
     findings: list[Finding],
     *,
     level4_claimed: bool,
+    canonical_url: str | None = None,
 ) -> list[AnchorEvidence]:
     if manifest_evidence is None or manifest_evidence.guide_sha256 is None:
         return []
@@ -874,6 +1014,16 @@ def check_anchors(
     anchors: list[AnchorEvidence] = []
     for channel, text in sorted(anchor_texts.items()):
         evidence_path = str(anchor_paths[channel]) if channel in anchor_paths else None
+        anchor_url = extract_anchor_url(channel, text)
+        if canonical_url and anchor_url and anchor_url != canonical_url:
+            add_finding(
+                findings,
+                "anchor.registry.url-mismatch",
+                "warning",
+                "package-registry assistant-guide URL does not match canonical-url",
+                section="verifier-conformance.23",
+                evidence=anchor_url,
+            )
         observed = extract_anchor_sha256(channel, text)
         if observed is None:
             anchors.append(
@@ -968,6 +1118,7 @@ def evaluate_guide(
         anchor_paths,
         findings,
         level4_claimed=level4_claimed,
+        canonical_url=meta.get("canonical-url"),
     )
 
     error_ids = {f.id for f in findings if f.severity == "error"}

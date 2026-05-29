@@ -161,6 +161,9 @@ assistantGuide.sha256 = "<64-hex>"
 When package registry metadata is the chosen independent anchor, include a
 `registry-url` in the guide metadata that points to a specific package record,
 not a registry homepage or search result.
+For JSON registry records, put the hash inside assistant-guide-specific
+metadata, such as `assistantGuide.sha256`; unrelated `sha256` fields elsewhere
+in the package record do not count as GuideCheck anchors.
 
 ### Level 5: runtime-enforced execution
 

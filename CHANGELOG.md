@@ -4,6 +4,23 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+### Security
+
+- package-registry JSON anchors now bind the hash to assistant-guide-specific
+  metadata (`assistantGuide` or `assistant-guide`) instead of accepting the
+  first `sha256` field anywhere in the registry record
+- hosted verification now enforces a five-fetch per-request budget with exact
+  fetch deduplication, uses one deterministically selected unbranded
+  content-variation probe, warns on off-domain recommended verifiers, and warns
+  when package-registry assistant-guide URLs disagree with `canonical-url`
+
+### Changed
+
+- code-level version constants are centralized for the local verifier, hosted
+  verifier, and hosted fetch user agent
+- contract validation now requires every emitted finding id in the verifier and
+  hosted API code to be documented in `finding-ids.md`
+
 ## [0.4.0] - 2026-05-29
 
 ### Security

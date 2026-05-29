@@ -118,6 +118,10 @@ For public-web verification, the verifier MUST:
 - reject compressed or transferred responses that expand beyond the verifier's configured maximum
 - stop reading once enough bytes have been read to prove the guide exceeds the maximum file size
 - use a simple, reproducible request profile that avoids content negotiation where practical
+Hosted or other public request-proxy verifiers SHOULD enforce a per-request
+outbound fetch budget across guide, variation, manifest, and anchor fetches,
+and SHOULD deduplicate exact same-URL same-profile fetches within one
+verification request.
 The verifier SHOULD use conservative timeouts:
 - DNS lookup timeout: default 5 seconds
 - connection timeout: default 10 seconds
@@ -232,6 +236,7 @@ The verifier MUST validate URL fields as ASCII URLs with ASCII hostnames. Intern
 The verifier MUST warn when a non-URL metadata value exceeds 80 bytes. URL-valued fields are exempt because a legitimate canonical or repository URL can be long; all other field values are short by design, and an unusually long one is a side-channel risk per guide-profile section 27.
 The verifier SHOULD warn when `canonical-url`, `repository-url`, `registry-url`, `manifest-url`, or `recommended-verifier` use unrelated registered domains without explanation.
 The verifier SHOULD warn when `recommended-verifier` is not on the same registered domain as `canonical-url`, unless the guide explicitly identifies it as third-party or the URL matches the standard primary verifier for the applicable verifier-profile version.
+The reference verifier emits `metadata.recommended-verifier.off-domain` for an off-domain `recommended-verifier` unless it is the configured standard primary verifier for the applicable profile version.
 The verifier MUST NOT warn solely because `recommended-verifier` differs from `canonical-url` when `recommended-verifier` matches the standard primary verifier configured for the applicable profile version.
 When package-registry metadata is used as an independent Level 4 anchor, the verifier MUST require `registry-url` and MUST validate that it identifies a specific registry record rather than a registry homepage or search result.
 When `registry-url` is absent and no other Level 4 independent anchor is available, the verifier SHOULD emit an informational finding for Level 3 and a blocking finding for Level 4.
@@ -395,6 +400,8 @@ Recognized independent channels are:
 - signed `security.txt` extension fields
 - public append-only transparency log referenced by the manifest `transparency-log-url` field
 A fetching verifier MUST NOT count a `registry-url` toward the Level 4 cross-channel requirement unless its host is a recognized package registry whose publish credentials are distinct from the guide's web host. A `registry-url` on any other host can be served by the guide publisher and provides no independence; the verifier SHOULD emit `anchor.registry.unrecognized-host` (warning) and MUST NOT fetch it as anchor evidence. If the package-registry channel is the only declared anchor, Level 4 then fails via `anchor.independent.missing`.
+A verifier that parses JSON package-registry metadata MUST extract the anchor hash only from assistant-guide-specific metadata, such as an `assistantGuide` or `assistant-guide` object with a `sha256` field. It MUST NOT count an unrelated `sha256` field elsewhere in the registry record as the assistant-guide anchor.
+When package-registry assistant-guide metadata includes a guide URL, the verifier SHOULD compare it with `canonical-url` and warn with `anchor.registry.url-mismatch` on disagreement. This warning does not by itself block Level 4 when the anchor hash matches.
 The verifier MUST emit a failure when independent channels disagree on the hash.
 The verifier MUST report which channels were checked, which were found, which were unreachable, and which were unavailable.
 Unreachable optional channels are findings but do not by themselves block Level 4 if at least one independent channel is present and agrees.

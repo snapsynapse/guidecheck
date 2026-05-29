@@ -22,6 +22,7 @@ exercised by scripts/test_fetch_safety.py.
 from __future__ import annotations
 
 import http.client
+import hashlib
 import ipaddress
 import socket
 import ssl
@@ -29,17 +30,26 @@ import time
 from dataclasses import dataclass, field
 from urllib.parse import urljoin, urlsplit
 
+from guidecheck_constants import HOSTED_USER_AGENT
+
 
 MAX_BYTES = 256 * 1024
 CONNECT_TIMEOUT = 5.0
 READ_TIMEOUT = 8.0
 TOTAL_DEADLINE = 12.0
 MAX_REDIRECTS = 5
-USER_AGENT = "guidecheck-hosted/0.4.0 (+https://guidecheck.org/verify/)"
-# Neutral, non-identifying profile for the content-variation re-fetch. It must
-# not contain "guidecheck" so a host cannot cloak specifically against the
-# verifier. See _request_headers for the rationale.
-VARIATION_USER_AGENT = "Mozilla/5.0 (compatible)"
+USER_AGENT = HOSTED_USER_AGENT
+VARIATION_PROFILES = {
+    "variation-browser": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+        "text/plain, application/octet-stream;q=0.8, */*;q=0.1",
+    ),
+    "variation-cli": (
+        "curl/8.4.0",
+        "text/plain;q=1.0, */*;q=0.2",
+    ),
+}
 REPORT_HEADERS = {
     "content-type",
     "x-content-type-options",
@@ -152,19 +162,27 @@ def _request_headers(request_profile: str = "default") -> dict[str, str]:
     user_agent = USER_AGENT
     accept = "text/plain, */*;q=0.1"
     if request_profile == "variation":
+        request_profile = "variation-browser"
+    if request_profile in VARIATION_PROFILES:
         # The content-variation re-fetch deliberately does NOT identify itself as
         # GuideCheck. A host that cloaks against the verifier (serving benign
         # bytes whenever it sees a "guidecheck" user agent, malicious bytes to
         # real agents) would defeat the check if both fetches were branded. A
-        # neutral, agent-like profile makes verifier-targeted cloaking visible.
-        user_agent = VARIATION_USER_AGENT
-        accept = "text/plain;q=1.0, application/octet-stream;q=0.2, */*;q=0.1"
+        # neutral profile makes verifier-targeted cloaking more visible.
+        user_agent, accept = VARIATION_PROFILES[request_profile]
     return {
         "User-Agent": user_agent,
         "Accept": accept,
         "Accept-Encoding": "identity",
         "Connection": "close",
     }
+
+
+def variation_request_profile(url: str, day: str) -> str:
+    """Deterministically select one unbranded variation profile."""
+    names = sorted(VARIATION_PROFILES)
+    digest = hashlib.sha256(f"{url}\n{day}".encode("utf-8")).digest()
+    return names[digest[0] % len(names)]
 
 
 def safe_fetch(url: str, request_profile: str = "default") -> FetchResult:

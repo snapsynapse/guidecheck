@@ -55,6 +55,7 @@ files.
 | `metadata.status.revoked` | error | The guide status is `revoked`. |
 | `metadata.superseded-by.missing` | warning | A deprecated or revoked guide lacks `superseded-by`. |
 | `metadata.registry-url.not-record` | error | `registry-url` does not identify a specific registry record. |
+| `metadata.recommended-verifier.off-domain` | warning | `recommended-verifier` is not on the canonical URL's registered domain and is not the standard primary verifier. |
 | `metadata.last-reviewed.invalid` | warning | The `last-reviewed` date is malformed. |
 | `metadata.last-reviewed.age` | info | The verifier reports the age of `last-reviewed`. |
 | `metadata.last-reviewed.future` | warning | The `last-reviewed` date appears to be in the future. |
@@ -148,6 +149,7 @@ files.
 | `anchor.independent.mismatch` | error | An independent anchor hash does not match the manifest hash. |
 | `anchor.independent.unreachable` | warning | A declared independent anchor could not be fetched or did not return usable evidence. |
 | `anchor.registry.unrecognized-host` | warning | `registry-url` host is not a recognized independent registry, so it does not count as a package-registry anchor. |
+| `anchor.registry.url-mismatch` | warning | Package-registry assistant-guide metadata names a URL that does not match `canonical-url`. |
 | `level4.requires-fetch` | info | Level 4 evidence is internally consistent but was not fetched; local-file mode caps the achieved level at 3. |
 
 ## Public fetch safety

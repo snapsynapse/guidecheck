@@ -53,6 +53,7 @@ The current static corpus includes:
 - single-authority verifier language
 - metadata key, URL, status, date, and revoked-status failures
 - missing required metadata and registry URLs that do not identify a specific record
+- recommended-verifier URLs that point off the canonical registered domain
 - missing required section
 - malformed or incomplete action blocks, duplicate ids, and invalid enum values
 - missing approval gates, including `code-executing`
@@ -64,6 +65,7 @@ The current static corpus includes:
 - manifest hash and byte-count mismatch
 - missing independent anchor and cross-channel hash divergence
 - Level 5 readiness true and false cases for otherwise valid Level 4 guides
+- package-registry assistant-guide URL mismatch warnings
 - public-fetch SSRF, TLS, cross-domain redirect, header, and content-variation scenarios
 
 Cases still to add:
@@ -71,8 +73,8 @@ Cases still to add:
 - additional metadata parser-confusion cases
 - public-fetch redirect-chain details beyond the modeled cross-domain case
 - additional replay fixtures for TLS edge cases and public-web header variants
-- additional Level 4 anchor scenarios for package registry, repository-file,
-  signed security.txt, and transparency-log evidence
+- additional Level 4 anchor scenarios for repository-file, signed
+  security.txt, and transparency-log evidence
 
 Some additional mutation cases remain covered by generated local evals in
 `scripts/eval_guidecheck.py`. Promote a generated case into this static corpus
@@ -83,5 +85,6 @@ Contributions that add a fixture must include `guide.txt` and `expected.json` an
 ## Finding ids
 
 The finding ids used in `expected.json` files are defined in `finding-ids.md`.
-The current registry covers the starter fixture suite. New fixtures that
-introduce new required finding ids must update the registry in the same change.
+The registry also covers literal finding ids emitted by the reference verifier
+and hosted API. New fixtures or code paths that introduce finding ids must
+update the registry in the same change.

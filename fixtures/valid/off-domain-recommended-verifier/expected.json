@@ -1,0 +1,10 @@
+{
+  "description": "A valid Level 3 guide that recommends an off-domain verifier. The verifier should warn because the URL is neither same-domain nor the standard primary verifier.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "metadata.recommended-verifier.off-domain"
+  ],
+  "level5_ready": false
+}

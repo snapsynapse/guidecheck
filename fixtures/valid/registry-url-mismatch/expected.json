@@ -1,0 +1,10 @@
+{
+  "description": "A Level 4-capable guide whose package-registry assistant-guide metadata has the right hash but a different guide URL. The mismatch is a warning and does not block the hash match.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "anchor.registry.url-mismatch"
+  ],
+  "level5_ready": false
+}

@@ -41,17 +41,20 @@ if _SCRIPTS not in sys.path:
     sys.path.insert(0, _SCRIPTS)
 
 import guidecheck_verify as gv  # noqa: E402
-from guidecheck_fetch import FetchError, safe_fetch  # noqa: E402
+from guidecheck_constants import GUIDECHECK_VERSION, HOSTED_VERIFIER_NAME  # noqa: E402
+from guidecheck_fetch import FetchError, safe_fetch, variation_request_profile  # noqa: E402
 
 
-HOSTED_NAME = "guidecheck-hosted"
-HOSTED_VERSION = "0.4.0"
+HOSTED_NAME = HOSTED_VERIFIER_NAME
+HOSTED_VERSION = GUIDECHECK_VERSION
 WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
+MAX_OUTBOUND_FETCHES = 5
 ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
     "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
     "Hosted Level 4 currently supports package-registry and transparency-log anchors; DNS TXT, repository-file, and signed security.txt anchors are not fetched.",
+    "Hosted verification uses a five-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
     "Level 5 runtime conformance is not evaluated.",
 ]
 
@@ -72,6 +75,33 @@ AGENT_CHOICES = {
     "local": ("local", "local"),
     "other": ("other", "other"),
 }
+
+
+class HostedFetchContext:
+    """Per-request fetch budget and exact fetch cache."""
+
+    def __init__(self, fetcher=safe_fetch, max_fetches: int = MAX_OUTBOUND_FETCHES) -> None:
+        self.fetcher = fetcher
+        self.max_fetches = max_fetches
+        self.cache = {}
+        self.outbound_fetches = 0
+
+    def fetch(self, url: str, request_profile: str = "default"):
+        key = (url, request_profile)
+        if key in self.cache:
+            return self.cache[key]
+        if self.outbound_fetches >= self.max_fetches:
+            raise FetchError("fetch-budget-exhausted", "the verification fetch budget was exhausted")
+        self.outbound_fetches += 1
+        if request_profile == "default":
+            fetched = self.fetcher(url)
+        else:
+            try:
+                fetched = self.fetcher(url, request_profile=request_profile)
+            except TypeError:
+                fetched = self.fetcher(url)
+        self.cache[key] = fetched
+        return fetched
 
 
 def _rate_ok(client_ip: str) -> bool:
@@ -302,11 +332,10 @@ def _header_findings(fetched) -> list[gv.Finding]:
     return findings
 
 
-def _content_variation_findings(url: str, fetched) -> list[gv.Finding]:
+def _content_variation_findings(url: str, fetched, fetch_context: HostedFetchContext, now: datetime) -> list[gv.Finding]:
+    request_profile = variation_request_profile(url, _day(now))
     try:
-        refetched = safe_fetch(url, request_profile="variation")
-    except TypeError:
-        refetched = safe_fetch(url)
+        refetched = fetch_context.fetch(url, request_profile=request_profile)
     except FetchError as exc:
         return [
             gv.Finding(
@@ -338,9 +367,14 @@ def _content_variation_findings(url: str, fetched) -> list[gv.Finding]:
     return []
 
 
-def _fetch_text_evidence(url: str, evidence_kind: str, findings: list[gv.Finding]) -> str | None:
+def _fetch_text_evidence(
+    url: str,
+    evidence_kind: str,
+    findings: list[gv.Finding],
+    fetch_context: HostedFetchContext,
+) -> str | None:
     try:
-        fetched = safe_fetch(url)
+        fetched = fetch_context.fetch(url)
     except FetchError as exc:
         severity = "error" if evidence_kind == "manifest" else "warning"
         fid = "manifest.fetch-failed" if evidence_kind == "manifest" else "anchor.independent.unreachable"
@@ -394,7 +428,10 @@ def _fetch_text_evidence(url: str, evidence_kind: str, findings: list[gv.Finding
     return _body_text(fetched.body)
 
 
-def _hosted_level4_evidence(body: bytes) -> tuple[str | None, dict[str, str], list[gv.Finding]]:
+def _hosted_level4_evidence(
+    body: bytes,
+    fetch_context: HostedFetchContext,
+) -> tuple[str | None, dict[str, str], list[gv.Finding]]:
     metadata = _guide_metadata(body)
     manifest_url = metadata.get("manifest-url")
     extra_findings: list[gv.Finding] = []
@@ -404,7 +441,7 @@ def _hosted_level4_evidence(body: bytes) -> tuple[str | None, dict[str, str], li
     if not manifest_url:
         return None, anchor_texts, extra_findings
 
-    manifest_text = _fetch_text_evidence(manifest_url, "manifest", extra_findings)
+    manifest_text = _fetch_text_evidence(manifest_url, "manifest", extra_findings, fetch_context)
     if manifest_text is None:
         return None, anchor_texts, extra_findings
 
@@ -426,14 +463,24 @@ def _hosted_level4_evidence(body: bytes) -> tuple[str | None, dict[str, str], li
                 )
             )
         else:
-            registry_text = _fetch_text_evidence(registry_url, "package-registry anchor", extra_findings)
+            registry_text = _fetch_text_evidence(
+                registry_url,
+                "package-registry anchor",
+                extra_findings,
+                fetch_context,
+            )
             if registry_text is not None:
                 anchor_texts["package-registry"] = registry_text
 
     manifest = gv.parse_manifest(manifest_text)
     transparency_url = manifest.get("transparency-log-url")
     if transparency_url:
-        transparency_text = _fetch_text_evidence(transparency_url, "transparency-log anchor", extra_findings)
+        transparency_text = _fetch_text_evidence(
+            transparency_url,
+            "transparency-log anchor",
+            extra_findings,
+            fetch_context,
+        )
         if transparency_text is not None:
             anchor_texts["transparency-log"] = transparency_text
 
@@ -672,9 +719,10 @@ class handler(BaseHTTPRequestHandler):
             return
 
         checked_url, auto_resolved = resolve_target_url(url)
+        fetch_context = HostedFetchContext(safe_fetch)
 
         try:
-            fetched = safe_fetch(checked_url)
+            fetched = fetch_context.fetch(checked_url)
         except FetchError as exc:
             fail(400, exc.code, exc.message)
             return
@@ -709,8 +757,11 @@ class handler(BaseHTTPRequestHandler):
             return
 
         hosted_fetch_findings = _header_findings(fetched)
-        hosted_fetch_findings.extend(_content_variation_findings(checked_url, fetched))
-        manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(fetched.body)
+        hosted_fetch_findings.extend(_content_variation_findings(checked_url, fetched, fetch_context, now))
+        manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(
+            fetched.body,
+            fetch_context,
+        )
         findings, achieved_level, level5_ready, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
             fetched.body,
             manifest_text,

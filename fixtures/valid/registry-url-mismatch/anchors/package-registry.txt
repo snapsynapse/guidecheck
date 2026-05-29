@@ -1,0 +1,1 @@
+{"assistantGuide":{"url":"https://evil.example/guide.txt","sha256":"3301cc097ccdf4f5ce7c5f11ac0d43d7edbbbd6b5c79cf7832cfc3e137317d26"}}
