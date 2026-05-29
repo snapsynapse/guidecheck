@@ -23,6 +23,10 @@ Verifier: https://guidecheck.org/verify
 New here: `ADOPTION.md` is the practical on-ramp. It explains the conformance
 ladder, gives a level-by-level path, and carries the guide-author checklist.
 
+## Canonical URL
+
+https://guidecheck.org/
+
 ## Naming model
 
 - The standards project, public checker, ecosystem, and site are GuideCheck.
@@ -41,7 +45,7 @@ without the security practices a competent operator would already apply. A
 verifier confirms form. The human confirms meaning. Read `spec.md` section 1
 and `operator-guide.md` before adopting.
 
-## The problem
+## What problem it solves
 
 AI-assisted setup guides are distributed through HTML, rendered Markdown, PDFs,
 docs sites, copied issue comments, terminal output, and screenshots. Those
