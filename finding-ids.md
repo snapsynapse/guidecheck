@@ -60,6 +60,7 @@ files.
 | `metadata.last-reviewed.future` | warning | The `last-reviewed` date appears to be in the future. |
 | `metadata.valid-until.invalid` | warning | The `valid-until` date is malformed. |
 | `metadata.valid-until.expired` | warning | The `valid-until` date is in the past. |
+| `metadata.value.long` | warning | A non-URL metadata value is unusually long. |
 
 ## Required content
 
@@ -95,6 +96,7 @@ files.
 | `action-block.class.code-executing-missing` | warning | A command likely executes code but lacks `code-executing`. |
 | `approval.required-missing` | error | A sensitive action is not marked `approval: required`. |
 | `approval.required.too-many` | warning | A guide has more required approvals than the default warning threshold. |
+| `approval.command-implies-required` | warning | A command implies a sensitive action but `approval` is not `required` and the declared class does not require it. |
 
 ## Command, filesystem, environment, and egress
 
@@ -104,11 +106,13 @@ files.
 | `command.substitution` | error | A command uses shell substitution. |
 | `command.pipe-or-redirection` | error | A non-normal action uses a pipe or redirection. |
 | `command.glob-destructive` | error | A destructive or privileged command uses a glob. |
+| `command.fetch-execute` | error | A command pipes a network fetch into a shell or interpreter (remote code execution). |
 | `filesystem.cwd.missing` | error | A filesystem action lacks `cwd`. |
 | `env.missing` | error | A command references environment variables without `env`. |
 | `env.unlisted-variable` | error | A command references variables not listed in `env`. |
 | `egress.missing` | error | A networked action lacks `egress`. |
 | `egress.wildcard-too-broad` | error | An egress wildcard is broader than one subdomain level. |
+| `network.command-implies-networked` | warning | A command performs network access but the class omits `networked`. |
 | `runner.shell.missing-rationale` | warning | A shell runner lacks a narrow rationale in `notes`. |
 
 ## Level 5 readiness
@@ -153,10 +157,15 @@ files.
 | `fetch.tls.invalid` | error | TLS validation fails. |
 | `fetch.redirect.cross-domain` | error | A redirect crosses registered domains. |
 | `fetch.content-variation` | warning | Re-fetching with a harmless alternate request profile returned different guide bytes. |
+| `fetch.content-variation.unchecked` | warning | The content-variation re-fetch could not be completed. |
 | `fetch.ssrf.localhost` | error | A hosted verifier target is localhost. |
 | `fetch.ssrf.private-ip` | error | A hosted verifier target resolves to private or local IP space. |
 | `fetch.ssrf.metadata-ip` | error | A hosted verifier target is a cloud metadata address. |
 | `fetch.ssrf.local-domain` | error | A hosted verifier target is a local-only domain. |
+| `header.content-type.missing` | warning | The served guide response has no `Content-Type`. |
+| `header.content-type.incompatible` | warning | The served guide response is not `text/plain; charset=utf-8`. |
+| `header.x-content-type-options.missing` | warning | The served guide response lacks `X-Content-Type-Options: nosniff`. |
+| `header.hsts.missing` | warning | The served guide response lacks `Strict-Transport-Security`. |
 
 ## Change control
 

@@ -1,0 +1,12 @@
+{
+  "description": "Hidden destructive action behind a case-variant [ACTION] marker the verifier must not silently drop.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "15db652cdcd98bb6e00ce5a55c049d75ac37a163c794d1725c56023dfb791b33",
+  "guide_bytes": 5250,
+  "blocking_finding_ids": [
+    "action-block.malformed"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

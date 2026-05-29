@@ -1,0 +1,15 @@
+{
+  "description": "Fetch-execute (curl | sh) hidden in a class: normal, approval: not-required action.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "023d6d7342e8d990d2c57a9cd061c7831247cb5a7b79f3bb5e7c7b33782d199b",
+  "guide_bytes": 5157,
+  "blocking_finding_ids": [
+    "command.fetch-execute"
+  ],
+  "required_warning_ids": [
+    "network.command-implies-networked",
+    "approval.command-implies-required"
+  ],
+  "level5_ready": false
+}

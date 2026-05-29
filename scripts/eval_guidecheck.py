@@ -134,6 +134,11 @@ def parse_key_block(text: str, start: str, end: str) -> tuple[list[dict[str, str
             in_block = False
             current = {}
             continue
+        if line.strip().lower() in (start.lower(), end.lower()):
+            # Marker differing only by whitespace or case: not an exact boundary,
+            # but a lenient agent parser may honor it. Surface, never drop.
+            errors.append(f"near-marker:{line.strip()}")
+            continue
         if in_block:
             if line in (start, end):
                 errors.append("nested")
@@ -356,8 +361,17 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
             finding(findings, "egress.missing", "error", action.get("id", ""))
         if "egress" in action and re.search(r"(^|,\s*)\*", action["egress"]):
             finding(findings, "egress.wildcard-too-broad", "error", action["egress"])
-        if "code-executing" not in classes and command_executes_code(action.get("command", "")):
+        command = action.get("command", "")
+        if "code-executing" not in classes and command_executes_code(command):
             finding(findings, "action-block.class.code-executing-missing", "warning", action.get("id", ""))
+        if "networked" not in classes and command_is_networked(command):
+            finding(findings, "network.command-implies-networked", "warning", action.get("id", ""))
+        if (
+            action.get("approval") != "required"
+            and not (classes & APPROVAL_REQUIRED_CLASSES)
+            and (command_is_networked(command) or command_executes_code(command))
+        ):
+            finding(findings, "approval.command-implies-required", "warning", action.get("id", ""))
         if action.get("runner") == "shell" and not action.get("notes"):
             finding(findings, "runner.shell.missing-rationale", "warning", action.get("id", ""))
         check_command(action, classes, findings)
@@ -388,8 +402,83 @@ def check_level5_readiness(actions: list[dict[str, str]], findings: list[Finding
     )
 
 
+# Mirrors guidecheck_verify exactly. Command-head analysis (not bare words),
+# warnings only except the unambiguous fetch-execute shape. See that module.
+_INTERPRETERS = {
+    "sh", "bash", "zsh", "ksh", "dash", "fish", "python", "node", "deno", "bun",
+    "ruby", "perl", "php", "lua", "awk", "gawk", "mawk", "rscript", "osascript",
+    "tclsh", "pwsh", "powershell",
+}
+_NET_TOOLS = {
+    "curl", "wget", "aria2c", "aria2", "httpie", "http", "https", "certutil",
+    "scp", "sftp", "rsync", "ftp", "tftp", "telnet", "nc", "ncat", "socat", "ssh",
+}
+_VCS_TOOLS = {"git", "svn", "hg"}
+_VCS_NET_SUBCOMMANDS = {"clone", "pull", "fetch", "push", "remote", "ls-remote", "submodule"}
+_PACKAGE_TOOLS = {
+    "npm", "pnpm", "yarn", "pip", "pipx", "gem", "cargo", "go", "make", "just",
+    "pytest", "poetry", "bundle", "composer", "gradle", "mvn",
+}
+_COMMAND_PREFIXES = {"sudo", "doas", "env", "command", "exec", "nohup", "time", "nice"}
+_CODE_FLAGS = {"-c", "-e", "-m", "--eval", "--exec", "--command", "-E"}
+_PROGRAM_INTERPRETERS = {"awk", "gawk", "mawk", "perl", "ruby", "osascript", "lua", "rscript", "pwsh", "powershell"}
+_SCRIPT_EXTENSION = re.compile(r"\.(?:py|js|ts|mjs|cjs|rb|pl|php|sh|bash|lua|r|tcl|ps1|awk)$", re.IGNORECASE)
+
+
+def _command_head(segment: str) -> tuple[str, list[str]]:
+    tokens = segment.split()
+    index = 0
+    while index < len(tokens) and (
+        re.fullmatch(r"[A-Za-z_]\w*=.*", tokens[index]) or tokens[index] in _COMMAND_PREFIXES
+    ):
+        index += 1
+    if index >= len(tokens):
+        return "", []
+    head = tokens[index].rsplit("/", 1)[-1].lower()
+    head = re.sub(r"[0-9][0-9.]*$", "", head) or head
+    return head, tokens[index + 1:]
+
+
+def _command_segments(command: str) -> list[str]:
+    return re.split(r"\|\||&&|[|;&\n]", command)
+
+
+def _segment_is_networked(segment: str) -> bool:
+    head, args = _command_head(segment)
+    if head in _VCS_TOOLS:
+        return any(arg in _VCS_NET_SUBCOMMANDS for arg in args)
+    return head in _NET_TOOLS
+
+
+def _segment_runs_code(segment: str) -> bool:
+    head, args = _command_head(segment)
+    if head in _PACKAGE_TOOLS:
+        return True
+    if head in _INTERPRETERS:
+        if any(arg in _CODE_FLAGS or _SCRIPT_EXTENSION.search(arg) for arg in args):
+            return True
+        if head in _PROGRAM_INTERPRETERS and any(not arg.startswith("-") for arg in args):
+            return True
+    return False
+
+
+def command_is_networked(command: str) -> bool:
+    return any(_segment_is_networked(segment) for segment in _command_segments(command))
+
+
 def command_executes_code(command: str) -> bool:
-    return bool(re.search(r"\b(npm|pnpm|yarn|pytest|python|node|make|just|go test|cargo)\b", command))
+    if any(_segment_runs_code(segment) for segment in _command_segments(command)):
+        return True
+    parts = re.split(r"(?<!\|)\|(?!\|)", command)
+    heads = [_command_head(part)[0] for part in parts]
+    return any(heads[i] in _INTERPRETERS for i in range(1, len(heads)))
+
+
+def command_fetch_executes(command: str) -> bool:
+    parts = re.split(r"(?<!\|)\|(?!\|)", command)
+    networked = [_segment_is_networked(part) for part in parts]
+    interpreter = [_command_head(part)[0] in _INTERPRETERS for part in parts]
+    return any(networked[i - 1] and interpreter[i] for i in range(1, len(parts)))
 
 
 def check_command(action: dict[str, str], classes: set[str], findings: list[Finding]) -> None:
@@ -401,6 +490,8 @@ def check_command(action: dict[str, str], classes: set[str], findings: list[Find
         finding(findings, "command.substitution", "error", command)
     if ("|" in command or ">" in command or "<" in command) and classes != {"normal"}:
         finding(findings, "command.pipe-or-redirection", "error", command)
+    if command_fetch_executes(command):
+        finding(findings, "command.fetch-execute", "error", command)
     if ("destructive" in classes or "privileged" in classes) and "*" in command:
         finding(findings, "command.glob-destructive", "error", command)
     vars_used = sorted(set(re.findall(r"\$([A-Za-z_][A-Za-z0-9_]*)", command)))
@@ -541,13 +632,14 @@ def evaluate_bytes(
     check_byte_profile(data, findings)
     check_disallowed(text, findings)
     has_l1_instruction = check_verification_instruction(text, findings)
-    meta = parse_metadata(text, findings) if "[assistant-guide-metadata]" in text else {}
+    has_metadata = bool(re.search(r"\[assistant-guide-metadata\]", text, re.IGNORECASE))
+    meta = parse_metadata(text, findings) if has_metadata else {}
     has_repo = "repository-url" in meta or re.search(r"Repository:\s*https://", text)
     has_canonical = "canonical-url" in meta or re.search(r"Canonical URL:\s*https://", text)
     has_scope = "Task scope" in text
     actions = parse_actions(text, findings)
     wants_level3_checks = bool(actions) or "Assistant invocation prompt" in text
-    if "[assistant-guide-metadata]" in text and wants_level3_checks:
+    if has_metadata and wants_level3_checks:
         check_sections(text, findings)
         check_actions(actions, findings)
     check_prohibited(text, findings)
@@ -574,7 +666,7 @@ def evaluate_bytes(
         fid for fid in error_ids if fid.startswith("manifest.") or fid.startswith("anchor.")
     }
     level3_blockers = error_ids - byte_blockers - l1_blockers - level4_blockers
-    if achieved >= 2 and "[assistant-guide-metadata]" in text and actions and not level3_blockers:
+    if achieved >= 2 and has_metadata and actions and not level3_blockers:
         achieved = 3
     if achieved >= 3 and level4_claimed and manifest_valid and anchor_matches and not anchor_mismatches:
         achieved = 4

@@ -238,6 +238,14 @@ def parse_key_block(text: str, start: str, end: str) -> tuple[list[dict[str, str
             in_block = False
             current = {}
             continue
+        if line.strip().lower() in (start.lower(), end.lower()):
+            # A marker that differs only by surrounding whitespace or letter case
+            # is not an exact boundary, so this verifier does not open or close a
+            # block on it. A whitespace- or case-lenient agent parser might, so
+            # the verifier MUST surface the divergence rather than silently
+            # dropping the block's contents.
+            errors.append(f"near-marker:{line.strip()}")
+            continue
         if in_block:
             if line in (start, end):
                 errors.append("nested")
@@ -567,8 +575,19 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
             add_finding(findings, "egress.missing", "error", "networked action lacks egress", evidence=action.get("id", ""))
         if "egress" in action and re.search(r"(^|,\s*)\*", action["egress"]):
             add_finding(findings, "egress.wildcard-too-broad", "error", "egress wildcard is too broad")
-        if "code-executing" not in classes and command_executes_code(action.get("command", "")):
+        command = action.get("command", "")
+        if "code-executing" not in classes and command_executes_code(command):
             add_finding(findings, "action-block.class.code-executing-missing", "warning", "command likely executes code", evidence=action.get("id", ""))
+        if "networked" not in classes and command_is_networked(command):
+            add_finding(findings, "network.command-implies-networked", "warning", "command performs network access but class omits networked", evidence=action.get("id", ""))
+        # When the declared class would not trigger an approval gate but the
+        # command itself implies a sensitive action, surface the missing gate.
+        if (
+            action.get("approval") != "required"
+            and not (classes & APPROVAL_REQUIRED_CLASSES)
+            and (command_is_networked(command) or command_executes_code(command))
+        ):
+            add_finding(findings, "approval.command-implies-required", "warning", "command implies a sensitive action but approval is not required", evidence=action.get("id", ""))
         if action.get("runner") == "shell" and not action.get("notes"):
             add_finding(findings, "runner.shell.missing-rationale", "warning", "shell runner lacks notes rationale", evidence=action.get("id", ""))
         check_command(action, classes, findings)
@@ -621,8 +640,94 @@ def check_level5_readiness(actions: list[dict[str, str]], findings: list[Finding
     )
 
 
+# Command/class cross-checks. These analyse the COMMAND HEAD of each pipeline
+# segment (the program being invoked), not bare words anywhere in the string, so
+# `apt-get install curl` is not mistaken for a network command. They cannot
+# decide arbitrary shell semantics, so apart from the unambiguous fetch-execute
+# shape they only raise warnings: the human still reviews intent.
+_INTERPRETERS = {
+    "sh", "bash", "zsh", "ksh", "dash", "fish", "python", "node", "deno", "bun",
+    "ruby", "perl", "php", "lua", "awk", "gawk", "mawk", "rscript", "osascript",
+    "tclsh", "pwsh", "powershell",
+}
+_NET_TOOLS = {
+    "curl", "wget", "aria2c", "aria2", "httpie", "http", "https", "certutil",
+    "scp", "sftp", "rsync", "ftp", "tftp", "telnet", "nc", "ncat", "socat", "ssh",
+}
+_VCS_TOOLS = {"git", "svn", "hg"}
+_VCS_NET_SUBCOMMANDS = {"clone", "pull", "fetch", "push", "remote", "ls-remote", "submodule"}
+_PACKAGE_TOOLS = {
+    "npm", "pnpm", "yarn", "pip", "pipx", "gem", "cargo", "go", "make", "just",
+    "pytest", "poetry", "bundle", "composer", "gradle", "mvn",
+}
+# Pure command prefixes whose first non-prefix token is the real program.
+_COMMAND_PREFIXES = {"sudo", "doas", "env", "command", "exec", "nohup", "time", "nice"}
+_CODE_FLAGS = {"-c", "-e", "-m", "--eval", "--exec", "--command", "-E"}
+# Interpreters that take an inline program as a bare positional argument.
+_PROGRAM_INTERPRETERS = {"awk", "gawk", "mawk", "perl", "ruby", "osascript", "lua", "rscript", "pwsh", "powershell"}
+_SCRIPT_EXTENSION = re.compile(r"\.(?:py|js|ts|mjs|cjs|rb|pl|php|sh|bash|lua|r|tcl|ps1|awk)$", re.IGNORECASE)
+
+
+def _command_head(segment: str) -> tuple[str, list[str]]:
+    """Return the invoked program (path- and version-normalized) and its args."""
+    tokens = segment.split()
+    index = 0
+    while index < len(tokens) and (
+        re.fullmatch(r"[A-Za-z_]\w*=.*", tokens[index]) or tokens[index] in _COMMAND_PREFIXES
+    ):
+        index += 1
+    if index >= len(tokens):
+        return "", []
+    head = tokens[index].rsplit("/", 1)[-1].lower()
+    head = re.sub(r"[0-9][0-9.]*$", "", head) or head
+    return head, tokens[index + 1:]
+
+
+def _command_segments(command: str) -> list[str]:
+    return re.split(r"\|\||&&|[|;&\n]", command)
+
+
+def _segment_is_networked(segment: str) -> bool:
+    head, args = _command_head(segment)
+    if head in _VCS_TOOLS:
+        return any(arg in _VCS_NET_SUBCOMMANDS for arg in args)
+    return head in _NET_TOOLS
+
+
+def _segment_runs_code(segment: str) -> bool:
+    head, args = _command_head(segment)
+    if head in _PACKAGE_TOOLS:
+        return True
+    if head in _INTERPRETERS:
+        if any(arg in _CODE_FLAGS or _SCRIPT_EXTENSION.search(arg) for arg in args):
+            return True
+        if head in _PROGRAM_INTERPRETERS and any(not arg.startswith("-") for arg in args):
+            return True
+    return False
+
+
+def command_is_networked(command: str) -> bool:
+    """True when a pipeline segment invokes a network client."""
+    return any(_segment_is_networked(segment) for segment in _command_segments(command))
+
+
 def command_executes_code(command: str) -> bool:
-    return bool(re.search(r"\b(npm|pnpm|yarn|pytest|python|node|make|just|go test|cargo)\b", command))
+    if any(_segment_runs_code(segment) for segment in _command_segments(command)):
+        return True
+    # An interpreter reading from a pipe executes whatever is piped into it.
+    parts = re.split(r"(?<!\|)\|(?!\|)", command)
+    heads = [_command_head(part)[0] for part in parts]
+    return any(heads[i] in _INTERPRETERS for i in range(1, len(heads)))
+
+
+def command_fetch_executes(command: str) -> bool:
+    """True for the remote-code-execution shape: a network fetch piped into an
+    interpreter (`curl url | sh`). This is the one command-content pattern
+    unambiguous enough to block; everything else is advisory."""
+    parts = re.split(r"(?<!\|)\|(?!\|)", command)
+    networked = [_segment_is_networked(part) for part in parts]
+    interpreter = [_command_head(part)[0] in _INTERPRETERS for part in parts]
+    return any(networked[i - 1] and interpreter[i] for i in range(1, len(parts)))
 
 
 def check_command(action: dict[str, str], classes: set[str], findings: list[Finding]) -> None:
@@ -636,6 +741,8 @@ def check_command(action: dict[str, str], classes: set[str], findings: list[Find
         add_finding(findings, "command.substitution", "error", "command uses shell substitution", evidence=command)
     if ("|" in command or ">" in command or "<" in command) and classes != {"normal"}:
         add_finding(findings, "command.pipe-or-redirection", "error", "non-normal command uses pipe or redirection", evidence=command)
+    if command_fetch_executes(command):
+        add_finding(findings, "command.fetch-execute", "error", "command pipes a network fetch into a shell or interpreter", evidence=command)
     if ("destructive" in classes or "privileged" in classes) and "*" in command:
         add_finding(findings, "command.glob-destructive", "error", "destructive or privileged command uses a glob", evidence=command)
     vars_used = sorted(set(re.findall(r"\$([A-Za-z_][A-Za-z0-9_]*)", command)))
@@ -835,13 +942,16 @@ def evaluate_guide(
     check_byte_profile(data, findings)
     check_disallowed(text, findings)
     has_l1_instruction = check_verification_instruction(text, findings)
-    meta = parse_metadata(text, findings, evaluated_at.date()) if "[assistant-guide-metadata]" in text else {}
+    # Detect the metadata marker case-insensitively so an upper/mixed-case
+    # variant is parsed and flagged (near-marker), never silently ignored.
+    has_metadata = bool(re.search(r"\[assistant-guide-metadata\]", text, re.IGNORECASE))
+    meta = parse_metadata(text, findings, evaluated_at.date()) if has_metadata else {}
     has_repo = "repository-url" in meta or re.search(r"Repository:\s*https://", text)
     has_canonical = "canonical-url" in meta or re.search(r"Canonical URL:\s*https://", text)
     has_scope = "Task scope" in text
     actions = parse_actions(text, findings)
     wants_level3_checks = bool(actions) or "Assistant invocation prompt" in text
-    if "[assistant-guide-metadata]" in text and wants_level3_checks:
+    if has_metadata and wants_level3_checks:
         check_sections(text, findings)
         check_actions(actions, findings)
     check_prohibited(text, findings)
@@ -867,7 +977,7 @@ def evaluate_guide(
         fid for fid in error_ids if fid.startswith("manifest.") or fid.startswith("anchor.")
     }
     level3_blockers = error_ids - byte_blockers - l1_blockers - level4_blockers
-    if achieved >= 2 and "[assistant-guide-metadata]" in text and actions and not level3_blockers:
+    if achieved >= 2 and has_metadata and actions and not level3_blockers:
         achieved = 3
     anchor_matches = any(anchor.status == "present-matches" for anchor in cross_channel_anchors)
     anchor_mismatches = any(anchor.status == "present-mismatch" for anchor in cross_channel_anchors)

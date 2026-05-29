@@ -36,6 +36,10 @@ READ_TIMEOUT = 8.0
 TOTAL_DEADLINE = 12.0
 MAX_REDIRECTS = 5
 USER_AGENT = "guidecheck-hosted/0.3.2 (+https://guidecheck.org/verify/)"
+# Neutral, non-identifying profile for the content-variation re-fetch. It must
+# not contain "guidecheck" so a host cannot cloak specifically against the
+# verifier. See _request_headers for the rationale.
+VARIATION_USER_AGENT = "Mozilla/5.0 (compatible)"
 REPORT_HEADERS = {
     "content-type",
     "x-content-type-options",
@@ -148,7 +152,12 @@ def _request_headers(request_profile: str = "default") -> dict[str, str]:
     user_agent = USER_AGENT
     accept = "text/plain, */*;q=0.1"
     if request_profile == "variation":
-        user_agent = "guidecheck-hosted-variation/0.3.2 (+https://guidecheck.org/verify/)"
+        # The content-variation re-fetch deliberately does NOT identify itself as
+        # GuideCheck. A host that cloaks against the verifier (serving benign
+        # bytes whenever it sees a "guidecheck" user agent, malicious bytes to
+        # real agents) would defeat the check if both fetches were branded. A
+        # neutral, agent-like profile makes verifier-targeted cloaking visible.
+        user_agent = VARIATION_USER_AGENT
         accept = "text/plain;q=1.0, application/octet-stream;q=0.2, */*;q=0.1"
     return {
         "User-Agent": user_agent,

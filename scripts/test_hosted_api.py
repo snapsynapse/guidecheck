@@ -120,7 +120,7 @@ def test_evaluated_with_warnings() -> None:
     request = run_post({"url": url}, lambda checked: fetched(checked, 200, data))
     body = request.body or {}
     check("evaluated warnings status", request.status == 200)
-    check("evaluated warnings retained", body.get("summary", {}).get("warnings") == 2)
+    check("evaluated warnings retained", body.get("summary", {}).get("warnings") == 4)
     check("evaluated warnings still proceed", "Proceed? yes" in body.get("compact_report", ""))
 
 
