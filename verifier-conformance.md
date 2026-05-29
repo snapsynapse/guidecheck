@@ -273,6 +273,7 @@ The verifier MUST parse action blocks by exact fence match:
 ...
 [/action]
 ```
+Fence markers are case-sensitive and MUST carry no leading or trailing whitespace. A line that equals a fence marker only after trimming surrounding whitespace or folding letter case (for example `[ACTION]` or `[action] `) MUST NOT open or close a block and MUST raise a blocking finding (`action-block.malformed` for action fences, `metadata.malformed`/`metadata.block-count` for the metadata fence). The verifier MUST NOT silently treat a near-miss marker as body text: a whitespace- or case-lenient agent parser may honor a marker the verifier ignores, and that divergence is exactly the review-integrity gap this profile exists to close. The metadata-block presence test MUST likewise be case-insensitive so an upper- or mixed-case metadata fence is parsed and flagged rather than skipped.
 For Level 3 and above, every substantive action MUST be represented by an action block.
 Each action block MUST include:
 - `id`
@@ -331,6 +332,15 @@ Examples include:
 - local shell scripts
 - Python, Ruby, Node, or other interpreter invocations over local files
 - `make`, `just`, `task`, or similar task runners
+
+### Command and class consistency
+The verifier SHOULD cross-check each command against its declared `class` by analysing the COMMAND HEAD of each pipeline segment (the invoked program, after stripping a leading path, a trailing version suffix, leading `VAR=value` assignments, and pure prefixes such as `sudo`, `env`, or `exec`). The verifier MUST NOT infer a capability from a bare word appearing anywhere in the command, because a tool name frequently appears as an argument (for example `apt-get install curl` installs a package; it does not perform `curl` egress).
+- When a segment head is a network client and the action does not declare `networked`, the verifier SHOULD warn (`network.command-implies-networked`).
+- When a segment head is an interpreter fed code (an inline-code flag, a script-file argument, an inline program argument, or any program reading from a pipe) or a package or build tool, and the action does not declare `code-executing`, the verifier SHOULD warn (`action-block.class.code-executing-missing`).
+- When a command implies a sensitive capability but the action neither declares an approval-requiring class nor sets `approval: required`, the verifier SHOULD warn (`approval.command-implies-required`).
+- When a command pipes a network fetch directly into an interpreter (the remote-code-execution shape, for example `curl URL | sh`), the verifier MUST raise a blocking finding (`command.fetch-execute`). Authors who must fetch and then run content SHOULD express the fetch and the execution as two separate, individually approved actions.
+
+These command-content checks are heuristic and cannot decide arbitrary shell semantics; apart from the unambiguous fetch-execute shape they are advisory warnings, and human review remains required. A verifier MUST NOT treat the absence of a command-content warning as evidence that a command is safe.
 The verifier SHOULD warn when `runner: shell` is present without a narrow rationale in `notes`.
 The verifier SHOULD warn when Level 4 guides omit `runner`.
 
