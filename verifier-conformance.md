@@ -384,6 +384,7 @@ Recognized independent channels are:
 - public repository file at `source-path`
 - signed `security.txt` extension fields
 - public append-only transparency log referenced by the manifest `transparency-log-url` field
+A fetching verifier MUST NOT count a `registry-url` toward the Level 4 cross-channel requirement unless its host is a recognized package registry whose publish credentials are distinct from the guide's web host. A `registry-url` on any other host can be served by the guide publisher and provides no independence; the verifier SHOULD emit `anchor.registry.unrecognized-host` (warning) and MUST NOT fetch it as anchor evidence. If the package-registry channel is the only declared anchor, Level 4 then fails via `anchor.independent.missing`.
 The verifier MUST emit a failure when independent channels disagree on the hash.
 The verifier MUST report which channels were checked, which were found, which were unreachable, and which were unavailable.
 Unreachable optional channels are findings but do not by themselves block Level 4 if at least one independent channel is present and agrees.

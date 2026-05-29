@@ -265,6 +265,26 @@ def is_ascii_https_url(value: str) -> bool:
     return parsed.scheme == "https" and bool(parsed.netloc) and parsed.hostname is not None
 
 
+# Hosts whose publish credentials are distinct from the guide's web host, so a
+# hash served there is genuine independent evidence (spec.md section 11,
+# "Package registry metadata"). A registry-url on any other host can be served
+# by the guide publisher and provides no independence, so it MUST NOT count as
+# a package-registry anchor.
+RECOGNIZED_REGISTRY_HOSTS = {
+    "registry.npmjs.org",
+    "pypi.org",
+    "crates.io",
+    "static.crates.io",
+    "rubygems.org",
+    "proxy.golang.org",
+}
+
+
+def is_recognized_registry(value: str) -> bool:
+    host = (urlparse(value).hostname or "").lower()
+    return host in RECOGNIZED_REGISTRY_HOSTS
+
+
 def looks_like_registry_record(value: str) -> bool:
     parsed = urlparse(value)
     if "registry.npmjs.org" in parsed.netloc:
@@ -366,6 +386,37 @@ def check_byte_profile(data: bytes, findings: list[Finding]) -> None:
             break
 
 
+# A negation suppresses a flagged pattern only when it directly governs it: a
+# negation token, then an optional coordinated verb list joined by "and"/"or"
+# ("do not fetch or follow ..."), then only whitespace or a colon before the
+# match ("do not base64 ...", "do not: fetch ..."). This is deliberately strict.
+# A negation broken from the instruction by a comma or sentence break ("do not
+# worry, base64 ...", "do not panic: base64 ...", "do not. base64 ..."), or a
+# word that merely contains a negation token ("nevertheless, base64 ..."), does
+# NOT suppress, so an attacker cannot disable a detector by sprinkling "do not"
+# elsewhere on the line. Word boundaries stop "cannot" matching inside
+# "scannot". ASCII apostrophes only; the byte profile already rejects the rest.
+_NEGATION_GOVERNS = re.compile(
+    r"\b(?:do ?not|don'?t|never|must ?not|mustn'?t|should ?not|shouldn'?t|"
+    r"cannot|can'?t|will ?not|won'?t)\b"
+    r"(?:[\s:]+\w+\s+(?:and|or))*"
+    r"[\s:]+\Z"
+)
+
+
+def _negated_before(line: str, match_start: int) -> bool:
+    """True if a negation token directly governs the match."""
+    return bool(_NEGATION_GOVERNS.search(line[:match_start]))
+
+
+def _flag_unless_negated(line: str, pattern: str) -> bool:
+    """True if pattern matches a clause in line that is not negated."""
+    for match in re.finditer(pattern, line):
+        if not _negated_before(line, match.start()):
+            return True
+    return False
+
+
 def check_disallowed(text: str, findings: list[Finding]) -> None:
     lowered = text.lower()
     if re.search(r"</?(html|script|style|iframe|img|link|meta)\b", lowered):
@@ -377,9 +428,7 @@ def check_disallowed(text: str, findings: list[Finding]) -> None:
     if re.search(r"\bjavascript\s*:", lowered) or re.search(r"\beval\s*\(", lowered):
         add_finding(findings, "construct.javascript", "error", "JavaScript construct present")
     for line in lowered.splitlines():
-        if "do not" in line:
-            continue
-        if re.search(r"(base64|decode).{0,40}(execute|run|eval)", line):
+        if _flag_unless_negated(line, r"(base64|decode).{0,40}(execute|run|eval)"):
             add_finding(findings, "prohibited.encoded-execution", "error", "decode and execute instruction")
 
 
@@ -516,7 +565,7 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
             add_finding(findings, "approval.required-missing", "error", "sensitive action lacks required approval", evidence=action.get("id", ""))
         if "networked" in classes and "egress" not in action:
             add_finding(findings, "egress.missing", "error", "networked action lacks egress", evidence=action.get("id", ""))
-        if "egress" in action and re.search(r"(^|,\s*)\*($|,|\.)", action["egress"]):
+        if "egress" in action and re.search(r"(^|,\s*)\*", action["egress"]):
             add_finding(findings, "egress.wildcard-too-broad", "error", "egress wildcard is too broad")
         if "code-executing" not in classes and command_executes_code(action.get("command", "")):
             add_finding(findings, "action-block.class.code-executing-missing", "warning", "command likely executes code", evidence=action.get("id", ""))
@@ -578,7 +627,10 @@ def command_executes_code(command: str) -> bool:
 
 def check_command(action: dict[str, str], classes: set[str], findings: list[Finding]) -> None:
     command = action.get("command", "")
-    if any(token in command for token in ["&&", "||", ";", "\n"]):
+    chaining = any(token in command for token in ["&&", "||", ";", "\n"])
+    # Standalone & is a background operator that chains a second command. A &
+    # inside a URL query (a=1&b=2) has no surrounding space and is not flagged.
+    if chaining or re.search(r"(?:^|\s)&(?:\s|$)", command):
         add_finding(findings, "command.chaining", "error", "command uses chaining", evidence=command)
     if "$(" in command or "${" in command or "`" in command:
         add_finding(findings, "command.substitution", "error", "command uses shell substitution", evidence=command)
@@ -611,10 +663,8 @@ def check_prohibited(text: str, findings: list[Finding]) -> None:
         ("prohibited.notes-as-command", r"treat .*notes.* as commands"),
     ]
     for raw_line in text.lower().splitlines():
-        if "do not" in raw_line:
-            continue
         for fid, pattern in exact_patterns:
-            if re.search(pattern, raw_line):
+            if _flag_unless_negated(raw_line, pattern):
                 add_finding(findings, fid, "error", fid)
 
 

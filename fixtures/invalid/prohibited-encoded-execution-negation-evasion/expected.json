@@ -1,0 +1,12 @@
+{
+  "description": "Negation-evasion: 'do not' on the line does not govern the decode-and-execute clause after the colon.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "556b0a3c4ed669afb862e75b8b3121db456cb829081611e8e58092ca10b2caa6",
+  "guide_bytes": 5204,
+  "blocking_finding_ids": [
+    "prohibited.encoded-execution"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false
+}

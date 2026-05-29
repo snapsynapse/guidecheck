@@ -180,6 +180,56 @@ def test_evaluated_level4_package_registry() -> None:
     )
 
 
+def test_level4_unrecognized_registry_host_not_independent() -> None:
+    # A registry-url on a host the publisher can self-host provides no
+    # independence. The attacker serves a matching hash, but the verifier must
+    # not count it: Level 4 must fail with anchor.independent.missing and the
+    # attacker URL must never be fetched.
+    base = (ROOT / "fixtures" / "valid" / "level-4" / "guide.txt").read_text(encoding="utf-8")
+    guide_url = "https://example.com/.well-known/assistant-guide.txt"
+    manifest_url = "https://example.com/.well-known/assistant-guide-manifest.txt"
+    registry_url = "https://attacker.example/fake-registry/example-verifier/1.0.0"
+    guide_text = base.replace(
+        "manifest-url: https://example.com/.well-known/assistant-guide-manifest.txt",
+        f"registry-url: {registry_url}\nmanifest-url: {manifest_url}",
+    )
+    guide_data = guide_text.encode("utf-8")
+    guide_sha = hashlib.sha256(guide_data).hexdigest()
+    manifest = "\n".join(
+        [
+            "guide-path: /.well-known/assistant-guide.txt",
+            "guide-version: 1.0.0",
+            f"guide-sha256: {guide_sha}",
+            f"guide-bytes: {len(guide_data)}",
+            "immutable-release-url: https://example.com/org/example-verifier/releases/v1.0.0",
+            "profile: human-verifiable-assistant-guide",
+            "profile-version: 0.2.0",
+            f"canonical-url: {guide_url}",
+            "repository-url: https://example.com/org/example-verifier",
+            "released-at: 2026-05-21T00:00:00Z",
+            "",
+        ]
+    ).encode("utf-8")
+
+    def fake_fetch(checked):
+        if checked == guide_url:
+            return fetched(checked, 200, guide_data)
+        if checked == manifest_url:
+            return fetched(checked, 200, manifest)
+        if checked == registry_url:
+            raise AssertionError("unrecognized registry host must not be fetched")
+        raise AssertionError(f"unexpected fetch {checked}")
+
+    request = run_post({"url": guide_url, "requested_level": 4}, fake_fetch)
+    body = request.body or {}
+    blockers = [f["id"] for f in body.get("findings", []) if f["severity"] == "error"]
+    warnings = [f["id"] for f in body.get("findings", []) if f["severity"] == "warning"]
+    check("unrecognized-registry status", request.status == 200)
+    check("unrecognized-registry not level4", body.get("guide", {}).get("achieved_level") == 3)
+    check("unrecognized-registry anchor missing", "anchor.independent.missing" in blockers)
+    check("unrecognized-registry warning", "anchor.registry.unrecognized-host" in warnings)
+
+
 def test_evaluated_level4_not_level5_ready() -> None:
     base = (ROOT / "fixtures" / "valid" / "level-4-not-level5-ready" / "guide.txt").read_text(encoding="utf-8")
     guide_url = "https://example.com/.well-known/assistant-guide.txt"
@@ -362,6 +412,7 @@ def main() -> int:
     test_evaluated()
     test_evaluated_with_warnings()
     test_evaluated_level4_package_registry()
+    test_level4_unrecognized_registry_host_not_independent()
     test_evaluated_level4_not_level5_ready()
     test_evaluated_level4_missing_anchor()
     test_auto_resolved_origin()

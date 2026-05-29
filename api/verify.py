@@ -410,9 +410,25 @@ def _hosted_level4_evidence(body: bytes) -> tuple[str | None, dict[str, str], li
 
     registry_url = metadata.get("registry-url")
     if registry_url:
-        registry_text = _fetch_text_evidence(registry_url, "package-registry anchor", extra_findings)
-        if registry_text is not None:
-            anchor_texts["package-registry"] = registry_text
+        if not gv.is_recognized_registry(registry_url):
+            # A registry-url the publisher can self-host is not an independent
+            # control plane, so it must not count toward the Level 4 anchor
+            # requirement. If it is the only anchor, anchor.independent.missing
+            # blocks Level 4 downstream.
+            extra_findings.append(
+                gv.Finding(
+                    "anchor.registry.unrecognized-host",
+                    "warning",
+                    "registry-url host is not a recognized independent registry; "
+                    "it does not count as a package-registry anchor",
+                    section="verifier-conformance.23",
+                    evidence=(urlsplit(registry_url).hostname or ""),
+                )
+            )
+        else:
+            registry_text = _fetch_text_evidence(registry_url, "package-registry anchor", extra_findings)
+            if registry_text is not None:
+                anchor_texts["package-registry"] = registry_text
 
     manifest = gv.parse_manifest(manifest_text)
     transparency_url = manifest.get("transparency-log-url")

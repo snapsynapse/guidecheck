@@ -252,6 +252,29 @@ def check_byte_profile(data: bytes, findings: list[Finding]) -> None:
             break
 
 
+# A negation suppresses a flagged pattern only when it directly governs it: a
+# negation token, an optional coordinated verb list joined by "and"/"or", then
+# only whitespace or a colon before the match. Mirrors guidecheck_verify exactly
+# so the two implementations stay in lockstep. See that module for the rationale.
+_NEGATION_GOVERNS = re.compile(
+    r"\b(?:do ?not|don'?t|never|must ?not|mustn'?t|should ?not|shouldn'?t|"
+    r"cannot|can'?t|will ?not|won'?t)\b"
+    r"(?:[\s:]+\w+\s+(?:and|or))*"
+    r"[\s:]+\Z"
+)
+
+
+def _negated_before(line: str, match_start: int) -> bool:
+    return bool(_NEGATION_GOVERNS.search(line[:match_start]))
+
+
+def _flag_unless_negated(line: str, pattern: str) -> bool:
+    for match in re.finditer(pattern, line):
+        if not _negated_before(line, match.start()):
+            return True
+    return False
+
+
 def check_disallowed(text: str, findings: list[Finding]) -> None:
     lowered = text.lower()
     if re.search(r"</?(html|script|style|iframe|img|link|meta)\b", lowered):
@@ -263,9 +286,7 @@ def check_disallowed(text: str, findings: list[Finding]) -> None:
     if re.search(r"\bjavascript\s*:", lowered) or re.search(r"\beval\s*\(", lowered):
         finding(findings, "construct.javascript", "error", "JavaScript construct present")
     for line in lowered.splitlines():
-        if "do not" in line:
-            continue
-        if re.search(r"(base64|decode).{0,40}(execute|run|eval)", line):
+        if _flag_unless_negated(line, r"(base64|decode).{0,40}(execute|run|eval)"):
             finding(findings, "prohibited.encoded-execution", "error", "decode and execute instruction")
 
 
@@ -333,7 +354,7 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
             finding(findings, "approval.required-missing", "error", action.get("id", ""))
         if "networked" in classes and "egress" not in action:
             finding(findings, "egress.missing", "error", action.get("id", ""))
-        if "egress" in action and re.search(r"(^|,\s*)\*($|,|\.)", action["egress"]):
+        if "egress" in action and re.search(r"(^|,\s*)\*", action["egress"]):
             finding(findings, "egress.wildcard-too-broad", "error", action["egress"])
         if "code-executing" not in classes and command_executes_code(action.get("command", "")):
             finding(findings, "action-block.class.code-executing-missing", "warning", action.get("id", ""))
@@ -373,7 +394,8 @@ def command_executes_code(command: str) -> bool:
 
 def check_command(action: dict[str, str], classes: set[str], findings: list[Finding]) -> None:
     command = action.get("command", "")
-    if any(token in command for token in ["&&", "||", ";", "\n"]):
+    chaining = any(token in command for token in ["&&", "||", ";", "\n"])
+    if chaining or re.search(r"(?:^|\s)&(?:\s|$)", command):
         finding(findings, "command.chaining", "error", command)
     if "$(" in command or "${" in command or "`" in command:
         finding(findings, "command.substitution", "error", command)
@@ -406,10 +428,8 @@ def check_prohibited(text: str, findings: list[Finding]) -> None:
         ("prohibited.notes-as-command", r"treat .*notes.* as commands"),
     ]
     for raw_line in text.lower().splitlines():
-        if "do not" in raw_line:
-            continue
         for fid, pattern in exact_patterns:
-            if re.search(pattern, raw_line):
+            if _flag_unless_negated(raw_line, pattern):
                 finding(findings, fid, "error", fid)
 
 
