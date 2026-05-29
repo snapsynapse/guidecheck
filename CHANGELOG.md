@@ -4,6 +4,41 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+### Security
+
+- detector negation handling rewritten: a negation now suppresses a prohibited
+  or encoded-execution pattern only when it directly governs that pattern, so
+  inserting `do not` elsewhere on the line no longer disables the detector
+- marker discipline: action and metadata fences that differ only by surrounding
+  whitespace or letter case (for example `[ACTION]`) are no longer silently
+  dropped; they raise a blocking malformed finding so a verifier and a lenient
+  agent parser cannot diverge on which actions exist
+- command and class consistency: a command is cross-checked against its declared
+  class by command-head analysis; a network fetch piped into an interpreter
+  blocks as `command.fetch-execute`, and under-declared network or code-executing
+  commands raise warnings
+- registry anchors: a `registry-url` is counted toward Level 4 only when its host
+  is a recognized independent registry, closing a self-hosted-anchor path
+
+### Added
+
+- finding ids `command.fetch-execute`, `network.command-implies-networked`,
+  `approval.command-implies-required`, `anchor.registry.unrecognized-host`, and
+  `level4.requires-fetch`
+- `verifier-conformance.md` sections for marker discipline and command/class
+  consistency
+- a recorded adversarial review in `threat-register.md`
+
+### Changed
+
+- the local-file reference verifier now caps the achieved level at Level 3. It
+  still checks supplied manifest and anchor evidence for consistency and reports
+  `level4.requires-fetch`, but Level 4 (independent provenance) is assertable
+  only by the fetching hosted verifier, matching `verifier-conformance.md`
+  section 6
+- the eval runner imports the primary engine instead of carrying a second copy
+  of the checks, so there is one source of truth
+
 ## [0.3.2] - 2026-05-28
 
 ### Added

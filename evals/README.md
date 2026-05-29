@@ -1,7 +1,9 @@
 # GuideCheck Evals
 
-The local eval suite is dependency-free and runs against both the static
-fixture corpus and generated edge cases derived from the profile.
+The local eval suite has no third-party dependencies. It imports the primary
+verifier engine from `scripts/guidecheck_verify.py` (it is not a second
+implementation) and runs it against both the static fixture corpus and
+generated edge cases derived from the profile.
 
 ## Quick run
 ```text
@@ -23,7 +25,8 @@ make test
 The eval runner is not the normative verifier. It is a regression harness
 for this repository and a reference map for verifier authors. It covers:
 
-- valid Level 1/2, Level 3, and Level 4 local-file guides
+- valid Level 1/2 and Level 3 local-file guides, plus Level 4-capable guides
+  (local-file mode confirms their evidence is consistent but caps at Level 3)
 - byte-profile failures
 - disallowed constructs
 - compact verification instruction checks
@@ -33,7 +36,7 @@ for this repository and a reference map for verifier authors. It covers:
 - command, cwd, env, and egress checks
 - prohibited chaining and encoded-execution patterns
 - manifest hash, byte-count mismatch, missing-anchor, and anchor-divergence checks
-- Level 5 readiness reporting for otherwise valid Level 4 guides
+- the local-file Level 3 cap with `level4.requires-fetch` on Level 4-capable guides
 - local public-fetch safety scenarios for HTTP, SSRF, TLS, and redirects
 
 The authoritative conformance target remains the fixture suite described in

@@ -104,7 +104,7 @@ agents may execute another.
 - `assistant-guide.txt` - repository copy of the GuideCheck adoption guide
 - `.well-known/assistant-guide.txt` - canonical public copy of the adoption guide
 - `evals/` - local eval documentation for fixture and generated checks
-- `scripts/eval_guidecheck.py` - dependency-free local eval runner
+- `scripts/eval_guidecheck.py` - eval runner over the primary engine (static fixtures plus generated edge cases); not a separate verifier
 - `roadmap.md` - future actions and undecided questions
 - `CHANGELOG.md` - profile and companion-document change history
 - `CONTRIBUTING.md` - how to propose a profile change

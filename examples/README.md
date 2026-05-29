@@ -14,10 +14,13 @@ shasum -a 256 level-3-assistant-guide.txt
 ```
 The result must equal the `guide-sha256` value in `manifest.txt`.
 
-To verify Level 4 locally, provide the guide, manifest, and at least one
-independent anchor file to the reference CLI:
+To check Level 4 evidence locally, provide the guide, manifest, and at least one
+independent anchor file to the reference CLI. The CLI confirms the evidence is
+internally consistent but caps at Level 3 (reporting `level4.requires-fetch`),
+because Level 4 requires fetched provenance; use the hosted verifier at
+https://guidecheck.org/verify to assert Level 4:
 ```
-python3 ../scripts/guidecheck_verify.py level-3-assistant-guide.txt --manifest manifest.txt --anchor dns-txt=anchor.txt --level 4 --pretty
+python3 ../scripts/guidecheck_verify.py level-3-assistant-guide.txt --manifest manifest.txt --anchor dns-txt=anchor.txt --pretty
 ```
 
 These examples are illustrative, not normative. The normative definitions are in `spec.md`.
