@@ -148,6 +148,7 @@ files.
 | `anchor.independent.mismatch` | error | An independent anchor hash does not match the manifest hash. |
 | `anchor.independent.unreachable` | warning | A declared independent anchor could not be fetched or did not return usable evidence. |
 | `anchor.registry.unrecognized-host` | warning | `registry-url` host is not a recognized independent registry, so it does not count as a package-registry anchor. |
+| `level4.requires-fetch` | info | Level 4 evidence is internally consistent but was not fetched; local-file mode caps the achieved level at 3. |
 
 ## Public fetch safety
 

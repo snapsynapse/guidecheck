@@ -1,12 +1,10 @@
 {
-  "description": "A complete Level 4 guide that is not Level 5-ready because an executable action lacks runner.",
+  "description": "A Level 4-capable guide whose executable action lacks runner. Level 4 and Level 5 readiness are evaluated only by the fetching hosted verifier; in local-file mode it caps at Level 3.",
   "evaluation_mode": "local-file",
-  "achieved_level": 4,
+  "achieved_level": 3,
   "guide_sha256": "59704158a8d4225e2ec5c88b8e4b05de7d94cb0eaec443d25807b16e0a9d2584",
   "guide_bytes": 3354,
   "blocking_finding_ids": [],
-  "required_warning_ids": [
-    "level5.runner.missing"
-  ],
+  "required_warning_ids": [],
   "level5_ready": false
 }

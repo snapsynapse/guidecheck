@@ -716,6 +716,9 @@ class handler(BaseHTTPRequestHandler):
             manifest_text,
             anchor_texts,
             now=now,
+            # The hosted verifier fetches manifest and anchors over the network,
+            # so it may assert Level 4; local-file mode (the default) caps at 3.
+            evidence_fetched=True,
         )
         if manifest_evidence is not None:
             manifest_evidence.fetched = True

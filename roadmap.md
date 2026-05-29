@@ -67,9 +67,11 @@ Candidates for 0.3.0 and later. Not commitments.
 
 ## Near-term actions
 
-- The reference verifier CLI covers Level 1 through Level 4 in local-file mode
-  when sidecar manifest and independent-anchor evidence are supplied. The
-  hosted public-web verifier covers Level 1 through Level 4 for supported
+- The reference verifier CLI covers Level 1 through Level 3 in local-file mode;
+  it checks supplied sidecar manifest and independent-anchor evidence for
+  consistency but caps at Level 3 (reporting `level4.requires-fetch`), since
+  Level 4 requires fetched provenance. The hosted public-web verifier covers
+  Level 1 through Level 4 for supported
   public-web anchors: package-registry metadata and transparency-log entries.
   The hosted verifier is live as a preview at https://guidecheck.org/verify;
   do not present it as fully conformant, and do not claim Level 5 conformance,
@@ -125,7 +127,7 @@ Candidates for 0.3.0 and later. Not commitments.
 
 ## Implementation work
 
-- Maintain the local-file reference verifier CLI for Levels 1 through 4 and
+- Maintain the local-file reference verifier CLI for Levels 1 through 3 and
   the hosted public-web verifier for Levels 1 through 4 on shared content and
   provenance checks. Do not extend either verifier to Level 5 runtime
   conformance until the supporting fixtures exist.

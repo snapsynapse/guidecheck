@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-GuideCheck reference verifier CLI for local-file Levels 1 through 4.
+GuideCheck reference verifier CLI for local-file Levels 1 through 3.
 
-This verifier intentionally does not claim hosted public-web Level 4
-verification or Level 5 runtime conformance.
+Level 4 asserts independent provenance and requires fetching the manifest and
+cross-channel anchors from their real locations, so it is only assertable by a
+fetching verifier (the hosted API). In local-file mode this CLI checks that any
+supplied manifest and anchor evidence is internally consistent and reports
+`level4.requires-fetch` (info) when it would otherwise qualify, but caps the
+achieved level at 3. This verifier does not evaluate Level 5 runtime conformance.
 """
 
 from __future__ import annotations
@@ -926,6 +930,7 @@ def evaluate_guide(
     anchor_texts: dict[str, str] | None = None,
     anchor_paths: dict[str, Path] | None = None,
     now: datetime | None = None,
+    evidence_fetched: bool = False,
 ) -> tuple[list[Finding], int, bool, ManifestEvidence | None, list[AnchorEvidence]]:
     """Run Level 1-4 local checks on raw guide bytes.
 
@@ -992,6 +997,23 @@ def evaluate_guide(
         achieved = 4
     if "metadata.status.revoked" in error_ids:
         achieved = min(achieved, 1)
+
+    # Level 4 asserts independent provenance, which requires the verifier to
+    # FETCH the manifest and anchors from their real locations. When the
+    # evidence was supplied as local files (no fetch), the bytes prove only
+    # internal consistency, not independence, so local-file mode caps at Level 3
+    # (verifier-conformance.md section 6). The consistency result is still
+    # surfaced so an operator can pre-publish-lint the provenance chain.
+    if achieved >= 4 and not evidence_fetched:
+        achieved = 3
+        add_finding(
+            findings,
+            "level4.requires-fetch",
+            "info",
+            "Level 4 evidence is internally consistent but was not fetched; "
+            "local-file mode caps the achieved level at 3",
+            section="verifier-conformance.6",
+        )
 
     level5_ready = check_level5_readiness(actions, findings) if achieved >= 4 else False
 

@@ -156,8 +156,11 @@ CI runs the same `make test` target on pushes to `main` and pull requests.
 Verifier work is split by evaluation mode. Two verifiers exist:
 
 - a local-file reference CLI, `scripts/guidecheck_verify.py`, which evaluates
-  Levels 1 through 4 when local manifest and independent-anchor evidence are
-  supplied
+  Levels 1 through 3. It also checks that any supplied sidecar manifest and
+  independent-anchor evidence is internally consistent, but caps the achieved
+  level at 3 and reports `level4.requires-fetch`: Level 4 asserts independent
+  provenance, which can only be established by fetching the evidence from its
+  real location
 - a hosted public-web verifier at https://guidecheck.org/verify, which fetches
   a guide by URL and applies Level 1-4 checks when supported public-web
   provenance evidence is available. The hosted verifier also accepts optional
@@ -176,13 +179,16 @@ Both verifiers:
 
 Both verifiers check Level 4 sidecar manifests plus guide hash and byte-count
 matches. The local reference CLI accepts local independent-anchor evidence with
-`--anchor`. The hosted verifier fetches supported public-web anchors:
-package-registry metadata and transparency-log entries.
+`--anchor` and confirms it is consistent, but does not assert Level 4 on local
+bytes (it caps at Level 3); only the hosted verifier, which fetches supported
+public-web anchors (package-registry metadata and transparency-log entries),
+asserts Level 4.
 
-Both verifiers may report `level5_ready: true` for a Level 4 guide that also
-passes the guide-side preparation checks for runtime enforcement. This is not
-an achieved Level 5 claim; Level 5 still requires a conformant assistant
-runtime.
+The hosted verifier may report `level5_ready: true` for a Level 4 guide that
+also passes the guide-side preparation checks for runtime enforcement (Level 5
+readiness is evaluated only once Level 4 is achieved, so it does not apply in
+local-file mode). This is not an achieved Level 5 claim; Level 5 still requires
+a conformant assistant runtime.
 
 User-facing score language should treat this as `Guide score: Level 4 of 4`
 plus `Runtime readiness: Level 5-ready`. Avoid `Level 4 of 5`, `almost Level
@@ -193,9 +199,10 @@ Run the local reference verifier with:
 python3 scripts/guidecheck_verify.py assistant-guide.txt --pretty
 ```
 
-Run a local Level 4 check with sidecar evidence:
+Check Level 4 sidecar evidence for consistency (still caps at Level 3 locally,
+reporting `level4.requires-fetch`; use the hosted verifier to assert Level 4):
 ```text
-python3 scripts/guidecheck_verify.py assistant-guide.txt --manifest manifest.txt --anchor dns-txt=anchor.txt --level 4 --pretty
+python3 scripts/guidecheck_verify.py assistant-guide.txt --manifest manifest.txt --anchor dns-txt=anchor.txt --pretty
 ```
 
 Run the static fixture check for the reference verifier with:

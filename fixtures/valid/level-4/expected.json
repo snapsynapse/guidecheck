@@ -1,10 +1,10 @@
 {
-  "description": "A complete Level 4 guide with a matching sidecar manifest and DNS TXT-style independent anchor.",
+  "description": "A Level 4-capable guide with a matching sidecar manifest and DNS TXT-style anchor. In local-file mode (no fetch) the verifier caps at Level 3 and reports level4.requires-fetch; Level 4 is asserted by the fetching hosted verifier (see test_hosted_api).",
   "evaluation_mode": "local-file",
-  "achieved_level": 4,
+  "achieved_level": 3,
   "guide_sha256": "720c8933dc0684220e8d75a145f84b56591e67f16847a48b626f9de4991acfd1",
   "guide_bytes": 3367,
   "blocking_finding_ids": [],
   "required_warning_ids": [],
-  "level5_ready": true
+  "level5_ready": false
 }

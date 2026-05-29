@@ -66,7 +66,19 @@ def test_json_pretty_flag() -> None:
 
 def test_level_assertion() -> None:
     valid = run(str(VALID), "--level", "3")
-    valid_level4 = run(
+    # A Level 4-capable guide reaches Level 3 in local-file mode...
+    local_level3 = run(
+        str(VALID_LEVEL4),
+        "--manifest",
+        str(VALID_LEVEL4_MANIFEST),
+        "--anchor",
+        f"dns-txt={VALID_LEVEL4_ANCHOR}",
+        "--level",
+        "3",
+    )
+    # ...but cannot satisfy --level 4: Level 4 requires fetched provenance,
+    # which the local-file CLI never does, so it caps at Level 3.
+    local_level4 = run(
         str(VALID_LEVEL4),
         "--manifest",
         str(VALID_LEVEL4_MANIFEST),
@@ -84,7 +96,8 @@ def test_level_assertion() -> None:
     )
     invalid = run(str(INVALID), "--level", "1")
     check("level assertion pass", valid.returncode == 0)
-    check("level 4 assertion pass", valid_level4.returncode == 0, valid_level4.stderr)
+    check("level4-capable reaches level 3 locally", local_level3.returncode == 0, local_level3.stderr)
+    check("local-file cannot assert level 4", local_level4.returncode == 1)
     check("level 4 missing anchor fail", missing_anchor.returncode == 1)
     check("level assertion fail", invalid.returncode == 1)
 
