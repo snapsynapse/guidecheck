@@ -45,7 +45,7 @@ from guidecheck_fetch import FetchError, safe_fetch  # noqa: E402
 
 
 HOSTED_NAME = "guidecheck-hosted"
-HOSTED_VERSION = "0.3.2"
+HOSTED_VERSION = "0.4.0"
 WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
 ANALYTICS_EVENT = "guidecheck_verify"

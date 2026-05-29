@@ -35,7 +35,7 @@ CONNECT_TIMEOUT = 5.0
 READ_TIMEOUT = 8.0
 TOTAL_DEADLINE = 12.0
 MAX_REDIRECTS = 5
-USER_AGENT = "guidecheck-hosted/0.3.2 (+https://guidecheck.org/verify/)"
+USER_AGENT = "guidecheck-hosted/0.4.0 (+https://guidecheck.org/verify/)"
 # Neutral, non-identifying profile for the content-variation re-fetch. It must
 # not contain "guidecheck" so a host cannot cloak specifically against the
 # verifier. See _request_headers for the rationale.

@@ -4,6 +4,8 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-29
+
 ### Security
 
 - detector negation handling rewritten: a negation now suppresses a prohibited
@@ -38,6 +40,11 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   section 6
 - the eval runner imports the primary engine instead of carrying a second copy
   of the checks, so there is one source of truth
+- profile, verifier, hosted verifier, spec, verifier-conformance, examples, and
+  public pages now report 0.4.0; guide `verifier-conformance` ranges move to
+  `>=0.4.0, <0.5.0` and `applies-to` to `guidecheck 0.4.x`
+- the published `docs/.well-known/assistant-guide.txt` is resynced byte-for-byte
+  with the repository `assistant-guide.txt` (it had drifted at 0.3.1)
 
 ## [0.3.2] - 2026-05-28
 
