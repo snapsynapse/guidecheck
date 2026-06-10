@@ -61,9 +61,19 @@ def derive_repository_file_url(repository_url: str | None, source_path: str | No
     if not clean_path:
         return None, "source-path empty"
     if host == GITHUB_HOST:
+        ref = _github_ref_from_segments(segments)
         encoded = "/".join(quote(p, safe="") for p in clean_path.split("/"))
-        return f"https://raw.githubusercontent.com/{owner}/{repo}/HEAD/{encoded}", None
+        return f"https://raw.githubusercontent.com/{owner}/{repo}/{quote(ref, safe='/')}/{encoded}", None
     return None, host
+
+
+def _github_ref_from_segments(segments: list[str]) -> str:
+    """Return the GitHub ref named by repository_url, or HEAD for repo roots."""
+    if len(segments) >= 4 and segments[2] in {"tree", "blob"}:
+        return "/".join(segments[3:])
+    if len(segments) >= 4 and segments[2] == "commit":
+        return segments[3]
+    return "HEAD"
 
 
 def derive_dns_txt_query_url(canonical_url: str | None) -> tuple[str | None, str | None]:
@@ -167,6 +177,7 @@ def select_dns_txt_record(records: list[str], expected_canonical_url: str | None
         for record in candidates:
             if _txt_url_field(record) == expected_canonical_url:
                 return record
+        return None
     return candidates[0]
 
 

@@ -53,6 +53,31 @@ def test_derive_repository_file_url_github_strip_dot_git() -> None:
     )
 
 
+def test_derive_repository_file_url_github_tree_ref() -> None:
+    url, _ = gha.derive_repository_file_url(
+        "https://github.com/owner/repo/tree/release/v1",
+        "/docs/guide.txt",
+    )
+    check(
+        "github tree ref used",
+        url == "https://raw.githubusercontent.com/owner/repo/release/v1/docs/guide.txt",
+        f"got {url!r}",
+    )
+
+
+def test_derive_repository_file_url_github_commit_ref() -> None:
+    sha = "0123456789abcdef0123456789abcdef01234567"
+    url, _ = gha.derive_repository_file_url(
+        f"https://github.com/owner/repo/commit/{sha}",
+        "/docs/guide.txt",
+    )
+    check(
+        "github commit ref used",
+        url == f"https://raw.githubusercontent.com/owner/repo/{sha}/docs/guide.txt",
+        f"got {url!r}",
+    )
+
+
 def test_derive_repository_file_url_rejects_non_allowlisted() -> None:
     url, reason = gha.derive_repository_file_url(
         "https://gitlab.com/owner/repo",
@@ -189,6 +214,15 @@ def test_select_dns_txt_record_falls_back_to_first_v1() -> None:
     check("select falls back to first v=1", chosen == "v=1; sha256=aaa", f"got {chosen!r}")
 
 
+def test_select_dns_txt_record_no_fallback_when_url_mismatches() -> None:
+    records = [
+        "v=1; sha256=aaa; url=https://other.example/g",
+        "v=1; sha256=bbb",
+    ]
+    chosen = gha.select_dns_txt_record(records, "https://guidecheck.org/.well-known/assistant-guide.txt")
+    check("select no fallback on url mismatch", chosen is None, f"got {chosen!r}")
+
+
 def test_select_dns_txt_record_returns_none_when_no_v1() -> None:
     records = ["v=2; foo=bar"]
     check("select no v=1 returns None", gha.select_dns_txt_record(records, "https://x") is None)
@@ -197,6 +231,8 @@ def test_select_dns_txt_record_returns_none_when_no_v1() -> None:
 def main() -> int:
     test_derive_repository_file_url_github()
     test_derive_repository_file_url_github_strip_dot_git()
+    test_derive_repository_file_url_github_tree_ref()
+    test_derive_repository_file_url_github_commit_ref()
     test_derive_repository_file_url_rejects_non_allowlisted()
     test_derive_repository_file_url_requires_inputs()
     test_derive_repository_file_url_rejects_http()
@@ -210,6 +246,7 @@ def main() -> int:
     test_parse_doh_txt_response_rejects_bad_json()
     test_select_dns_txt_record_prefers_matching_url()
     test_select_dns_txt_record_falls_back_to_first_v1()
+    test_select_dns_txt_record_no_fallback_when_url_mismatches()
     test_select_dns_txt_record_returns_none_when_no_v1()
     print(f"\n{PASSED} passed, {FAILED} failed")
     return 0 if FAILED == 0 else 1

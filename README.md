@@ -222,12 +222,13 @@ yet complete, and the hosted implementation has not been shown to pass it.
 
 Temporary limitations:
 
-- no hosted support yet for DNS TXT, repository-file, or signed `security.txt`
-  Level 4 anchors
+- hosted Level 4 supports package-registry, transparency-log, DNS TXT, and
+  github.com repository-file anchors; signed `security.txt` anchors are not
+  fetched yet
 - the hosted verifier is a Level 1-4 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
   redirects, response size limits, header capture, and content variation; each
-  hosted request is capped by a five-fetch outbound budget
+  hosted request is capped by a seven-fetch outbound budget
 - no Level 5 runtime conformance claim; Level 5 remains out of scope for the
   reference verifier
 
