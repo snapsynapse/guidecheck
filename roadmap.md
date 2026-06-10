@@ -97,19 +97,25 @@ Candidates for 0.3.0 and later. Not commitments.
   can feed OWASP Agent Observability Standard trace, guardian, and AgBOM
   surfaces. The note must not make AOS a GuideCheck conformance dependency or
   imply OWASP endorsement.
-- Maintain the non-normative ACS integration note in `docs/acs-integration.md`
+
+The three integration notes below were added in the 0.3.x cycle and are
+advisory perimeter documents, not core roadmap commitments. "Keep in sync"
+means they track the normative documents; each may be restructured or
+withdrawn without a profile version change.
+
+- Keep the non-normative ACS integration note in `docs/acs-integration.md`
   describing how GuideCheck verifier output, action ids, approval gates,
   egress declarations, and stop conditions can feed Agent Control Standard
   runtime hooks, Guardian Agent verdicts, trace records, and AgBOM inventory.
   Keep ACS as a runtime-control integration surface, not a GuideCheck
   conformance dependency.
-- Maintain the non-normative MCP integration note in `docs/mcp-integration.md`
+- Keep the non-normative MCP integration note in `docs/mcp-integration.md`
   describing where `assistant-guide.txt` can add value for MCP server
   installation guides, server manifests, tool permission review, resource
   exposure review, and MCP-host runtime enforcement. Keep the profile
   vendor-neutral and avoid making MCP a required transport or discovery
   mechanism.
-- Maintain the non-normative A2A integration note in `docs/a2a-integration.md`
+- Keep the non-normative A2A integration note in `docs/a2a-integration.md`
   describing where GuideCheck can add value for Agent Card review,
   delegated-task instructions, remote-agent provenance, approval boundaries,
   and A2A task artifacts that instruct an assistant to act.
@@ -167,5 +173,11 @@ Candidates for 0.3.0 and later. Not commitments.
 - Canonical site serves or links machine-readable verifier output.
 - Guide hash is published through at least one independent channel.
 - `security.txt` expiration and contact ownership are reviewed.
-- Profile 0.2.0 changelog is complete.
+- The changelog for the current profile version is complete.
 - All static fixtures and generated evals pass in CI.
+- Each release packages the fixture suite and schemas as a standalone
+  conformance kit with a `SHA256SUMS` file, so independent verifier authors
+  can target a pinned corpus. Cryptographic signing of the kit is planned
+  once a signing mechanism is chosen (minisign or Sigstore are the
+  candidates); until then the SHA256SUMS file published with the GitHub
+  release is the integrity reference.

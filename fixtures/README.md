@@ -26,6 +26,13 @@ wording but MUST agree on:
 - `guide_sha256` when the guide bytes are evaluated
 - `level5_ready`
 
+Two optional fields tighten the warning contract:
+
+- `warnings_exact`: when true, the emitted warning set must equal
+  `required_warning_ids` exactly, so a new unexpected warning (a false
+  positive) fails the fixture instead of passing silently
+- `forbidden_warning_ids`: warning ids that must not appear for this fixture
+
 Example:
 ```
 {
@@ -38,8 +45,9 @@ Example:
 
 ## Status
 
-This is the v0.2.0 starter set. The full suite enumerated in
-verifier-conformance section 29 is in progress.
+This corpus tracks the current profile version (see `CHANGELOG.md`); it began
+as the v0.2.0 starter set and has grown with each release. The full suite
+enumerated in verifier-conformance section 29 is in progress.
 
 The current static corpus includes:
 

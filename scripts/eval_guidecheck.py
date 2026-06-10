@@ -81,6 +81,8 @@ class Case:
     expected_sha256: str | None = None
     expected_bytes: int | None = None
     expected_level5_ready: bool | None = None
+    warnings_exact: bool = False
+    forbidden_warnings: list[str] | None = None
 
 
 def replace_once(text: str, old: str, new: str) -> str:
@@ -495,6 +497,8 @@ def load_fixture_cases() -> list[Case]:
                 expected_sha256=expected.get("guide_sha256"),
                 expected_bytes=expected.get("guide_bytes"),
                 expected_level5_ready=expected.get("level5_ready"),
+                warnings_exact=expected.get("warnings_exact", False),
+                forbidden_warnings=expected.get("forbidden_warning_ids"),
             )
         )
     return cases
@@ -630,6 +634,13 @@ def run_case(case: Case) -> tuple[bool, str]:
     missing_warnings = sorted(set(case.warnings) - set(result.warning_ids))
     if missing_warnings:
         failures.append(f"missing warnings {missing_warnings}; got {result.warning_ids}")
+    if case.warnings_exact:
+        unexpected = sorted(set(result.warning_ids) - set(case.warnings))
+        if unexpected:
+            failures.append(f"unexpected warnings {unexpected}")
+    forbidden = sorted(set(case.forbidden_warnings or []) & set(result.warning_ids))
+    if forbidden:
+        failures.append(f"forbidden warnings present {forbidden}")
     return not failures, "; ".join(failures)
 
 

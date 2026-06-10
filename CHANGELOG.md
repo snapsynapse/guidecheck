@@ -2,7 +2,7 @@
 
 All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
-## [Unreleased]
+## [0.5.0] - 2026-06-09
 
 ### Security
 
@@ -14,12 +14,41 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   content-variation probe, warns on off-domain recommended verifiers, and warns
   when package-registry assistant-guide URLs disagree with `canonical-url`
 
+### Added
+
+- `scripts/check_version_sync.py` runs in `make test` and asserts every
+  version-bearing surface agrees with `guidecheck_constants.py`, including a
+  byte-identity check that the published `docs/.well-known/assistant-guide.txt`
+  matches the repository `assistant-guide.txt`
+- optional fixture expectation fields `warnings_exact` and
+  `forbidden_warning_ids` so fixtures can fail on unexpected warnings (false
+  positives), not just missing ones; 68 of 68 local-file fixtures now pin
+  their warning sets exactly
+- deterministic parser tests for the dns-txt, repository-file,
+  signed-security-txt, and transparency-log anchor channels, covering
+  extraction semantics, agreement, mismatch blocking, and absent evidence
+- the verifier-output schema documents the `valid` and `guide_sha256` fields
+  the reference verifier emits in manifest evidence
+
 ### Changed
 
 - code-level version constants are centralized for the local verifier, hosted
   verifier, and hosted fetch user agent
 - contract validation now requires every emitted finding id in the verifier and
-  hosted API code to be documented in `finding-ids.md`
+  hosted API code to be documented in `finding-ids.md`; `CONTRIBUTING.md` now
+  lists `finding-ids.md` as normative for the finding-id registry
+- `ADOPTION.md` reframes MCP and A2A as ecosystem integrations of the core
+  profile rather than primary audiences; the three integration notes carry an
+  explicit advisory status statement
+- `INTENT.md` records the Level 5 ownership decision: GuideCheck owns the
+  runtime fixture suite and evaluator, gated by
+  `docs/pre-level-5-readiness.md`
+
+### Fixed
+
+- the published `docs/.well-known/assistant-guide.txt` had drifted from the
+  repository `assistant-guide.txt` again after the 0.4.0 hardening commit; it
+  is resynced and the new version-sync check makes this drift a test failure
 
 ## [0.4.0] - 2026-05-29
 
@@ -206,7 +235,9 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/snapsynapse/guidecheck/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/snapsynapse/guidecheck/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/snapsynapse/guidecheck/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/snapsynapse/guidecheck/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/snapsynapse/guidecheck/compare/v0.2.0...v0.3.0

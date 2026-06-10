@@ -2,7 +2,10 @@
   "description": "Guide uses CRLF line endings. The byte profile requires LF only and forbids carriage returns, so Level 2 and above fail. Level 1 is still achievable.",
   "evaluation_mode": "local-file",
   "achieved_level": 1,
-  "blocking_finding_ids": ["byte-profile.no-carriage-returns"],
+  "blocking_finding_ids": [
+    "byte-profile.no-carriage-returns"
+  ],
   "required_warning_ids": [],
-  "level5_ready": false
+  "level5_ready": false,
+  "warnings_exact": true
 }

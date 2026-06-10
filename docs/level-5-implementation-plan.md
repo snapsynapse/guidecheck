@@ -1,6 +1,13 @@
 # Level 5 Runtime Conformance Implementation Plan
 
-Status: draft implementation plan.
+Status: committed implementation plan; the profile it produces stays a design
+draft until its fixture suite and evaluator exist.
+
+Per the 2026-06-09 decision recorded in `INTENT.md` under Level 5 ownership,
+GuideCheck owns this work: the runtime fixture suite and the scenario-driven
+evaluator are deliverables of the standard. Execution is gated by
+`docs/pre-level-5-readiness.md`, and no runtime conformance claim is made
+before the gate clears.
 
 This plan sequences work needed to turn the Level 5 runtime conformance design
 into a testable GuideCheck profile. It keeps Level 5 separate from the Level 1

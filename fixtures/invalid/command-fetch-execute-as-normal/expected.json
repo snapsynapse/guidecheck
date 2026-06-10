@@ -8,8 +8,10 @@
     "command.fetch-execute"
   ],
   "required_warning_ids": [
-    "network.command-implies-networked",
-    "approval.command-implies-required"
+    "action-block.class.code-executing-missing",
+    "approval.command-implies-required",
+    "network.command-implies-networked"
   ],
-  "level5_ready": false
+  "level5_ready": false,
+  "warnings_exact": true
 }

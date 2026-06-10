@@ -1,6 +1,9 @@
 # GuideCheck and A2A Integration
 
-Status: non-normative integration note.
+Status: non-normative integration note. Advisory only: nothing in this
+note adds, changes, or implies a conformance requirement, and the note
+may be restructured without a profile version change. The normative
+documents are `spec.md` and `verifier-conformance.md`.
 
 This note describes where GuideCheck can add value for Agent2Agent protocol
 implementations and deployments. It does not make A2A a GuideCheck conformance

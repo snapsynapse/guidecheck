@@ -258,7 +258,7 @@ Before acting:
 
 The guide MAY list a recommended hosted verifier via the `recommended-verifier` metadata field. It MUST NOT state or imply that only one verifier is authoritative. A conformant verifier is one that satisfies the GuideCheck Verifier Conformance Profile for the applicable profile version.
 
-When a guide lists `recommended-verifier`, the URL SHOULD be on the same registered domain as `canonical-url`, unless the guide explicitly identifies the verifier as third-party or the verifier is the standard primary verifier published by the standards project for the applicable profile version. The standard primary verifier is exempt from off-domain verifier warnings because it is part of the standard's own conformance ecosystem, not an arbitrary third-party verifier. For guide-profile version 0.4.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by GuideCheck as the standards project for this profile. Verifiers SHOULD treat that URL as the standard primary verifier and apply the off-domain warning to all other `recommended-verifier` values not matching `canonical-url`.
+When a guide lists `recommended-verifier`, the URL SHOULD be on the same registered domain as `canonical-url`, unless the guide explicitly identifies the verifier as third-party or the verifier is the standard primary verifier published by the standards project for the applicable profile version. The standard primary verifier is exempt from off-domain verifier warnings because it is part of the standard's own conformance ecosystem, not an arbitrary third-party verifier. For guide-profile version 0.5.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by GuideCheck as the standards project for this profile. Verifiers SHOULD treat that URL as the standard primary verifier and apply the off-domain warning to all other `recommended-verifier` values not matching `canonical-url`.
 
 Assistants fetching public guides MUST NOT send cookies, browser session state, authorization headers, or other ambient credentials. Public guide fetches MUST be unauthenticated and reproducible.
 
@@ -302,14 +302,14 @@ Optional fields:
 
 ### Version-range syntax
 
-The `verifier-conformance` field uses a SemVer range expressed in npm-compatible operator form: `<name> <op><version>[, <op><version>]`. Allowed operators are `=`, `>=`, `>`, `<=`, `<`, `~`, and `^`. Multiple constraints are comma-separated and combined with logical AND. Example: `human-verifiable-assistant-guide-verifier >=0.4.0, <0.5.0`. Whitespace between operator and version is optional. Verifiers that do not implement the full operator set MUST report unsupported operators as warnings and fall back to exact-version matching.
+The `verifier-conformance` field uses a SemVer range expressed in npm-compatible operator form: `<name> <op><version>[, <op><version>]`. Allowed operators are `=`, `>=`, `>`, `<=`, `<`, `~`, and `^`. Multiple constraints are comma-separated and combined with logical AND. Example: `human-verifiable-assistant-guide-verifier >=0.5.0, <0.6.0`. Whitespace between operator and version is optional. Verifiers that do not implement the full operator set MUST report unsupported operators as warnings and fall back to exact-version matching.
 
 Example:
 ```text
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.4.0
+profile-version: 0.5.0
 guide-version: 1.0.0
 applies-to: example-project >=2.3.0, <3.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt
@@ -319,7 +319,7 @@ last-reviewed: 2026-05-22
 reviewed-by: security@example.com
 status: active
 recommended-verifier: https://example.com/check
-verifier-conformance: human-verifiable-assistant-guide-verifier >=0.4.0
+verifier-conformance: human-verifiable-assistant-guide-verifier >=0.5.0
 [/assistant-guide-metadata]
 ```
 

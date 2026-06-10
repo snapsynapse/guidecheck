@@ -19,14 +19,20 @@ Adopt GuideCheck if you publish instructions an AI assistant will act on:
 - remediation and incident playbooks
 - support and operations runbooks
 - agent skill installation guidance
-- MCP server installation, configuration, tool review, and resource review
-  guidance
-- A2A companion guidance for delegated tasks, returned artifacts, and
-  remote-agent operating boundaries
 
 It is relevant to maintainers who ship those guides, to security and platform
-engineers who review them, to MCP and A2A implementers working across agent
-trust boundaries, and to verifier authors building tooling.
+engineers who review them, and to verifier authors building tooling.
+
+### Ecosystem integrations
+
+GuideCheck also composes with agent protocols whose setup and operating
+guidance crosses the same trust boundary. These are integrations of the core
+profile, not additional audiences or separate profiles: an MCP server's
+installation and tool-review guidance, or an A2A companion note for delegated
+tasks and remote-agent operating boundaries, is published as an ordinary
+`assistant-guide.txt` and verified the same way. The non-normative notes in
+`docs/mcp-integration.md`, `docs/a2a-integration.md`, and
+`docs/acs-integration.md` map those surfaces onto the profile.
 
 ## Why this exists
 

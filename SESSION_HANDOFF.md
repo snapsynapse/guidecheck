@@ -1,32 +1,53 @@
 # Session handoff
 
-Date: 2026-05-24
+Date: 2026-06-09
 
-Scope: GuideCheck verifier and adoption documentation.
+Scope: Full-repo audit mitigation and the 0.5.0 release.
 
 ## Completed
 
-- Added local and hosted Level 4 validation coverage for sidecar manifests and supported independent anchors.
-- Added `level5_ready` reporting for Level 4 guides that satisfy guide-side runtime preparation checks.
-- Updated user-facing score language so guide files are described as scoring up to Level 4 of 4, with Level 5 framed as separate runtime enforcement.
-- Added hosted public-web warnings for missing or incompatible reportable response headers and for guide bytes that vary across harmless request profiles.
-- Added Level 4 package registry metadata examples for npm, PyPI, Cargo, and generic registries.
-- Updated roadmap, README, verifier page copy, fixtures notes, and changelog to match the implemented scope.
+- Released 0.5.0: folded the post-0.4.0 hosted hardening (fetch budget,
+  content-variation probe, off-domain recommended-verifier warning,
+  registry-anchor hash binding) out of Unreleased into a tagged release.
+- Added `scripts/check_version_sync.py` to `make test`: asserts every
+  version-bearing surface against `guidecheck_constants.py` and checks the
+  published `docs/.well-known/assistant-guide.txt` byte-for-byte against the
+  repository guide. It caught a second .well-known drift on its first run.
+- Tightened the fixture warning contract: optional `warnings_exact` and
+  `forbidden_warning_ids` fields; all 68 local-file fixtures now pin their
+  warning sets exactly, so false-positive warnings fail tests.
+- Added deterministic anchor-channel tests for dns-txt, repository-file,
+  signed-security-txt, and transparency-log (extraction, agreement, mismatch
+  blocking, absent evidence).
+- Recorded the Level 5 ownership decision in `INTENT.md`: GuideCheck owns the
+  runtime fixture suite and evaluator, gated by pre-level-5 readiness.
+- Reframed `ADOPTION.md` so MCP/A2A are ecosystem integrations, not primary
+  audiences; added explicit advisory status statements to the three
+  integration notes; fixed roadmap "Maintain" framing and gave fixture-suite
+  signing a stated path (SHA256SUMS now, minisign or Sigstore later).
+- Marked `finding-ids.md` normative in `CONTRIBUTING.md`; documented `valid`
+  and `guide_sha256` in the verifier-output schema.
+- Added `make release-archive` and `make conformance-kit` targets.
 
 ## Verification
 
-- `make test` passes after the hosted hardening and documentation updates.
+- `make test` passes at 0.5.0: 132 evals, 68 fixtures, 78 contract
+  validations, version sync, and all network-safety suites.
 
-## Lessons learned
+## Open decisions
 
-- Avoid presenting Level 5 as a missing point in a guide-file score. The clearest user model is `Guide score: Level 4 of 4` plus a separate runtime-readiness or runtime-conformance status.
-- Hosted verifier output should report only conformance-relevant response headers. Capturing every header risks exposing cookies or other operational details in public verifier output.
-- Public-web hardening can advance safely as advisory findings while preserving current achieved-level semantics.
-- Level 5 runtime conformance should not be implemented until a separate runtime fixture suite and runtime adapter model are designed.
+- Conformance-kit signing mechanism: minisign vs Sigstore. SHA256SUMS
+  published with the release is the integrity reference until chosen.
+- Second independent verifier implementation: kit packaging done; whether to
+  write a minimal independent (for example JavaScript) engine or recruit an
+  external implementation is undecided.
 
 ## Next candidates
 
-- Design the Level 5 runtime-conformance fixture suite separately from guide-file validation.
-- Add deterministic tests for remaining cross-channel anchor types.
-- Add replay fixtures for TLS edge cases and additional public-web header variants.
-- Expand verifier examples with full passing, failing, not-found, and warning-bearing JSON reports.
+- Publish the 0.5.0 GitHub release with the source archive and the first
+  conformance-kit artifact.
+- Design the Level 5 runtime-conformance fixture suite per the implementation
+  plan, now that ownership is recorded.
+- Add replay fixtures for TLS edge cases and additional public-web header
+  variants.
+- Promote generated metadata parser-confusion cases into static fixtures.

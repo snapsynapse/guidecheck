@@ -6,6 +6,10 @@ Human-Verifiable Assistant Guide profile are reviewed with that in mind.
 ## What lives where
 
 - `spec.md` and `verifier-conformance.md` are normative. Changes to either are profile changes.
+- `finding-ids.md` is normative for the finding-id registry. Contract
+  validation requires every finding id emitted by the verifier and hosted API
+  to be documented there, so adding, renaming, or removing an id is a profile
+  change.
 - `design-rationale.md` and `threat-register.md` are explanatory. They must
   stay consistent with the normative documents.
 - `schemas/` is normative for the field sets it describes.

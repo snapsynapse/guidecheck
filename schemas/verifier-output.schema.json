@@ -91,7 +91,9 @@
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "fetched": { "type": "boolean" },
         "hash_match": { "type": "boolean" },
-        "bytes_match": { "type": "boolean" }
+        "bytes_match": { "type": "boolean" },
+        "valid": { "type": "boolean" },
+        "guide_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
       }
     },
     "local_evaluation": {

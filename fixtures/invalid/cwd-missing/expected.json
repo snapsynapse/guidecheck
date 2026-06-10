@@ -8,5 +8,6 @@
     "filesystem.cwd.missing"
   ],
   "required_warning_ids": [],
-  "level5_ready": false
+  "level5_ready": false,
+  "warnings_exact": true
 }

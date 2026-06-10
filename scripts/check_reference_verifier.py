@@ -75,6 +75,13 @@ def compare_fixture(path: Path) -> list[str]:
     missing_warnings = sorted(set(expected["required_warning_ids"]) - set(actual_warnings))
     if missing_warnings:
         errors.append(f"required warnings missing {missing_warnings}")
+    if expected.get("warnings_exact"):
+        unexpected = sorted(set(actual_warnings) - set(expected["required_warning_ids"]))
+        if unexpected:
+            errors.append(f"unexpected warnings {unexpected}")
+    forbidden = sorted(set(expected.get("forbidden_warning_ids", [])) & set(actual_warnings))
+    if forbidden:
+        errors.append(f"forbidden warnings present {forbidden}")
     if output["guide"]["level5_ready"] != expected["level5_ready"]:
         errors.append(
             f"level5_ready expected {expected['level5_ready']} got {output['guide']['level5_ready']}"

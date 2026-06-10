@@ -50,6 +50,19 @@
       },
       "uniqueItems": true
     },
+    "warnings_exact": {
+      "type": "boolean",
+      "description": "When true, the emitted warning set must equal required_warning_ids exactly, so unexpected warnings (false positives) fail the fixture."
+    },
+    "forbidden_warning_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$"
+      },
+      "uniqueItems": true,
+      "description": "Warning ids that must not be emitted for this fixture."
+    },
     "level5_ready": {
       "type": "boolean",
       "description": "Expected guide-side Level 5 readiness signal. True does not mean achieved Level 5."

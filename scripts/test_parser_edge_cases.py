@@ -5,6 +5,7 @@ Parser edge-case evals for metadata blocks and Level 4 manifests.
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import guidecheck_verify as gv
@@ -111,6 +112,54 @@ def expect_anchor_hash(label: str, text: str, expected: str | None) -> bool:
     got = gv.extract_anchor_sha256("package-registry", text)
     if got != expected:
         print(f"FAIL {label}: expected {expected!r} got {got!r}")
+        return False
+    print(f"PASS {label}")
+    return True
+
+
+def expect_channel_hash(label: str, channel: str, text: str, expected: str | None) -> bool:
+    got = gv.extract_anchor_sha256(channel, text)
+    if got != expected:
+        print(f"FAIL {label}: expected {expected!r} got {got!r}")
+        return False
+    print(f"PASS {label}")
+    return True
+
+
+def expect_anchor_status(
+    label: str,
+    channel: str,
+    text: str,
+    guide_sha256: str,
+    expected_status: str,
+    expected_error: str | None,
+) -> bool:
+    manifest_evidence = gv.ManifestEvidence(
+        sha256="0" * 64,
+        fetched=False,
+        hash_match=True,
+        bytes_match=True,
+        valid=True,
+        guide_sha256=guide_sha256,
+    )
+    findings: list[gv.Finding] = []
+    anchors = gv.check_anchors(
+        manifest_evidence,
+        {channel: text},
+        {},
+        findings,
+        level4_claimed=True,
+    )
+    statuses = {anchor.channel: anchor.status for anchor in anchors}
+    errors = {finding.id for finding in findings if finding.severity == "error"}
+    if statuses.get(channel) != expected_status:
+        print(f"FAIL {label}: status {statuses.get(channel)!r} want {expected_status!r}")
+        return False
+    if expected_error is not None and expected_error not in errors:
+        print(f"FAIL {label}: missing error {expected_error}; got {sorted(errors)}")
+        return False
+    if expected_error is None and errors:
+        print(f"FAIL {label}: unexpected errors {sorted(errors)}")
         return False
     print(f"PASS {label}")
     return True
@@ -304,6 +353,79 @@ def main() -> int:
         "registry toml assistant-guide hash",
         f'[package.metadata.assistant-guide]\nsha256 = "{good_hash}"\n',
         good_hash,
+    )
+
+    # Cross-channel anchor types beyond package-registry: extraction semantics
+    # per channel, then end-to-end agreement against the manifest hash.
+    ok &= expect_channel_hash(
+        "dns-txt sha256 attribute",
+        "dns-txt",
+        f"guidecheck-anchor sha256={good_hash}",
+        good_hash,
+    )
+    ok &= expect_channel_hash(
+        "dns-txt guide-sha256 field",
+        "dns-txt",
+        f"guide-sha256: {good_hash}",
+        good_hash,
+    )
+    ok &= expect_channel_hash(
+        "dns-txt truncated hash ignored",
+        "dns-txt",
+        f"sha256={good_hash[:40]}",
+        None,
+    )
+    ok &= expect_channel_hash(
+        "signed-security-txt header field",
+        "signed-security-txt",
+        f"Contact: mailto:security@example.com\nAssistant-Guide-SHA256: {good_hash}\n",
+        good_hash,
+    )
+    ok &= expect_channel_hash(
+        "transparency-log json hash",
+        "transparency-log",
+        f'{{"entry": {{"sha256": "{good_hash}"}}}}',
+        good_hash,
+    )
+    repo_copy = "guide bytes published as a repository file\n"
+    repo_copy_hash = hashlib.sha256(repo_copy.encode("utf-8")).hexdigest()
+    ok &= expect_channel_hash(
+        "repository-file hashes file content",
+        "repository-file",
+        repo_copy,
+        repo_copy_hash,
+    )
+    ok &= expect_anchor_status(
+        "dns-txt anchor agreement",
+        "dns-txt",
+        f"sha256={good_hash}",
+        good_hash,
+        "present-matches",
+        None,
+    )
+    ok &= expect_anchor_status(
+        "repository-file anchor agreement",
+        "repository-file",
+        repo_copy,
+        repo_copy_hash,
+        "present-matches",
+        None,
+    )
+    ok &= expect_anchor_status(
+        "transparency-log anchor mismatch blocks",
+        "transparency-log",
+        f'{{"sha256": "{bad_hash}"}}',
+        good_hash,
+        "present-mismatch",
+        "anchor.independent.mismatch",
+    )
+    ok &= expect_anchor_status(
+        "signed-security-txt without hash is absent",
+        "signed-security-txt",
+        "Contact: mailto:security@example.com\n",
+        good_hash,
+        "absent",
+        "anchor.independent.missing",
     )
 
     return 0 if ok else 1

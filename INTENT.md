@@ -38,6 +38,10 @@ The conformance ladder is additive and honest. Each level states exactly what it
 
 A conformant verifier is a testable implementation claim. The fixture suite is the conformance target. GuideCheck publishes a primary verifier at https://guidecheck.org/verify for usability but never presents it as the only authoritative verifier. Anyone may build a conformant verifier; the fixture suite is how independent implementations stay in agreement.
 
+## Level 5 ownership
+
+Decided 2026-06-09: GuideCheck owns the Level 5 runtime conformance profile, including the runtime fixture suite and the scenario-driven evaluator. They are deliverables of this standard, not design notes handed to runtime vendors. The work is gated by `docs/pre-level-5-readiness.md`: the Level 5 documents stay design drafts and no runtime conformance claim is made until the runtime fixture suite and evaluator profile exist and pass the same contract discipline as the guide-file suite. `docs/level-5-implementation-plan.md` is the sequencing plan for that work. Owning the evaluator does not create an oracle; like the guide-file verifier, the runtime evaluator is a reference implementation against a published fixture suite that anyone may reimplement.
+
 ## Admission criteria for changes
 
 A proposed change is admitted only if it satisfies all of the following.
@@ -71,8 +75,9 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 ## Versioning and authority
 
-The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.4.0, draft for review. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.5.0, released. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` across every version-bearing surface, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
 
 ## Changelog
 
+- 2026-06-09: Recorded the Level 5 ownership decision (GuideCheck owns the runtime fixture suite and evaluator, gated by pre-level-5 readiness). Updated version status to 0.5.0 released and noted the version-sync check. Backfilled missing entries: the version line had been bumped through 0.2.0 to 0.5.0 without changelog entries.
 - 2026-05-21: Initial INTENT for the GuideCheck standard, drafted alongside the v0.1.0 bootstrap.
