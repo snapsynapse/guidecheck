@@ -156,7 +156,7 @@ def _open_tls(host: str, port: int, ip: str) -> ssl.SSLSocket:
         raise
 
 
-def _request_headers(request_profile: str = "default") -> dict[str, str]:
+def _request_headers(request_profile: str = "default", accept_override: str | None = None) -> dict[str, str]:
     # No cookies, no authorization, no ambient credentials. Identity encoding
     # keeps the size cap exact and avoids decompression bombs.
     user_agent = USER_AGENT
@@ -170,6 +170,8 @@ def _request_headers(request_profile: str = "default") -> dict[str, str]:
         # real agents) would defeat the check if both fetches were branded. A
         # neutral profile makes verifier-targeted cloaking more visible.
         user_agent, accept = VARIATION_PROFILES[request_profile]
+    if accept_override:
+        accept = accept_override
     return {
         "User-Agent": user_agent,
         "Accept": accept,
@@ -185,10 +187,15 @@ def variation_request_profile(url: str, day: str) -> str:
     return names[digest[0] % len(names)]
 
 
-def safe_fetch(url: str, request_profile: str = "default") -> FetchResult:
+def safe_fetch(url: str, request_profile: str = "default", accept_override: str | None = None) -> FetchResult:
     """Fetch a public guide URL with SSRF, size, redirect, and timeout limits.
 
     Raises FetchError with a sanitized message on any rejection or failure.
+
+    `accept_override` lets callers ask for a content type other than the
+    text-plain default (currently used by the DNS-over-HTTPS anchor path,
+    which needs `application/dns-json`). All other SSRF, size, redirect, and
+    timeout controls are unchanged.
     """
     start = time.monotonic()
     current = url
@@ -233,7 +240,7 @@ def safe_fetch(url: str, request_profile: str = "default") -> FetchResult:
         conn = http.client.HTTPSConnection(host, port, timeout=READ_TIMEOUT)
         conn.sock = tls
         try:
-            conn.request("GET", path, headers=_request_headers(request_profile))
+            conn.request("GET", path, headers=_request_headers(request_profile, accept_override))
             response = conn.getresponse()
             status = response.status
 

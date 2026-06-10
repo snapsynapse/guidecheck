@@ -1,4 +1,4 @@
-.PHONY: eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-api test-fetch-replay test-cli-contract test release-archive conformance-kit
+.PHONY: eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test release-archive conformance-kit
 
 VERSION := $(shell python3 -c "import sys; sys.path.insert(0, 'scripts'); from guidecheck_constants import GUIDECHECK_VERSION; print(GUIDECHECK_VERSION)")
 
@@ -26,6 +26,9 @@ check-version-sync:
 test-fetch-safety:
 	python3 scripts/test_fetch_safety.py
 
+test-hosted-anchors:
+	python3 scripts/test_hosted_anchors.py
+
 test-hosted-api:
 	python3 scripts/test_hosted_api.py
 
@@ -35,7 +38,7 @@ test-fetch-replay:
 test-cli-contract:
 	python3 scripts/test_cli_contract.py
 
-test: eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-api test-fetch-replay test-cli-contract
+test: eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract
 
 # Full source archive for a GitHub release, matching prior build/ layout.
 release-archive:

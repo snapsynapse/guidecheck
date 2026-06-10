@@ -47,6 +47,15 @@ implementation-detail outcomes are pinned here as specs to build against.
 
 Candidates for 0.3.0 and later. Not commitments.
 
+- A second independent verifier implementation in Go or Rust, ported from the
+  Python reference and human-verified divergence by divergence. Targeted as
+  the first reactivation move per the 2026-06-09 disposition note, not as
+  active 0.6.x work. Language choice (Go vs Rust) deferred until reactivation;
+  Go is the working preference for a parser/checker with simpler dependency
+  graph, Rust offers stronger correctness primitives. Until then the
+  conformance kit plus SHA256SUMS plus Sigstore signatures stand as the
+  cross-implementation contract.
+
 - A higher provenance tier above Level 5 requiring a code signature and a
   transparency-log entry. The conformance ladder stays 0 to 5 for now;
   provenance hardening would land within the existing tiers, not as a numbered
@@ -72,10 +81,23 @@ Candidates for 0.3.0 and later. Not commitments.
   consistency but caps at Level 3 (reporting `level4.requires-fetch`), since
   Level 4 requires fetched provenance. The hosted public-web verifier covers
   Level 1 through Level 4 for supported
-  public-web anchors: package-registry metadata and transparency-log entries.
+  public-web anchors: package-registry metadata, transparency-log entries,
+  DNS TXT records resolved over DNS-over-HTTPS, and repository-file evidence
+  served by github.com.
   The hosted verifier is live as a preview at https://guidecheck.org/verify;
   do not present it as fully conformant, and do not claim Level 5 conformance,
   until the supporting runtime fixture suites are complete.
+- Expand the repository-file anchor allowlist beyond github.com to gitlab.com,
+  codeberg.org, bitbucket.org, and git.sr.ht in a future minor release; the
+  0.6.0 cycle keeps it scoped to a single host while the channel beds in.
+- Self-hosted Gitea, Forgejo, and GitLab instances cannot be allowlisted
+  generically because each install lives on a different domain. A future
+  per-instance opt-in (publisher declares `independent-repository-host` in the
+  manifest, verifier honors it under stricter checks) is tracked as a
+  candidate. No commitment.
+- A future DNS TXT fetcher path that performs client-side DNSSEC validation
+  with a vendored library, as an alternative to the current DoH-resolver
+  reliance on the resolver's `AD` bit. No commitment.
 - Add a Level 4 manifest for GuideCheck's own guide after an independent hash
   anchor is published.
 - Add a signed or otherwise independently anchored `security.txt` plan before
@@ -177,7 +199,10 @@ withdrawn without a profile version change.
 - All static fixtures and generated evals pass in CI.
 - Each release packages the fixture suite and schemas as a standalone
   conformance kit with a `SHA256SUMS` file, so independent verifier authors
-  can target a pinned corpus. Cryptographic signing of the kit is planned
-  once a signing mechanism is chosen (minisign or Sigstore are the
-  candidates); until then the SHA256SUMS file published with the GitHub
-  release is the integrity reference.
+  can target a pinned corpus. From 0.6.0 onward releases are signed with
+  Sigstore cosign keyless from the tag-triggered release workflow at
+  `.github/workflows/release.yml`, with verification identity locked to
+  `https://github.com/snapsynapse/guidecheck/.github/workflows/release.yml@refs/tags/v*`
+  and transparency-log entries in Rekor. The SHA256SUMS file remains the
+  integrity reference for 0.5.0 and prior; 0.6.0+ ships `.sig` and `.crt`
+  bundles alongside each artifact.

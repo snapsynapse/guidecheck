@@ -32,7 +32,7 @@ Fixture suite
 : The official test corpus of valid and invalid guides, manifests, anchors, fetch scenarios, and expected findings.
 
 Standard primary verifier
-: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For verifier-profile version 0.5.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation.
+: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For verifier-profile version 0.6.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation.
 
 ## 4. Scope
 This profile defines two evaluation modes.
@@ -486,11 +486,11 @@ The minimum JSON-compatible schema is:
 {
   "verifier": {
     "name": "example-verifier",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "0.5.0",
+    "verifier_profile_version": "0.6.0",
     "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "0.5.0"
+    "guide_profile_version": "0.6.0"
   },
   "input": {
     "url": "https://example.com/.well-known/assistant-guide.txt"

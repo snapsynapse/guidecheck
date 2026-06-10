@@ -1,0 +1,11 @@
+guide-path: /.well-known/assistant-guide.txt
+guide-version: 0.6.0
+guide-sha256: dde6852bc406b1ab06266a5c289c58e8ccc27574bf84202c8730de6ee2e15be0
+guide-bytes: 8065
+immutable-release-url: https://github.com/snapsynapse/guidecheck/releases/tag/v0.6.0
+profile: human-verifiable-assistant-guide
+profile-version: 0.6.0
+canonical-url: https://guidecheck.org/.well-known/assistant-guide.txt
+repository-url: https://github.com/snapsynapse/guidecheck
+released-at: 2026-06-10T00:00:00Z
+changelog-url: https://github.com/snapsynapse/guidecheck/blob/v0.6.0/CHANGELOG.md

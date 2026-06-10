@@ -113,7 +113,7 @@ def test_evaluated() -> None:
     check("evaluated outcome", body.get("outcome") == "evaluated")
     check("evaluated level", body.get("guide", {}).get("achieved_level") == 3)
     check("evaluated compact report", "SHA-256:" in body.get("compact_report", ""))
-    check("evaluated limitations", len(body.get("hosted_limitations", [])) == 4)
+    check("evaluated limitations", len(body.get("hosted_limitations", [])) == 5)
 
 
 def test_evaluated_with_warnings() -> None:
@@ -409,6 +409,188 @@ def test_evaluated_level4_missing_anchor() -> None:
     check("level4 missing anchor no proceed", "Proceed? no" in body.get("compact_report", ""))
 
 
+def test_evaluated_level4_repository_file_github() -> None:
+    base = (ROOT / "fixtures" / "valid" / "level-4" / "guide.txt").read_text(encoding="utf-8")
+    guide_url = "https://snapsynapse.github.io/test-guide/.well-known/assistant-guide.txt"
+    manifest_url = "https://snapsynapse.github.io/test-guide/.well-known/assistant-guide-manifest.txt"
+    repo_url = "https://github.com/snapsynapse/test-guide"
+    source_path = "/docs/.well-known/assistant-guide.txt"
+    raw_url = "https://raw.githubusercontent.com/snapsynapse/test-guide/HEAD/docs/.well-known/assistant-guide.txt"
+    guide_text = base
+    guide_text = guide_text.replace(
+        "canonical-url: https://example.com/.well-known/assistant-guide.txt",
+        f"canonical-url: {guide_url}",
+    )
+    guide_text = guide_text.replace(
+        "repository-url: https://example.com/org/example-verifier",
+        f"repository-url: {repo_url}",
+    )
+    guide_text = guide_text.replace(
+        "source-path: /.well-known/assistant-guide.txt",
+        f"source-path: {source_path}",
+    )
+    guide_text = guide_text.replace(
+        "manifest-url: https://example.com/.well-known/assistant-guide-manifest.txt",
+        f"manifest-url: {manifest_url}",
+    )
+    guide_data = guide_text.encode("utf-8")
+    guide_sha = hashlib.sha256(guide_data).hexdigest()
+    manifest = "\n".join(
+        [
+            "guide-path: /.well-known/assistant-guide.txt",
+            "guide-version: 1.0.0",
+            f"guide-sha256: {guide_sha}",
+            f"guide-bytes: {len(guide_data)}",
+            f"immutable-release-url: https://snapsynapse.github.io/test-guide/releases/v1.0.0",
+            "profile: human-verifiable-assistant-guide",
+            "profile-version: 0.6.0",
+            f"canonical-url: {guide_url}",
+            f"repository-url: {repo_url}",
+            "released-at: 2026-06-10T00:00:00Z",
+            "",
+        ]
+    ).encode("utf-8")
+
+    def fake_fetch(checked, request_profile="default", accept_override=None):
+        if checked == guide_url:
+            return fetched(checked, 200, guide_data)
+        if checked == manifest_url:
+            return fetched(checked, 200, manifest)
+        if checked == raw_url:
+            return fetched(checked, 200, guide_data)
+        if checked.startswith("https://cloudflare-dns.com/"):
+            return fetched(checked, 200, b'{"Status":0}', "application/dns-json")
+        raise AssertionError(f"unexpected fetch {checked}")
+
+    request = run_post({"url": guide_url, "requested_level": 4}, fake_fetch)
+    body = request.body or {}
+    anchors = body.get("cross_channel_anchors", [])
+    check("repo-file status", request.status == 200)
+    check("repo-file achieved", body.get("guide", {}).get("achieved_level") == 4)
+    check(
+        "repo-file anchor present",
+        any(
+            a.get("channel") == "repository-file" and a.get("status") == "present-matches"
+            for a in anchors
+        ),
+        str(anchors),
+    )
+
+
+def test_evaluated_level4_dns_txt() -> None:
+    base = (ROOT / "fixtures" / "valid" / "level-4" / "guide.txt").read_text(encoding="utf-8")
+    guide_url = "https://example.com/.well-known/assistant-guide.txt"
+    manifest_url = "https://example.com/.well-known/assistant-guide-manifest.txt"
+    guide_text = base.replace(
+        "manifest-url: https://example.com/.well-known/assistant-guide-manifest.txt",
+        f"manifest-url: {manifest_url}",
+    )
+    guide_data = guide_text.encode("utf-8")
+    guide_sha = hashlib.sha256(guide_data).hexdigest()
+    manifest = "\n".join(
+        [
+            "guide-path: /.well-known/assistant-guide.txt",
+            "guide-version: 1.0.0",
+            f"guide-sha256: {guide_sha}",
+            f"guide-bytes: {len(guide_data)}",
+            "immutable-release-url: https://example.com/releases/v1.0.0",
+            "profile: human-verifiable-assistant-guide",
+            "profile-version: 0.6.0",
+            f"canonical-url: {guide_url}",
+            "repository-url: https://example.com/org/example-verifier",
+            "released-at: 2026-06-10T00:00:00Z",
+            "",
+        ]
+    ).encode("utf-8")
+    txt_record = f"v=1; sha256={guide_sha}; url={guide_url}"
+    doh_body = json.dumps(
+        {
+            "Status": 0,
+            "AD": True,
+            "Answer": [{"type": 16, "data": f"\"{txt_record}\""}],
+        }
+    ).encode("utf-8")
+
+    def fake_fetch(checked, request_profile="default", accept_override=None):
+        if checked == guide_url:
+            return fetched(checked, 200, guide_data)
+        if checked == manifest_url:
+            return fetched(checked, 200, manifest)
+        if checked.startswith("https://cloudflare-dns.com/"):
+            return fetched(checked, 200, doh_body, "application/dns-json")
+        raise AssertionError(f"unexpected fetch {checked}")
+
+    request = run_post({"url": guide_url, "requested_level": 4}, fake_fetch)
+    body = request.body or {}
+    anchors = body.get("cross_channel_anchors", [])
+    check("dns-txt status", request.status == 200)
+    check("dns-txt achieved", body.get("guide", {}).get("achieved_level") == 4)
+    check(
+        "dns-txt anchor present",
+        any(
+            a.get("channel") == "dns-txt" and a.get("status") == "present-matches"
+            for a in anchors
+        ),
+        str(anchors),
+    )
+
+
+def test_repository_file_host_not_supported_info_finding() -> None:
+    # A non-allowlisted repository-url host emits an info finding without
+    # attempting a fetch. The channel does not count toward Level 4, but the
+    # guide is not penalized for it if another anchor satisfies Level 4.
+    base = (ROOT / "fixtures" / "valid" / "level-4" / "guide.txt").read_text(encoding="utf-8")
+    guide_url = "https://example.com/.well-known/assistant-guide.txt"
+    manifest_url = "https://example.com/.well-known/assistant-guide-manifest.txt"
+    guide_text = base.replace(
+        "manifest-url: https://example.com/.well-known/assistant-guide-manifest.txt",
+        f"manifest-url: {manifest_url}",
+    )
+    guide_text = guide_text.replace(
+        "repository-url: https://example.com/org/example-verifier",
+        "repository-url: https://attacker.example/org/example-verifier",
+    )
+    guide_data = guide_text.encode("utf-8")
+    guide_sha = hashlib.sha256(guide_data).hexdigest()
+    manifest = "\n".join(
+        [
+            "guide-path: /.well-known/assistant-guide.txt",
+            "guide-version: 1.0.0",
+            f"guide-sha256: {guide_sha}",
+            f"guide-bytes: {len(guide_data)}",
+            "immutable-release-url: https://example.com/releases/v1.0.0",
+            "profile: human-verifiable-assistant-guide",
+            "profile-version: 0.6.0",
+            f"canonical-url: {guide_url}",
+            "repository-url: https://attacker.example/org/example-verifier",
+            "released-at: 2026-06-10T00:00:00Z",
+            "",
+        ]
+    ).encode("utf-8")
+
+    def fake_fetch(checked, request_profile="default", accept_override=None):
+        if checked == guide_url:
+            return fetched(checked, 200, guide_data)
+        if checked == manifest_url:
+            return fetched(checked, 200, manifest)
+        if checked.startswith("https://cloudflare-dns.com/"):
+            return fetched(checked, 200, b'{"Status":0}', "application/dns-json")
+        # No repo-file fetch must occur for non-allowlisted host.
+        if "attacker.example" in checked or "raw.githubusercontent.com" in checked:
+            raise AssertionError(f"non-allowlisted host fetched: {checked}")
+        raise AssertionError(f"unexpected fetch {checked}")
+
+    request = run_post({"url": guide_url, "requested_level": 4}, fake_fetch)
+    body = request.body or {}
+    finding_ids = [f["id"] for f in body.get("findings", [])]
+    check("host-not-supported status", request.status == 200)
+    check(
+        "host-not-supported info emitted",
+        "anchor.repository-file.host-not-supported" in finding_ids,
+        str(finding_ids),
+    )
+
+
 def test_auto_resolved_origin() -> None:
     data = (ROOT / "fixtures" / "valid" / "level-3" / "guide.txt").read_bytes()
     request = run_post({"url": "https://example.com/"}, lambda checked: fetched(checked, 200, data))
@@ -683,6 +865,9 @@ def main() -> int:
     test_package_registry_url_mismatch_warns()
     test_evaluated_level4_not_level5_ready()
     test_evaluated_level4_missing_anchor()
+    test_evaluated_level4_repository_file_github()
+    test_evaluated_level4_dns_txt()
+    test_repository_file_host_not_supported_info_finding()
     test_auto_resolved_origin()
     test_noncanonical_location_note()
     test_header_warnings()

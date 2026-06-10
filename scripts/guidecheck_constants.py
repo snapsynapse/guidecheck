@@ -1,6 +1,6 @@
 """Shared GuideCheck code-level constants."""
 
-GUIDECHECK_VERSION = "0.5.0"
+GUIDECHECK_VERSION = "0.6.0"
 
 GUIDE_PROFILE = "human-verifiable-assistant-guide"
 GUIDE_PROFILE_VERSION = GUIDECHECK_VERSION

@@ -54,12 +54,26 @@ publication:
 The following work needs external systems or release decisions and should not
 be treated as part of repo-local readiness:
 
-- publishing a DNS TXT hash anchor
 - publishing signed `security.txt` evidence
-- creating immutable release URLs for GuideCheck's own guide
-- signing verifier reports or fixture-suite releases
-- claiming GuideCheck's own guide reaches Level 4
+- signing verifier reports
 - claiming any runtime reaches Level 5
+
+### Resolved in 0.6.0
+
+- publishing a DNS TXT hash anchor: the hosted verifier resolves
+  `_assistant-guide.<canonical-host>` over DNS-over-HTTPS, and
+  GuideCheck's own guide publishes the record at
+  `_assistant-guide.guidecheck.org`
+- creating immutable release URLs for GuideCheck's own guide: each
+  release tags `v<version>` so the GitHub release page is the immutable
+  reference recorded in `assistant-guide-manifest.txt`
+- signing fixture-suite releases: 0.6.0 onward signs the release archive,
+  the conformance kit, and `SHA256SUMS` with Sigstore cosign keyless from
+  the `.github/workflows/release.yml` tag workflow
+- claiming GuideCheck's own guide reaches Level 4: in scope; the manifest
+  at `docs/.well-known/assistant-guide-manifest.txt` plus the DNS TXT
+  anchor plus the github.com repository-file anchor support a Level 4
+  claim for guidecheck.org's own guide once the DNS record is in place
 
 ## Recommended next implementation slice
 

@@ -2,6 +2,48 @@
 
 All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
+## [0.6.0] - 2026-06-10
+
+### Added
+
+- the hosted verifier now fetches and evaluates two additional Level 4
+  cross-channel anchors: `repository-file` (scoped to github.com in 0.6.0)
+  and `dns-txt` (resolved over DNS-over-HTTPS via cloudflare-dns.com,
+  reporting the resolver's DNSSEC AD bit). The fetcher allowlist and DoH
+  resolver choice are documented in `roadmap.md`
+- `scripts/guidecheck_hosted_anchors.py` owns the URL derivation,
+  repository-host allowlist, and DoH response parser for the two new
+  channels; `scripts/test_hosted_anchors.py` covers the helpers and
+  `scripts/test_hosted_api.py` covers the integrated paths
+- GuideCheck's own `assistant-guide.txt` now declares Level 4 evidence
+  through a `manifest-url` at `docs/.well-known/assistant-guide-manifest.txt`,
+  a `_assistant-guide.guidecheck.org` DNS TXT record, and a `source-path`
+  pointing into the repository's `docs/` tree so the github.com repository-file
+  channel resolves
+- `.github/workflows/release.yml` runs on `v*` tag pushes and signs the
+  release-archive tarball, zip, the conformance kit, and `SHA256SUMS` with
+  Sigstore cosign keyless. The verification identity is locked to
+  `https://github.com/snapsynapse/guidecheck/.github/workflows/release.yml@refs/tags/v*`
+  and the procedure is documented in `SECURITY.md`
+- a new `anchor.repository-file.host-not-supported` info finding records
+  when the hosted verifier cannot treat a publisher's `repository-url`
+  host as an independent anchor in the current allowlist; the channel
+  does not count toward Level 4 in that case
+
+### Changed
+
+- the hosted fetch budget rises from five to seven outbound fetches per
+  request to admit the new DNS TXT and repository-file anchor probes
+  alongside the existing guide, variation, manifest, registry, and
+  transparency-log paths
+- `safe_fetch` accepts an `accept_override` keyword so the DoH path can
+  request `application/dns-json` while keeping the SSRF, redirect, size,
+  and timeout controls unchanged
+- `roadmap.md` now commits to Sigstore keyless as the release-signing
+  mechanism (superseding the prior "minisign or Sigstore are the
+  candidates" placeholder) and records the second-verifier port to Go or
+  Rust as the first reactivation move per the 2026-06-09 disposition note
+
 ## [0.5.0] - 2026-06-09
 
 ### Security

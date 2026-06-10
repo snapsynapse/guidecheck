@@ -246,7 +246,7 @@ expectation contract by `scripts/check_reference_verifier.py`.
 
 ## Status
 
-Released, profile version 0.5.0. See `CHANGELOG.md`.
+Released, profile version 0.6.0. See `CHANGELOG.md`.
 
 This is an early-stage open standard. The most useful feedback right now is
 whether the hidden-instruction problem maps to real operational risk in your

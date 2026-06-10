@@ -43,18 +43,26 @@ if _SCRIPTS not in sys.path:
 import guidecheck_verify as gv  # noqa: E402
 from guidecheck_constants import GUIDECHECK_VERSION, HOSTED_VERIFIER_NAME  # noqa: E402
 from guidecheck_fetch import FetchError, safe_fetch, variation_request_profile  # noqa: E402
+from guidecheck_hosted_anchors import (  # noqa: E402
+    DOH_ACCEPT,
+    derive_dns_txt_query_url,
+    derive_repository_file_url,
+    parse_doh_txt_response,
+    select_dns_txt_record,
+)
 
 
 HOSTED_NAME = HOSTED_VERIFIER_NAME
 HOSTED_VERSION = GUIDECHECK_VERSION
 WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
-MAX_OUTBOUND_FETCHES = 5
+MAX_OUTBOUND_FETCHES = 7
 ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
     "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
-    "Hosted Level 4 currently supports package-registry and transparency-log anchors; DNS TXT, repository-file, and signed security.txt anchors are not fetched.",
-    "Hosted verification uses a five-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
+    "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is scoped to github.com in 0.6.0; signed security.txt anchors are not fetched.",
+    "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
+    "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
     "Level 5 runtime conformance is not evaluated.",
 ]
 
@@ -86,20 +94,24 @@ class HostedFetchContext:
         self.cache = {}
         self.outbound_fetches = 0
 
-    def fetch(self, url: str, request_profile: str = "default"):
-        key = (url, request_profile)
+    def fetch(self, url: str, request_profile: str = "default", accept_override: str | None = None):
+        key = (url, request_profile, accept_override)
         if key in self.cache:
             return self.cache[key]
         if self.outbound_fetches >= self.max_fetches:
             raise FetchError("fetch-budget-exhausted", "the verification fetch budget was exhausted")
         self.outbound_fetches += 1
-        if request_profile == "default":
+        if request_profile == "default" and accept_override is None:
             fetched = self.fetcher(url)
         else:
             try:
-                fetched = self.fetcher(url, request_profile=request_profile)
+                fetched = self.fetcher(url, request_profile=request_profile, accept_override=accept_override)
             except TypeError:
-                fetched = self.fetcher(url)
+                # Fall back to legacy fetcher signatures used by older test stubs.
+                try:
+                    fetched = self.fetcher(url, request_profile=request_profile)
+                except TypeError:
+                    fetched = self.fetcher(url)
         self.cache[key] = fetched
         return fetched
 
@@ -484,7 +496,81 @@ def _hosted_level4_evidence(
         if transparency_text is not None:
             anchor_texts["transparency-log"] = transparency_text
 
+    repo_url = metadata.get("repository-url")
+    source_path = metadata.get("source-path")
+    repo_file_url, repo_reason = derive_repository_file_url(repo_url, source_path)
+    if repo_file_url:
+        repo_text = _fetch_text_evidence(
+            repo_file_url,
+            "repository-file anchor",
+            extra_findings,
+            fetch_context,
+        )
+        if repo_text is not None:
+            anchor_texts["repository-file"] = repo_text
+    elif repo_url and source_path and repo_reason:
+        # The publisher named a repository-url that the hosted verifier cannot
+        # treat as an independent anchor in this profile. Surface it so the
+        # publisher knows to use another channel or wait for the allowlist to
+        # widen; not a Level 4 failure on its own.
+        extra_findings.append(
+            gv.Finding(
+                "anchor.repository-file.host-not-supported",
+                "info",
+                "repository-url host is not in the hosted verifier's repository-file allowlist; "
+                "this channel does not count toward Level 4 here",
+                section="verifier-conformance.23",
+                evidence=repo_reason,
+            )
+        )
+
+    canonical_url = metadata.get("canonical-url")
+    dns_query_url, _dns_host = derive_dns_txt_query_url(canonical_url)
+    if dns_query_url:
+        dns_text = _fetch_dns_txt_anchor(
+            dns_query_url,
+            canonical_url,
+            extra_findings,
+            fetch_context,
+        )
+        if dns_text is not None:
+            anchor_texts["dns-txt"] = dns_text
+
     return manifest_text, anchor_texts, extra_findings
+
+
+def _fetch_dns_txt_anchor(
+    query_url: str,
+    canonical_url: str | None,
+    findings: list[gv.Finding],
+    fetch_context: HostedFetchContext,
+) -> str | None:
+    try:
+        fetched = fetch_context.fetch(query_url, accept_override=DOH_ACCEPT)
+    except FetchError as exc:
+        if exc.code == "fetch-budget-exhausted":
+            findings.append(
+                gv.Finding(
+                    "anchor.independent.unreachable",
+                    "warning",
+                    "dns-txt anchor was not fetched: fetch budget exhausted",
+                    section="verifier-conformance.23",
+                    evidence=exc.code,
+                )
+            )
+        # All other DoH failures stay silent; DNS TXT is opportunistic.
+        return None
+    except Exception:
+        return None
+    if fetched.status != 200:
+        return None
+    parsed = parse_doh_txt_response(fetched.body)
+    if parsed is None:
+        return None
+    records, _dnssec_validated = parsed
+    if not records:
+        return None
+    return select_dns_txt_record(records, canonical_url)
 
 
 def _verifier_block() -> dict:
