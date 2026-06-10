@@ -199,6 +199,12 @@ Run the local reference verifier with:
 python3 scripts/guidecheck_verify.py assistant-guide.txt --pretty
 ```
 
+Or install it as a standalone command via Homebrew (macOS and Linux):
+```text
+brew install snapsynapse/tap/guidecheck
+guidecheck-verify assistant-guide.txt --pretty
+```
+
 Check Level 4 sidecar evidence for consistency (still caps at Level 3 locally,
 reporting `level4.requires-fetch`; use the hosted verifier to assert Level 4):
 ```text
