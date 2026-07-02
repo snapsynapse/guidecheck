@@ -351,6 +351,53 @@ def main() -> int:
         {"network.command-implies-networked", "command.fetch-execute"},
     )
 
+    # Transitive-execution detector gaps (0.7.0 groundwork): a path-qualified or
+    # containerized invocation runs code the head-only view misses. Additive
+    # detection reusing the code-executing under-declaration warnings.
+    ok &= expect_action(
+        "bare ./scripts/setup.sh runs code",
+        {"id": "x", "class": "normal", "approval": "not-required", "command": "./scripts/setup.sh"},
+        {"action-block.class.code-executing-missing", "approval.command-implies-required"},
+        {"network.command-implies-networked", "command.fetch-execute"},
+    )
+    ok &= expect_action(
+        "interpreter with a ./ path arg runs code",
+        {"id": "x", "class": "normal", "approval": "not-required", "command": "sh ./install"},
+        {"action-block.class.code-executing-missing", "approval.command-implies-required"},
+        set(),
+    )
+    ok &= expect_action(
+        "absolute-path executable runs code",
+        {"id": "x", "class": "normal", "approval": "not-required", "command": "/opt/tool/bootstrap"},
+        {"action-block.class.code-executing-missing", "approval.command-implies-required"},
+        set(),
+    )
+    ok &= expect_action(
+        "docker build runs code",
+        {"id": "x", "class": "normal", "approval": "not-required", "command": "docker build ."},
+        {"action-block.class.code-executing-missing", "approval.command-implies-required"},
+        set(),
+    )
+    ok &= expect_action(
+        "docker compose up runs code",
+        {"id": "x", "class": "normal", "approval": "not-required", "command": "docker compose up"},
+        {"action-block.class.code-executing-missing", "approval.command-implies-required"},
+        set(),
+    )
+    # Guards: a read-only container query and a data tool are not code-executing.
+    ok &= expect_action(
+        "docker ps is not code-executing",
+        {"id": "x", "class": "normal", "approval": "not-required", "command": "docker ps"},
+        set(),
+        {"action-block.class.code-executing-missing", "approval.command-implies-required"},
+    )
+    ok &= expect_action(
+        "sed reading a file is not code-executing",
+        {"id": "x", "class": "normal", "approval": "not-required", "command": "sed -n 1,80p spec.md", "cwd": "."},
+        set(),
+        {"action-block.class.code-executing-missing", "approval.command-implies-required"},
+    )
+
     # Marker discipline (F3): a marker carrying stray whitespace must surface,
     # never be silently dropped.
     ok &= expect_marker(

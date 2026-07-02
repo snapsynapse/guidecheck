@@ -730,6 +730,10 @@ _SCRIPT_EXTENSION = re.compile(r"\.(?:py|js|ts|mjs|cjs|rb|pl|php|sh|bash|lua|r|t
 # their presence as network access so the redirect is not invisible to the
 # class check.
 _DEV_SOCKET = re.compile(r"/dev/(?:tcp|udp)/")
+_CONTAINER_TOOLS = {"docker", "podman", "buildah", "nerdctl"}
+# Container subcommands that build or run an image, executing an in-repo
+# Dockerfile's RUN lines or a container entrypoint.
+_CONTAINER_CODE_SUBCOMMANDS = {"build", "bud", "run", "exec", "start"}
 
 
 def _command_head(segment: str) -> tuple[str, list[str]]:
@@ -760,12 +764,48 @@ def _segment_is_networked(segment: str) -> bool:
     return head in _NET_TOOLS
 
 
+def _invoked_path_token(segment: str) -> str:
+    """The raw program token before path and version normalization, or ''."""
+    tokens = segment.split()
+    index = 0
+    while index < len(tokens) and (
+        re.fullmatch(r"[A-Za-z_]\w*=.*", tokens[index]) or tokens[index] in _COMMAND_PREFIXES
+    ):
+        index += 1
+    return tokens[index] if index < len(tokens) else ""
+
+
+def _is_path_arg(arg: str) -> bool:
+    """A token that names a local file by an explicit path prefix."""
+    return arg.startswith(("./", "../", "/"))
+
+
+def _container_runs_code(args: list[str]) -> bool:
+    sub = next((a for a in args if not a.startswith("-")), "")
+    if sub in _CONTAINER_CODE_SUBCOMMANDS:
+        return True
+    if sub == "compose":
+        return any(a in {"up", "run", "build"} for a in args)
+    return False
+
+
 def _segment_runs_code(segment: str) -> bool:
     head, args = _command_head(segment)
+    # A path-qualified executable (./x, ../x, /abs/x) runs a local file directly,
+    # and a program whose name carries a script extension is a script being run.
+    # _command_head strips the path, so the head-only view misses both; check the
+    # raw invoked token and the extension here.
+    if _is_path_arg(_invoked_path_token(segment)) or _SCRIPT_EXTENSION.search(head):
+        return True
+    if head in _CONTAINER_TOOLS:
+        return _container_runs_code(args)
     if head in _PACKAGE_TOOLS:
         return True
     if head in _INTERPRETERS:
         if any(arg in _CODE_FLAGS or _SCRIPT_EXTENSION.search(arg) for arg in args):
+            return True
+        # An interpreter given a path-qualified positional runs that script.
+        if any(_is_path_arg(arg) for arg in args if not arg.startswith("-")):
             return True
         if head in _PROGRAM_INTERPRETERS and any(not arg.startswith("-") for arg in args):
             return True

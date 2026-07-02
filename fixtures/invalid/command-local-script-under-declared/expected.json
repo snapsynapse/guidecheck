@@ -1,0 +1,14 @@
+{
+  "description": "A code-executing local script (./scripts/setup.sh) declared class: normal, approval: not-required; the verifier now detects the under-declaration. Warnings-only (0.7.0 will make the invoked-artifact contents a bounded requirement).",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "38d2c5edc13911a4042f2ca53b8526c4e3b2c36d79cd06abc71d42de6ac47715",
+  "guide_bytes": 5160,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "action-block.class.code-executing-missing",
+    "approval.command-implies-required"
+  ],
+  "level5_ready": false,
+  "warnings_exact": true
+}

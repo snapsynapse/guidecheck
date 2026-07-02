@@ -115,6 +115,20 @@ profile version change):
   coverage in `scripts/test_parser_edge_cases.py` and fixture
   `fixtures/invalid/command-dns-fetch-execute-as-normal`. Recorded in
   `threat-register.md`.
+- Transitive-execution detection groundwork (the C2 gaps from the 0.7.0 proposal):
+  `scripts/guidecheck_verify.py` now classifies a bare path-qualified executable
+  (`./scripts/setup.sh`, `/opt/x/run`), an interpreter with a path argument
+  (`sh ./install`), and container builds or runs
+  (`docker`/`podman`/`buildah`/`nerdctl`) as `code-executing`, so under-declaring
+  them as `class: normal` now raises `action-block.class.code-executing-missing`
+  and `approval.command-implies-required` instead of nothing. Read-only container
+  queries and data tools are guarded against false positives. Additive detection
+  reusing existing warning ids; it is the substrate the 0.7.0 `action.exec-unbounded`
+  rule keys off, not that rule itself. Regression coverage in
+  `scripts/test_parser_edge_cases.py` and fixture
+  `fixtures/invalid/command-local-script-under-declared`. Recorded in
+  `threat-register.md`; the normative rule is drafted in
+  `handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`.
 
 Candidates for the 0.7.0 normative cycle (not commitments; each changes the
 conformance contract and needs a version bump):
