@@ -4,4 +4,4 @@ Preferred-Languages: en
 Canonical: https://guidecheck.org/.well-known/security.txt
 Policy: https://guidecheck.org/SECURITY.md
 Assistant-Guide: https://guidecheck.org/.well-known/assistant-guide.txt
-Assistant-Guide-SHA256: bf70c62487a8bfacdf0481033a5c88c19238140d82bb970a16055bf60b80c298
+Assistant-Guide-SHA256: 8432a9fe75ba3672ed1adbd4b792badedebb449dfb44e3f28fd3ccf22f4fa3ab
