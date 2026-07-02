@@ -107,6 +107,52 @@ Candidates for 0.3.0 and later. Not commitments.
 - Track repo-local blockers before executable Level 5 work in
   `docs/pre-level-5-readiness.md`.
 
+## Adoption and distribution work
+
+Sequenced adoption plan recorded 2026-07-01. Ordered: each step builds the
+audience or the artifact the next step needs. Not commitments.
+
+1. Scan existing instruction surfaces. Extend the verifier/scanner to check
+   artifacts people already publish (`AGENTS.md`, `CLAUDE.md`, README install
+   sections, skill files, MCP tool descriptions) for hidden-instruction
+   channels: HTML comments, invisible Unicode, CSS-hidden text, escape
+   sequences. A scan must deliver value at zero ecosystem adoption of
+   `assistant-guide.txt`; the profile is the remediation path, the scanner is
+   the front door.
+2. One-command entry point. Package the scanner as `npx guidecheck scan
+   <url-or-file>` (or `uvx guidecheck`) with ten seconds to first finding.
+   Lead the site and README with the command and a short demo recording;
+   reframe the top-line pitch from protocol language to "make sure your AI
+   reads the same instructions you do." The spec moves one click deeper, not
+   away.
+3. Aggregate ecosystem scan. Use the scanner from step 1 against a defined
+   corpus (for example, top 100 popular MCP servers or AI setup guides) and
+   publish aggregate statistics plus positive callouts only. Responsible
+   disclosure privately to any repository with a real finding; no named
+   negative findings without consent. This is the white-hat salience test:
+   measure engagement against prior spec-pitch posts.
+4. Cut author cost to minutes. `guidecheck init` drafts an
+   `assistant-guide.txt` from an existing README or INSTALL doc; a shields.io
+   conformance badge ("GuideCheck L2") for adopter READMEs; a GitHub Action
+   that verifies conformance in CI. The badge doubles as distribution on
+   every adopting repository.
+5. Borrowed distribution. Ride channels that already have audience: a Claude
+   Code plugin or hook that checks for `assistant-guide.txt` (or scans the
+   guide) before an agent follows setup instructions; MCP registries
+   (official registry, Smithery, PulseMCP) treating conformance as a listing
+   quality signal; an OWASP GenAI Security Project contribution citing
+   GuideCheck as a prompt-injection mitigation for instruction surfaces
+   (front-door route: open project meetings at
+   https://genai.owasp.org/meetings/, OWASP Slack GenAI channels, and a
+   GitHub issue or PR proposing GuideCheck for the AI Security Solutions
+   Landscape); awesome-list entries for MCP and AI-security collections. The
+   existing non-normative AOS integration note (see Documentation work) is
+   the natural artifact to anchor the OWASP contribution.
+
+Success measures per step: scanner installs and runs per week (1, 2), post
+engagement relative to prior spec posts (3), badge count in the wild (4),
+plugin installs and registry listings (5).
+
 ## Documentation work
 
 - Extend the contents-with-anchor-links approach added to `spec.md` to
