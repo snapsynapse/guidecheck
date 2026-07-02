@@ -15,8 +15,7 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   runtime-indirection class ("clone this repo and I own your machine"), which
   hides no text and materializes its payload at runtime over DNS. The
   bound-versus-exempt axis, the remedies, and the inline carve-out are defined
-  in section 12; the design and its adversarial hardening are recorded in
-  `handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`
+  in section 12, with residual gaps recorded in `threat-register.md`
 - two optional action fields in section 12: `exec-sha256` (pins the invoked
   in-repo artifact's bytes to the reviewed guide) and `exec-opaque` (acknowledges
   an un-pinnable external-dependency command such as `npm ci`)

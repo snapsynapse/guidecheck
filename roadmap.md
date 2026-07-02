@@ -127,8 +127,8 @@ profile version change):
   rule keys off, not that rule itself. Regression coverage in
   `scripts/test_parser_edge_cases.py` and fixture
   `fixtures/invalid/command-local-script-under-declared`. Recorded in
-  `threat-register.md`; the normative rule is drafted in
-  `handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`.
+  `threat-register.md`; the normative rule landed in `spec.md` section 12 in
+  the 0.7.0 cycle.
 
 Landed in 0.7.0 (spec plus docs, 2026-07-02): the bounded-execution rule below is
 now normative in `spec.md` section 12 ("Code-executing actions and the review
@@ -140,8 +140,9 @@ enforcement of `action.exec-unbounded`, `exec-sha256` verification, and
 transitive-closure scanning is the remaining work and is deferred to a 0.7.x
 release; until then bounded-execution compliance is self-asserted. Tagging v0.7.0,
 republishing the self-guide DNS TXT hash, and deploying the site are out-of-band
-release steps. The hardened design is in
-`handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`.
+release steps. The bound-versus-exempt axis and the adversarial hardening behind
+it are summarized in the covered/landed/candidate notes in this section and in
+`threat-register.md`.
 
 Remaining 0.7.x work (not commitments):
 
