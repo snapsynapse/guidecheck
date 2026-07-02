@@ -121,7 +121,9 @@ agents may execute another.
 - Level 1: a plain-text guide exists, is reachable, and carries the compact
   verification instruction
 - Level 2: strict ASCII byte profile, size limits, no disallowed constructs
-- Level 3: assistant safety contract, all required sections, explicit approval gates
+- Level 3: assistant safety contract, all required sections, explicit approval
+  gates; from 0.7.0, an invoked in-repo script or entry point must be inlined or
+  hash-pinned so the executed surface stays inside the reviewed guide
 - Level 4: verifiable provenance, sidecar manifest, cross-channel hash on an
   independent control plane
 - Level 5: a guide plus a conformant assistant runtime that mechanically
@@ -247,7 +249,7 @@ expectation contract by `scripts/check_reference_verifier.py`.
 
 ## Status
 
-Released, profile version 0.6.0. See `CHANGELOG.md`.
+Released, profile version 0.7.0. See `CHANGELOG.md`.
 
 This is an early-stage open standard. The most useful feedback right now is
 whether the hidden-instruction problem maps to real operational risk in your

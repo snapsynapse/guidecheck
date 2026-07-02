@@ -130,8 +130,20 @@ profile version change):
   `threat-register.md`; the normative rule is drafted in
   `handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`.
 
-Candidates for the 0.7.0 normative cycle (not commitments; each changes the
-conformance contract and needs a version bump):
+Landed in 0.7.0 (spec plus docs, 2026-07-02): the bounded-execution rule below is
+now normative in `spec.md` section 12 ("Code-executing actions and the review
+boundary"), with the bound-versus-exempt axis, the `exec-sha256` and `exec-opaque`
+action fields, the section 13 stop-and-ask item, the section 15 reinforcement, and
+five finding ids in `finding-ids.md` and `verifier-conformance.md`. The profile is
+bumped to 0.7.0 across all surfaces. Reference-verifier and hosted-verifier
+enforcement of `action.exec-unbounded`, `exec-sha256` verification, and
+transitive-closure scanning is the remaining work and is deferred to a 0.7.x
+release; until then bounded-execution compliance is self-asserted. Tagging v0.7.0,
+republishing the self-guide DNS TXT hash, and deploying the site are out-of-band
+release steps. The hardened design is in
+`handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`.
+
+Remaining 0.7.x work (not commitments):
 
 - Bound the transitive execution surface. A `code-executing` action that invokes a
   local script or entry point (`bash scripts/setup.sh`, `python -m pkg`, `make

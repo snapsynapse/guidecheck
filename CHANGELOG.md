@@ -2,6 +2,50 @@
 
 All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
+## [0.7.0] - 2026-07-02
+
+### Added
+
+- section 12 gains a normative "Code-executing actions and the review boundary"
+  subsection: an action that invokes a publisher-controlled in-repo artifact
+  (`bash scripts/setup.sh`, a `./`-invoked script, `make <target>`,
+  `npm run <script>`, `docker build` against an in-repo Dockerfile) MUST inline
+  the effective commands or pin the artifact bytes with `exec-sha256`, so the
+  reviewed and executed surfaces stay one bounded artifact. Prompted by the 0din
+  runtime-indirection class ("clone this repo and I own your machine"), which
+  hides no text and materializes its payload at runtime over DNS. The
+  bound-versus-exempt axis, the remedies, and the inline carve-out are defined
+  in section 12; the design and its adversarial hardening are recorded in
+  `handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`
+- two optional action fields in section 12: `exec-sha256` (pins the invoked
+  in-repo artifact's bytes to the reviewed guide) and `exec-opaque` (acknowledges
+  an un-pinnable external-dependency command such as `npm ci`)
+- section 13 gains a stop-and-ask condition for acting on remediation text
+  emitted by a failing command, tool, or error message; section 15 is reinforced
+  to treat command output, errors, tool results, and stack traces as untrusted
+  generated content that MUST NOT be auto-run during error recovery
+- five finding ids for the bounded-execution checks in `finding-ids.md`:
+  `action.exec-unbounded`, `action.exec-opaque`, `exec-sha256.mismatch`,
+  `exec-sha256.transitive-unpinned`, and `exec-sha256.unverified`
+
+### Changed
+
+- profile version to 0.7.0 across the spec, verifier-conformance profile, README,
+  INTENT, the public pages, the examples, and the published guide plus its
+  manifest
+
+### Notes
+
+- This release defines the bounded-execution requirement, its action fields, and
+  its finding ids. Reference-verifier and hosted-verifier enforcement of
+  `action.exec-unbounded`, `exec-sha256` verification, and transitive-closure
+  scanning arrive in a subsequent 0.7.x release, so a guide's compliance with the
+  bounded-execution rule is currently self-asserted, in the same way Level 5
+  runtime conformance is specified ahead of a conformant runtime. The DNS-client,
+  `/dev/tcp`, and path-qualified and container code-execution detection that
+  landed under the 0.6.x line already surface the command shapes this rule
+  governs.
+
 ## [0.6.0] - 2026-06-10
 
 ### Added

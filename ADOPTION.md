@@ -202,6 +202,7 @@ Level 3
 - [ ] every substantive action is an `[action]` block
 - [ ] `approval: required` on every privileged, destructive, persistence-changing, data-accessing, and code-executing action
 - [ ] `command` fields satisfy the section 12 restrictions
+- [ ] every `code-executing` action that invokes an in-repo script or entry point inlines its commands or pins the bytes with `exec-sha256` (0.7.0; spec section 12)
 - [ ] `networked` actions declare a narrow `egress`
 - [ ] stop-and-ask conditions and acceptance checklist present
 - [ ] no safety overclaiming

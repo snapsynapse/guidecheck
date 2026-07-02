@@ -32,7 +32,7 @@ Fixture suite
 : The official test corpus of valid and invalid guides, manifests, anchors, fetch scenarios, and expected findings.
 
 Standard primary verifier
-: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For verifier-profile version 0.6.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation.
+: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For verifier-profile version 0.7.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation.
 
 ## 4. Scope
 This profile defines two evaluation modes.
@@ -349,6 +349,19 @@ These command-content checks are heuristic and cannot decide arbitrary shell sem
 The verifier SHOULD warn when `runner: shell` is present without a narrow rationale in `notes`.
 The verifier SHOULD warn when Level 4 guides omit `runner`.
 
+### Bounded execution checks (0.7.0)
+For guide-profile 0.7.0 and above, the verifier evaluates whether a `code-executing` action keeps the executed instructions inside the reviewed guide (spec section 12, "Code-executing actions and the review boundary"). Classification is by invocation shape, not program name:
+- Bound: the command invokes a publisher-controlled artifact whose bytes live in the repository (a `./`-prefixed or absolute-path script, an interpreter with a local script-file argument, `make <target>`, `npm run <script>`, `just <recipe>`, `pip install .`/`-e .`, `docker build` against an in-repo `Dockerfile`, or `cargo`/`go build` with an in-repo build hook).
+- Exempt: the command resolves and builds a third-party dependency graph from a lockfile or manifest it does not itself execute as publisher code (`npm ci`, `npm install` without a script argument, `pip install -r`, `bundle install`, `cargo build` with no `build.rs`, committed bootstrap wrappers).
+
+The verifier MUST NOT key this classification on the program head alone: `npm install` is exempt while `npm run <script>` is bound, so the discriminator is the subcommand and argv shape. An action whose executed instructions appear literally in the `command` field (an inline `-c`/`-e`/`-E`/`--eval`/`--exec` program, or a bare-program interpreter such as `awk` or `perl`) is bounded by definition and MUST NOT be reported as `action.exec-unbounded`.
+
+- When an action invokes a bound in-repo artifact and declares neither an inlined equivalent nor a valid `exec-sha256`, the verifier MUST raise `action.exec-unbounded` (blocking).
+- When an action declares `exec-opaque: acknowledged` on an exempt command, the verifier reports `action.exec-opaque` (warning). When `exec-opaque` is declared on a bound artifact, the verifier MUST raise `action.exec-unbounded` (blocking): a bound artifact is always inlinable or pinnable.
+- When an action declares `exec-sha256` and the verifier can read the invoked artifact, the verifier MUST recompute the SHA-256, raise `exec-sha256.mismatch` (blocking) on divergence, and raise `exec-sha256.transitive-unpinned` (blocking) when the pinned bytes invoke a further in-repo artifact that is neither inlined nor pinned. When the verifier cannot read the artifact, it reports `exec-sha256.unverified` (info) and MUST NOT present the pin as satisfied. Local-file mode, which does not fetch the repository, reports `exec-sha256.unverified`; hosted mode verifies artifacts it can read through the repository-file channel.
+
+These checks are heuristic on the classification boundary and cannot decide arbitrary shell semantics; where the bound-versus-exempt shape is genuinely undecidable from the command string the verifier SHOULD treat the action as the residual package-lifecycle-execution class rather than raising a blocking finding. Reference-verifier and hosted-verifier support for these findings arrives in a subsequent 0.7.x release; until then the findings are defined but not emitted, and bounded-execution compliance is self-asserted, in the same way Level 5 runtime conformance is specified ahead of a conformant runtime.
+
 ## 20. Filesystem, Environment, and Egress Checks
 For any action that reads or writes the filesystem, the verifier MUST require `cwd`.
 For any action that references environment variables with `$NAME`, the verifier MUST require `env` and MUST check that every referenced variable is listed.
@@ -486,11 +499,11 @@ The minimum JSON-compatible schema is:
 {
   "verifier": {
     "name": "example-verifier",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "0.6.0",
+    "verifier_profile_version": "0.7.0",
     "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "0.6.0"
+    "guide_profile_version": "0.7.0"
   },
   "input": {
     "url": "https://example.com/.well-known/assistant-guide.txt"

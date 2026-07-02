@@ -75,7 +75,7 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 ## Versioning and authority
 
-The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.6.0, released. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` across every version-bearing surface, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.7.0, released. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` across every version-bearing surface, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
 
 ## Changelog
 

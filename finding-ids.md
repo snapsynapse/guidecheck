@@ -116,6 +116,22 @@ files.
 | `network.command-implies-networked` | warning | A command performs network access but the class omits `networked`. |
 | `runner.shell.missing-rationale` | warning | A shell runner lacks a narrow rationale in `notes`. |
 
+## Bounded execution
+
+Defined for guide-profile 0.7.0 (spec section 12, "Code-executing actions and
+the review boundary"). Reference-verifier and hosted-verifier support arrives in
+a subsequent 0.7.x release; until then these ids are part of the contract but are
+not yet emitted, and a guide's compliance with the bounded-execution rule is
+self-asserted.
+
+| ID | Severity | Trigger |
+|---|---|---|
+| `action.exec-unbounded` | error | An action invokes a bound in-repo artifact without inlining its commands or a valid `exec-sha256`, or declares `exec-opaque` on a bound artifact. |
+| `action.exec-opaque` | warning | An action declares `exec-opaque: acknowledged` on an exempt external-dependency command; the guide is not self-contained at that action. |
+| `exec-sha256.mismatch` | error | A declared `exec-sha256` does not match the invoked artifact's bytes. |
+| `exec-sha256.transitive-unpinned` | error | A readable pinned artifact invokes a further in-repo artifact that is neither inlined nor pinned. |
+| `exec-sha256.unverified` | info | A verifier could not read the invoked artifact to check its `exec-sha256`; the pin is declared but unverified. |
+
 ## Level 5 readiness
 
 | ID | Severity | Trigger |
