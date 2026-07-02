@@ -138,7 +138,8 @@ five finding ids in `finding-ids.md` and `verifier-conformance.md`. The profile 
 bumped to 0.7.0 across all surfaces. Reference-verifier and hosted-verifier
 enforcement of `action.exec-unbounded`, `exec-sha256` verification, and
 transitive-closure scanning is the remaining work and is deferred to a 0.7.x
-release; until then bounded-execution compliance is self-asserted. Tagging v0.7.0,
+release, sequenced in `docs/0.7-verifier-enforcement-plan.md`; until then
+bounded-execution compliance is self-asserted. Tagging v0.7.0,
 republishing the self-guide DNS TXT hash, and deploying the site are out-of-band
 release steps. The bound-versus-exempt axis and the adversarial hardening behind
 it are summarized in the covered/landed/candidate notes in this section and in
