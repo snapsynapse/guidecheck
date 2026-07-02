@@ -199,6 +199,28 @@ door, not a conformance gate.
 - A future DNS TXT fetcher path that performs client-side DNSSEC validation
   with a vendored library, as an alternative to the current DoH-resolver
   reliance on the resolver's `AD` bit. No commitment.
+- Self-guide DNS TXT anchor republish automation (evaluated 2026-07-02, not
+  changing today; likely stays manual). The `_assistant-guide.guidecheck.org`
+  TXT record is updated by hand at each release. The zone is on Namecheap
+  BasicDNS (`registrar-servers.com`), whose API replaces the entire host set per
+  call, so unattended automation there is awkward. Options considered:
+  provider-API upsert (clean on Cloudflare, Route53, or deSEC; awkward on
+  Namecheap), a Terraform-managed record, a semi-automation helper
+  (`scripts/dns-anchor.py` / `make dns-anchor`) that computes the current guide
+  hash and emits the exact TXT value plus a ready-to-run upsert command, and an
+  approval-gated CI job with a DNS-scoped single-record token. The deciding
+  factor is a trust trade-off: the DNS anchor is a Level 4 independent control
+  plane precisely because DNS credentials are distinct from web-host and CI
+  credentials (`threat-register.md`, provenance anchor risks). Putting a
+  DNS-write token in the release pipeline that already builds and deploys the
+  guide collapses that independence and weakens the cross-channel forge
+  resistance the anchor exists to provide. Preferred direction if pursued: the
+  semi-automation helper (removes the hash-copy error without giving CI a DNS
+  key) with the human still performing the save, since the repository-file and
+  manifest anchors already update automatically with the commit and keeping DNS
+  in a separate human-gated trust domain is the more defensible posture. Full CI
+  automation, if ever adopted, only behind a required-reviewer environment with
+  an isolated token, and documented as an independence trade-off.
 - Add a Level 4 manifest for GuideCheck's own guide after an independent hash
   anchor is published.
 - Add a signed or otherwise independently anchored `security.txt` plan before
