@@ -16,6 +16,7 @@ build/
 .cache/
 __pycache__/
 *.py[cod]
+*.egg-info/
 *.log
 
 # Local environment

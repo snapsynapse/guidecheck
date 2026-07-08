@@ -187,6 +187,23 @@ guide's compliance with the bounded-execution rule is self-asserted.
 | `header.x-content-type-options.missing` | warning | The served guide response lacks `X-Content-Type-Options: nosniff`. |
 | `header.hsts.missing` | warning | The served guide response lacks `Strict-Transport-Security`. |
 
+## Instruction-surface scanner
+
+Emitted by `scripts/guidecheck_scan.py` (`guidecheck scan`) against published
+instruction surfaces (AGENTS.md, CLAUDE.md, READMEs, skill files,
+assistant-guide.txt, llms.txt) rather than against conformant guides. These
+ids are stable but are not part of the verifier fixture contract. Comment and
+CSS-hidden findings are gated on instruction-likeness to keep precision high.
+
+| ID | Severity | Trigger |
+|---|---|---|
+| `surface.hidden-html-comment` | warning | An HTML comment contains instruction-like text that is invisible in rendered output. |
+| `surface.invisible-unicode.zero-width` | warning | Zero-width characters (U+200B..U+200D, non-leading U+FEFF) are embedded in text; ZWNJ/ZWJ adjacent to non-ASCII text (emoji, joining scripts) are exempt. |
+| `surface.invisible-unicode.bidi-control` | error | Bidirectional control characters (U+202A..U+202E, U+2066..U+2069) can reorder how text is displayed. |
+| `surface.invisible-unicode.tag-characters` | error | Unicode tag characters (U+E0000..U+E007F) encode invisible ASCII text; the scanner reports the decoded payload. |
+| `surface.css-hidden-text` | error | Instruction-like text sits inside an element styled invisible (`display:none`, `visibility:hidden`, `font-size:0`, `opacity:0`, or color matching background). |
+| `surface.ansi-escape` | error | An ESC-based escape sequence can conceal or restyle terminal output. |
+
 ## Change control
 
 Finding ids are part of the verifier fixture contract. Renaming or removing a

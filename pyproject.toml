@@ -1,0 +1,35 @@
+# Local packaging for the one-command entry point (adoption roadmap step 2):
+#   uvx --from /path/to/guidecheck guidecheck scan <url-or-file>
+# Not published to any index. Version tracks guidecheck_constants.py.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "guidecheck"
+description = "Scan and verify AI-assistant instruction surfaces for hidden-instruction channels (GuideCheck reference tools)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0 OR MIT" }
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://guidecheck.org/"
+Repository = "https://github.com/snapsynapse/guidecheck"
+
+[project.scripts]
+guidecheck = "guidecheck_cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "scripts" }
+py-modules = [
+    "guidecheck_cli",
+    "guidecheck_scan",
+    "guidecheck_verify",
+    "guidecheck_constants",
+    "guidecheck_fetch",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "guidecheck_constants.GUIDECHECK_VERSION" }
