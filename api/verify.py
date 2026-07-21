@@ -60,7 +60,7 @@ MAX_OUTBOUND_FETCHES = 7
 ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
     "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
-    "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is scoped to github.com in 0.6.0; signed security.txt anchors are not fetched.",
+    "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched.",
     "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
     "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
     "Level 5 runtime conformance is not evaluated.",

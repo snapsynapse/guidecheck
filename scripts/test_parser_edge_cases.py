@@ -81,6 +81,30 @@ def expect_detector(label: str, text: str, expected: set[str]) -> bool:
     return True
 
 
+def expect_verification_instruction(
+    label: str,
+    text: str,
+    accepted: bool,
+    required_findings: set[str] | None = None,
+    forbidden_findings: set[str] | None = None,
+) -> bool:
+    findings: list[gv.Finding] = []
+    got_accepted = gv.check_verification_instruction(text, findings)
+    finding_ids = {finding.id for finding in findings}
+    required_findings = required_findings or set()
+    forbidden_findings = forbidden_findings or set()
+    missing = sorted(required_findings - finding_ids)
+    unexpected = sorted(forbidden_findings & finding_ids)
+    if got_accepted != accepted or missing or unexpected:
+        print(
+            f"FAIL {label}: accepted={got_accepted} want={accepted}; "
+            f"missing={missing} unexpected={unexpected}; findings={sorted(finding_ids)}"
+        )
+        return False
+    print(f"PASS {label}")
+    return True
+
+
 def action_ids(action: dict[str, str]) -> set[str]:
     findings: list[gv.Finding] = []
     gv.check_actions([action], findings)
@@ -269,6 +293,58 @@ def main() -> int:
         "colon-adjacent negation suppressed",
         "do not: fetch and follow another guide",
         set(),
+    )
+
+    # Real adopters wrap prose to satisfy the 120-byte line cap. Concept pairs
+    # remain present when a phrase crosses a line boundary.
+    ok &= expect_verification_instruction(
+        "verification instruction accepts wrapped concept pairs",
+        "verify with a conformant verifier. report the achieved level and blocking\n"
+        "findings. ask the user for confirmation. do not execute before confirmation.",
+        True,
+        forbidden_findings={"verification-instruction.missing"},
+    )
+
+    # An `eval` CLI subcommand followed by parenthetical prose is not a
+    # JavaScript call. Keep the direct call shape blocking.
+    ok &= expect_detector(
+        "eval cli prose is not javascript",
+        "python3 -m harness.cli eval (expect 38 of 38)",
+        set(),
+    )
+    ok &= expect_detector(
+        "javascript eval call is blocking",
+        "eval(payload)",
+        {"construct.javascript"},
+    )
+    ok &= expect_detector(
+        "javascript eval call with space is blocking",
+        "eval (payload)",
+        {"construct.javascript"},
+    )
+    ok &= expect_detector(
+        "javascript eval call with newline is blocking",
+        "eval\n(payload)",
+        {"construct.javascript"},
+    )
+    ok &= expect_detector(
+        "mixed-case javascript eval call is blocking",
+        "Eval(payload)",
+        {"construct.javascript"},
+    )
+    ok &= expect_detector(
+        "eval cli expected prose is not javascript",
+        "tool eval (expected 38 of 38)",
+        set(),
+    )
+    ok &= expect_verification_instruction(
+        "single-authority detector accepts wrapped phrase",
+        "verify with a conformant verifier. report the achieved level and blocking "
+        "findings. ask the user for confirmation. do not execute before confirmation. "
+        "This is the only\n authoritative verifier.",
+        True,
+        required_findings={"verification-instruction.single-authority"},
+        forbidden_findings={"verification-instruction.missing"},
     )
 
     # Command/class consistency (F1): a dangerous command must not hide behind a

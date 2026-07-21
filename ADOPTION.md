@@ -101,6 +101,9 @@ or as a missing point.
    `/.well-known/assistant-guide.txt`, place it at the repository root, or
    both. When both are served, keep them byte-identical (`spec.md` section 6).
 
+On GitHub Pages, add an empty `docs/.nojekyll` file when publishing from
+`docs/`; otherwise Jekyll processing may omit the `.well-known` directory.
+
 ### Level 2: human-verifiable byte profile
 
 1. Restrict the file to the byte profile: ASCII printable bytes plus LF, no
@@ -112,6 +115,11 @@ or as a missing point.
    section 9).
 4. Serve it with `Content-Type: text/plain; charset=utf-8` and
    `X-Content-Type-Options: nosniff` (`spec.md` section 20).
+
+GitHub Pages does not provide project-level control over response headers, so
+publishers cannot add `X-Content-Type-Options` or `Strict-Transport-Security`
+there. These headers are profile SHOULDs. Record the limitation rather than
+spending effort on an unavailable Pages setting or overstating the result.
 
 ### Level 3: assistant safety contract
 
@@ -171,6 +179,35 @@ For JSON registry records, put the hash inside assistant-guide-specific
 metadata, such as `assistantGuide.sha256`; unrelated `sha256` fields elsewhere
 in the package record do not count as GuideCheck anchors.
 
+The manifest may name the release that will contain the guide before that tag
+or release URL exists. Publish the release as part of the same release process;
+verifiers check URL reachability at verification time, not commit ancestry.
+
+### Rotating a Level 4 guide
+
+Every guide edit changes the hash and requires every derived artifact and
+anchor to move together. Use this order:
+
+1. Batch intentional guide edits so one release requires one anchor rotation.
+2. Synchronize the served guide copy, manifest hash and byte count, repository
+   trust-bundle pins, and other in-repository derivations.
+3. Run repository checks that assert byte identity, manifest consistency, and
+   trust-bundle pins before deployment.
+4. Deploy the guide and manifest.
+5. Update DNS TXT, package-registry metadata, transparency-log entries, and
+   every other independent anchor.
+6. Re-run a fetching verifier against the public URLs and anchors.
+
+A verifier should report divergence between deployment and the final anchor
+update. That expected failure is the cross-channel control working; keep the
+window short. A DNS TTL no greater than 3600 seconds limits propagation delay.
+
+Prefer commands and stable acceptance criteria over copying current command
+output into the guide. Test counts, version-pinned expectations, and other
+volatile facts force a guide rotation whenever they change. If a volatile fact
+is necessary, make its refresh a release-checklist item and test the semantic
+claim separately; byte/hash synchronization alone cannot detect stale prose.
+
 ### Level 5: runtime-enforced execution
 
 Level 5 is not a guide-only claim. A guide author prepares for it by reaching
@@ -189,6 +226,7 @@ Level 1
 - [ ] canonical project or repository URL present
 - [ ] compact verification instruction appears before any action instructions
 - [ ] reachable from a canonical surface; both copies byte-identical if both are served
+- [ ] `.nojekyll` present when GitHub Pages must serve `.well-known`
 
 Level 2
 - [ ] byte profile satisfied: ASCII printable plus LF, no tabs, carriage returns, control, or invisible characters
@@ -209,8 +247,10 @@ Level 3
 
 Level 4
 - [ ] sidecar manifest published and named in `manifest-url`
+- [ ] `immutable-release-url` resolves after the release is published
 - [ ] `guide-sha256` cross-published on at least one independent channel
 - [ ] a verifier confirms the manifest match and one agreeing anchor
+- [ ] guide rotation updates every served copy, derived pin, and independent anchor
 
 Level 5 readiness
 - [ ] every action declares `runner`

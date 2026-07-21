@@ -4,7 +4,7 @@ guide-sha256: 47052436990ca77094df82996276a4c55f04237eedcc2cca3b444aa0686a4e93
 guide-bytes: 5210
 immutable-release-url: https://example.com/org/example-cli/releases/v2.4.1
 profile: human-verifiable-assistant-guide
-profile-version: 0.7.0
+profile-version: 0.7.1
 canonical-url: https://example.com/.well-known/assistant-guide.txt
 repository-url: https://example.com/org/example-cli
 released-at: 2026-05-22T00:00:00Z

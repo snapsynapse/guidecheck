@@ -309,7 +309,7 @@ Example:
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.7.0
+profile-version: 0.7.1
 guide-version: 1.0.0
 applies-to: example-project >=2.3.0, <3.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt
@@ -350,6 +350,8 @@ transparency-log-url: optional-url-to-a-public-append-only-log-entry
 ```
 
 The hash identifies which version of the file a verifier has examined. The hash does not assert that the file is safe. A verifier that fetches both `assistant-guide.txt` and its manifest MUST recompute the SHA-256 over the fetched bytes and report any mismatch as a Level 4 conformance failure while still permitting Level 3 evaluation of the file contents on their own merits.
+
+The `immutable-release-url` MAY name the release that will contain this guide version before the tag or release URL exists during authoring. The publisher MUST make that URL reachable when the release is published. Verifiers check reachability at verification time; they do not infer conformance from commit ancestry or authoring order.
 
 A future version of this specification may define a more structured manifest schema. The minimum fields above are stable.
 

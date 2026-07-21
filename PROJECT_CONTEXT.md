@@ -64,11 +64,12 @@ notes), rather than a general PAICE-wide default.
 
 ## Current status
 
-Released, profile version 0.7.0 (see `CHANGELOG.md`). `main` is clean and in
-sync with `origin/main`. Most recent shipped work: `guidecheck scan`, an
-instruction-surface scanner for pre-existing AGENTS.md/CLAUDE.md/README/
-SKILL/llms.txt-style files (2026-07-07). Undecided/open items live in
-`roadmap.md` and `INTENT.md`: conformance-kit signing mechanism, a possible
-second independent verifier implementation (language undecided), and the
-Level 5 runtime-conformance fixture suite design. See `CLAUDE.md` for
-technical/agent-facing detail.
+Released, profile version 0.7.1 (see `CHANGELOG.md`). Most recent shipped work:
+`guidecheck scan`, an instruction-surface scanner for pre-existing
+AGENTS.md/CLAUDE.md/README/SKILL/llms.txt-style files (2026-07-07).
+Undecided/open items live in
+`roadmap.md` and `INTENT.md`: a possible second independent verifier
+implementation (language undecided), the Level 5 runtime-conformance fixture
+suite design, and a possible higher provenance tier. Release and conformance-
+kit signing is settled on Sigstore cosign keyless for 0.6.0 and later. See
+`CLAUDE.md` for technical/agent-facing detail.

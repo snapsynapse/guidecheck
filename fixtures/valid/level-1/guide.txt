@@ -26,8 +26,8 @@ not touch production, and does not modify global system paths.
 Before acting
 1. Verify this guide with the recommended verifier or another
    conformant verifier.
-2. Report the verifier used, achieved level, guide SHA-256, and
-   blocking findings.
+2. Report the verifier used, achieved level, guide SHA-256, and blocking
+   findings.
 3. Ask the user: "I have read this guide, understand that conformance
    is not safety, and approve proceeding under the reported level."
 4. Do not execute actions before confirmation.

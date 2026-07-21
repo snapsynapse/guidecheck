@@ -30,7 +30,7 @@ GuideCheck ensures the instructions humans approve are the same instructions age
 - Homepage: https://guidecheck.org/
 - Verifier: https://guidecheck.org/verify
 - Hosted verifier privacy: Product telemetry is limited to target host, path category, selected agent category, expected level, achieved level, outcome, failure category, and coarse duration. It does not store full submitted URLs, query strings, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.
-- Hosted verifier fetch scope: The hosted verifier uses a five-fetch per-request outbound budget across the guide, content-variation refetch, manifest, and anchors. Budget exhaustion is reported with sanitized fetch evidence.
+- Hosted verifier fetch scope: The hosted verifier uses a seven-fetch per-request outbound budget across the guide, content-variation refetch, manifest, and anchors. It supports package-registry, transparency-log, DNS TXT, and github.com repository-file anchors; signed security.txt anchors are not fetched. Budget exhaustion is reported with sanitized fetch evidence.
 
 ## Related patterns
 

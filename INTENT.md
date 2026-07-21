@@ -75,9 +75,10 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 ## Versioning and authority
 
-The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.7.0, released. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` across every version-bearing surface, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.7.1, released. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` across every version-bearing surface, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
 
 ## Changelog
 
+- 2026-07-21: Released profile 0.7.1 with verifier false-positive fixes for wrapped verification instructions and CLI `eval` result prose, expanded parser regressions, refreshed hosted-verifier copy, and adoption guidance derived from the Harnessie field report.
 - 2026-06-09: Recorded the Level 5 ownership decision (GuideCheck owns the runtime fixture suite and evaluator, gated by pre-level-5 readiness). Updated version status to 0.6.0 released and noted the version-sync check. Backfilled missing entries: the version line had been bumped through 0.2.0 to 0.6.0 without changelog entries.
 - 2026-05-21: Initial INTENT for the GuideCheck standard, drafted alongside the v0.1.0 bootstrap.

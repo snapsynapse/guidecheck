@@ -1,53 +1,70 @@
 # Session handoff
 
-Date: 2026-06-09
+Date: 2026-07-21
 
-Scope: Full-repo audit mitigation and the 0.5.0 release.
+Scope: Handoff disposition review and adopter-friction fixes validated against
+the Harnessie GuideCheck adoption.
 
 ## Completed
 
-- Released 0.5.0: folded the post-0.4.0 hosted hardening (fetch budget,
-  content-variation probe, off-domain recommended-verifier warning,
-  registry-anchor hash binding) out of Unreleased into a tagged release.
-- Added `scripts/check_version_sync.py` to `make test`: asserts every
-  version-bearing surface against `guidecheck_constants.py` and checks the
-  published `docs/.well-known/assistant-guide.txt` byte-for-byte against the
-  repository guide. It caught a second .well-known drift on its first run.
-- Tightened the fixture warning contract: optional `warnings_exact` and
-  `forbidden_warning_ids` fields; all 68 local-file fixtures now pin their
-  warning sets exactly, so false-positive warnings fail tests.
-- Added deterministic anchor-channel tests for dns-txt, repository-file,
-  signed-security-txt, and transparency-log (extraction, agreement, mismatch
-  blocking, absent evidence).
-- Recorded the Level 5 ownership decision in `INTENT.md`: GuideCheck owns the
-  runtime fixture suite and evaluator, gated by pre-level-5 readiness.
-- Reframed `ADOPTION.md` so MCP/A2A are ecosystem integrations, not primary
-  audiences; added explicit advisory status statements to the three
-  integration notes; fixed roadmap "Maintain" framing and gave fixture-suite
-  signing a stated path (SHA256SUMS now, minisign or Sigstore later).
-- Marked `finding-ids.md` normative in `CONTRIBUTING.md`; documented `valid`
-  and `guide_sha256` in the verifier-output schema.
-- Added `make release-archive` and `make conformance-kit` targets.
+- Reviewed the root handoff, four gitignored working handoffs, and two archived
+  genesis/migration handoffs against the 0.7.0 repository state, then prepared
+  the resulting fixes for the 0.7.1 patch release.
+- Confirmed that release signing, additional Level 4 anchors, GuideCheck's own
+  Level 4 posture, and the Vercel migration are complete. Sigstore cosign
+  keyless is the release and conformance-kit signing mechanism from 0.6.0.
+- Validated the Harnessie field report against `/Users/snap/Git/harnessie`, its
+  adoption commits, current guide, manifest, artifact-sync tests, and release
+  record.
+- Fixed compact verification-instruction matching when a concept pair such as
+  `blocking findings` wraps across lines.
+- Narrowly exempted CLI result prose such as `tool eval (expect ...)` from the
+  JavaScript detector while retaining blocking coverage for `eval` calls with
+  no space, spaces, newlines, and mixed case.
+- Added regression tests for both false blockers, normalized the wrapped
+  single-authority check, and promoted wrapped verification wording into the
+  static Level 1 fixture contract.
+- Added GitHub Pages `.nojekyll` and response-header guidance, clarified
+  `immutable-release-url` authoring order, and documented Level 4 rotation.
+- Documented that volatile facts such as current test counts create rotation
+  liabilities and require semantic checks beyond byte/hash synchronization.
+- Corrected `CLAUDE.md` and `PROJECT_CONTEXT.md` where they described the
+  already-resolved signing mechanism as undecided.
+- Cached repeated per-action command classification, simplified the Level 5
+  readiness scan, and refreshed public hosted-verifier copy from the stale
+  five-fetch scope to the current seven-fetch and four-anchor scope.
+- Prepared the 0.7.1 release surfaces, authored release notes, and configured
+  the tag workflow to publish those reviewed notes with signed artifacts.
 
-## Verification
+## Handoff disposition
 
-- `make test` passes at 0.5.0: 132 evals, 68 fixtures, 78 contract
-  validations, version sync, and all network-safety suites.
-
-## Open decisions
-
-- Conformance-kit signing mechanism: minisign vs Sigstore. SHA256SUMS
-  published with the release is the integrity reference until chosen.
-- Second independent verifier implementation: kit packaging done; whether to
-  write a minimal independent (for example JavaScript) engine or recruit an
-  external implementation is undecided.
+- `archive/human-verifiable-plain-text-handoff.md`: historical genesis;
+  superseded by the GuideCheck standard.
+- `archive/vercel-migration-handoff.md`: historical migration plan; completed.
+- `handoffs/2026-06-09-disposition-note.md`: demand-gating context, not a work
+  order; subsequent scanner and adoption work partially overtook the park.
+- `handoffs/2026-06-09-post-0.5.0-open-decisions.md`: mostly resolved; retain
+  the second-verifier, signed-security.txt, replay/UI/fuzz, and Level 5 items.
+- `handoffs/2026-07-02-0.7.0-transitive-execution-proposal.md`: normative work
+  applied in 0.7.0; verifier enforcement remains active 0.7.x work.
+- `handoffs/2026-07-07-harnessie-adoption-field-report.md`: adopter-friction
+  fixes applied here; same-control-plane anchor handling remains open.
 
 ## Next candidates
 
-- Publish the 0.5.0 GitHub release with the source archive and the first
-  conformance-kit artifact.
-- Design the Level 5 runtime-conformance fixture suite per the implementation
-  plan, now that ownership is recorded.
-- Add replay fixtures for TLS edge cases and additional public-web header
-  variants.
-- Promote generated metadata parser-confusion cases into static fixtures.
+1. Resolve repository-file anchors that share a control plane with a Pages
+   deployment. This needs a normative independence decision, finding id,
+   detection design, hosted tests, and fixtures. Harnessie's independent DNS
+   TXT anchor keeps its own Level 4 claim valid despite this general gap.
+2. Implement local bounded-execution enforcement phases 1 through 3 and 5 in
+   `docs/0.7-verifier-enforcement-plan.md` as a dedicated 0.7.x slice.
+3. Implement hosted `exec-sha256` verification and transitive scanning only
+   after resolving artifact-fetch limits and the outbound-fetch budget.
+4. Keep the second verifier and Level 5 runtime work demand/readiness-gated.
+
+## Verification
+
+- `make test` passes: 134 eval cases, 70 reference-verifier fixtures, 80
+  contract validations, the two new parser regressions, version and guide-copy
+  sync, fetch safety, hosted anchors and API, fetch replay, CLI contract, and
+  58 scanner tests.

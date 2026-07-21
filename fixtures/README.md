@@ -57,7 +57,8 @@ The current static corpus includes:
 - byte-profile failures for tabs, CRLF, non-ASCII, NUL, ANSI escape, other controls, overlong lines, and oversize guides
 - line-count failures above the 400-line limit
 - disallowed constructs for HTML, Markdown images, data URLs, and JavaScript
-- compact verification instruction failure
+- compact verification instruction failure plus valid wording with a concept
+  pair wrapped across lines
 - single-authority verifier language
 - metadata key, URL, status, date, and revoked-status failures
 - missing required metadata and registry URLs that do not identify a specific record

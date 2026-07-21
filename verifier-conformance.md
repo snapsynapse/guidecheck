@@ -499,11 +499,11 @@ The minimum JSON-compatible schema is:
 {
   "verifier": {
     "name": "example-verifier",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "0.7.0",
+    "verifier_profile_version": "0.7.1",
     "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "0.7.0"
+    "guide_profile_version": "0.7.1"
   },
   "input": {
     "url": "https://example.com/.well-known/assistant-guide.txt"

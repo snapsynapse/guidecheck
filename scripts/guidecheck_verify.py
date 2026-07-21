@@ -466,6 +466,12 @@ def _flag_unless_negated(line: str, pattern: str) -> bool:
     return False
 
 
+_JAVASCRIPT_EVAL = re.compile(r"\beval\s*\(")
+_CLI_EVAL_EXPECTATION = re.compile(
+    r"\beval[ \t]+\(\s*(?:expect|expected|expecting)\b[^()\n]*\)"
+)
+
+
 def check_disallowed(text: str, findings: list[Finding]) -> None:
     lowered = text.lower()
     if re.search(r"</?(html|script|style|iframe|img|link|meta)\b", lowered):
@@ -474,7 +480,13 @@ def check_disallowed(text: str, findings: list[Finding]) -> None:
         add_finding(findings, "construct.markdown-image", "error", "Markdown image construct present")
     if "data:" in lowered:
         add_finding(findings, "construct.data-url", "error", "data URL present")
-    if re.search(r"\bjavascript\s*:", lowered) or re.search(r"\beval\s*\(", lowered):
+    # `eval (` is valid JavaScript, so whitespace cannot be used to evade the
+    # detector. Exempt only the narrow adopter prose shape used to report a CLI
+    # eval subcommand's expected result, for example `tool eval (expect 38 of
+    # 38)`. The parenthetical content is deliberately restricted to one line
+    # with no nested parentheses.
+    javascript_scan = _CLI_EVAL_EXPECTATION.sub("", lowered)
+    if re.search(r"\bjavascript\s*:", lowered) or _JAVASCRIPT_EVAL.search(javascript_scan):
         add_finding(findings, "construct.javascript", "error", "JavaScript construct present")
     for line in lowered.splitlines():
         if _flag_unless_negated(line, r"(base64|decode).{0,40}(execute|run|eval)"):
@@ -482,8 +494,8 @@ def check_disallowed(text: str, findings: list[Finding]) -> None:
 
 
 def check_verification_instruction(text: str, findings: list[Finding]) -> bool:
-    lower = text.lower()
-    before_action = lower.split("[action]", 1)[0]
+    normalized = re.sub(r"\s+", " ", text.lower())
+    before_action = normalized.split("[action]", 1)[0]
     concepts = [
         ("verify", "verifier"),
         ("achieved level", "blocking findings"),
@@ -500,7 +512,7 @@ def check_verification_instruction(text: str, findings: list[Finding]) -> bool:
             section="verifier-conformance.15",
             remediation="add the Level 1 compact verification instruction before action instructions",
         )
-    if re.search(r"only\s+(?:authoritative|valid|approved)\s+verifier", lower):
+    if re.search(r"only\s+(?:authoritative|valid|approved)\s+verifier", normalized):
         add_finding(
             findings,
             "verification-instruction.single-authority",
@@ -631,16 +643,18 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
         if "egress" in action and re.search(r"(^|,\s*)\*", action["egress"]):
             add_finding(findings, "egress.wildcard-too-broad", "error", "egress wildcard is too broad")
         command = action.get("command", "")
-        if "code-executing" not in classes and command_executes_code(command):
+        executes_code = command_executes_code(command)
+        is_networked = command_is_networked(command)
+        if "code-executing" not in classes and executes_code:
             add_finding(findings, "action-block.class.code-executing-missing", "warning", "command likely executes code", evidence=action.get("id", ""))
-        if "networked" not in classes and command_is_networked(command):
+        if "networked" not in classes and is_networked:
             add_finding(findings, "network.command-implies-networked", "warning", "command performs network access but class omits networked", evidence=action.get("id", ""))
         # When the declared class would not trigger an approval gate but the
         # command itself implies a sensitive action, surface the missing gate.
         if (
             action.get("approval") != "required"
             and not (classes & APPROVAL_REQUIRED_CLASSES)
-            and (command_is_networked(command) or command_executes_code(command))
+            and (is_networked or executes_code)
         ):
             add_finding(findings, "approval.command-implies-required", "warning", "command implies a sensitive action but approval is not required", evidence=action.get("id", ""))
         if action.get("runner") == "shell" and not action.get("notes"):
@@ -651,7 +665,6 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
 
 
 def check_level5_readiness(actions: list[dict[str, str]], findings: list[Finding]) -> bool:
-    before = len(findings)
     for action in actions:
         classes = action_classes(action)
         action_id = action.get("id", "")
@@ -691,7 +704,7 @@ def check_level5_readiness(actions: list[dict[str, str]], findings: list[Finding
     }
     return not any(
         finding.severity == "warning" and finding.id in readiness_warning_ids
-        for finding in findings[before:] + findings[:before]
+        for finding in findings
     )
 
 

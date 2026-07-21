@@ -122,22 +122,21 @@ builds and Sigstore-signs release + conformance-kit artifacts.
 
 ## Current state
 
-- Released, profile version 0.7.0 (see `CHANGELOG.md`). Working tree is
-  clean; `main` is up to date with `origin/main`.
+- Released, profile version 0.7.1 (see `CHANGELOG.md`).
 - Most recent work (2026-07-07): added `guidecheck scan`, a standalone
   instruction-surface scanner for existing files (AGENTS.md/CLAUDE.md/
   README/SKILL/llms.txt/assistant-guide.txt) that flags hidden-instruction
   channels independent of full assistant-guide.txt conformance — framed as
   "adoption steps 1-2," the low-friction front door ahead of full profile
   adoption. Packaged via `pyproject.toml` for `uvx guidecheck scan`.
-- `SESSION_HANDOFF.md` at the repo root is dated 2026-06-09 (pre-0.7.0,
-  pre-scanner) — treat it as historical context, not current status; prefer
-  `CHANGELOG.md`, `INTENT.md`, and `roadmap.md` for what's current.
-- Open/undecided items tracked in `roadmap.md` and `INTENT.md`: conformance-
-  kit signing mechanism (minisign vs Sigstore — SHA256SUMS is the interim
-  integrity reference), whether to build a second independent verifier
+- `SESSION_HANDOFF.md` records the current repo-local handoff disposition,
+  completed session work, verification state, and next implementation slices.
+- Release and conformance-kit signing is settled: 0.6.0 and later use Sigstore
+  cosign keyless in the tag-triggered release workflow; SHA256SUMS remains the
+  integrity reference for 0.5.0 and earlier. Open items tracked in `roadmap.md`
+  and `INTENT.md` include whether to build a second independent verifier
   implementation (Go vs Rust undecided) or recruit an external one, Level 5
-  runtime-conformance fixture suite design, and a possible higher provenance
+  runtime-conformance fixture-suite design, and a possible higher provenance
   tier above Level 4/5.
 - The hosted verifier at guidecheck.org/verify is explicitly a preview: its
   conformance fixture suite is incomplete and it has not been shown to pass

@@ -3,7 +3,7 @@ Assistant Guide: example-cli local install
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.7.0
+profile-version: 0.7.1
 guide-version: 1.0.0
 applies-to: example-cli >=2.0.0, <3.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt

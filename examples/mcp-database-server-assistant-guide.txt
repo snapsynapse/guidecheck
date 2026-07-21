@@ -3,7 +3,7 @@ Assistant Guide: example-db-mcp local adoption
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.7.0
+profile-version: 0.7.1
 guide-version: 1.0.0
 applies-to: example-db-mcp >=1.0.0, <2.0.0
 canonical-url: https://example.com/.well-known/assistant-guide.txt
@@ -14,7 +14,7 @@ last-reviewed: 2026-05-26
 reviewed-by: security@example.com
 status: active
 recommended-verifier: https://guidecheck.org/verify
-verifier-conformance: human-verifiable-assistant-guide-verifier >=0.6.0, <0.7.0
+verifier-conformance: human-verifiable-assistant-guide-verifier >=0.7.0, <0.8.0
 [/assistant-guide-metadata]
 
 Task scope

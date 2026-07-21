@@ -7,14 +7,14 @@ external evidence:
 
 - package-registry  (existing, see api/verify.py)
 - transparency-log  (existing, see api/verify.py)
-- repository-file   (this module, github.com only in 0.6.0)
-- dns-txt           (this module, DoH via Cloudflare in 0.6.0)
+- repository-file   (this module, currently github.com only)
+- dns-txt           (this module, DoH via Cloudflare)
 
 This module owns the URL derivation and DoH response parsing for the two new
 channels. It does no network IO itself; api/verify.py supplies a fetcher that
 applies the SSRF-hardened safe_fetch plus the hosted fetch budget.
 
-The repository-file allowlist is intentionally small in 0.6.0. The roadmap
+The repository-file allowlist is intentionally small. The roadmap
 tracks expansion to gitlab.com, codeberg.org, bitbucket.org, and git.sr.ht.
 Self-hosted code-host instances cannot be allowlisted generically and are
 deferred to a future per-instance opt-in.
@@ -102,7 +102,7 @@ def parse_doh_txt_response(body: bytes) -> tuple[list[str], bool] | None:
 
     Returns None if the body is not valid DoH JSON or NXDOMAIN. DNSSEC
     validation is taken from the AD bit reported by the resolver; the hosted
-    verifier trusts the resolver's chain check in 0.6.0. A future
+    verifier trusts the resolver's chain check. A future
     client-side DNSSEC validator is on the roadmap.
     """
     try:

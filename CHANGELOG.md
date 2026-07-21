@@ -2,6 +2,28 @@
 
 All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
+## [Unreleased]
+
+## [0.7.1] - 2026-07-21
+
+### Fixed
+
+- compact verification instructions may wrap concept pairs across lines
+  without producing a false `verification-instruction.missing` blocker
+- CLI prose such as `tool eval (expect ...)` no longer triggers the JavaScript
+  detector; JavaScript call syntax remains blocking across spaces, newlines,
+  and case variants
+
+### Documentation
+
+- added GitHub Pages `.nojekyll` and response-header guidance, clarified
+  `immutable-release-url` authoring order, and documented the Level 4 guide
+  rotation sequence and the maintenance cost of volatile facts
+- corrected project context that still described the release-signing mechanism
+  as undecided after Sigstore signing shipped in 0.6.0
+- refreshed stale hosted-verifier public copy to name the seven-fetch budget
+  and the DNS TXT and github.com repository-file anchor support now available
+
 ## [0.7.0] - 2026-07-02
 
 ### Added
@@ -320,7 +342,10 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/snapsynapse/guidecheck/compare/v0.7.0...v0.7.1
+[0.7.0]: https://github.com/snapsynapse/guidecheck/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/snapsynapse/guidecheck/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/snapsynapse/guidecheck/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/snapsynapse/guidecheck/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/snapsynapse/guidecheck/compare/v0.3.1...v0.3.2

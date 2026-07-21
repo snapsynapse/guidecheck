@@ -2,7 +2,7 @@
   "description": "A Level 1 guide that has the compact verification instruction and source fields but intentionally fails the Level 2 byte profile.",
   "evaluation_mode": "local-file",
   "achieved_level": 1,
-  "guide_sha256": "c1012e8558a58c55b27cfcdd45e0335fd8340f87f241002f6aa52f6303cde31e",
+  "guide_sha256": "8c9db6f6d86dd50262264ef1996b779ea1350ef4dfcfde3475084b2806a2ef93",
   "guide_bytes": 5200,
   "blocking_finding_ids": [
     "byte-profile.no-tabs"
