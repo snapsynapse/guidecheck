@@ -35,7 +35,7 @@ jobs:
         working-directory: build
         run: |
           shasum -a 256 \
-            guidecheck-*.tar.gz \
+            guidecheck-[0-9]*.tar.gz \
             guidecheck-*.zip \
             guidecheck-conformance-kit-*.tar.gz \
             > SHA256SUMS
@@ -51,7 +51,7 @@ jobs:
           COSIGN_EXPERIMENTAL: "1"
         run: |
           for artifact in \
-            guidecheck-*.tar.gz \
+            guidecheck-[0-9]*.tar.gz \
             guidecheck-*.zip \
             guidecheck-conformance-kit-*.tar.gz \
             SHA256SUMS; do
@@ -70,7 +70,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/guidecheck-*.tar.gz
+            build/guidecheck-[0-9]*.tar.gz
             build/guidecheck-*.zip
             build/guidecheck-conformance-kit-*.tar.gz
             build/SHA256SUMS
