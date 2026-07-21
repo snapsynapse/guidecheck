@@ -33,8 +33,13 @@ the Harnessie GuideCheck adoption.
 - Cached repeated per-action command classification, simplified the Level 5
   readiness scan, and refreshed public hosted-verifier copy from the stale
   five-fetch scope to the current seven-fetch and four-anchor scope.
-- Prepared the 0.7.1 release surfaces, authored release notes, and configured
-  the tag workflow to publish those reviewed notes with signed artifacts.
+- Published the 0.7.1 release from annotated tag `v0.7.1`, with reviewed release
+  notes, three downloadable bundles, combined checksums, and Sigstore signing
+  material. The public release workflow completed successfully.
+- Narrowed the release workflow's archive glob after publication so future
+  checksum and signing passes process the conformance kit exactly once. The
+  duplicate 0.7.1 checksum line is harmless and both entries carry the same
+  verified digest.
 
 ## Handoff disposition
 
@@ -52,15 +57,17 @@ the Harnessie GuideCheck adoption.
 
 ## Next candidates
 
-1. Resolve repository-file anchors that share a control plane with a Pages
+1. Rotate `_assistant-guide.guidecheck.org` to the 0.7.1 guide digest:
+   `v=1; sha256=4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e; url=https://guidecheck.org/.well-known/assistant-guide.txt`.
+2. Resolve repository-file anchors that share a control plane with a Pages
    deployment. This needs a normative independence decision, finding id,
    detection design, hosted tests, and fixtures. Harnessie's independent DNS
    TXT anchor keeps its own Level 4 claim valid despite this general gap.
-2. Implement local bounded-execution enforcement phases 1 through 3 and 5 in
+3. Implement local bounded-execution enforcement phases 1 through 3 and 5 in
    `docs/0.7-verifier-enforcement-plan.md` as a dedicated 0.7.x slice.
-3. Implement hosted `exec-sha256` verification and transitive scanning only
+4. Implement hosted `exec-sha256` verification and transitive scanning only
    after resolving artifact-fetch limits and the outbound-fetch budget.
-4. Keep the second verifier and Level 5 runtime work demand/readiness-gated.
+5. Keep the second verifier and Level 5 runtime work demand/readiness-gated.
 
 ## Verification
 
@@ -68,3 +75,12 @@ the Harnessie GuideCheck adoption.
   contract validations, the two new parser regressions, version and guide-copy
   sync, fetch safety, hosted anchors and API, fetch replay, CLI contract, and
   58 scanner tests.
+- GuideCheck and Harnessie both pass the 0.7.1 local verifier with zero blockers
+  and zero warnings. The maximum-size adversarial regex check completed 2,000
+  scans in 0.397 seconds while retaining real JavaScript `eval` detection.
+- The public release contains 12 assets. All three bundle hashes match the
+  published `SHA256SUMS`, and all four signed artifacts verify against the
+  release workflow's GitHub Actions OIDC identity.
+- The live guide and manifest serve the 0.7.1 digest. The independent DNS TXT
+  anchor still serves the prior digest and is the only outstanding release
+  rotation step.
