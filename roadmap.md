@@ -71,6 +71,9 @@ Candidates for 0.3.0 and later. Not commitments.
 - Draft Level 5 planning lives in `docs/level-5-runtime-conformance.md` and
   `docs/level-5-implementation-plan.md`. Keep these as non-normative design
   notes until the Level 1-4 fixture and validation base is stronger.
+- A canonical approval-record encoding and digest, so a Level 5 approval is a
+  recomputable receipt rather than a required field set. See "Canonical
+  approval receipt (2026-07-31)" below.
 - Signing fixture-suite releases once `verifier-conformance.md` reaches a
   stable conformance target; tracked also in `CONTRIBUTING.md`.
 
@@ -174,6 +177,56 @@ Extend step 1 with a runtime-primitive dimension: scan the scripts that document
 setup commands invoke for fetch-then-execute shapes (pipe-to-interpreter, `base64 -d
 | sh`, `/dev/tcp`, DNS or web fetch into exec). The scanner stays a discovery front
 door, not a conformance gate.
+
+## Canonical approval receipt (2026-07-31)
+
+Prompted by an external question: does GuideCheck define a stable digest or
+receipt binding an approval to the exact action that executes, including
+parameters, target, requesting identity, policy version, and expiry?
+
+What exists today covers most of that binding, but not as a recomputable
+artifact:
+
+- `guide-sha256` binds the reviewed bytes, cross-published on an independent
+  control plane (`spec.md` section 11).
+- `exec-sha256` binds the bytes of an invoked in-repo artifact (`spec.md`
+  section 12).
+- The Level 5 session approval ledger binds guide URL, guide hash, verifier
+  name, verifier version, achieved level, and action id, with verbatim display,
+  no batching across action ids, and a stop on byte mismatch (`spec.md` section
+  18).
+- Parameters and target are bound structurally rather than by digest: one
+  literal command, no chaining or substitution, declared `cwd`, `env`, and
+  narrow `egress` (`spec.md` section 12).
+- Expiry is session invalidation (guide hash change, verifier result change,
+  explicit close, restart, declared idle timeout), not an approval TTL.
+
+Two gaps are real:
+
+- The ledger is a required field set, not a canonical serialization. There is
+  no defined byte encoding, so no stable digest an independent auditor can
+  recompute and no record that can be signed or carried across a trust
+  boundary. Two conformant runtimes produce non-comparable receipts.
+- Requesting identity is undefined. Nothing in the profile names which agent,
+  session, or delegated principal requested the action.
+
+Candidate work, not a commitment:
+
+- Define a canonical approval-record encoding (field order, normalization,
+  ASCII profile consistent with section 8) and a digest over it, so Level 5
+  evidence becomes execution provenance rather than a log format. Level 4 is
+  guide provenance; this is the missing counterpart.
+- Decide whether requesting identity is a field inside the record or the signer
+  over it. These are different trust models: a field is publisher-asserted
+  metadata a verifier cannot check, a signature makes identity the thing that
+  authenticates the record. This is the fork to resolve first, because the
+  encoding depends on the answer.
+- Reconcile with the optional signed verifier-report envelope already listed
+  under Future profile directions. A receipt digest that does not cover the
+  verifier output leaves the approval bound to a verdict that cannot be
+  re-derived.
+- Sequence after the Level 5 fixture-suite design, not before it. A receipt
+  format with no conformance tests is a schema, not a guarantee.
 
 ## Near-term actions
 
