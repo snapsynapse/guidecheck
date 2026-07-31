@@ -67,7 +67,9 @@ The following decisions are settled for v0.2 but are explicitly open to revision
 
 ## Open questions
 
-Tracked in `roadmap.md` under Future profile directions. The live items are a possible higher provenance tier requiring signature and transparency-log evidence, a canonical finding-id registry, fixture-suite signing, and Level 5 runtime attestation. None of these block v0.2. The 2026-05-21 review resolved the prior open-question lists; see `roadmap.md` under Resolved in the 0.1.0 review.
+Tracked in `roadmap.md` under Future profile directions. The live items are a possible higher provenance tier requiring signature and transparency-log evidence, a canonical finding-id registry, fixture-suite signing, Level 5 runtime attestation, and a canonical approval receipt. None of these block v0.2. The 2026-05-21 review resolved the prior open-question lists; see `roadmap.md` under Resolved in the 0.1.0 review.
+
+The canonical approval receipt (opened 2026-07-31, detail in `roadmap.md`) is the one with a live design fork rather than a deferred yes/no. Level 5 already mandates the binding and the log, but the session approval ledger is a required field set with no canonical serialization, so an approval cannot be recomputed, signed, or carried across a trust boundary. Level 4 gives guide provenance; the receipt would give execution provenance. The fork to resolve first is whether requesting identity is a field inside the record or the signer over it, because the encoding depends on the answer, and the two choices are different trust models: a field is publisher-asserted metadata a verifier cannot check, a signature makes identity the thing that authenticates the record. Sequenced after Level 5 fixture-suite design under the `docs/pre-level-5-readiness.md` gate, so the format ships with conformance tests rather than as a bare schema.
 
 ## Relationship to the PAICE portfolio
 
@@ -79,6 +81,7 @@ The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The 
 
 ## Changelog
 
+- 2026-07-31: Opened the canonical approval receipt as a live open question, prompted by an external question about binding approval to the exact executing action. Detail in `roadmap.md`; the identity fork (field in the record versus signer over it) is the first thing to resolve, gated behind Level 5 fixture-suite design.
 - 2026-07-21: Released profile 0.7.1 with verifier false-positive fixes for wrapped verification instructions and CLI `eval` result prose, expanded parser regressions, refreshed hosted-verifier copy, and adoption guidance derived from the Harnessie field report.
 - 2026-06-09: Recorded the Level 5 ownership decision (GuideCheck owns the runtime fixture suite and evaluator, gated by pre-level-5 readiness). Updated version status to 0.6.0 released and noted the version-sync check. Backfilled missing entries: the version line had been bumped through 0.2.0 to 0.6.0 without changelog entries.
 - 2026-05-21: Initial INTENT for the GuideCheck standard, drafted alongside the v0.1.0 bootstrap.
