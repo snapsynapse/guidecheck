@@ -4,6 +4,19 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+### Fixed
+
+- enforce the existing bounded-execution rule for named scripts independently of
+  their declared action class; validate execution pins and opacity rationale
+- report valid execution pins as declared but unverified in local and hosted
+  results; hosted artifact hashing and transitive scanning remain deferred
+- add invocation-shape regressions and static bounded-execution fixtures
+
+### Documentation
+
+- reconcile completed adoption/signing work and temporary handoffs with current
+  queues; record Sam's September 5 confirmation of July DNS anchor rotation
+
 ## [0.7.1] - 2026-07-21
 
 ### Fixed

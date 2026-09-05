@@ -129,8 +129,8 @@ builds and Sigstore-signs release + conformance-kit artifacts.
   channels independent of full assistant-guide.txt conformance — framed as
   "adoption steps 1-2," the low-friction front door ahead of full profile
   adoption. Packaged via `pyproject.toml` for `uvx guidecheck scan`.
-- `SESSION_HANDOFF.md` records the current repo-local handoff disposition,
-  completed session work, verification state, and next implementation slices.
+- `roadmap.md` records current work and disposition; `handoffs/` contains
+  only unprocessed temporary queues.
 - Release and conformance-kit signing is settled: 0.6.0 and later use Sigstore
   cosign keyless in the tag-triggered release workflow; SHA256SUMS remains the
   integrity reference for 0.5.0 and earlier. Open items tracked in `roadmap.md`
@@ -141,3 +141,9 @@ builds and Sigstore-signs release + conformance-kit artifacts.
 - The hosted verifier at guidecheck.org/verify is explicitly a preview: its
   conformance fixture suite is incomplete and it has not been shown to pass
   it; signed `security.txt` anchors are not yet fetched by the hosted path.
+
+## Unreleased maintenance (2026-09-05)
+
+Local bounded-execution findings are implemented in the shared verifier. Pins
+remain unverified, including through hosted callers. See roadmap.md for pending
+hosted fetching and independence decisions. Profile release remains 0.7.1.

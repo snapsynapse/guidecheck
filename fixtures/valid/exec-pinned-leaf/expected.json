@@ -1,0 +1,11 @@
+{
+  "description": "Local bounded-execution contract: exec-pinned-leaf. Pins are declared, not verified; PrompterKit pins are illustrative fixture values.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "060fefc02184acd27173a076279df9717ad05f72c653d2178884afa4353969aa",
+  "guide_bytes": 5193,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [],
+  "level5_ready": false,
+  "warnings_exact": true
+}

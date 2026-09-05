@@ -34,6 +34,8 @@ SCHEMA_FILES = [
 ]
 FINDING_ID_PREFIXES = {
     "action-block",
+    "action",
+    "exec-sha256",
     "approval",
     "anchor",
     "byte-profile",

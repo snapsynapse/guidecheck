@@ -75,6 +75,14 @@ be treated as part of repo-local readiness:
   anchor plus the github.com repository-file anchor support a Level 4
   claim for guidecheck.org's own guide once the DNS record is in place
 
+## September 2026 reconciliation
+
+Dependency-free schema-backed contract validation, static fixture expansion,
+self-guide manifest publication, and release signing are already implemented.
+The earlier checklist below is a coverage review, not a queue to rebuild those
+features. Sam confirmed July DNS rotation on 2026-09-05. Hosted conformance and
+runtime fixture/evaluator completeness remain separate, unresolved gates.
+
 ## Recommended next implementation slice
 
 The next repo-local slice before Level 5 should:

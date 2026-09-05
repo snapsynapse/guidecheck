@@ -97,3 +97,11 @@ The finding ids used in `expected.json` files are defined in `finding-ids.md`.
 The registry also covers literal finding ids emitted by the reference verifier
 and hosted API. New fixtures or code paths that introduce finding ids must
 update the registry in the same change.
+
+## Bounded execution fixtures
+
+The pinned-leaf fixture includes the exact leaf bytes for its illustrative hash.
+Local verification does not read those bytes and reports the pin as unverified.
+PrompterKit fixture pins are illustrative, not hashes of published PrompterKit
+artifacts. Static cases cover missing pins and opacity on installers and scripts;
+parser regressions cover malformed pins and attempts to bypass classification.

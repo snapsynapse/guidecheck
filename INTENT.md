@@ -67,7 +67,7 @@ The following decisions are settled for v0.2 but are explicitly open to revision
 
 ## Open questions
 
-Tracked in `roadmap.md` under Future profile directions. The live items are a possible higher provenance tier requiring signature and transparency-log evidence, a canonical finding-id registry, fixture-suite signing, Level 5 runtime attestation, and a canonical approval receipt. None of these block v0.2. The 2026-05-21 review resolved the prior open-question lists; see `roadmap.md` under Resolved in the 0.1.0 review.
+Tracked in `roadmap.md` under Future profile directions. The live items are a possible higher provenance tier requiring signature and transparency-log evidence, Level 5 runtime attestation, and a canonical approval receipt. None of these block v0.2. The 2026-05-21 review resolved the prior open-question lists; see `roadmap.md` under Resolved in the 0.1.0 review.
 
 The canonical approval receipt (opened 2026-07-31, detail in `roadmap.md`) is the one with a live design fork rather than a deferred yes/no. Level 5 already mandates the binding and the log, but the session approval ledger is a required field set with no canonical serialization, so an approval cannot be recomputed, signed, or carried across a trust boundary. Level 4 gives guide provenance; the receipt would give execution provenance. The fork to resolve first is whether requesting identity is a field inside the record or the signer over it, because the encoding depends on the answer, and the two choices are different trust models: a field is publisher-asserted metadata a verifier cannot check, a signature makes identity the thing that authenticates the record. Sequenced after Level 5 fixture-suite design under the `docs/pre-level-5-readiness.md` gate, so the format ships with conformance tests rather than as a bare schema.
 
@@ -78,6 +78,15 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 ## Versioning and authority
 
 The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.7.1, released. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` across every version-bearing surface, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+
+## Maintenance and demand gate
+
+The June 9 disposition parked new product investment while maintaining existing
+adoption commitments. Its revisit triggers were ten external AI Posture
+declarations or Obligation First bindings, a validity-badge decision, or a paying
+counterparty requesting conformance checking. This does not change GuideCheck's
+standard scope or authorize a cross-standard certification product. The September
+5 session implements existing bounded-execution obligations as maintenance.
 
 ## Changelog
 

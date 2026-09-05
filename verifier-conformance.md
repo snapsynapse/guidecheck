@@ -360,7 +360,25 @@ The verifier MUST NOT key this classification on the program head alone: `npm in
 - When an action declares `exec-opaque: acknowledged` on an exempt command, the verifier reports `action.exec-opaque` (warning). When `exec-opaque` is declared on a bound artifact, the verifier MUST raise `action.exec-unbounded` (blocking): a bound artifact is always inlinable or pinnable.
 - When an action declares `exec-sha256` and the verifier can read the invoked artifact, the verifier MUST recompute the SHA-256, raise `exec-sha256.mismatch` (blocking) on divergence, and raise `exec-sha256.transitive-unpinned` (blocking) when the pinned bytes invoke a further in-repo artifact that is neither inlined nor pinned. When the verifier cannot read the artifact, it reports `exec-sha256.unverified` (info) and MUST NOT present the pin as satisfied. Local-file mode, which does not fetch the repository, reports `exec-sha256.unverified`; hosted mode verifies artifacts it can read through the repository-file channel.
 
-These checks are heuristic on the classification boundary and cannot decide arbitrary shell semantics; where the bound-versus-exempt shape is genuinely undecidable from the command string the verifier SHOULD treat the action as the residual package-lifecycle-execution class rather than raising a blocking finding. Reference-verifier and hosted-verifier support for these findings arrives in a subsequent 0.7.x release; until then the findings are defined but not emitted, and bounded-execution compliance is self-asserted, in the same way Level 5 runtime conformance is specified ahead of a conformant runtime.
+These checks are heuristic on the classification boundary and cannot decide arbitrary shell semantics; where the bound-versus-exempt shape is genuinely undecidable from the command string the verifier SHOULD treat the action as the residual package-lifecycle-execution class rather than raising a blocking finding. The unreleased shared reference engine emits `action.exec-unbounded`, `action.exec-opaque`, and `exec-sha256.unverified`. Hosted callers inherit these checks but do not yet read execution artifacts. Hash mismatch and transitive-closure enforcement remain deferred.
+
+Reference classification table (no repository reads):
+
+| Invocation shape | Classification |
+|---|---|
+| Named executable path or interpreter script positional, including extensionless files | Bound script; valid pin required |
+| Inline interpreter code flag or awk positional program | Inline; no bounded-execution finding |
+| npm ci/install, pnpm install, yarn install, bundle install | Exempt dependency installer |
+| pip install with requirements or named non-local dependencies | Exempt dependency installer |
+| gradlew, mvnw, configure, autogen.sh bootstrap wrappers | Exempt dependency installer |
+| make/just recipes, npm run, local pip installs, Python modules, cargo/go builds, container execution | Ambiguous; no blocking classification finding |
+
+Build-hook absence cannot be established from command text. Cargo/go builds
+therefore remain ambiguous. Classification tokenizes quoted arguments without
+inspecting inline program contents. A separate script invocation is still bound.
+Malformed pins and invalid opacity values or missing rationales are reported as
+`action-block.malformed`; an invalid pin cannot suppress a script blocker.
+
 
 ## 20. Filesystem, Environment, and Egress Checks
 For any action that reads or writes the filesystem, the verifier MUST require `cwd`.

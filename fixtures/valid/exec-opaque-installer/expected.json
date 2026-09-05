@@ -1,0 +1,13 @@
+{
+  "description": "Local bounded-execution contract: exec-opaque-installer. Pins are declared, not verified; PrompterKit pins are illustrative fixture values.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 3,
+  "guide_sha256": "6a1fed77d663e889955f401c05728d9f07089f71e573a04b4ba805e20f00dcd1",
+  "guide_bytes": 5133,
+  "blocking_finding_ids": [],
+  "required_warning_ids": [
+    "action.exec-opaque"
+  ],
+  "level5_ready": false,
+  "warnings_exact": true
+}

@@ -1,9 +1,9 @@
 {
-  "description": "Real-world PrompterKit Level 3 guide captured from https://prompterkit.app/.well-known/assistant-guide.txt for deterministic local conformance coverage.",
+  "description": "Local bounded-execution contract: prompterkit-level-3. Pins are declared, not verified; PrompterKit pins are illustrative fixture values.",
   "evaluation_mode": "local-file",
   "achieved_level": 3,
-  "guide_sha256": "bebdebef7f00066b641f6b4de97b45ffe62be47e3db9196baea79cd93965504f",
-  "guide_bytes": 7288,
+  "guide_sha256": "dcad3194764499392dc96d327f775aac782786b345901a82c015930c07bd6de8",
+  "guide_bytes": 7522,
   "blocking_finding_ids": [],
   "required_warning_ids": [
     "action-block.class.code-executing-missing",

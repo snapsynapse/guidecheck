@@ -118,11 +118,10 @@ files.
 
 ## Bounded execution
 
-Defined for guide-profile 0.7.0 (spec section 12, "Code-executing actions and
-the review boundary"). Reference-verifier and hosted-verifier support arrives in
-a subsequent 0.7.x release, sequenced in `docs/0.7-verifier-enforcement-plan.md`;
-until then these ids are part of the contract but are not yet emitted, and a
-guide's compliance with the bounded-execution rule is self-asserted.
+Defined for guide-profile 0.7.0. The unreleased shared verifier now emits
+`action.exec-unbounded`, `action.exec-opaque`, and `exec-sha256.unverified`.
+Both local and hosted callers report pins as declared, not verified. Hosted
+artifact fetching and the mismatch/transitive findings remain deferred.
 
 | ID | Severity | Trigger |
 |---|---|---|

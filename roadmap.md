@@ -5,6 +5,38 @@ Status: planning notes for actions not yet executed and decisions not yet made.
 This roadmap is not normative. It records likely future work so unresolved
 items are visible without being treated as commitments.
 
+## Current work queue (reconciled 2026-09-05)
+
+- Local bounded-execution phases 1-3 and local phase 5 are implemented but
+  unreleased. Hosted artifact verification and transitive scanning are next,
+  after deciding fetch limits and budget. Class-warning promotion is a separate
+  conformance decision, not a prerequisite for local script blocking.
+- AIDR-0001 remains open: same-control-plane repository anchors need arbitration,
+  a testable independence rule, finding identity, and hosted fixtures.
+- DNS anchor rotation completed in July, confirmed by Sam on 2026-09-05.
+  This is operator confirmation, not a fresh DNS observation.
+- Exemption-list maintenance cadence and mixed built/pulled Docker Compose
+  services remain future hosted-classification design questions.
+- Signing/OpenSSF/citations remain queued in the September 1 handoff. Its
+  account-signing prerequisite pointer is missing and must be rediscovered before
+  relying on it. No badge, DOI, account change, or publication is authorized by
+  that handoff.
+- Second verifier, Level 5 fixtures/evaluator, higher provenance tiers, and
+  approval receipts remain demand/readiness-gated. Resolve the receipt identity
+  fork only after Level 5 fixture design.
+- Remaining maintenance candidates: signed security.txt fetching, TLS/header
+  replay and real HTTPS integration tests, browser report smoke tests, metadata
+  parser-confusion fixtures, size-boundary fuzzing, and explicit full-schema
+  coverage assessment. Existing dependency-free schema checks already run in CI.
+- Harnessie follow-up: assess compact local Level 4-ready presentation separately
+  from the anchor-independence decision. Wrapped verification prose, eval prose,
+  Pages hosting guidance, immutable URL ordering, and rotation guidance shipped.
+
+Completed foundations: scanner and Python CLI packaging, self-guide manifest,
+DNS/repository-file anchor support, immutable release references, contract checks,
+and Sigstore release/conformance-kit signing. Older milestone descriptions below
+are historical planning context where explicitly marked as shipped.
+
 ## Resolved in the 0.1.0 review
 
 A round of open-question resolution on 2026-05-21 settled the decisions below.
@@ -74,8 +106,7 @@ Candidates for 0.3.0 and later. Not commitments.
 - A canonical approval-record encoding and digest, so a Level 5 approval is a
   recomputable receipt rather than a required field set. See "Canonical
   approval receipt (2026-07-31)" below.
-- Signing fixture-suite releases once `verifier-conformance.md` reaches a
-  stable conformance target; tracked also in `CONTRIBUTING.md`.
+- Fixture-suite release signing shipped in 0.6.0 using Sigstore.
 
 ## Runtime-indirection threat class (2026-07-02)
 
@@ -140,15 +171,14 @@ action fields, the section 13 stop-and-ask item, the section 15 reinforcement, a
 five finding ids in `finding-ids.md` and `verifier-conformance.md`. The profile is
 bumped to 0.7.0 across all surfaces. Reference-verifier and hosted-verifier
 enforcement of `action.exec-unbounded`, `exec-sha256` verification, and
-transitive-closure scanning is the remaining work and is deferred to a 0.7.x
-release, sequenced in `docs/0.7-verifier-enforcement-plan.md`; until then
-bounded-execution compliance is self-asserted. Tagging v0.7.0,
-republishing the self-guide DNS TXT hash, and deploying the site are out-of-band
-release steps. The bound-versus-exempt axis and the adversarial hardening behind
+transitive-closure scanning is the work originally deferred to a 0.7.x
+release (local enforcement is now implemented; hosted reads remain pending), sequenced in `docs/0.7-verifier-enforcement-plan.md`; local script enforcement is now implemented but unreleased. Hosted artifact
+reads remain pending. The July DNS rotation was confirmed by Sam on September 5. The bound-versus-exempt axis and the adversarial hardening behind
 it are summarized in the covered/landed/candidate notes in this section and in
 `threat-register.md`.
 
-Remaining 0.7.x work (not commitments):
+Historical 0.7.0 design rationale (the bound rule and stop-and-ask text shipped;
+remaining enforcement is tracked in the current queue):
 
 - Bound the transitive execution surface. A `code-executing` action that invokes a
   local script or entry point (`bash scripts/setup.sh`, `python -m pkg`, `make
@@ -274,11 +304,10 @@ Candidate work, not a commitment:
   in a separate human-gated trust domain is the more defensible posture. Full CI
   automation, if ever adopted, only behind a required-reviewer environment with
   an isolated token, and documented as an independence trade-off.
-- Add a Level 4 manifest for GuideCheck's own guide after an independent hash
-  anchor is published.
+- Self-guide Level 4 manifest and independent DNS anchor are in place.
 - Add a signed or otherwise independently anchored `security.txt` plan before
   claiming it as a Level 4 channel.
-- Add immutable release URLs and a static fixture for the tagged 0.2.0 release.
+- Immutable release references are in place; do not reopen historical release work.
 - Add signed verifier-report envelopes for hosted checker and CI consumption.
 - Track repo-local blockers before executable Level 5 work in
   `docs/pre-level-5-readiness.md`.
@@ -288,14 +317,14 @@ Candidate work, not a commitment:
 Sequenced adoption plan recorded 2026-07-01. Ordered: each step builds the
 audience or the artifact the next step needs. Not commitments.
 
-1. Scan existing instruction surfaces. Extend the verifier/scanner to check
+1. Shipped in 0.7.0: scan existing instruction surfaces. Extend the verifier/scanner to check
    artifacts people already publish (`AGENTS.md`, `CLAUDE.md`, README install
    sections, skill files, MCP tool descriptions) for hidden-instruction
    channels: HTML comments, invisible Unicode, CSS-hidden text, escape
    sequences. A scan must deliver value at zero ecosystem adoption of
    `assistant-guide.txt`; the profile is the remediation path, the scanner is
    the front door.
-2. One-command entry point. Package the scanner as `npx guidecheck scan
+2. Python CLI packaging shipped; remaining presentation work: one-command entry point. Package the scanner as `npx guidecheck scan
    <url-or-file>` (or `uvx guidecheck`) with ten seconds to first finding.
    Lead the site and README with the command and a short demo recording;
    reframe the top-line pitch from protocol language to "make sure your AI
@@ -388,8 +417,8 @@ withdrawn without a profile version change.
 - Emit machine-readable verifier output and the compact human-readable report
   from the same evidence model.
 - Extend schema and fixture coverage as the local-file CLI contract evolves.
-- Add exact JSON Schema validation for manifest, verifier output, and fixture
-  expected files using a pinned portable tool.
+- Existing dependency-free schema checks validate the published contracts;
+  assess remaining full JSON Schema coverage before selecting another tool.
 - Add public-web replay fixtures through local HTTP servers for TLS edge cases
   and additional header variants.
 - Replace modeled public-fetch scenarios with replayable public-web fixtures

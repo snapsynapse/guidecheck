@@ -36,6 +36,6 @@ This position was written without reading any other participant's position.
 
 ## Evidence
 
-- [Current session handoff](../SESSION_HANDOFF.md#next-candidates) identifies same-control-plane repository anchors as the next normative independence decision.
+- [Current work queue](../roadmap.md#current-work-queue-reconciled-2026-09-05) identifies same-control-plane repository anchors as the next normative independence decision.
 - [Verifier conformance section 23](../verifier-conformance.md#23-cross-channel-anchor-checks) defines recognized independent channels and the Level 4 anchor requirement.
 - [Threat register](../threat-register.md#provenance-anchor-risks) explains that Level 4 is intended to raise the cost of forging the guide and provenance evidence together.

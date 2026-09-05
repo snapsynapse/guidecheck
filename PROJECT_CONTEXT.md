@@ -73,3 +73,9 @@ implementation (language undecided), the Level 5 runtime-conformance fixture
 suite design, and a possible higher provenance tier. Release and conformance-
 kit signing is settled on Sigstore cosign keyless for 0.6.0 and later. See
 `CLAUDE.md` for technical/agent-facing detail.
+
+## Unreleased maintenance (2026-09-05)
+
+Local bounded-execution findings are implemented in the shared verifier. Pins
+remain unverified, including through hosted callers. See roadmap.md for pending
+hosted fetching and independence decisions. Profile release remains 0.7.1.

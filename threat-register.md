@@ -165,3 +165,20 @@ Prompted by the 0din write-up "Clone This Repo and I Own Your Machine" (https://
 - The instruction-fetch prohibition (`spec.md` section 15) bites only when the guide itself instructs the fetch; a fetch buried inside an invoked script is never inspected at guide-review time.
 - No stop-and-ask condition covers acting on remediation text emitted by a failing command or error message, which is the trigger the 0din attack exploits (auto-run the fix on error recovery). Proposed as a `spec.md` section 13 addition.
 - The approval gate is bypassable by class understatement: declaring a `code-executing` command as `class: normal` downgrades the blocking `approval.required-missing` to the advisory `approval.command-implies-required` warning. Conformance still surfaces it, but at warning severity, not blocking.
+
+## Bounded-execution implementation evidence (2026-09-05)
+
+The July adversarial review rejected exemptions keyed only on program names:
+make recipes, npm scripts, local pip installs, and build hooks can execute
+publisher-controlled code. The shared verifier now blocks named scripts without
+valid pins even when class is understated, and rejects opacity as a bypass on
+those scripts. Bootstrap wrappers retain the profile's dependency exemption.
+Inline code is not recursively inspected by this classifier. Ambiguous module,
+recipe, and build commands remain deliberately under-enforced. Class-warning
+promotion is a separate decision; it is not required for named-script blocking.
+
+The original review did not complete its hosted-feasibility assessment. Hosted
+repository inspection and transitive closure therefore still need explicit
+fetch-budget and decidability review before implementation. A single matching
+file hash cannot establish closure or safety. Local and current hosted paths
+report execution pins as unverified, without reading the referenced bytes.

@@ -16,6 +16,7 @@ import argparse
 import hashlib
 import json
 import re
+import shlex
 import sys
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
@@ -618,6 +619,10 @@ def parse_actions(text: str, findings: list[Finding]) -> list[dict[str, str]]:
             add_finding(findings, "action-block.approval.invalid", "error", f"invalid approval: {action.get('approval')}")
         if "runner" in action and action["runner"] not in {"argv", "shell"}:
             add_finding(findings, "action-block.runner.invalid", "error", f"invalid runner: {action['runner']}")
+        if "exec-sha256" in action and not re.fullmatch(r"[0-9a-f]{64}", action["exec-sha256"]):
+            add_finding(findings, "action-block.malformed", "error", "exec-sha256 must be 64 lowercase hex characters", evidence=action_id)
+        if "exec-opaque" in action and (action["exec-opaque"] != "acknowledged" or not action.get("notes")):
+            add_finding(findings, "action-block.malformed", "error", "exec-opaque requires acknowledged and a notes rationale", evidence=action_id)
         actions.append(action)
     return actions
 
@@ -659,6 +664,7 @@ def check_actions(actions: list[dict[str, str]], findings: list[Finding]) -> Non
             add_finding(findings, "approval.command-implies-required", "warning", "command implies a sensitive action but approval is not required", evidence=action.get("id", ""))
         if action.get("runner") == "shell" and not action.get("notes"):
             add_finding(findings, "runner.shell.missing-rationale", "warning", "shell runner lacks notes rationale", evidence=action.get("id", ""))
+        check_bounded_execution(action, findings)
         check_command(action, classes, findings)
     if required_approvals > DEFAULT_APPROVAL_WARNING_THRESHOLD:
         add_finding(findings, "approval.required.too-many", "warning", "guide contains many required approvals")
@@ -823,6 +829,101 @@ def _segment_runs_code(segment: str) -> bool:
         if head in _PROGRAM_INTERPRETERS and any(not arg.startswith("-") for arg in args):
             return True
     return False
+
+
+# Public classification table: verifier-conformance section 19. Build commands
+# requiring repository inspection deliberately remain ambiguous.
+_DEPENDENCY_INSTALLERS = {
+    ("npm", "ci"), ("npm", "install"), ("pnpm", "install"),
+    ("yarn", "install"), ("bundle", "install"),
+}
+_BOOTSTRAP_WRAPPERS = {"gradlew", "mvnw", "configure", "autogen.sh"}
+
+
+def classify_exec_target(command: str) -> str:
+    """Classify invocation shape without reading files or interpreting programs.
+
+    Shell separators are tokenized outside quotes. Inline program contents are
+    never recursively inspected. A second external invocation still wins.
+    """
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|\n")
+        lexer.whitespace = " \t\r"
+        lexer.whitespace_split = True
+        lexer.commenters = ""
+        segments: list[list[str]] = [[]]
+        for token in lexer:
+            if token and all(c in ";&|\n" for c in token):
+                segments.append([])
+            else:
+                segments[-1].append(token)
+    except ValueError:
+        return "ambiguous"
+    kinds = [_classify_exec_tokens(tokens) for tokens in segments if tokens]
+    return next((kind for kind in ("bound-script", "ambiguous", "exempt-installer", "inline") if kind in kinds), "none")
+
+
+def _classify_exec_tokens(tokens: list[str]) -> str:
+    while tokens and (tokens[0] in _COMMAND_PREFIXES or re.fullmatch(r"[A-Za-z_]\w*=.*", tokens[0])):
+        tokens = tokens[1:]
+    if not tokens:
+        return "none"
+    raw, *args = tokens
+    head = re.sub(r"[0-9][0-9.]*$", "", raw.rsplit("/", 1)[-1].lower())
+    if head in _BOOTSTRAP_WRAPPERS:
+        return "exempt-installer"
+    if head in _INTERPRETERS:
+        for index, arg in enumerate(args):
+            if arg == "--":
+                return "bound-script" if index + 1 < len(args) else "none"
+            if arg == "-m" or (head == "python" and arg.startswith("-m") and len(arg) > 2):
+                return "ambiguous"
+            if arg in ({"-c"} if head == "python" else _CODE_FLAGS - {"-m"}) or (head in {"sh", "bash", "zsh", "ksh", "dash"} and re.fullmatch(r"-[a-z]*c[a-z]*", arg)):
+                return "inline"
+            if head in {"awk", "gawk", "mawk", "php", "pwsh", "powershell"} and arg in {"-f", "--file", "-File"}:
+                return "bound-script" if index + 1 < len(args) else "ambiguous"
+            if arg == "-" or (head in {"sh", "bash", "zsh", "ksh", "dash"} and arg == "-s"):
+                return "ambiguous"
+            if head == "python" and arg.startswith("-c") and len(arg) > 2:
+                return "inline"
+            if head == "python" and index and args[index - 1] in {"-W", "-X"}:
+                continue
+            if arg.startswith("-"):
+                continue
+            if head in {"awk", "gawk", "mawk"}:
+                return "inline"
+            # Interpreter positionals are script filenames, even without a
+            # suffix or path prefix; later argv values are not code flags.
+            return "bound-script"
+        return "none"
+    if _is_path_arg(raw) or "/" in raw or _SCRIPT_EXTENSION.search(raw):
+        return "bound-script"
+    sub = args[0] if args else ""
+    if (head, sub) in _DEPENDENCY_INSTALLERS:
+        return "exempt-installer"
+    if head == "pip" and sub == "install":
+        targets = args[1:]
+        if any(a in {".", "..", "-e", "--editable"} or a.startswith(("./", "../", "/", "file:", "-e.", "--editable=")) for a in targets):
+            return "ambiguous"
+        return "exempt-installer" if targets else "ambiguous"
+    if head in _PACKAGE_TOOLS or (head in _CONTAINER_TOOLS and _container_runs_code(args)):
+        return "ambiguous"
+    return "none"
+
+
+def check_bounded_execution(action: dict[str, str], findings: list[Finding]) -> None:
+    kind = classify_exec_target(action.get("command", ""))
+    pin = action.get("exec-sha256", "")
+    opaque = "exec-opaque" in action
+    evidence = action.get("id", "")
+    if kind == "bound-script" and (opaque or not re.fullmatch(r"[0-9a-f]{64}", pin)):
+        add_finding(findings, "action.exec-unbounded", "error", "named script requires a valid exec-sha256 or replacement with inline actions; exec-opaque cannot exempt it", evidence=evidence)
+    if opaque and kind == "exempt-installer" and action["exec-opaque"] == "acknowledged" and action.get("notes"):
+        add_finding(findings, "action.exec-opaque", "warning", "external dependency execution is acknowledged and not self-contained", evidence=evidence)
+    if opaque and kind in {"inline", "none"}:
+        add_finding(findings, "action-block.malformed", "error", "exec-opaque is only permitted for exempt dependency commands", evidence=evidence)
+    if re.fullmatch(r"[0-9a-f]{64}", pin):
+        add_finding(findings, "exec-sha256.unverified", "info", "artifact bytes were not read; exec-sha256 is declared, not verified", evidence=evidence)
 
 
 def command_is_networked(command: str) -> bool:

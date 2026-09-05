@@ -1,0 +1,13 @@
+{
+  "description": "Local bounded-execution contract: exec-opaque-bound. Pins are declared, not verified; PrompterKit pins are illustrative fixture values.",
+  "evaluation_mode": "local-file",
+  "achieved_level": 2,
+  "guide_sha256": "bff8d8dc0d7b9883d62cb8d5fdc8829d34c766c4a5d8f64a18985f1c91facd93",
+  "guide_bytes": 5145,
+  "blocking_finding_ids": [
+    "action.exec-unbounded"
+  ],
+  "required_warning_ids": [],
+  "level5_ready": false,
+  "warnings_exact": true
+}

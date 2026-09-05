@@ -123,6 +123,7 @@ id: run-doctor
 class: normal
 approval: not-required
 command: .venv/bin/python prompter_kit.py doctor
+exec-sha256: dad145c9d0dff3ca325090b87471a0cda89d85ca8f556bd690dd5e8249181485
 runner: argv
 cwd: prompter-kit
 notes: Runs the built-in environment self-check. Read-only.
@@ -133,6 +134,7 @@ id: backup-camera-hub
 class: data-accessing, persistence-changing
 approval: required
 command: .venv/bin/python prompter_kit.py backup --output prompterkit-backup.zip
+exec-sha256: dad145c9d0dff3ca325090b87471a0cda89d85ca8f556bd690dd5e8249181485
 runner: argv
 cwd: prompter-kit
 notes: Reads Camera Hub data and writes a backup zip. Run before any write.
@@ -143,6 +145,7 @@ id: launch-gui
 class: code-executing
 approval: required
 command: .venv/bin/python prompter_kit_gui.py
+exec-sha256: dad145c9d0dff3ca325090b87471a0cda89d85ca8f556bd690dd5e8249181485
 runner: argv
 cwd: prompter-kit
 notes: Starts the local GUI at http://127.0.0.1:5000. Can write Camera Hub data.
