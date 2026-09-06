@@ -77,7 +77,7 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 ## Versioning and authority
 
-The profile version is declared in `spec.md` and tracked in `CHANGELOG.md`. The current version is 0.7.1, released. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` across every version-bearing surface, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+The current profile is declared in `profiles/1.0.0/spec.md` and tracked in `CHANGELOG.md`. The current version is 1.0.0, released. Root normative documents preserve the legacy contract; the self-guide remains pinned to 0.7.1. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` against independently pinned release, engine, and self-guide identities, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
 
 ## Maintenance and demand gate
 
@@ -89,6 +89,8 @@ standard scope or authorize a cross-standard certification product. The Septembe
 5 session implements existing bounded-execution obligations as maintenance.
 
 ## Changelog
+
+- 2026-09-05: Sam approved the version-aware anchor proposal with legacy compatibility required. The local 1.0.0 candidate excludes repository-file evidence from independent qualification, while the dispatcher preserves supported legacy evaluations and published self-guide bytes. Release and deployment remain separate. See `docs/anchor-policy-compatibility.md` and `docs/anchor-dispatch-validation.md`.
 
 - 2026-07-31: Opened the canonical approval receipt as a live open question, prompted by an external question about binding approval to the exact executing action. Detail in `roadmap.md`; the identity fork (field in the record versus signer over it) is the first thing to resolve, gated behind Level 5 fixture-suite design.
 - 2026-07-21: Released profile 0.7.1 with verifier false-positive fixes for wrapped verification instructions and CLI `eval` result prose, expanded parser regressions, refreshed hosted-verifier copy, and adoption guidance derived from the Harnessie field report.

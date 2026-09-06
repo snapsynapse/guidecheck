@@ -31,6 +31,9 @@ SCHEMA_FILES = [
     ROOT / "schemas" / "manifest.schema.json",
     ROOT / "schemas" / "verifier-output.schema.json",
     ROOT / "schemas" / "fixture-expected.schema.json",
+    ROOT / "schemas" / "1.0.0" / "manifest.schema.json",
+    ROOT / "schemas" / "1.0.0" / "verifier-output.schema.json",
+    ROOT / "schemas" / "1.0.0" / "fixture-expected.schema.json",
 ]
 FINDING_ID_PREFIXES = {
     "action-block",
@@ -248,7 +251,8 @@ def registered_finding_ids() -> set[str]:
 
 def emitted_finding_ids() -> dict[str, set[str]]:
     emitted: dict[str, set[str]] = {}
-    for path in (ROOT / "scripts" / "guidecheck_verify.py", ROOT / "api" / "verify.py"):
+    for path in (ROOT / "scripts" / "guidecheck_verify.py", ROOT / "scripts" / "guidecheck_legacy.py",
+                 ROOT / "scripts" / "guidecheck_strict.py", ROOT / "api" / "verify.py"):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         ids: set[str] = set()
         for node in ast.walk(tree):
@@ -372,7 +376,7 @@ def main() -> int:
     for schema_path in SCHEMA_FILES:
         schema = load_schema(errors, schema_path)
         if schema is not None:
-            schemas[schema_path.name] = schema
+            schemas[str(schema_path.relative_to(ROOT / "schemas"))] = schema
 
     registered_ids = registered_finding_ids()
     for rel_path, ids in emitted_finding_ids().items():

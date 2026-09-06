@@ -47,6 +47,12 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   Level 5 planning notes: `level-5-runtime-conformance.md`,
   `level-5-implementation-plan.md`, `pre-level-5-readiness.md`).
 - `scripts/` — Python tools:
+  - `guidecheck_profiles.py` selects an explicitly supported policy from guide
+    bytes; caller profile assertions never reinterpret those bytes.
+  - `guidecheck_legacy.py` and `guidecheck_legacy_constants.py` preserve the
+    3ceb30a evaluator and 0.7.1 report contract; frozen artifact digests and full
+    report replays guard compatibility.
+  - `guidecheck_strict.py` implements the opt-in 1.0.0 provenance policy.
   - `guidecheck_verify.py` — local-file reference verifier CLI (Levels 1-3,
     plus internal-consistency checks on Level 4 sidecar manifests/anchors).
   - `guidecheck_scan.py` / `guidecheck_cli.py` — instruction-surface scanner
@@ -76,9 +82,10 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
 - Normative documents (`spec.md`, `verifier-conformance.md`) drive behavior;
   explanatory docs (`design-rationale.md`, `threat-register.md`) must be kept
   consistent with them, not the other way around.
-- Profile version lives in `scripts/guidecheck_constants.py` and is asserted
-  across every version-bearing surface by `scripts/check_version_sync.py` —
-  never hand-edit a version number in one place without checking sync.
+- Software, engine, released-profile, and self-guide versions are separate in
+  `scripts/guidecheck_constants.py`. The legacy engine has frozen constants.
+  `scripts/check_version_sync.py` checks release surfaces against 1.0.0 and legacy/self-guide surfaces against 0.7.1;
+  package upgrades must not rewrite the published self-guide or its anchors.
 - `finding-ids.md` is the normative registry for finding ids; new finding ids
   used by fixtures or emitted by verifiers/scanner must be registered there
   (see `CONTRIBUTING.md`).
@@ -122,7 +129,7 @@ builds and Sigstore-signs release + conformance-kit artifacts.
 
 ## Current state
 
-- Released, profile version 0.7.1 (see `CHANGELOG.md`).
+- Released, profile version 1.0.0 (see `CHANGELOG.md`).
 - Most recent work (2026-07-07): added `guidecheck scan`, a standalone
   instruction-surface scanner for existing files (AGENTS.md/CLAUDE.md/
   README/SKILL/llms.txt/assistant-guide.txt) that flags hidden-instruction
@@ -142,8 +149,16 @@ builds and Sigstore-signs release + conformance-kit artifacts.
   conformance fixture suite is incomplete and it has not been shown to pass
   it; signed `security.txt` anchors are not yet fetched by the hosted path.
 
-## Unreleased maintenance (2026-09-05)
+## Version-aware release (2026-09-05)
+
+The approved version-aware dispatcher is released as 1.0.0. Legacy profiles retain the isolated 0.7.1 behavior; explicit
+1.0.0 guides use strict repository-anchor exclusion. Current normative text
+and examples live in `profiles/1.0.0/`, with new schemas in `schemas/1.0.0/`.
+Root normative documents and published guide bytes remain the legacy contract.
+See `docs/anchor-dispatch-validation.md` for evidence and remaining release gates.
+`make test` remains Python-only; `make test-verify-ui` requires Node 18+ and runs
+the deterministic DOM contract separately. CI runs both.
 
 Local bounded-execution findings are implemented in the shared verifier. Pins
 remain unverified, including through hosted callers. See roadmap.md for pending
-hosted fetching and independence decisions. Profile release remains 0.7.1.
+hosted fetching and independence decisions. Legacy profile behavior remains pinned to the pre-dispatch baseline.

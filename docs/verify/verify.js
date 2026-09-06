@@ -146,6 +146,9 @@
     headline.textContent = pass
       ? "Guide score: Level " + achievedLevel + " of 4 · 0 blocking · " + plural(summary.warnings || 0, "warning") + readiness
       : "Not conformant · " + plural(blocking, "blocking finding") + " · " + plural(summary.warnings || 0, "warning") + readiness;
+    if (data.profile_selection && data.profile_selection.evaluated_policy === "1.0.0") {
+      headline.textContent = "Profile 1.0.0 · " + headline.textContent;
+    }
 
     if (data.location_note) {
       messageEl.textContent = data.location_note;

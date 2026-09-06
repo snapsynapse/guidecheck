@@ -4,6 +4,25 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-05
+
+### Added
+
+- dispatch by the declared guide profile, preserving the 0.7.1 legacy evaluator,
+  report contract, and all supported legacy declarations
+- apply repository-anchor exclusion only to the explicit 1.0.0 policy; retain
+  matching evidence, block conflicting hashes, and report qualifying channels
+- add exact-profile caller assertions, manifest profile binding, and isolated
+  versioned schemas and normative documents under `profiles/1.0.0/`
+- separate the 1.0.0 dispatcher package from engine, released-profile, and
+  self-guide versions; published 0.7.1 guide and anchor bytes remain unchanged
+- add baseline report replay, legacy compatibility cases, strict fixtures,
+  mixed-request tests, and UI rendering/copy/download contract checks
+
+Legacy support has no automatic sunset in this release. Existing guide and
+manifest declarations select the preserved baseline evaluator; adopting 1.0.0
+is an explicit migration.
+
 ### Fixed
 
 - enforce the existing bounded-execution rule for named scripts independently of
@@ -355,7 +374,8 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/snapsynapse/guidecheck/compare/v0.7.1...v1.0.0
 [0.7.1]: https://github.com/snapsynapse/guidecheck/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/snapsynapse/guidecheck/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/snapsynapse/guidecheck/compare/v0.5.0...v0.6.0

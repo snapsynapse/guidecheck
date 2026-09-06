@@ -7,12 +7,21 @@ items are visible without being treated as commitments.
 
 ## Current work queue (reconciled 2026-09-05)
 
-- Local bounded-execution phases 1-3 and local phase 5 are implemented but
-  unreleased. Hosted artifact verification and transitive scanning are next,
+- Local bounded-execution phases 1-3 and local phase 5 are included in release 1.0.0. Hosted artifact verification and transitive scanning are next,
   after deciding fetch limits and budget. Class-warning promotion is a separate
   conformance decision, not a prerequisite for local script blocking.
-- AIDR-0001 remains open: same-control-plane repository anchors need arbitration,
-  a testable independence rule, finding identity, and hosted fixtures.
+- The approved AIDR-0001 version-aware anchor policy is included in release 1.0.0.
+  The 1.0.0 dispatcher preserves legacy results and applies repository-anchor
+  exclusion only to explicit 1.0.0 guides. Versioned specifications, schemas,
+  strict fixtures, and complete legacy report replay are present. The
+  [compatibility contract](docs/anchor-policy-compatibility.md) and
+  [validation evidence](docs/anchor-dispatch-validation.md) record the approved
+  behavior and tests. All 25 local guide paths and 16 public fetch/replay reports
+  matched the baseline; no dependent repository or anchor was changed.
+  Sam authorized staging, commit, push, release, and deployment. The delivery
+  procedure and verification gates are in `docs/release-1.0.0.md`. The AIDR preserves Sam's
+  approval verbatim in Evidence; its human-owned Arbitration section remains
+  available for Sam's formal record. The pre-publication evidence remains explicitly a snapshot.
 - DNS anchor rotation completed in July, confirmed by Sam on 2026-09-05.
   This is operator confirmation, not a fresh DNS observation.
 - Exemption-list maintenance cadence and mixed built/pulled Docker Compose

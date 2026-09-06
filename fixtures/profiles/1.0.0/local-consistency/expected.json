@@ -1,0 +1,8 @@
+{
+  "evidence_fetched": false,
+  "achieved_level": 3,
+  "blocking_finding_ids": [
+    "anchor.independent.missing"
+  ],
+  "qualifying_anchor_count": 0
+}

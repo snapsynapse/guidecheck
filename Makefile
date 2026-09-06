@@ -1,4 +1,4 @@
-.PHONY: test-bounded-execution eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-scanner test release-archive conformance-kit
+.PHONY: test-verify-ui test-legacy-anchor-compatibility test-bounded-execution eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-scanner test release-archive conformance-kit
 
 VERSION := $(shell python3 -c "import sys; sys.path.insert(0, 'scripts'); from guidecheck_constants import GUIDECHECK_VERSION; print(GUIDECHECK_VERSION)")
 
@@ -44,7 +44,16 @@ test-scanner:
 test-bounded-execution:
 	python3 scripts/test_bounded_execution.py
 
-test: test-bounded-execution eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-scanner
+test-legacy-anchor-compatibility:
+	python3 scripts/test_legacy_anchor_compatibility.py
+	python3 scripts/test_dispatch_compatibility.py
+	python3 scripts/test_profile_dispatch.py
+
+# Keep the established Python-only test entry point usable without Node.
+test-verify-ui:
+	node scripts/test_verify_ui.mjs
+
+test: test-legacy-anchor-compatibility test-bounded-execution eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-scanner
 
 # Full source archive for a GitHub release, matching prior build/ layout.
 release-archive:
@@ -60,6 +69,6 @@ conformance-kit:
 	mkdir -p build
 	git archive --format=tar.gz --prefix=guidecheck-conformance-kit-$(VERSION)/ \
 		-o build/guidecheck-conformance-kit-$(VERSION).tar.gz HEAD \
-		fixtures schemas finding-ids.md verifier-conformance.md CHANGELOG.md
+		fixtures schemas profiles finding-ids.md verifier-conformance.md CHANGELOG.md
 	cd build && shasum -a 256 guidecheck-conformance-kit-$(VERSION).tar.gz > guidecheck-conformance-kit-$(VERSION).SHA256SUMS
 	cat build/guidecheck-conformance-kit-$(VERSION).SHA256SUMS

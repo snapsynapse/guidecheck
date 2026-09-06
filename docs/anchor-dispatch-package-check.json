@@ -1,0 +1,50 @@
+{
+  "wheel": "guidecheck-1.0.0-py3-none-any.whl",
+  "sha256": "162c67df0f18336c41abd14305672b88d597e5e02a87b4a95e18e837933256f3",
+  "packaged_modules_match_source": [
+    "guidecheck_cli",
+    "guidecheck_scan",
+    "guidecheck_verify",
+    "guidecheck_legacy",
+    "guidecheck_legacy_constants",
+    "guidecheck_profiles",
+    "guidecheck_strict",
+    "guidecheck_constants",
+    "guidecheck_fetch"
+  ],
+  "installed_entrypoint_checks": [
+    {
+      "args": [
+        "--version"
+      ],
+      "exit_code": 0
+    },
+    {
+      "args": [
+        "verify",
+        "fixtures/valid/level-3/guide.txt",
+        "--level",
+        "3"
+      ],
+      "exit_code": 0
+    },
+    {
+      "args": [
+        "verify",
+        "fixtures/profiles/1.0.0/repository-only/guide.txt",
+        "--require-profile-version",
+        "1.0.0"
+      ],
+      "exit_code": 1
+    },
+    {
+      "args": [
+        "verify",
+        "fixtures/valid/level-3/guide.txt",
+        "--require-profile-version",
+        "1.0.0"
+      ],
+      "exit_code": 2
+    }
+  ]
+}

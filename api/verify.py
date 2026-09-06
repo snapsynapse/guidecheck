@@ -41,7 +41,9 @@ if _SCRIPTS not in sys.path:
     sys.path.insert(0, _SCRIPTS)
 
 import guidecheck_verify as gv  # noqa: E402
-from guidecheck_constants import GUIDECHECK_VERSION, HOSTED_VERIFIER_NAME  # noqa: E402
+from guidecheck_profiles import ProfileError, select_profile  # noqa: E402
+from guidecheck_strict import decorate_report  # noqa: E402
+from guidecheck_constants import GUIDECHECK_VERSION, HOSTED_VERIFIER_NAME, LEGACY_ENGINE_VERSION  # noqa: E402
 from guidecheck_fetch import FetchError, safe_fetch, variation_request_profile  # noqa: E402
 from guidecheck_hosted_anchors import (  # noqa: E402
     DOH_ACCEPT,
@@ -53,7 +55,7 @@ from guidecheck_hosted_anchors import (  # noqa: E402
 
 
 HOSTED_NAME = HOSTED_VERIFIER_NAME
-HOSTED_VERSION = GUIDECHECK_VERSION
+HOSTED_VERSION = LEGACY_ENGINE_VERSION
 WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
 MAX_OUTBOUND_FETCHES = 7
@@ -92,6 +94,7 @@ class HostedFetchContext:
         self.fetcher = fetcher
         self.max_fetches = max_fetches
         self.cache = {}
+        self.evidence = {}
         self.outbound_fetches = 0
 
     def fetch(self, url: str, request_profile: str = "default", accept_override: str | None = None):
@@ -437,6 +440,11 @@ def _fetch_text_evidence(
             )
         )
         return None
+    fetch_context.evidence[evidence_kind] = {
+        "evidence_url": fetched.final_url,
+        "fetched_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "redirects": fetched.redirects,
+    }
     return _body_text(fetched.body)
 
 
@@ -570,7 +578,14 @@ def _fetch_dns_txt_anchor(
     records, _dnssec_validated = parsed
     if not records:
         return None
-    return select_dns_txt_record(records, canonical_url)
+    selected = select_dns_txt_record(records, canonical_url)
+    if selected is not None:
+        fetch_context.evidence["dns-txt anchor"] = {
+            "evidence_url": fetched.final_url,
+            "fetched_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "redirects": fetched.redirects,
+        }
+    return selected
 
 
 def _verifier_block() -> dict:
@@ -687,6 +702,8 @@ def build_evaluated(
     now,
     manifest_evidence=None,
     cross_channel_anchors=None,
+    selection=None,
+    anchor_sources=None,
 ) -> dict:
     data = fetched.body
     blocking = sum(1 for f in findings if f.severity == "error")
@@ -721,6 +738,10 @@ def build_evaluated(
     if note:
         result["location_note"] = note
     result["compact_report"] = _compact_report(result)
+    if selection is not None and selection.strict:
+        for anchor in result.get("cross_channel_anchors", []):
+            anchor.update((anchor_sources or {}).get(anchor["channel"] + " anchor", {}))
+        decorate_report(result, selection)
     return result
 
 
@@ -733,6 +754,7 @@ class handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-GuideCheck-Dispatcher-Version", GUIDECHECK_VERSION)
         self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         self.wfile.write(body)
@@ -842,25 +864,35 @@ class handler(BaseHTTPRequestHandler):
             self._write_json(200, build_not_a_guide(url, checked_url, auto_resolved, fetched, now))
             return
 
+        try:
+            if "required_profile_version" in payload and not isinstance(payload["required_profile_version"], str):
+                raise ProfileError("profile-version-unsupported", "required_profile_version must be a string")
+            selection = select_profile(fetched.body, payload.get("required_profile_version"))
+        except ProfileError as exc:
+            fail(400, exc.code, exc.message)
+            return
+
         hosted_fetch_findings = _header_findings(fetched)
         hosted_fetch_findings.extend(_content_variation_findings(checked_url, fetched, fetch_context, now))
         manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(
             fetched.body,
             fetch_context,
         )
-        findings, achieved_level, level5_ready, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
-            fetched.body,
-            manifest_text,
-            anchor_texts,
-            now=now,
-            # The hosted verifier fetches manifest and anchors over the network,
-            # so it may assert Level 4; local-file mode (the default) caps at 3.
-            evidence_fetched=True,
-        )
+        try:
+            findings, achieved_level, level5_ready, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
+                fetched.body, manifest_text, anchor_texts, now=now,
+                evidence_fetched=True, selection=selection,
+            )
+        except ProfileError as exc:
+            fail(400, exc.code, exc.message)
+            return
         if manifest_evidence is not None:
             manifest_evidence.fetched = True
         findings.extend(hosted_fetch_findings)
         findings.extend(hosted_evidence_findings)
+        if selection.strict and any(f.severity == "error" and f.id.startswith(("anchor.", "manifest.")) for f in findings):
+            achieved_level = min(achieved_level, 3)
+            level5_ready = False
         _log_product_event(
             now=now,
             started=started,
@@ -885,5 +917,7 @@ class handler(BaseHTTPRequestHandler):
                 now,
                 manifest_evidence,
                 cross_channel_anchors,
+                selection=selection,
+                anchor_sources=fetch_context.evidence,
             ),
         )

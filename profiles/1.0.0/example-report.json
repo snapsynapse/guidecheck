@@ -1,0 +1,93 @@
+{
+  "verifier": {
+    "name": "guidecheck-hosted",
+    "version": "1.0.0",
+    "verifier_profile": "human-verifiable-assistant-guide-verifier",
+    "verifier_profile_version": "1.0.0",
+    "guide_profile": "human-verifiable-assistant-guide",
+    "guide_profile_version": "1.0.0"
+  },
+  "input": {
+    "evaluation_mode": "public-web",
+    "url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+    "submitted_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+    "auto_resolved": false
+  },
+  "outcome": "evaluated",
+  "fetch": {
+    "final_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+    "fetched_at": "2026-09-05T20:00:00Z",
+    "http_status": 200,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8",
+      "x-content-type-options": "nosniff",
+      "strict-transport-security": "max-age=31536000"
+    },
+    "redirects": [],
+    "tls_valid": true,
+    "bytes": 3403
+  },
+  "guide": {
+    "bytes": 3403,
+    "sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+    "achieved_level": 4,
+    "level5_ready": true
+  },
+  "summary": {
+    "blocking_findings": 0,
+    "warnings": 1,
+    "infos": 1
+  },
+  "findings": [
+    {
+      "id": "metadata.last-reviewed.age",
+      "severity": "info",
+      "message": "last-reviewed is 107 days old"
+    },
+    {
+      "id": "anchor.repository-file.independence-unestablished",
+      "severity": "warning",
+      "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+    }
+  ],
+  "hosted_limitations": [
+    "Profile 1.0.0 excludes repository-file hashes from Level 4 qualification; matching repository bytes remain corroboration.",
+    "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
+    "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched.",
+    "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
+    "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
+    "Level 5 runtime conformance is not evaluated."
+  ],
+  "manifest": {
+    "sha256": "585b59ac211e35d68d7a8fa10cef75daa2a3d4a04032fbe8c7c8db572d5be73c",
+    "fetched": true,
+    "hash_match": true,
+    "bytes_match": true,
+    "valid": true,
+    "guide_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d"
+  },
+  "cross_channel_anchors": [
+    {
+      "channel": "dns-txt",
+      "status": "present-matches",
+      "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+      "qualifies_for_level4": true,
+      "qualification_reason": "qualifying-channel"
+    },
+    {
+      "channel": "repository-file",
+      "status": "present-matches",
+      "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+      "qualifies_for_level4": false,
+      "qualification_reason": "repository-independence-unestablished",
+      "independence": "unestablished"
+    }
+  ],
+  "location_note": "This guide was verified at https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt, which is not the standard location. A conformant guide must be named assistant-guide.txt and served at https://snapsynapse.github.io/.well-known/assistant-guide.txt so assistants can discover it. Move or copy the file there.",
+  "compact_report": "Verifier: guidecheck-hosted 1.0.0\nGuide: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 1\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 4\nSHA-256: 57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d\nBlocking findings: 0\nWarnings: 1\nHash pinned: yes\nProceed? yes",
+  "profile_selection": {
+    "declared_version": "1.0.0",
+    "evaluated_policy": "1.0.0"
+  },
+  "qualifying_anchor_count": 1
+}

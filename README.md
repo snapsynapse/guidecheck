@@ -1,5 +1,12 @@
 # GuideCheck
 
+The 1.0.0 dispatcher preserves legacy
+verification and selects stricter repository-anchor rules only for guides that
+declare 1.0.0. See the [1.0.0 profile](profiles/1.0.0/spec.md),
+[compatibility contract](docs/anchor-policy-compatibility.md), and
+[validation evidence](docs/anchor-dispatch-validation.md). Published guide and
+anchor bytes remain unchanged at 0.7.1; the latest released profile is 1.0.0.
+
 GuideCheck is a trust boundary protocol for agent instruction surfaces. It
 ensures the instructions humans approve are the same instructions agents
 execute.
@@ -91,8 +98,8 @@ agents may execute another.
 ## Documents
 
 - `ADOPTION.md` - the practical on-ramp: conformance ladder, level-by-level path, guide-author checklist
-- `spec.md` - the normative Human-Verifiable Assistant Guide profile
-- `verifier-conformance.md` - the normative profile for tools that verify guides
+- `profiles/1.0.0/spec.md` and `profiles/1.0.0/verifier-conformance.md` - the current normative guide and verifier profiles
+- `spec.md` and `verifier-conformance.md` - preserved normative legacy profiles
 - `design-rationale.md` - why the design choices were made
 - `operator-guide.md` - non-normative defense-in-depth practices for operators
 - `threat-register.md` - known risk classes for fixture, verifier, and runtime authors
@@ -226,7 +233,8 @@ Temporary limitations:
 
 - hosted Level 4 supports package-registry, transparency-log, DNS TXT, and
   github.com repository-file anchors; signed `security.txt` anchors are not
-  fetched yet
+  fetched yet. Repository-file matches qualify only under legacy profiles;
+  1.0.0 requires another qualifying channel
 - the hosted verifier is a Level 1-4 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
   redirects, response size limits, header capture, and content variation; each
@@ -249,7 +257,7 @@ expectation contract by `scripts/check_reference_verifier.py`.
 
 ## Status
 
-Released, profile version 0.7.1. See `CHANGELOG.md`.
+Released, profile version 1.0.0. Legacy profiles remain supported. See `CHANGELOG.md`.
 
 This is an early-stage open standard. The most useful feedback right now is
 whether the hidden-instruction problem maps to real operational risk in your

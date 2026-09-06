@@ -153,6 +153,18 @@ artifact fetching and the mismatch/transitive findings remain deferred.
 
 ## Manifest and anchors
 
+The following additions apply only to the 1.0.0 profile. Legacy evaluations
+retain the prior finding identities and severities.
+
+| Finding id | Severity | Meaning |
+|---|---|---|
+| `manifest.profile-version.mismatch` | error | New-profile manifest selectors are missing, duplicated, unsupported, or disagree with the selected guide profile. |
+| `anchor.repository-file.independence-unestablished` | warning | Repository hash evidence is visible but cannot qualify for new-profile Level 4. |
+| `anchor.repository-file.mismatch` | error | Repository bytes disagree with the manifest hash; the disagreement blocks Level 4 even though a match would not qualify. |
+| `anchor.channel.unsupported` | warning | Supplied evidence uses an unsupported channel and cannot qualify. |
+
+Existing findings:
+
 | ID | Severity | Trigger |
 |---|---|---|
 | `manifest.missing-required` | error | A manifest lacks a required field. |

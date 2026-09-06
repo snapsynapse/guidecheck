@@ -31,6 +31,16 @@ Risks here are not redundant with section 27 of the spec (Residual Threats). Sec
 
 ## Provenance anchor risks
 
+- Same-control-plane repository hashes: the 1.0.0 candidate retains repository
+  hash evidence but excludes it from independent qualification because the
+  supported fetches cannot establish administrative separation. Legacy profiles
+  intentionally retain their old rule; consumers requiring the stronger policy
+  must assert the new profile, not just a conformance level.
+- Version downgrade or shared evaluator state: the dispatcher binds an immutable
+  selection to the guide hash and rejects unsupported or conflicting selectors.
+  Required-profile assertions cannot trigger legacy fallback. Mixed-request and
+  exact legacy-report regressions guard against policy leaking between requests.
+
 - Same-origin manifest forgery: if the guide and manifest live on the same compromised host, both can be changed together. This is explicitly why same-origin manifest alone is not enough for Level 4.
 - Independent channel compromise: DNS, package registry, repository, or signing-key compromise can allow a malicious guide to pass Level 4. The design raises the attack cost; it does not make compromise impossible.
 - Multiple-anchor disagreement: anchors may disagree because of attack, rotation, cache delay, or publisher error. The verifier can fail Level 4 and report evidence, but humans still need to decide whether to wait, investigate, or stop.

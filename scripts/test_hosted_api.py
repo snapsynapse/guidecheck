@@ -989,10 +989,11 @@ def test_recommended_verifier_warnings() -> None:
 
 
 def test_version_constants() -> None:
-    check("hosted version constant", hv.HOSTED_VERSION == gc.GUIDECHECK_VERSION)
-    check("local version constant", hv.gv.VERIFIER_VERSION == gc.GUIDECHECK_VERSION)
-    check("profile version constant", hv.gv.GUIDE_PROFILE_VERSION == gc.GUIDECHECK_VERSION)
-    check("fetch user agent version", f"/{gc.GUIDECHECK_VERSION} " in gf.USER_AGENT)
+    check("hosted legacy engine version", hv.HOSTED_VERSION == gc.LEGACY_ENGINE_VERSION == "0.7.1")
+    check("local legacy engine version", hv.gv.VERIFIER_VERSION == gc.LEGACY_ENGINE_VERSION)
+    check("legacy report profile version", hv.gv.GUIDE_PROFILE_VERSION == gc.LEGACY_ENGINE_VERSION)
+    check("released strict profile version", gc.LATEST_RELEASED_PROFILE_VERSION == gc.STRICT_ENGINE_VERSION)
+    check("preserved fetch user agent", f"/{gc.LEGACY_ENGINE_VERSION} " in gf.USER_AGENT)
 
 
 def main() -> int:

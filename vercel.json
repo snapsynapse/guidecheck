@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "rm -rf docs/schemas && cp -r schemas docs/schemas",
+  "buildCommand": "python3 scripts/build_public_contracts.py",
   "outputDirectory": "docs",
   "cleanUrls": true,
   "trailingSlash": false,
@@ -13,7 +13,12 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.guidecheck.org" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.guidecheck.org"
+        }
+      ],
       "destination": "https://guidecheck.org/:path*",
       "permanent": true
     }
@@ -22,9 +27,18 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        }
       ]
     }
   ]

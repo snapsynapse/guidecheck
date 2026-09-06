@@ -1,0 +1,15 @@
+{
+  "baseline_commit": "3ceb30a58488f925844c51c5aad0bc0f94633ff7",
+  "sha256": {
+    "scripts/guidecheck_legacy.py": "b2f2e5afefaf949cdc50846ff1ad97d5f506da50fc787afa17e26e019963efda",
+    "scripts/guidecheck_legacy_constants.py": "3ca2d25c7ee7e4320b3ad8b9a98722da861bb4e4f2cd5cc230731ab74e2c2b07",
+    "scripts/guidecheck_hosted_anchors.py": "452a4d68d143aaff6296eb591955bffbcbd85916e4c1bc6b8dff4310cb93939e",
+    "scripts/guidecheck_fetch.py": "87bcb051610ab85d10faf2bf9d11bdda8b58b5d6982e3e778e9165f48e1a6479",
+    "schemas/verifier-output.schema.json": "23d4de817f4ac66e98bc81bdb227a4f64c5e161199d05f49d6184e36a93444a9",
+    "spec.md": "ce6a8ae38b5f9fb49eac61159be6c9edd3de3bfe63906d1904cd9fdf2f63288b",
+    "verifier-conformance.md": "c710e4c591749cbf0933acc9b812e43234a9f0024d75113f773d0b717dbab1b5",
+    "assistant-guide.txt": "4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e",
+    "docs/.well-known/assistant-guide.txt": "4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e",
+    "docs/.well-known/assistant-guide-manifest.txt": "b8d0cfdddc7ddc134ca86a40365a0aa84b75dd0c6031a6d19a88e7b0e4cfd923"
+  }
+}

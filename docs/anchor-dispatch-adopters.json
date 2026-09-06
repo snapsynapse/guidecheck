@@ -1,0 +1,831 @@
+{
+  "baseline_commit": "3ceb30a58488f925844c51c5aad0bc0f94633ff7",
+  "method": "baseline hosted evaluator fetches public bytes once; candidate replays identical responses at identical time; local reports compared at fixed time",
+  "local": {
+    "inputs": [
+      {
+        "repo": "agentlink",
+        "path": "agentlink/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://agentlink.run/.well-known/assistant-guide.txt",
+        "manifest-url": "https://agentlink.run/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.1, <0.8.0",
+        "sha256": "9cec5d600628081db15accbe6136ede96f5a845272a5d1bb9fe3af1d9c17531f",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "agentlink",
+        "path": "agentlink/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://agentlink.run/.well-known/assistant-guide.txt",
+        "manifest-url": "https://agentlink.run/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.1, <0.8.0",
+        "sha256": "9cec5d600628081db15accbe6136ede96f5a845272a5d1bb9fe3af1d9c17531f",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "ai-incident-law",
+        "path": "ai-incident-law/assistant-guide.txt",
+        "profile-version": "0.6.0",
+        "canonical-url": "https://aiincidentlaw.org/.well-known/assistant-guide.txt",
+        "manifest-url": "https://aiincidentlaw.org/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.6.0, <0.7.0",
+        "sha256": "3fed9ab654aa04ccd5b0e908a0ace6138fefed3a73463d3daf9c8ebf5491cc08",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "ai-posture",
+        "path": "ai-posture/assistant-guide.txt",
+        "profile-version": "0.3.0",
+        "canonical-url": "https://aiposture.org/.well-known/assistant-guide.txt",
+        "manifest-url": "https://aiposture.org/.well-known/assistant-guide-manifest.json",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0",
+        "sha256": "0e53ec62f8651da26707abb1601f5431912879a592cdd61b1959cb3fe794c2a8",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "ai-posture",
+        "path": "ai-posture/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.3.0",
+        "canonical-url": "https://aiposture.org/.well-known/assistant-guide.txt",
+        "manifest-url": "https://aiposture.org/.well-known/assistant-guide-manifest.json",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0",
+        "sha256": "0e53ec62f8651da26707abb1601f5431912879a592cdd61b1959cb3fe794c2a8",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "audible-pdf-renamer",
+        "path": "audible-pdf-renamer/assistant-guide.txt",
+        "profile-version": "0.4.0",
+        "canonical-url": "https://raw.githubusercontent.com/snapsynapse/audible-pdf-renamer/main/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.4.0, <0.5.0",
+        "sha256": "0d98430b1190fd019899476bf95a7e45439d932408e0eb91dc8497034aeed2b5",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "graceful-boundaries",
+        "path": "graceful-boundaries/assistant-guide.txt",
+        "profile-version": "0.3.0",
+        "canonical-url": "https://gracefulboundaries.dev/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0",
+        "sha256": "7dbf6472d5a49905054b0d541c27a4246bdc1f10e5d7bb9c16c028fa04b8bfdd",
+        "baseline_level": 2,
+        "candidate_level": 2,
+        "exact_report_match": true
+      },
+      {
+        "repo": "guidecheck",
+        "path": "guidecheck/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://guidecheck.org/.well-known/assistant-guide.txt",
+        "manifest-url": "https://guidecheck.org/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.0, <0.8.0",
+        "sha256": "4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "guidecheck",
+        "path": "guidecheck/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://guidecheck.org/.well-known/assistant-guide.txt",
+        "manifest-url": "https://guidecheck.org/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.0, <0.8.0",
+        "sha256": "4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "harnessie",
+        "path": "harnessie/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://harnessie.com/.well-known/assistant-guide.txt",
+        "manifest-url": "https://harnessie.com/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.1, <0.8.0",
+        "sha256": "ff77d219add6f1cf6a22c4570830f9fbd70cedd59f3caa933fbd0c7ae3733421",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "harnessie",
+        "path": "harnessie/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://harnessie.com/.well-known/assistant-guide.txt",
+        "manifest-url": "https://harnessie.com/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.1, <0.8.0",
+        "sha256": "ff77d219add6f1cf6a22c4570830f9fbd70cedd59f3caa933fbd0c7ae3733421",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "knowledge-as-code-template",
+        "path": "knowledge-as-code-template/assistant-guide.txt",
+        "profile-version": "0.3.0",
+        "canonical-url": "https://knowledge-as-code.com/.well-known/assistant-guide.txt",
+        "manifest-url": "https://knowledge-as-code.com/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0",
+        "sha256": "1f5f955fd03b8a3a176cec4bd312bb36bdf81a42922e659ca447417345493276",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "obligation-first",
+        "path": "obligation-first/assistant-guide.txt",
+        "profile-version": "0.2.0",
+        "canonical-url": "https://obligationfirst.org/.well-known/assistant-guide.txt",
+        "manifest-url": "https://obligationfirst.org/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.2.0, <0.3.0",
+        "sha256": "3953f5a26e64a0510183618aa6bffad3cba9c3c254277cf4d9db7d24ce1db841",
+        "baseline_level": 2,
+        "candidate_level": 2,
+        "exact_report_match": true
+      },
+      {
+        "repo": "obligation-first",
+        "path": "obligation-first/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.2.0",
+        "canonical-url": "https://obligationfirst.org/.well-known/assistant-guide.txt",
+        "manifest-url": "https://obligationfirst.org/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.2.0, <0.3.0",
+        "sha256": "3953f5a26e64a0510183618aa6bffad3cba9c3c254277cf4d9db7d24ce1db841",
+        "baseline_level": 2,
+        "candidate_level": 2,
+        "exact_report_match": true
+      },
+      {
+        "repo": "paice-foundation",
+        "path": "paice-foundation/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.3.0",
+        "canonical-url": "https://paice.foundation/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0",
+        "sha256": "e70be4246f01f4a1f1c390969b9731d5d0d2011ede4120d11004b84d21285279",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "prompter-kit",
+        "path": "prompter-kit/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://prompterkit.app/.well-known/assistant-guide.txt",
+        "manifest-url": "https://prompterkit.app/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.1, <0.8.0",
+        "sha256": "1b73f93f9f466de6f7b5f69182535d10c65e37e1cdf4427efa15d8508dfe6558",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "prompter-kit",
+        "path": "prompter-kit/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://prompterkit.app/.well-known/assistant-guide.txt",
+        "manifest-url": "https://prompterkit.app/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.1, <0.8.0",
+        "sha256": "1b73f93f9f466de6f7b5f69182535d10c65e37e1cdf4427efa15d8508dfe6558",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "resume",
+        "path": "resume/public/.well-known/assistant-guide.txt",
+        "profile-version": "0.4.0",
+        "canonical-url": "https://resume.sam-rogers.com/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": null,
+        "sha256": "fb30ba7aa705235cd13539b9cdec6fd660de30118f877153fae028aecb92bede",
+        "baseline_level": 0,
+        "candidate_level": 0,
+        "exact_report_match": true
+      },
+      {
+        "repo": "siteline",
+        "path": "siteline/assistant-guide.txt",
+        "profile-version": "0.7.0",
+        "canonical-url": "https://siteline.to/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": null,
+        "sha256": "3fc667ce18988c256552b42df7a0253657df567da9fb26b64a2d4da7a520c2e0",
+        "baseline_level": 0,
+        "candidate_level": 0,
+        "exact_report_match": true
+      },
+      {
+        "repo": "skill-a11y-audit",
+        "path": "skill-a11y-audit/assistant-guide.txt",
+        "profile-version": "0.7.0",
+        "canonical-url": "https://skilla11y.dev/.well-known/assistant-guide.txt",
+        "manifest-url": "https://skilla11y.dev/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.0, <0.8.0",
+        "sha256": "81fed93eac293f63897daf3c4ebc283cf9ad9efa194893fe93ddae58c5da3c78",
+        "baseline_level": 2,
+        "candidate_level": 2,
+        "exact_report_match": true
+      },
+      {
+        "repo": "skill-a11y-audit",
+        "path": "skill-a11y-audit/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.7.0",
+        "canonical-url": "https://skilla11y.dev/.well-known/assistant-guide.txt",
+        "manifest-url": "https://skilla11y.dev/.well-known/assistant-guide-manifest.txt",
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.0, <0.8.0",
+        "sha256": "81fed93eac293f63897daf3c4ebc283cf9ad9efa194893fe93ddae58c5da3c78",
+        "baseline_level": 2,
+        "candidate_level": 2,
+        "exact_report_match": true
+      },
+      {
+        "repo": "substack2md",
+        "path": "substack2md/assistant-guide.txt",
+        "profile-version": "0.3.0",
+        "canonical-url": "https://substack2md.space/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0",
+        "sha256": "83897a41301889d763d2280d8cddce1f88d4ffc219c98c8b0289a2ecc209b404",
+        "baseline_level": 2,
+        "candidate_level": 2,
+        "exact_report_match": true
+      },
+      {
+        "repo": "substack2md",
+        "path": "substack2md/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.3.0",
+        "canonical-url": "https://substack2md.space/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0",
+        "sha256": "83897a41301889d763d2280d8cddce1f88d4ffc219c98c8b0289a2ecc209b404",
+        "baseline_level": 2,
+        "candidate_level": 2,
+        "exact_report_match": true
+      },
+      {
+        "repo": "virtual-classroom-watch",
+        "path": "virtual-classroom-watch/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://VirtualClassroom.watch/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.0, <0.8.0",
+        "sha256": "b6217bcb9632000d4efcb1312a6ff41fb2cc7a2a853f254ac2eccee3322e6acd",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      },
+      {
+        "repo": "virtual-classroom-watch",
+        "path": "virtual-classroom-watch/docs/.well-known/assistant-guide.txt",
+        "profile-version": "0.7.1",
+        "canonical-url": "https://VirtualClassroom.watch/.well-known/assistant-guide.txt",
+        "manifest-url": null,
+        "verifier-conformance": "human-verifiable-assistant-guide-verifier >=0.7.0, <0.8.0",
+        "sha256": "b6217bcb9632000d4efcb1312a6ff41fb2cc7a2a853f254ac2eccee3322e6acd",
+        "baseline_level": 3,
+        "candidate_level": 3,
+        "exact_report_match": true
+      }
+    ],
+    "ci_references": [
+      {
+        "repo": "ai-incident-law",
+        "file": "scripts/validate-guidecheck.mjs",
+        "line": 160,
+        "text": "console.error(\"GuideCheck validation failed:\\n\");"
+      },
+      {
+        "repo": "ai-incident-law",
+        "file": "scripts/validate-guidecheck.mjs",
+        "line": 168,
+        "text": "`Validated GuideCheck assistant guide and fallbacks (${bytes.length} bytes, ${lines.length} lines, sha256 ${guideSha256}).`"
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 53,
+        "text": "\"guidecheck.org\","
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 54,
+        "text": "\"www.guidecheck.org\","
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 362,
+        "text": "failures.push(`assistant-guide.txt: file exceeds GuideCheck 8192-byte limit (${rootBytes.length})`);"
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 368,
+        "text": "failures.push(`assistant-guide.txt: file exceeds GuideCheck 400-line limit (${lines.length})`);"
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 374,
+        "text": "failures.push(`assistant-guide.txt:${lineFor(text, i)}: byte outside GuideCheck ASCII profile`);"
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 381,
+        "text": "failures.push(`assistant-guide.txt:${index + 1}: line exceeds GuideCheck 120-byte limit`);"
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 390,
+        "text": "\"recommended-verifier: https://guidecheck.org/verify\","
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 398,
+        "text": "\"GuideCheck conformance is a form claim, not a safety claim.\","
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/validate-repo-contracts.mjs",
+        "line": 403,
+        "text": "failures.push(`assistant-guide.txt: missing required GuideCheck content: ${snippet}`);"
+      },
+      {
+        "repo": "obligation-first",
+        "file": "scripts/make-release.mjs",
+        "line": 170,
+        "text": "<li><a href=\"/.well-known/assistant-guide.txt\"><code>/.well-known/assistant-guide.txt</code></a> - GuideCheck assistant guide</li>"
+      },
+      {
+        "repo": "prompter-kit",
+        "file": "scripts/check_agent_surfaces.py",
+        "line": 1,
+        "text": "\"\"\"Check published copies and metadata; this is not a GuideCheck verifier.\"\"\""
+      },
+      {
+        "repo": "resume",
+        "file": "scripts/validate-metadata.mjs",
+        "line": 80,
+        "text": "fail(\"api-manifest.json: must declare GuideCheck Level 3\");"
+      },
+      {
+        "repo": "resume",
+        "file": "scripts/validate-metadata.mjs",
+        "line": 85,
+        "text": "if (apiManifest.standards?.guidecheck?.url !== \"https://guidecheck.org/\") {"
+      },
+      {
+        "repo": "resume",
+        "file": "scripts/validate-metadata.mjs",
+        "line": 86,
+        "text": "fail(\"api-manifest.json: must link canonical GuideCheck spec\");"
+      },
+      {
+        "repo": "resume",
+        "file": "scripts/validate-metadata.mjs",
+        "line": 101,
+        "text": "\"conformance-target: GuideCheck Level 3\","
+      },
+      {
+        "repo": "skill-a11y-audit",
+        "file": ".github/workflows/validate-skill.yml",
+        "line": 55,
+        "text": "- name: Checkout pinned GuideCheck verifier"
+      },
+      {
+        "repo": "skill-a11y-audit",
+        "file": ".github/workflows/validate-skill.yml",
+        "line": 63,
+        "text": "- name: Verify assistant guide against GuideCheck 0.7.0"
+      },
+      {
+        "repo": "skill-a11y-audit",
+        "file": ".github/workflows/validate-skill.yml",
+        "line": 64,
+        "text": "run: python3 .guidecheck/scripts/guidecheck_verify.py assistant-guide.txt --pretty"
+      }
+    ]
+  },
+  "public_fetch_replay": [
+    {
+      "repo": "agentlink",
+      "url": "https://agentlink.run/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:38.761622+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 4,
+      "candidate_level": 4,
+      "guide_sha256": "9cec5d600628081db15accbe6136ede96f5a845272a5d1bb9fe3af1d9c17531f",
+      "outcome": "evaluated",
+      "fetches": 5,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "ai-incident-law",
+      "url": "https://aiincidentlaw.org/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:39.573859+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 4,
+      "candidate_level": 4,
+      "guide_sha256": "3fed9ab654aa04ccd5b0e908a0ace6138fefed3a73463d3daf9c8ebf5491cc08",
+      "outcome": "evaluated",
+      "fetches": 5,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "ai-posture",
+      "url": "https://aiposture.org/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:40.288692+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 3,
+      "candidate_level": 3,
+      "guide_sha256": "0e53ec62f8651da26707abb1601f5431912879a592cdd61b1959cb3fe794c2a8",
+      "outcome": "evaluated",
+      "fetches": 5,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "audible-pdf-renamer",
+      "url": "https://raw.githubusercontent.com/snapsynapse/audible-pdf-renamer/main/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:41.284986+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 3,
+      "candidate_level": 3,
+      "guide_sha256": "0d98430b1190fd019899476bf95a7e45439d932408e0eb91dc8497034aeed2b5",
+      "outcome": "evaluated",
+      "fetches": 2,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "graceful-boundaries",
+      "url": "https://gracefulboundaries.dev/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:41.536163+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 2,
+      "candidate_level": 2,
+      "guide_sha256": "7dbf6472d5a49905054b0d541c27a4246bdc1f10e5d7bb9c16c028fa04b8bfdd",
+      "outcome": "evaluated",
+      "fetches": 2,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "guidecheck",
+      "url": "https://guidecheck.org/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:41.809595+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 3,
+      "candidate_level": 3,
+      "guide_sha256": "4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e",
+      "outcome": "evaluated",
+      "fetches": 5,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "harnessie",
+      "url": "https://harnessie.com/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:42.782866+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 3,
+      "candidate_level": 3,
+      "guide_sha256": "ff77d219add6f1cf6a22c4570830f9fbd70cedd59f3caa933fbd0c7ae3733421",
+      "outcome": "evaluated",
+      "fetches": 6,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "knowledge-as-code-template",
+      "url": "https://knowledge-as-code.com/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:43.642064+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 4,
+      "candidate_level": 4,
+      "guide_sha256": "1f5f955fd03b8a3a176cec4bd312bb36bdf81a42922e659ca447417345493276",
+      "outcome": "evaluated",
+      "fetches": 5,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "obligation-first",
+      "url": "https://obligationfirst.org/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:44.377009+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 2,
+      "candidate_level": 2,
+      "guide_sha256": "3953f5a26e64a0510183618aa6bffad3cba9c3c254277cf4d9db7d24ce1db841",
+      "outcome": "evaluated",
+      "fetches": 5,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "paice-foundation",
+      "url": "https://paice.foundation/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:45.096143+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 3,
+      "candidate_level": 3,
+      "guide_sha256": "e70be4246f01f4a1f1c390969b9731d5d0d2011ede4120d11004b84d21285279",
+      "outcome": "evaluated",
+      "fetches": 2,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "prompter-kit",
+      "url": "https://prompterkit.app/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:45.345298+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 4,
+      "candidate_level": 4,
+      "guide_sha256": "1b73f93f9f466de6f7b5f69182535d10c65e37e1cdf4427efa15d8508dfe6558",
+      "outcome": "evaluated",
+      "fetches": 6,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "resume",
+      "url": "https://resume.sam-rogers.com/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:46.182467+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 0,
+      "candidate_level": 0,
+      "guide_sha256": "fb30ba7aa705235cd13539b9cdec6fd660de30118f877153fae028aecb92bede",
+      "outcome": "evaluated",
+      "fetches": 2,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "siteline",
+      "url": "https://siteline.to/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:46.787088+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 0,
+      "candidate_level": 0,
+      "guide_sha256": "3fc667ce18988c256552b42df7a0253657df567da9fb26b64a2d4da7a520c2e0",
+      "outcome": "evaluated",
+      "fetches": 2,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "skill-a11y-audit",
+      "url": "https://skilla11y.dev/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:47.237806+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 2,
+      "candidate_level": 2,
+      "guide_sha256": "81fed93eac293f63897daf3c4ebc283cf9ad9efa194893fe93ddae58c5da3c78",
+      "outcome": "evaluated",
+      "fetches": 5,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "substack2md",
+      "url": "https://substack2md.space/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:47.998560+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 2,
+      "candidate_level": 2,
+      "guide_sha256": "83897a41301889d763d2280d8cddce1f88d4ffc219c98c8b0289a2ecc209b404",
+      "outcome": "evaluated",
+      "fetches": 2,
+      "replay_used_same_fetches": true
+    },
+    {
+      "repo": "virtual-classroom-watch",
+      "url": "https://VirtualClassroom.watch/.well-known/assistant-guide.txt",
+      "observed_at": "2026-09-06T02:13:48.274996+00:00",
+      "exact_report_match": true,
+      "baseline_status": 200,
+      "candidate_status": 200,
+      "baseline_level": 3,
+      "candidate_level": 3,
+      "guide_sha256": "b6217bcb9632000d4efcb1312a6ff41fb2cc7a2a853f254ac2eccee3322e6acd",
+      "outcome": "evaluated",
+      "fetches": 2,
+      "replay_used_same_fetches": true
+    }
+  ],
+  "production_level_comparison": [
+    {
+      "url": "https://agentlink.run/.well-known/assistant-guide.txt",
+      "production_level": 4,
+      "production_sha256": "9cec5d600628081db15accbe6136ede96f5a845272a5d1bb9fe3af1d9c17531f",
+      "production_error_ids": [],
+      "candidate_level": 4,
+      "candidate_sha256": "9cec5d600628081db15accbe6136ede96f5a845272a5d1bb9fe3af1d9c17531f",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://aiincidentlaw.org/.well-known/assistant-guide.txt",
+      "production_level": 4,
+      "production_sha256": "3fed9ab654aa04ccd5b0e908a0ace6138fefed3a73463d3daf9c8ebf5491cc08",
+      "production_error_ids": [],
+      "candidate_level": 4,
+      "candidate_sha256": "3fed9ab654aa04ccd5b0e908a0ace6138fefed3a73463d3daf9c8ebf5491cc08",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://aiposture.org/.well-known/assistant-guide.txt",
+      "production_level": 3,
+      "production_sha256": "0e53ec62f8651da26707abb1601f5431912879a592cdd61b1959cb3fe794c2a8",
+      "production_error_ids": [
+        "manifest.missing-required"
+      ],
+      "candidate_level": 3,
+      "candidate_sha256": "0e53ec62f8651da26707abb1601f5431912879a592cdd61b1959cb3fe794c2a8",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://guidecheck.org/.well-known/assistant-guide.txt",
+      "production_level": 3,
+      "production_sha256": "4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e",
+      "production_error_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "candidate_level": 3,
+      "candidate_sha256": "4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://harnessie.com/.well-known/assistant-guide.txt",
+      "production_level": 3,
+      "production_sha256": "ff77d219add6f1cf6a22c4570830f9fbd70cedd59f3caa933fbd0c7ae3733421",
+      "production_error_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "candidate_level": 3,
+      "candidate_sha256": "ff77d219add6f1cf6a22c4570830f9fbd70cedd59f3caa933fbd0c7ae3733421",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://knowledge-as-code.com/.well-known/assistant-guide.txt",
+      "production_level": 4,
+      "production_sha256": "1f5f955fd03b8a3a176cec4bd312bb36bdf81a42922e659ca447417345493276",
+      "production_error_ids": [],
+      "candidate_level": 4,
+      "candidate_sha256": "1f5f955fd03b8a3a176cec4bd312bb36bdf81a42922e659ca447417345493276",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://obligationfirst.org/.well-known/assistant-guide.txt",
+      "production_level": 2,
+      "production_sha256": "3953f5a26e64a0510183618aa6bffad3cba9c3c254277cf4d9db7d24ce1db841",
+      "production_error_ids": [
+        "prohibited.encoded-execution"
+      ],
+      "candidate_level": 2,
+      "candidate_sha256": "3953f5a26e64a0510183618aa6bffad3cba9c3c254277cf4d9db7d24ce1db841",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://prompterkit.app/.well-known/assistant-guide.txt",
+      "production_level": 4,
+      "production_sha256": "1b73f93f9f466de6f7b5f69182535d10c65e37e1cdf4427efa15d8508dfe6558",
+      "production_error_ids": [],
+      "candidate_level": 4,
+      "candidate_sha256": "1b73f93f9f466de6f7b5f69182535d10c65e37e1cdf4427efa15d8508dfe6558",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    },
+    {
+      "url": "https://skilla11y.dev/.well-known/assistant-guide.txt",
+      "production_level": 2,
+      "production_sha256": "81fed93eac293f63897daf3c4ebc283cf9ad9efa194893fe93ddae58c5da3c78",
+      "production_error_ids": [
+        "action-block.malformed"
+      ],
+      "candidate_level": 2,
+      "candidate_sha256": "81fed93eac293f63897daf3c4ebc283cf9ad9efa194893fe93ddae58c5da3c78",
+      "verifier": {
+        "name": "guidecheck-hosted",
+        "version": "0.7.1",
+        "verifier_profile": "human-verifiable-assistant-guide-verifier",
+        "verifier_profile_version": "0.7.1",
+        "guide_profile": "human-verifiable-assistant-guide",
+        "guide_profile_version": "0.7.1"
+      },
+      "same_bytes": true,
+      "same_level": true
+    }
+  ],
+  "production_comparison_date": "2026-09-05 America/Denver (2026-09-06 UTC)"
+}

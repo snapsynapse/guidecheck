@@ -9,7 +9,7 @@ threat-register.md as a process risk). This check makes that class of drift a
 test failure instead of a release-notes apology.
 
 Rules per surface: each listed pattern must match at least once, and every
-match must equal the expected value derived from GUIDECHECK_VERSION.
+match must equal the independently pinned release, engine, or self-guide version.
 Also asserts the published .well-known guide copy is byte-identical to the
 repository guide (it drifted once at 0.3.1).
 """
@@ -20,27 +20,32 @@ import re
 import sys
 from pathlib import Path
 
-from guidecheck_constants import GUIDECHECK_VERSION
+from guidecheck_constants import (GUIDECHECK_VERSION, LATEST_RELEASED_PROFILE_VERSION,
+                                 SELF_GUIDE_VERSION, SELF_GUIDE_PROFILE_VERSION,
+                                 LEGACY_ENGINE_VERSION, STRICT_ENGINE_VERSION)
 
 ROOT = Path(__file__).resolve().parents[1]
 
-VERSION = GUIDECHECK_VERSION
-MAJOR, MINOR, _PATCH = (int(part) for part in VERSION.split("."))
+# Public release identity, legacy contracts, and the self-guide are separate.
+# A dispatcher or public release bump must never rotate anchored self-guide bytes.
+VERSION = LATEST_RELEASED_PROFILE_VERSION
+LEGACY_VERSION = LEGACY_ENGINE_VERSION
+MAJOR, MINOR, _PATCH = (int(part) for part in LEGACY_VERSION.split("."))
 SERIES = f"{MAJOR}.{MINOR}.x"
 RANGE_LOW = f"{MAJOR}.{MINOR}.0"
 RANGE_HIGH = f"{MAJOR}.{MINOR + 1}.0"
 
 # (file, pattern with one capture group, expected captured value)
 CHECKS: list[tuple[str, str, str]] = [
-    ("spec.md", r"^profile-version: (\S+)$", VERSION),
+    ("spec.md", r"^profile-version: (\S+)$", LEGACY_VERSION),
     ("spec.md", r"guide-profile version (\d+\.\d+\.x)", SERIES),
     ("verifier-conformance.md", r"verifier-profile version (\d+\.\d+\.x)", SERIES),
-    ("verifier-conformance.md", r"\"version\": \"(\d+\.\d+\.\d+)\"", VERSION),
-    ("verifier-conformance.md", r"_profile_version\": \"(\d+\.\d+\.\d+)\"", VERSION),
+    ("verifier-conformance.md", r"\"version\": \"(\d+\.\d+\.\d+)\"", LEGACY_VERSION),
+    ("verifier-conformance.md", r"_profile_version\": \"(\d+\.\d+\.\d+)\"", LEGACY_VERSION),
     ("README.md", r"profile version (\d+\.\d+\.\d+)", VERSION),
     ("INTENT.md", r"current version is (\d+\.\d+\.\d+)", VERSION),
-    ("assistant-guide.txt", r"^profile-version: (\S+)$", VERSION),
-    ("assistant-guide.txt", r"^guide-version: (\S+)$", VERSION),
+    ("assistant-guide.txt", r"^profile-version: (\S+)$", SELF_GUIDE_PROFILE_VERSION),
+    ("assistant-guide.txt", r"^guide-version: (\S+)$", SELF_GUIDE_VERSION),
     ("assistant-guide.txt", r"^applies-to: guidecheck (\d+\.\d+\.x)$", SERIES),
     (
         "assistant-guide.txt",
@@ -54,7 +59,7 @@ CHECKS: list[tuple[str, str, str]] = [
         r">=\d+\.\d+\.\d+, <(\d+\.\d+\.\d+)$",
         RANGE_HIGH,
     ),
-    ("examples/level-3-assistant-guide.txt", r"^profile-version: (\S+)$", VERSION),
+    ("examples/level-3-assistant-guide.txt", r"^profile-version: (\S+)$", LEGACY_VERSION),
     (
         "examples/level-3-assistant-guide.txt",
         r"^verifier-conformance: human-verifiable-assistant-guide-verifier "
@@ -70,9 +75,9 @@ CHECKS: list[tuple[str, str, str]] = [
     (
         "examples/mcp-database-server-assistant-guide.txt",
         r"^profile-version: (\S+)$",
-        VERSION,
+        LEGACY_VERSION,
     ),
-    ("examples/manifest.txt", r"^profile-version: (\S+)$", VERSION),
+    ("examples/manifest.txt", r"^profile-version: (\S+)$", LEGACY_VERSION),
     ("docs/index.html", r"v(\d+\.\d+\.\d+)", VERSION),
     ("docs/index.html", r"[Pp]rofile version (\d+\.\d+\.\d+)", VERSION),
     ("docs/verify/index.html", r"profile (\d+\.\d+\.\d+)", VERSION),
@@ -80,9 +85,11 @@ CHECKS: list[tuple[str, str, str]] = [
     (
         "docs/verifier-examples.html",
         r"guidecheck-reference-local (\d+\.\d+\.\d+)",
-        VERSION,
+        LEGACY_VERSION,
     ),
-    ("docs/verifier-examples.html", r"\"version\": \"(\d+\.\d+\.\d+)\"", VERSION),
+    ("docs/verifier-examples.html", r"\"version\": \"(\d+\.\d+\.\d+)\"", LEGACY_VERSION),
+    ("profiles/1.0.0/spec.md", r"^profile-version: (\S+)$", STRICT_ENGINE_VERSION),
+    ("profiles/1.0.0/verifier-conformance.md", r"_profile_version\": \"(\d+\.\d+\.\d+)\"", STRICT_ENGINE_VERSION),
     ("CHANGELOG.md", r"^## \[(\d+\.\d+\.\d+)\] - \d{4}-\d{2}-\d{2}$", None),  # type: ignore[list-item]
 ]
 
@@ -127,6 +134,10 @@ def check_byte_identical() -> list[str]:
 
 def main() -> int:
     failures = check_patterns() + check_byte_identical()
+    if SELF_GUIDE_VERSION != "0.7.1" or SELF_GUIDE_PROFILE_VERSION != "0.7.1" or LEGACY_ENGINE_VERSION != "0.7.1" or STRICT_ENGINE_VERSION != "1.0.0":
+        failures.append("engine/self-guide profile identities disagree with the versioned contracts")
+    if not re.fullmatch(r"1\.0\.0(?:\.dev[0-9]+)?", GUIDECHECK_VERSION):
+        failures.append("dispatcher must use its separate 1.0.0 development/release version")
     if failures:
         print("Version sync failures:", file=sys.stderr)
         for failure in failures:

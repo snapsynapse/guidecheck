@@ -1,0 +1,8 @@
+{
+  "evidence_fetched": true,
+  "achieved_level": 3,
+  "blocking_finding_ids": [
+    "anchor.repository-file.mismatch"
+  ],
+  "qualifying_anchor_count": 1
+}

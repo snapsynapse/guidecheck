@@ -37,3 +37,6 @@ handoffs/
 
 # Generated at build time by vercel.json buildCommand (source is /schemas)
 /docs/schemas/
+
+/docs/profiles/
+/docs/deploy-manifest.json

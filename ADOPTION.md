@@ -1,5 +1,24 @@
 # GuideCheck Adoption Guide
 
+## Version-aware adoption
+
+Existing supported legacy guides keep their current evaluation when checked by
+the 1.0.0 dispatcher. No guide, manifest, DNS, or repository-anchor
+rotation is required for that compatibility. The latest released profile is
+[1.0.0](profiles/1.0.0/spec.md); legacy profiles remain supported.
+
+Deliberately adopting 1.0.0 requires matching guide/manifest profile declarations
+and another qualifying anchor when the repository was the only source of
+provenance. Repository hash matches remain useful corroboration, but cannot
+qualify for 1.0.0 Level 4. Retain legacy declarations until deliberately migrating.
+Consumers that require 1.0.0 can use the `required_profile_version` API field or
+`--require-profile-version` local CLI assertion. These reject an incompatible
+guide rather than reinterpret its bytes. Local evaluation still caps at Level 3.
+
+The guidance below describes the published legacy profile. See the
+[compatibility contract](docs/anchor-policy-compatibility.md) for version selection
+and the [validation evidence](docs/anchor-dispatch-validation.md) for tested limits.
+
 This is the practical on-ramp to GuideCheck. It explains what an
 `assistant-guide.txt` artifact is, what the conformance ladder means in
 operational terms, and how to publish a conforming guide one level at a time.

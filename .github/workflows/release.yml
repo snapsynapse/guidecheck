@@ -24,7 +24,9 @@ jobs:
           python-version: "3.12"
 
       - name: Run local verification suite
-        run: make test
+        run: |
+          make test test-verify-ui
+          python3 scripts/build_public_contracts.py
 
       - name: Build release archive and conformance kit
         run: |

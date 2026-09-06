@@ -64,7 +64,7 @@ notes), rather than a general PAICE-wide default.
 
 ## Current status
 
-Released, profile version 0.7.1 (see `CHANGELOG.md`). Most recent shipped work:
+Released, profile version 1.0.0 (see `CHANGELOG.md`). Most recent shipped work:
 `guidecheck scan`, an instruction-surface scanner for pre-existing
 AGENTS.md/CLAUDE.md/README/SKILL/llms.txt-style files (2026-07-07).
 Undecided/open items live in
@@ -74,8 +74,13 @@ suite design, and a possible higher provenance tier. Release and conformance-
 kit signing is settled on Sigstore cosign keyless for 0.6.0 and later. See
 `CLAUDE.md` for technical/agent-facing detail.
 
-## Unreleased maintenance (2026-09-05)
+## Version-aware release (2026-09-05)
+
+Version-aware dispatch and opt-in 1.0.0 anchor qualification ship in release
+1.0.0. The published self-guide remains 0.7.1. Legacy reports and anchor semantics are
+preserved. Current profile documents live in `profiles/1.0.0/`; validation evidence
+and delivery limits are in `docs/anchor-dispatch-validation.md`.
 
 Local bounded-execution findings are implemented in the shared verifier. Pins
 remain unverified, including through hosted callers. See roadmap.md for pending
-hosted fetching and independence decisions. Profile release remains 0.7.1.
+hosted fetching and independence decisions. Legacy profile behavior remains pinned to the pre-dispatch baseline.
