@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 from guidecheck_constants import (GUIDECHECK_VERSION, LATEST_RELEASED_PROFILE_VERSION,
@@ -132,8 +133,32 @@ def check_byte_identical() -> list[str]:
     return failures
 
 
+def check_release_dates() -> list[str]:
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    release = re.search(
+        rf"^## \[{re.escape(VERSION)}\] - (\d{{4}}-\d{{2}}-\d{{2}})$",
+        changelog, re.MULTILINE,
+    )
+    if release is None:
+        return [f"CHANGELOG.md: missing dated release entry for {VERSION}"]
+    release_date = date.fromisoformat(release.group(1))
+    iso = release_date.isoformat()
+    label = f"{release_date:%B} {release_date.day}, {release_date.year}"
+    page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    checks = [
+        ("structured modification date", r'"dateModified": "([^"]+)"', [iso]),
+        ("visible updated date", r'Updated <time datetime="([^"]+)">([^<]+)</time>', [(iso, label)]),
+        ("substantive revision date", r'Last substantive revision:\s*<time datetime="([^"]+)">([^<]+)</time>', [(iso, iso)]),
+    ]
+    return [
+        f"docs/index.html: {name} must match release {VERSION} ({iso})"
+        for name, pattern, expected in checks
+        if re.findall(pattern, page) != expected
+    ]
+
+
 def main() -> int:
-    failures = check_patterns() + check_byte_identical()
+    failures = check_patterns() + check_byte_identical() + check_release_dates()
     if SELF_GUIDE_VERSION != "0.7.1" or SELF_GUIDE_PROFILE_VERSION != "0.7.1" or LEGACY_ENGINE_VERSION != "0.7.1" or STRICT_ENGINE_VERSION != "1.0.0":
         failures.append("engine/self-guide profile identities disagree with the versioned contracts")
     if not re.fullmatch(r"1\.0\.0(?:\.dev[0-9]+)?", GUIDECHECK_VERSION):
@@ -145,7 +170,8 @@ def main() -> int:
         return 1
     print(
         f"Version sync passed: {len(CHECKS)} pattern checks and "
-        f"{len(BYTE_IDENTICAL)} byte-identity checks agree with {VERSION}"
+        f"{len(BYTE_IDENTICAL)} byte-identity checks agree with {VERSION}; "
+        "homepage release dates agree with the changelog"
     )
     return 0
 
