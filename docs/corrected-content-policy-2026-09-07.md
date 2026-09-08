@@ -1,8 +1,10 @@
 # Corrected content policy contract
 
-Status: implemented local candidate contract, 2026-09-07. The profile documents,
-schemas, fixtures, selectors, and callers named below agree; profile 2.0.0 remains
-unreleased and undeployed.
+Scope: implementation contract recorded on 2026-09-07 before publication.
+The profile documents, schemas, fixtures, selectors, and callers named below
+agreed at that checkpoint. Current normative requirements live in
+`profiles/2.0.0/spec.md` and `profiles/2.0.0/verifier-conformance.md`; delivery
+evidence is separate and follows `docs/release-2.0.0.md`.
 
 ## Decision
 

@@ -13,7 +13,8 @@ migrated or reinterpreted automatically.
 
 The experimental POSIX JSON CLI contract, selected with
 `--contract posix-json-v1`, is independent of the guide-declared profile
-selector. See `docs/cli-contract.md`.
+selector. See [the CLI contract](https://guidecheck.org/cli-contract.md).
 
-The normative corrected-content policy is
-`docs/corrected-content-policy-2026-09-07.md`.
+The normative requirements are in the
+[2.0.0 specification](https://guidecheck.org/profiles/2.0.0/spec.md) and
+[verifier conformance profile](https://guidecheck.org/profiles/2.0.0/verifier-conformance.md).
