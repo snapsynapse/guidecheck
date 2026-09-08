@@ -11,11 +11,13 @@ test failure instead of a release-notes apology.
 Rules per surface: each listed pattern must match at least once, and every
 match must equal the independently pinned release, engine, or self-guide version.
 Also asserts the published .well-known guide copy is byte-identical to the
-repository guide (it drifted once at 0.3.1).
+repository guide (it drifted once at 0.3.1), and that security.txt declares
+the SHA-256 digest of those guide bytes.
 """
 
 from __future__ import annotations
 
+import hashlib
 import re
 import sys
 from datetime import date
@@ -160,8 +162,40 @@ def check_byte_identical() -> list[str]:
     return failures
 
 
+def check_security_guide_hash() -> list[str]:
+    security_path = ROOT / "docs" / ".well-known" / "security.txt"
+    fields = re.findall(
+        r"^Assistant-Guide-SHA256:[ \t]*(.*?)[ \t]*$",
+        security_path.read_text(encoding="utf-8"),
+        flags=re.MULTILINE,
+    )
+    if len(fields) != 1:
+        return [
+            "docs/.well-known/security.txt: expected exactly one "
+            "Assistant-Guide-SHA256 field"
+        ]
+    if re.fullmatch(r"[0-9a-f]{64}", fields[0]) is None:
+        return [
+            "docs/.well-known/security.txt: Assistant-Guide-SHA256 must be "
+            "exactly 64 lowercase hexadecimal characters"
+        ]
+
+    expected = hashlib.sha256((ROOT / "assistant-guide.txt").read_bytes()).hexdigest()
+    if fields[0] != expected:
+        return [
+            "docs/.well-known/security.txt: Assistant-Guide-SHA256 does not "
+            "match assistant-guide.txt"
+        ]
+    return []
+
+
 def main() -> int:
-    failures = check_patterns() + check_byte_identical() + check_dated_release_record()
+    failures = (
+        check_patterns()
+        + check_byte_identical()
+        + check_security_guide_hash()
+        + check_dated_release_record()
+    )
     if SELF_GUIDE_VERSION != "0.7.1" or SELF_GUIDE_PROFILE_VERSION != "0.7.1" or LEGACY_ENGINE_VERSION != "0.7.1" or STRICT_ENGINE_VERSION != "1.0.0" or CORRECTED_ENGINE_VERSION != "2.0.0":
         failures.append("engine/self-guide profile identities disagree with the versioned contracts")
     if not re.fullmatch(r"2\.0\.0", GUIDECHECK_VERSION):
@@ -176,7 +210,8 @@ def main() -> int:
     print(
         f"Version sync passed: {len(CHECKS)} pattern checks and "
         f"{len(BYTE_IDENTICAL)} byte-identity checks agree with release {RELEASE_VERSION}; "
-        "release surfaces agree; 2.0.0 is the latest released profile"
+        "security.txt matches the self-guide hash; release surfaces agree; "
+        "2.0.0 is the latest released profile"
     )
     return 0
 

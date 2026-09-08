@@ -2,6 +2,14 @@
 
 All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
+## [Unreleased]
+
+### Fixed
+
+- Correct the self-guide digest in the published `security.txt` metadata and
+  make version-sync validation reject missing, malformed, duplicate, or stale
+  `Assistant-Guide-SHA256` fields.
+
 ## [2.0.0] - 2026-09-07
 
 - Include the corrected evaluator in the installable wheel and exercise legacy,
