@@ -174,8 +174,6 @@ def _validate_selector(argv: list[str]) -> None:
         "--format",
         "--json",
         "--pretty",
-        "-h",
-        "--help",
     }
     counts: dict[str, int] = {}
     for arg in option_argv:
@@ -184,6 +182,9 @@ def _validate_selector(argv: list[str]) -> None:
     duplicate = next((flag for flag in singular if counts.get(flag, 0) > 1), None)
     if duplicate is not None:
         raise ContractArgumentError(f"duplicate option: {duplicate}", "duplicate-option")
+    help_count = sum(arg in {"-h", "--help"} for arg in option_argv)
+    if help_count > 1:
+        raise ContractArgumentError("duplicate option: --help", "duplicate-option")
 
 
 def _build_parser() -> _ContractParser:
@@ -191,8 +192,10 @@ def _build_parser() -> _ContractParser:
         prog="guidecheck verify",
         description="Verify a local assistant-guide.txt at local Levels 1-3; check Level 4 evidence consistency without awarding Level 4.",
         allow_abbrev=False,
+        add_help=False,
     )
-    parser.add_argument("path", type=Path, help="Path to assistant-guide.txt")
+    parser.add_argument("path", type=Path, nargs="?", help="Path to assistant-guide.txt")
+    parser.add_argument("-h", "--help", action="store_true", help="show this help message and exit")
     parser.add_argument("--manifest", type=Path, help="Optional local sidecar manifest path")
     parser.add_argument(
         "--anchor",
@@ -244,6 +247,8 @@ def _parse_contract_args(
             "duplicate anchor channel",
             "duplicate-anchor-channel",
         )
+    if args.path is None and not args.help:
+        raise ContractArgumentError("the following arguments are required: path")
     return args
 
 
@@ -291,29 +296,23 @@ def run_contract(
     """Run one selected verifier contract invocation and emit one JSON object."""
     try:
         args = _parse_contract_args(argv)
-    except _ParserExit as exc:
-        if exc.status == 0:
-            return _emit(
-                _complete_result(
-                    gate=_gate("not_requested"),
-                    report=None,
-                    legacy_exit_code=None,
-                    exit_code=0,
-                )
-            )
-        return _emit(
-            _error_result(
-                "argument parser exited before verification",
-                error_id="invalid-invocation",
-                exit_code=EX_USAGE,
-            )
-        )
     except ContractArgumentError as exc:
         return _emit(
             _error_result(
                 str(exc),
                 error_id=exc.error_id,
                 exit_code=EX_USAGE,
+            )
+        )
+
+    if args.help:
+        _build_parser().print_help()
+        return _emit(
+            _complete_result(
+                gate=_gate("not_requested"),
+                report=None,
+                legacy_exit_code=None,
+                exit_code=0,
             )
         )
 

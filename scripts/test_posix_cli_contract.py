@@ -261,6 +261,21 @@ def test_contract_invocation_errors() -> None:
         check("contract help no report", help_output["report"] is None)
         check("contract help gate not requested", help_output["gate"]["status"] == "not_requested")
 
+    for label, args in (
+        ("help-unknown", ("--contract", "posix-json-v1", "--help", "--bogus")),
+        ("help-text", ("--contract", "posix-json-v1", "--help", "--format", "text")),
+        ("help-pretty", ("--contract", "posix-json-v1", "--help", "--pretty")),
+        ("duplicate-help-alias", ("--contract", "posix-json-v1", "-h", "--help")),
+        ("missing-path", ("--contract", "posix-json-v1")),
+    ):
+        result = run(*args)
+        output = parse_terminal(label, result)
+        check(f"{label} exit", result.returncode == 64, result.stderr)
+        check(
+            f"{label} operational failed",
+            output is not None and output["operational"]["status"] == "failed",
+        )
+
     literal_selector = run("--", "--contract")
     check("literal selector uses legacy path", literal_selector.returncode == 2)
     check("literal selector emits no contract json", not literal_selector.stdout.strip())
