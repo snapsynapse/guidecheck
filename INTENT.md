@@ -79,6 +79,14 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 The current profile is declared in `profiles/1.0.0/spec.md` and tracked in `CHANGELOG.md`. The current version is 1.0.0, released. Root normative documents preserve the legacy contract; the self-guide remains pinned to 0.7.1. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` against independently pinned release, engine, and self-guide identities, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
 
+## Corrected content checks
+
+Decided by Sam on 2026-09-07: preserve frozen legacy reports and add an explicitly selected corrected evaluation path. The September 7 detector review reproduced negation false positives, affirmative-instruction false negatives, and unpinned script-dispatch gaps. These are maintenance of existing content-check obligations, not authority to silently alter a published evaluation contract.
+
+Existing supported profile behavior, findings, levels, report identity, and exit semantics remain frozen. The corrected path must have an explicit selection and distinguishable policy identity; its precise selector, version, normative changes, and migration design remain to be proposed under the admission criteria above. This decision does not automatically revise the released strict 1.0.0 policy, which reuses legacy content checks. Implementation, release, and hosted acceptance are not completed by this decision.
+
+Sam also decided on 2026-09-07 that an unresolved execution target blocks Level 3 acceptance on the corrected path. The guide must establish the effective target and satisfy the applicable pinning contract. A declared hash alone cannot resolve an unidentified target. This requirement does not change any released legacy or 1.0.0 evaluation.
+
 ## Maintenance and demand gate
 
 The June 9 disposition parked new product investment while maintaining existing
@@ -90,6 +98,8 @@ standard scope or authorize a cross-standard certification product. The Septembe
 
 ## Changelog
 
+- 2026-09-07: Sam selected blocking unresolved execution targets for Level 3 on the opt-in corrected path; released evaluations remain frozen.
+- 2026-09-07: Sam selected preservation of frozen legacy reports with opt-in corrected content checks. Recorded the decision and remaining selector/version design scope; evaluator and published profiles remain unchanged.
 - 2026-09-05: Sam approved the version-aware anchor proposal with legacy compatibility required. The local 1.0.0 candidate excludes repository-file evidence from independent qualification, while the dispatcher preserves supported legacy evaluations and published self-guide bytes. Release and deployment remain separate. See `docs/anchor-policy-compatibility.md` and `docs/anchor-dispatch-validation.md`.
 
 - 2026-07-31: Opened the canonical approval receipt as a live open question, prompted by an external question about binding approval to the exact executing action. Detail in `roadmap.md`; the identity fork (field in the record versus signer over it) is the first thing to resolve, gated behind Level 5 fixture-suite design.

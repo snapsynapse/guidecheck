@@ -6,6 +6,7 @@ import vm from 'node:vm';
 
 const source = fs.readFileSync(new URL('../docs/verify/verify.js', import.meta.url), 'utf8');
 const strict = JSON.parse(fs.readFileSync(new URL('../profiles/1.0.0/example-report.json', import.meta.url)));
+const corrected = JSON.parse(fs.readFileSync(new URL('../profiles/2.0.0/example-report.json', import.meta.url)));
 const baseline = JSON.parse(fs.readFileSync(new URL('../fixtures/compatibility/legacy-baseline.json', import.meta.url)));
 const legacy = baseline.results.hosted.find(item => item.body?.guide?.achieved_level === 4).body;
 class Element {
@@ -27,18 +28,26 @@ const context = {
   URL: { createObjectURL: blob => { downloaded.push(blob); return 'blob:test'; }, revokeObjectURL: () => {} },
 };
 vm.runInNewContext(source, context);
-for (const report of [legacy, strict, legacy, strict]) {
+for (const report of [legacy, strict, corrected, legacy, strict, corrected]) {
   response = report;
   element('guide-url').value = report.input.url;
   element('verify-form').listeners.submit({ preventDefault() {} });
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(element('verify-compact').textContent, report.compact_report);
   assert.deepEqual(JSON.parse(element('verify-json').textContent), report);
-  assert.equal(element('verify-headline').textContent.startsWith('Profile 1.0.0'), report === strict);
+  const selection = report.profile_selection;
+  assert.equal(element('verify-headline').textContent.startsWith('Profile '), Boolean(selection));
+  if (selection) {
+    assert.ok(element('verify-headline').textContent.includes(selection.evaluated_policy));
+    if (selection.content_policy) {
+      assert.ok(element('verify-headline').textContent.includes(selection.content_policy));
+      assert.ok(element('verify-headline').textContent.includes(selection.anchor_policy));
+    }
+  }
   element('verify-copy-compact').listeners.click();
   element('verify-download').listeners.click();
   assert.equal(copied.at(-1), report.compact_report);
   assert.deepEqual(JSON.parse(await downloaded.at(-1).text()), report);
   assert.equal(element('verify-submit').disabled, false);
 }
-console.log('Verify UI contract passed: legacy/strict form, render, copy, download, and repeat requests.');
+console.log('Verify UI contract passed: legacy/strict/corrected render, policy identity, copy, download, and repeat requests.');

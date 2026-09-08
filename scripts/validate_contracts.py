@@ -34,6 +34,9 @@ SCHEMA_FILES = [
     ROOT / "schemas" / "1.0.0" / "manifest.schema.json",
     ROOT / "schemas" / "1.0.0" / "verifier-output.schema.json",
     ROOT / "schemas" / "1.0.0" / "fixture-expected.schema.json",
+    ROOT / "schemas" / "2.0.0" / "manifest.schema.json",
+    ROOT / "schemas" / "2.0.0" / "verifier-output.schema.json",
+    ROOT / "schemas" / "2.0.0" / "fixture-expected.schema.json",
 ]
 FINDING_ID_PREFIXES = {
     "action-block",

@@ -4,6 +4,17 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+- Include the corrected evaluator in the installable wheel and exercise legacy,
+  strict, corrected, and scanner dispatch from an isolated installed consumer in CI.
+
+- Add the root assistant-guide manifest and enforce byte equality with the
+  served copy, preserving published self-guide and manifest bytes.
+- Add a local, unreleased 2.0.0 profile candidate selected only by guide bytes.
+  It corrects bounded negation and independent occurrence matching, blocks
+  unresolved execution targets, recognizes syntax-proven repository dispatch,
+  and inherits the released 1.0.0 strict anchor policy without changing legacy
+  or 1.0.0 reports.
+
 ## [1.0.0] - 2026-09-05
 
 ### Added

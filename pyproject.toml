@@ -31,6 +31,7 @@ py-modules = [
     "guidecheck_legacy_constants",
     "guidecheck_profiles",
     "guidecheck_strict",
+    "guidecheck_corrected",
     "guidecheck_constants",
     "guidecheck_fetch",
 ]

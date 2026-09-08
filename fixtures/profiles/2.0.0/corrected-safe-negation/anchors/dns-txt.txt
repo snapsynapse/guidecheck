@@ -1,0 +1,1 @@
+v=1; sha256=428d9aa5b7a31d3260ef4fc0040d6c7b62c701d321170ea599ea16c0b04dac63; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt

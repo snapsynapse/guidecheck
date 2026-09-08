@@ -23,7 +23,8 @@ from pathlib import Path
 
 from guidecheck_constants import (GUIDECHECK_VERSION, LATEST_RELEASED_PROFILE_VERSION,
                                  SELF_GUIDE_VERSION, SELF_GUIDE_PROFILE_VERSION,
-                                 LEGACY_ENGINE_VERSION, STRICT_ENGINE_VERSION)
+                                 LEGACY_ENGINE_VERSION, STRICT_ENGINE_VERSION,
+                                 CORRECTED_ENGINE_VERSION)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -91,11 +92,14 @@ CHECKS: list[tuple[str, str, str]] = [
     ("docs/verifier-examples.html", r"\"version\": \"(\d+\.\d+\.\d+)\"", LEGACY_VERSION),
     ("profiles/1.0.0/spec.md", r"^profile-version: (\S+)$", STRICT_ENGINE_VERSION),
     ("profiles/1.0.0/verifier-conformance.md", r"_profile_version\": \"(\d+\.\d+\.\d+)\"", STRICT_ENGINE_VERSION),
+    ("profiles/2.0.0/spec.md", r"^Status: local candidate for profile (\d+\.\d+\.\d+)\.", CORRECTED_ENGINE_VERSION),
+    ("profiles/2.0.0/verifier-conformance.md", r"^Status: local candidate for profile (\d+\.\d+\.\d+)\.", CORRECTED_ENGINE_VERSION),
     ("CHANGELOG.md", r"^## \[(\d+\.\d+\.\d+)\] - \d{4}-\d{2}-\d{2}$", None),  # type: ignore[list-item]
 ]
 
 BYTE_IDENTICAL: list[tuple[str, str]] = [
     ("assistant-guide.txt", "docs/.well-known/assistant-guide.txt"),
+    ("assistant-guide-manifest.txt", "docs/.well-known/assistant-guide-manifest.txt"),
 ]
 
 
@@ -159,7 +163,7 @@ def check_release_dates() -> list[str]:
 
 def main() -> int:
     failures = check_patterns() + check_byte_identical() + check_release_dates()
-    if SELF_GUIDE_VERSION != "0.7.1" or SELF_GUIDE_PROFILE_VERSION != "0.7.1" or LEGACY_ENGINE_VERSION != "0.7.1" or STRICT_ENGINE_VERSION != "1.0.0":
+    if SELF_GUIDE_VERSION != "0.7.1" or SELF_GUIDE_PROFILE_VERSION != "0.7.1" or LEGACY_ENGINE_VERSION != "0.7.1" or STRICT_ENGINE_VERSION != "1.0.0" or CORRECTED_ENGINE_VERSION != "2.0.0":
         failures.append("engine/self-guide profile identities disagree with the versioned contracts")
     if not re.fullmatch(r"1\.0\.0(?:\.dev[0-9]+)?", GUIDECHECK_VERSION):
         failures.append("dispatcher must use its separate 1.0.0 development/release version")

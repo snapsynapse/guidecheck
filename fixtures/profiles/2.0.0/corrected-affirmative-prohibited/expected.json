@@ -1,0 +1,10 @@
+{
+  "evidence_fetched": true,
+  "achieved_level": 2,
+  "blocking_finding_ids": [
+    "prohibited.encoded-execution",
+    "prohibited.skip-approval"
+  ],
+  "warning_finding_ids": [],
+  "qualifying_anchor_count": 1
+}

@@ -1,0 +1,9 @@
+guide-path: /.well-known/assistant-guide.txt
+guide-version: 2.0.0
+guide-sha256: dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e
+guide-bytes: 3403
+immutable-release-url: https://example.com/releases/2.0.0
+profile: human-verifiable-assistant-guide
+profile-version: 2.0.0
+canonical-url: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt
+repository-url: https://github.com/snapsynapse/compat

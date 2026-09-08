@@ -9,7 +9,8 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from guidecheck_constants import GUIDECHECK_VERSION, LEGACY_ENGINE_VERSION, STRICT_ENGINE_VERSION
+from guidecheck_constants import (CORRECTED_ENGINE_VERSION, GUIDECHECK_VERSION,
+                                  LEGACY_ENGINE_VERSION, STRICT_ENGINE_VERSION)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -35,6 +36,7 @@ def main() -> None:
         'dispatcher_version': GUIDECHECK_VERSION,
         'legacy_engine_version': LEGACY_ENGINE_VERSION,
         'strict_engine_version': STRICT_ENGINE_VERSION,
+        'corrected_engine_version': CORRECTED_ENGINE_VERSION,
         'public_sha256': {p: hashlib.sha256((output / p).read_bytes()).hexdigest()
                           for p in sorted(public_paths)},
         'source_sha256': {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest()

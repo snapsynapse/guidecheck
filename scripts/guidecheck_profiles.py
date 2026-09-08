@@ -5,7 +5,8 @@ import re
 
 LEGACY_VERSIONS = frozenset({"0.1.0", "0.2.0", "0.3.0", "0.3.1", "0.4.0", "0.5.0", "0.6.0", "0.7.0", "0.7.1"})
 STRICT_PROFILE_VERSION = "1.0.0"
-SUPPORTED_VERSIONS = LEGACY_VERSIONS | {STRICT_PROFILE_VERSION}
+CORRECTED_PROFILE_VERSION = "2.0.0"
+SUPPORTED_VERSIONS = LEGACY_VERSIONS | {STRICT_PROFILE_VERSION, CORRECTED_PROFILE_VERSION}
 PROFILE_NAME = "human-verifiable-assistant-guide"
 _RELEASE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?")
 
@@ -25,6 +26,14 @@ class ProfileSelection:
     @property
     def strict(self):
         return self.policy_version == STRICT_PROFILE_VERSION
+
+    @property
+    def corrected(self):
+        return self.policy_version == CORRECTED_PROFILE_VERSION
+
+    @property
+    def modern(self):
+        return self.policy_version in {STRICT_PROFILE_VERSION, CORRECTED_PROFILE_VERSION}
 
 
 def policy_key(value):
@@ -61,6 +70,8 @@ def select_profile(data: bytes, required_profile_version=None):
     # Malformed unambiguous old selectors still receive legacy diagnostics.
     if selected == STRICT_PROFILE_VERSION and (len(versions) != 1 or names != [PROFILE_NAME]):
         raise ProfileError("profile-version-ambiguous", "strict profile requires one profile name and one version selector")
+    if selected == CORRECTED_PROFILE_VERSION and (len(versions) != 1 or names != [PROFILE_NAME]):
+        raise ProfileError("profile-version-ambiguous", "corrected profile requires one profile name and one version selector")
     if required_profile_version is not None:
         required = policy_key(required_profile_version)
         if declared is None or required != selected:
@@ -69,7 +80,7 @@ def select_profile(data: bytes, required_profile_version=None):
 
 
 def check_legacy_manifest(selection, manifest_text):
-    if selection.strict or not manifest_text:
+    if selection.modern or not manifest_text:
         return
     for line in manifest_text.splitlines():
         if ":" not in line:
