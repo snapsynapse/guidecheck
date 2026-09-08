@@ -2,21 +2,20 @@
 
 Status: non-normative companion to `spec.md`.
 
-Version note: the current candidate profile is 2.0.0 and is unpublished;
-1.0.0 remains the last published profile. The candidate preserves legacy and
+Version note: the current release profile is 2.0.0. It preserves legacy and
 1.0.0 evaluation while selecting `corrected-content-1` only for a matching
 2.0.0 guide declaration. To require a profile, assert
 `required_profile_version` in a hosted request or use
 `--require-profile-version` locally. Do not change an existing guide or its
 anchors merely to upgrade verifier software. See
 [adoption guidance](ADOPTION.md#version-aware-adoption) and
-[the candidate release notes](RELEASE_NOTES-2.0.0.md).
+[the release notes](RELEASE_NOTES-2.0.0.md).
 
 During rollout, an older hosted verifier may ignore an unfamiliar request field.
-Consumers requiring 2.0.0 must also validate the response against the candidate
+Consumers requiring 2.0.0 must also validate the response against the released
 schema and confirm `profile_selection.evaluated_policy` is `2.0.0`. HTTP 200 or
 a legacy Level 4 result is insufficient. The current production service has not
-received this candidate in this session. The experimental POSIX CLI selector,
+received this release in this session. The experimental POSIX CLI selector,
 `--contract posix-json-v1`, is independent of the guide-declared profile
 selector; see [the CLI contract](docs/cli-contract.md).
 

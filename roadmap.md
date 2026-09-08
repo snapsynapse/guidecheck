@@ -7,18 +7,18 @@ items are visible without being treated as commitments.
 
 ## Current work queue (reconciled 2026-09-07)
 
-- Local profile 2.0.0 candidate work is implemented and locally validated under
+- Profile 2.0.0 release work is implemented and locally validated under
   `docs/corrected-content-policy-2026-09-07.md`. The
   [validation record](docs/corrected-content-validation-2026-09-07.md) pins the
   base HEAD, local fingerprints, compatibility evidence, and delivery boundary.
-  The candidate uses explicit
+  The release uses explicit
   guide-byte selection, corrected prohibited-pattern boundaries, blocking
   unresolved execution targets, and the 1.0.0 strict anchor policy. It is not
-  released or deployed, and no adopter report migrates automatically.
+  deployed through this document, and no adopter report migrates automatically.
 - The experimental local verification CLI adapter is implemented under
-  [the POSIX JSON contract](docs/cli-contract.md). The software 2.0.0 candidate
+  [the POSIX JSON contract](docs/cli-contract.md). The software 2.0.0 release
   and [delivery procedure](docs/release-2.0.0.md) are the next publication unit.
-  Complete preview acceptance before main integration and release. Broader CLI
+  Complete production verification after main integration and release. Broader CLI
   adoption follows pilot delivery; it does not block the corrected profile.
 - Local bounded-execution phases 1-3 and local phase 5 are included in release 1.0.0. Hosted artifact verification and transitive scanning are next,
   after deciding fetch limits and budget. Class-warning promotion is a separate

@@ -1,11 +1,10 @@
 # GuideCheck
 
-The 2.0.0 candidate adds an opt-in corrected content policy while preserving
-legacy and 1.0.0 evaluations. It is unpublished: 1.0.0 remains the last
-published profile, and the self-guide and frozen legacy reports remain 0.7.1.
-See the [2.0.0 candidate profile](profiles/2.0.0/spec.md),
+GuideCheck 2.0.0 adds an opt-in corrected-content policy while preserving
+legacy and 1.0.0 evaluations. It is the current release; the self-guide and
+frozen legacy reports remain 0.7.1. See the [2.0.0 profile](https://github.com/snapsynapse/guidecheck/blob/v2.0.0/profiles/2.0.0/spec.md),
 [corrected-content policy](docs/corrected-content-policy-2026-09-07.md), and
-[candidate release notes](RELEASE_NOTES-2.0.0.md). The current candidate is 2.0.0.
+[release notes](RELEASE_NOTES-2.0.0.md). The current release is 2.0.0.
 
 GuideCheck is a trust boundary protocol for agent instruction surfaces. It
 ensures the instructions humans approve are the same instructions agents
@@ -98,8 +97,8 @@ agents may execute another.
 ## Documents
 
 - `ADOPTION.md` - the practical on-ramp: conformance ladder, level-by-level path, guide-author checklist
-- `profiles/2.0.0/spec.md` and `profiles/2.0.0/verifier-conformance.md` - the unpublished 2.0.0 candidate guide and verifier profiles
-- `profiles/1.0.0/spec.md` and `profiles/1.0.0/verifier-conformance.md` - the last published guide and verifier profiles
+- `profiles/2.0.0/spec.md` and `profiles/2.0.0/verifier-conformance.md` - the current released guide and verifier profiles
+- `profiles/1.0.0/spec.md` and `profiles/1.0.0/verifier-conformance.md` - the prior released guide and verifier profiles
 - `spec.md` and `verifier-conformance.md` - preserved normative legacy profiles
 - `design-rationale.md` - why the design choices were made
 - `operator-guide.md` - non-normative defense-in-depth practices for operators
@@ -258,8 +257,8 @@ expectation contract by `scripts/check_reference_verifier.py`.
 
 ## Status
 
-The current candidate is 2.0.0 and is unpublished. Profile 1.0.0 remains the
-last published profile; legacy profiles remain supported. See
+The current release is 2.0.0. Profile 1.0.0 remains supported as a prior
+release, and legacy profiles remain supported. See
 `RELEASE_NOTES-2.0.0.md` and `CHANGELOG.md`.
 
 This is an early-stage open standard. The most useful feedback right now is

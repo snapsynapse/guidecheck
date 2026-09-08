@@ -1,9 +1,9 @@
 """Shared GuideCheck code-level constants."""
 
-# Candidate software identity is independent of published-profile, engine, and
-# anchored self-guide identities. 2.0.0 is not published; 1.0.0 remains latest.
+# Released software identity is independent of engine and anchored self-guide
+# identities. Profile 2.0.0 is the latest released profile.
 GUIDECHECK_VERSION = "2.0.0"
-LATEST_RELEASED_PROFILE_VERSION = "1.0.0"
+LATEST_RELEASED_PROFILE_VERSION = "2.0.0"
 SELF_GUIDE_VERSION = "0.7.1"
 SELF_GUIDE_PROFILE_VERSION = "0.7.1"
 LEGACY_ENGINE_VERSION = "0.7.1"

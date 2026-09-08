@@ -1,5 +1,5 @@
-Status: local candidate for profile 2.0.0. This profile is not released. Legacy
-contracts remain available in the repository root and prior release tags.
+Status: released profile 2.0.0. Legacy contracts remain available in the
+repository root and prior release tags.
 
 # GuideCheck Verifier Conformance Profile
 
@@ -788,7 +788,7 @@ The 2.0.0 report MUST identify `declared_version: 2.0.0`,
 `anchor_policy: 1.0.0-strict` through `profile_selection`. The `verifier`
 object MUST identify guide-profile and verifier-profile version 2.0.0 while
 `verifier.version` identifies the actual software release that produced the
-candidate report. The report also includes `qualifying_anchor_count`.
+released-profile report. The report also includes `qualifying_anchor_count`.
 Repository evidence MUST be shown as excluded in human output. Level, findings,
 hash-pinned status, and proceed result MUST derive from the final selected
 evaluation. Neither a positive conformance result nor `Proceed? yes` grants

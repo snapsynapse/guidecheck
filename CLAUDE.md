@@ -85,8 +85,8 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   consistent with them, not the other way around.
 - Software, engine, released-profile, and self-guide versions are separate in
   `scripts/guidecheck_constants.py`. The legacy engine has frozen constants.
-  `scripts/check_version_sync.py` checks the 2.0.0 candidate surfaces while
-  legacy/self-guide surfaces remain 0.7.1; candidate work must not rewrite the
+  `scripts/check_version_sync.py` checks the 2.0.0 release surfaces while
+  legacy/self-guide surfaces remain 0.7.1; release work must not rewrite the
   published self-guide or its anchors.
 - `finding-ids.md` is the normative registry for finding ids; new finding ids
   used by fixtures or emitted by verifiers/scanner must be registered there
@@ -131,8 +131,8 @@ builds and Sigstore-signs release + conformance-kit artifacts.
 
 ## Current state
 
-- The current candidate is 2.0.0 and is unpublished. Profile 1.0.0 remains the
-  last published profile (see `CHANGELOG.md`).
+- The current release is 2.0.0. Profile 1.0.0 remains supported as a prior
+  release (see `CHANGELOG.md`).
 - Most recent work (2026-07-07): added `guidecheck scan`, a standalone
   instruction-surface scanner for existing files (AGENTS.md/CLAUDE.md/
   README/SKILL/llms.txt/assistant-guide.txt) that flags hidden-instruction
@@ -166,11 +166,11 @@ Local bounded-execution findings are implemented in the shared verifier. Pins
 remain unverified, including through hosted callers. See roadmap.md for pending
 hosted fetching and independence decisions. Legacy profile behavior remains pinned to the pre-dispatch baseline.
 
-## Corrected-content candidate (2026-09-07)
+## Corrected-content release (2026-09-07)
 
-The opt-in 2.0.0 candidate selects `corrected-content-1` while retaining the
+The opt-in 2.0.0 release selects `corrected-content-1` while retaining the
 `1.0.0-strict` anchor policy. See `docs/corrected-content-policy-2026-09-07.md`
-and `RELEASE_NOTES-2.0.0.md`. It does not publish, migrate, or reinterpret
+and `RELEASE_NOTES-2.0.0.md`. It does not migrate or reinterpret
 legacy, 1.0.0, or self-guide bytes. The experimental POSIX CLI selector
 `--contract posix-json-v1` is independent of the guide-declared profile
 selector; see `docs/cli-contract.md`.
