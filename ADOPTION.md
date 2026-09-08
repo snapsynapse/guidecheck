@@ -3,10 +3,9 @@
 ## Version-aware adoption
 
 Existing supported legacy guides keep their current evaluation under the 2.0.0
-candidate dispatcher. No guide, manifest, DNS, or repository-anchor rotation
-is required for that compatibility. The current candidate is
-[2.0.0](profiles/2.0.0/spec.md) and is unpublished; [1.0.0](profiles/1.0.0/spec.md)
-remains the last published profile, and legacy profiles remain supported.
+dispatcher. No guide, manifest, DNS, or repository-anchor rotation is required
+for that compatibility. The current release is [2.0.0](https://github.com/snapsynapse/guidecheck/blob/v2.0.0/profiles/2.0.0/spec.md);
+[1.0.0](https://github.com/snapsynapse/guidecheck/blob/v1.0.0/profiles/1.0.0/spec.md) and legacy profiles remain supported.
 
 Deliberately adopting 1.0.0 requires matching guide/manifest profile declarations
 and another qualifying anchor when the repository was the only source of
@@ -16,8 +15,8 @@ Consumers that require 1.0.0 can use the `required_profile_version` API field or
 `--require-profile-version` local CLI assertion. These reject an incompatible
 guide rather than reinterpret its bytes. Local evaluation still caps at Level 3.
 
-Deliberately adopting the 2.0.0 candidate requires matching guide and manifest
-profile declarations. Its `corrected-content-1` policy is opt-in and its
+Deliberately adopting 2.0.0 requires matching guide and manifest profile
+declarations. Its `corrected-content-1` policy is opt-in and its
 `1.0.0-strict` anchor policy still excludes repository-file evidence from Level
 4 qualification. It does not migrate existing reports. The experimental POSIX
 CLI selector, `--contract posix-json-v1`, is independent of the guide-declared
@@ -26,7 +25,7 @@ profile selector; see [the CLI contract](docs/cli-contract.md).
 The guidance below describes the published legacy profile. See the
 [compatibility contract](docs/anchor-policy-compatibility.md),
 [corrected-content policy](docs/corrected-content-policy-2026-09-07.md), and
-[candidate release notes](RELEASE_NOTES-2.0.0.md) for selection and status.
+[release notes](RELEASE_NOTES-2.0.0.md) for selection and status.
 
 This is the practical on-ramp to GuideCheck. It explains what an
 `assistant-guide.txt` artifact is, what the conformance ladder means in

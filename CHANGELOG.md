@@ -2,7 +2,7 @@
 
 All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
-## [2.0.0] - 2026-09-07 (unreleased candidate)
+## [2.0.0] - 2026-09-07
 
 - Include the corrected evaluator in the installable wheel and exercise legacy,
   strict, corrected, and scanner dispatch from an isolated installed consumer in CI.
@@ -13,7 +13,7 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   replays alongside the existing legacy baseline.
 - Add the root assistant-guide manifest and enforce byte equality with the
   served copy, preserving published self-guide and manifest bytes.
-- Add a local, unreleased 2.0.0 profile candidate selected only by guide bytes.
+- Add a released 2.0.0 profile selected only by guide bytes.
   It corrects bounded negation and independent occurrence matching, blocks
   unresolved execution targets, recognizes syntax-proven repository dispatch,
   and inherits the released 1.0.0 strict anchor policy without changing legacy
@@ -389,7 +389,8 @@ Initial draft for review.
 - designated standard primary verifier at `https://guidecheck.org/verify`
 - canonical site at `https://guidecheck.org/`
 
-[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/snapsynapse/guidecheck/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/snapsynapse/guidecheck/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/snapsynapse/guidecheck/compare/v0.7.1...v1.0.0
 [0.7.1]: https://github.com/snapsynapse/guidecheck/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/snapsynapse/guidecheck/compare/v0.6.0...v0.7.0

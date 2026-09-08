@@ -1,5 +1,5 @@
-Status: local candidate for profile 2.0.0. This profile is not released. Legacy
-contracts remain available in the repository root and prior release tags.
+Status: released profile 2.0.0. Legacy contracts remain available in the
+repository root and prior release tags.
 
 # GuideCheck Human-Verifiable Assistant Guide Profile
 

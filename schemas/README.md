@@ -2,8 +2,8 @@
 
 JSON Schema (Draft 2020-12) definitions for machine-readable artifacts referenced by `spec.md` and `verifier-conformance.md`.
 
-The current candidate profile 2.0.0 has versioned schemas in `schemas/2.0.0/`.
-It is unpublished; `schemas/1.0.0/` remains the last published profile schema
+The current release profile 2.0.0 has versioned schemas in `schemas/2.0.0/`.
+`schemas/1.0.0/` remains available for the prior released profile schema
 set and root schemas preserve the legacy contract.
 
 `cli-result-posix-json-v1.json` is the standalone experimental POSIX JSON CLI
