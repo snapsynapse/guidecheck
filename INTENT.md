@@ -77,13 +77,21 @@ GuideCheck is a PAICE Foundation standard. It sits alongside the other open-spec
 
 ## Versioning and authority
 
-The current profile is declared in `profiles/1.0.0/spec.md` and tracked in `CHANGELOG.md`. The current version is 1.0.0, released. Root normative documents preserve the legacy contract; the self-guide remains pinned to 0.7.1. The version is asserted by `scripts/check_version_sync.py` against `scripts/guidecheck_constants.py` against independently pinned release, engine, and self-guide identities, so the status here and the released tag cannot silently disagree. `spec.md` and `verifier-conformance.md` are normative. `design-rationale.md` and `threat-register.md` are explanatory and must stay consistent with the normative documents. `archive/` is historical and is not edited.
+The current candidate version is 2.0.0, declared in `profiles/2.0.0/` and not
+published. Profile 1.0.0 remains the last published profile and is tracked in
+`CHANGELOG.md`. Root normative documents preserve the legacy contract; the
+self-guide remains pinned to 0.7.1. `scripts/check_version_sync.py` asserts
+candidate, engine, and self-guide identities without treating the candidate as
+a published release. `spec.md` and `verifier-conformance.md` are normative.
+`design-rationale.md` and `threat-register.md` are explanatory and must stay
+consistent with the normative documents. `archive/` is historical and is not
+edited.
 
 ## Corrected content checks
 
 Decided by Sam on 2026-09-07: preserve frozen legacy reports and add an explicitly selected corrected evaluation path. The September 7 detector review reproduced negation false positives, affirmative-instruction false negatives, and unpinned script-dispatch gaps. These are maintenance of existing content-check obligations, not authority to silently alter a published evaluation contract.
 
-Existing supported profile behavior, findings, levels, report identity, and exit semantics remain frozen. The corrected path must have an explicit selection and distinguishable policy identity; its precise selector, version, normative changes, and migration design remain to be proposed under the admission criteria above. This decision does not automatically revise the released strict 1.0.0 policy, which reuses legacy content checks. Implementation, release, and hosted acceptance are not completed by this decision.
+Existing supported profile behavior, findings, levels, report identity, and exit semantics remain frozen. The corrected path has explicit 2.0.0 selection and `corrected-content-1` policy identity, as defined in `docs/corrected-content-policy-2026-09-07.md`. This does not revise the published strict 1.0.0 policy, which reuses legacy content checks. Publication and hosted acceptance are not completed by this candidate.
 
 Sam also decided on 2026-09-07 that an unresolved execution target blocks Level 3 acceptance on the corrected path. The guide must establish the effective target and satisfy the applicable pinning contract. A declared hash alone cannot resolve an unidentified target. This requirement does not change any released legacy or 1.0.0 evaluation.
 

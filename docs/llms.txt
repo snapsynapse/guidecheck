@@ -4,7 +4,7 @@
 
 GuideCheck ensures the instructions humans approve are the same instructions agents execute. AI setup guides reach assistants through HTML, PDFs, docs sites, and copied terminal output, surfaces that can hide text a model reads but a human never sees. A tool-using assistant then runs those hidden instructions with delegated authority: a credential exposed, a destructive command run, a malicious dependency installed, or safeguards disabled while the human believed they had reviewed the guide. GuideCheck closes this review-integrity gap. It defines a constrained plain-text profile for assistant-guide.txt: strict ASCII, capped at 8 KiB, structured into explicit action blocks, so a human can review the entire instruction surface before an assistant follows it. Conformance verifies form, not safety.
 
-Version 1.0.0 dispatches by the guide's declared profile. Supported legacy declarations retain the 0.7.1 evaluator and report contract. Under explicit 1.0.0 declarations, repository-file matches are corroborating evidence and cannot qualify for Level 4; another qualifying anchor is required. Existing guide and manifest bytes need no migration. Root specification documents preserve the legacy contract.
+Current candidate: 2.0.0. It is unpublished; 1.0.0 remains the last published profile. The candidate dispatches by the guide's declared profile. Supported legacy declarations retain the 0.7.1 evaluator and report contract, 1.0.0 retains its strict anchor policy, and explicit 2.0.0 declarations select `corrected-content-1` with the `1.0.0-strict` anchor policy. Existing guide and manifest bytes need no migration. Root specification documents preserve the legacy contract. The experimental POSIX CLI selector `--contract posix-json-v1` is independent of guide-declared profile selection; see [CLI contract](https://github.com/snapsynapse/guidecheck/blob/main/docs/cli-contract.md).
 
 ## Concepts
 
@@ -18,8 +18,9 @@ Version 1.0.0 dispatches by the guide's declared profile. Supported legacy decla
 ## Key files
 
 - [Adoption guide](https://github.com/snapsynapse/guidecheck/blob/main/ADOPTION.md): The practical on-ramp: conformance ladder, level-by-level path, guide-author checklist.
-- [Specification](https://github.com/snapsynapse/guidecheck/blob/v1.0.0/profiles/1.0.0/spec.md): The normative Human-Verifiable Assistant Guide profile.
-- [Verifier conformance](https://github.com/snapsynapse/guidecheck/blob/v1.0.0/profiles/1.0.0/verifier-conformance.md): The normative profile for tools that verify guides.
+- [2.0.0 candidate specification](https://github.com/snapsynapse/guidecheck/blob/main/profiles/2.0.0/spec.md): Unpublished corrected-content candidate profile.
+- [2.0.0 candidate verifier conformance](https://github.com/snapsynapse/guidecheck/blob/main/profiles/2.0.0/verifier-conformance.md): Unpublished candidate profile for verifier tools.
+- [Candidate release notes](https://github.com/snapsynapse/guidecheck/blob/main/RELEASE_NOTES-2.0.0.md): Candidate status and scope.
 - [Changelog](https://github.com/snapsynapse/guidecheck/blob/main/CHANGELOG.md): Version history.
 - [ACS integration](https://github.com/snapsynapse/guidecheck/blob/main/docs/acs-integration.md): Non-normative patterns for runtime control hooks and Guardian enforcement.
 - [MCP integration](https://github.com/snapsynapse/guidecheck/blob/main/docs/mcp-integration.md): Non-normative patterns for MCP server authors and host implementers.

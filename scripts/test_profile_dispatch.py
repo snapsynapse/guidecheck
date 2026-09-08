@@ -103,7 +103,7 @@ class ProfileDispatchTests(unittest.TestCase):
                 self.assertEqual(result["guide"]["achieved_level"], level)
                 self.assertIn(f"Level: {level}\n", result["compact_report"])
                 self.assertEqual(result["verifier"]["guide_profile_version"], version)
-                self.assertEqual(result["verifier"]["version"], "1.0.0")
+                self.assertEqual(result["verifier"]["version"], "2.0.0" if version == "2.0.0" else "1.0.0")
                 if version == "2.0.0":
                     self.assertEqual(result["profile_selection"], {
                         "declared_version": "2.0.0",
@@ -177,7 +177,7 @@ class ProfileDispatchTests(unittest.TestCase):
                 self.assertIn("fetched_at", anchor)
                 self.assertFalse(anchor["qualifies_for_level4"])
             if version == "2.0.0":
-                self.assertEqual(request.body["verifier"]["version"], "1.0.0")
+                self.assertEqual(request.body["verifier"]["version"], "2.0.0")
                 self.assertEqual(request.body["profile_selection"]["content_policy"], "corrected-content-1")
                 self.assertEqual(request.body["profile_selection"]["anchor_policy"], "1.0.0-strict")
             calls.clear()
@@ -239,7 +239,7 @@ class ProfileDispatchTests(unittest.TestCase):
             result = subprocess.run([sys.executable, str(ROOT / "scripts/guidecheck_cli.py"), "verify", str(path), "--manifest", str(manifest_path), "--require-profile-version", "2.0.0"], text=True, capture_output=True)
             self.assertEqual(result.returncode, 1)
             output = json.loads(result.stdout)
-            self.assertEqual(output["verifier"]["version"], "1.0.0")
+            self.assertEqual(output["verifier"]["version"], "2.0.0")
             self.assertEqual(output["profile_selection"], {
                 "declared_version": "2.0.0",
                 "evaluated_policy": "2.0.0",

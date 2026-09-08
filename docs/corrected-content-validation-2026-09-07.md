@@ -1,6 +1,11 @@
 # Corrected Profile 2.0.0 Local Validation
 Date: 2026-09-07
 
+Scope: historical local evidence for corrected-profile checkpoint `20fd911`,
+before the CLI adapter and software 2.0.0 candidate preparation. Version and
+fingerprint statements below describe that checkpoint. Current release
+preparation is tracked in `docs/release-2.0.0.md`.
+
 ## Result
 
 The explicitly selected profile 2.0.0 candidate is implemented and passes the

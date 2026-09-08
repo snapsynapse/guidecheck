@@ -15,7 +15,11 @@ items are visible without being treated as commitments.
   guide-byte selection, corrected prohibited-pattern boundaries, blocking
   unresolved execution targets, and the 1.0.0 strict anchor policy. It is not
   released or deployed, and no adopter report migrates automatically.
-
+- The experimental local verification CLI adapter is implemented under
+  [the POSIX JSON contract](docs/cli-contract.md). The software 2.0.0 candidate
+  and [delivery procedure](docs/release-2.0.0.md) are the next publication unit.
+  Complete preview acceptance before main integration and release. Broader CLI
+  adoption follows pilot delivery; it does not block the corrected profile.
 - Local bounded-execution phases 1-3 and local phase 5 are included in release 1.0.0. Hosted artifact verification and transitive scanning are next,
   after deciding fetch limits and budget. Class-warning promotion is a separate
   conformance decision, not a prerequisite for local script blocking.

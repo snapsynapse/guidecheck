@@ -1,7 +1,7 @@
 {
   "verifier": {
     "name": "guidecheck-hosted",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "verifier_profile": "human-verifiable-assistant-guide-verifier",
     "verifier_profile_version": "2.0.0",
     "guide_profile": "human-verifiable-assistant-guide",
@@ -90,7 +90,7 @@
     }
   ],
   "location_note": "This guide was verified at https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt, which is not the standard location. A conformant guide must be named assistant-guide.txt and served at https://snapsynapse.github.io/.well-known/assistant-guide.txt so assistants can discover it. Move or copy the file there.",
-  "compact_report": "Verifier: guidecheck-hosted 1.0.0\nGuide: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt\nProfile: 2.0.0 (declared 2.0.0)\nContent policy: corrected-content-1\nAnchor policy: 1.0.0-strict\nQualifying anchors: 1\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 4\nSHA-256: dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e\nBlocking findings: 0\nWarnings: 1\nHash pinned: yes\nProceed? yes",
+  "compact_report": "Verifier: guidecheck-hosted 2.0.0\nGuide: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt\nProfile: 2.0.0 (declared 2.0.0)\nContent policy: corrected-content-1\nAnchor policy: 1.0.0-strict\nQualifying anchors: 1\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 4\nSHA-256: dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e\nBlocking findings: 0\nWarnings: 1\nHash pinned: yes\nProceed? yes",
   "profile_selection": {
     "declared_version": "2.0.0",
     "evaluated_policy": "2.0.0",

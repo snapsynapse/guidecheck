@@ -2,11 +2,15 @@
 
 All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and its companion documents are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. Profile versions follow Semantic Versioning as defined in `spec.md` section 11.
 
-## [Unreleased]
+## [2.0.0] - 2026-09-07 (unreleased candidate)
 
 - Include the corrected evaluator in the installable wheel and exercise legacy,
   strict, corrected, and scanner dispatch from an isolated installed consumer in CI.
-
+- Add the experimental `--contract posix-json-v1` verification adapter with one
+  terminal JSON record, separate operational and gate outcomes, and stable exit
+  categories. Existing CLI output and exit behavior remain the default.
+- Freeze complete released 1.0.0 local and hosted reports in compatibility
+  replays alongside the existing legacy baseline.
 - Add the root assistant-guide manifest and enforce byte equality with the
   served copy, preserving published self-guide and manifest bytes.
 - Add a local, unreleased 2.0.0 profile candidate selected only by guide bytes.
