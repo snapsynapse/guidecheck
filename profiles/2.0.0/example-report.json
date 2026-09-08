@@ -1,0 +1,101 @@
+{
+  "verifier": {
+    "name": "guidecheck-hosted",
+    "version": "2.0.0",
+    "verifier_profile": "human-verifiable-assistant-guide-verifier",
+    "verifier_profile_version": "2.0.0",
+    "guide_profile": "human-verifiable-assistant-guide",
+    "guide_profile_version": "2.0.0"
+  },
+  "input": {
+    "evaluation_mode": "public-web",
+    "url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+    "submitted_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+    "auto_resolved": false
+  },
+  "outcome": "evaluated",
+  "fetch": {
+    "final_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+    "fetched_at": "2026-09-05T20:00:00Z",
+    "http_status": 200,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8",
+      "x-content-type-options": "nosniff",
+      "strict-transport-security": "max-age=31536000"
+    },
+    "redirects": [],
+    "tls_valid": true,
+    "bytes": 3403
+  },
+  "guide": {
+    "bytes": 3403,
+    "sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+    "achieved_level": 4,
+    "level5_ready": true
+  },
+  "summary": {
+    "blocking_findings": 0,
+    "warnings": 1,
+    "infos": 1
+  },
+  "findings": [
+    {
+      "id": "metadata.last-reviewed.age",
+      "severity": "info",
+      "message": "last-reviewed is 109 days old"
+    },
+    {
+      "id": "anchor.repository-file.independence-unestablished",
+      "severity": "warning",
+      "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+    }
+  ],
+  "hosted_limitations": [
+    "Profile 2.0.0 uses the 1.0.0 strict anchor policy and excludes repository-file hashes from Level 4 qualification.",
+    "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
+    "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched.",
+    "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
+    "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
+    "Level 5 runtime conformance is not evaluated."
+  ],
+  "manifest": {
+    "sha256": "9baa7da9113c2f3bda96251889a8a605385cc8b87fde3c9d91c32ac059c52241",
+    "fetched": true,
+    "hash_match": true,
+    "bytes_match": true,
+    "valid": true,
+    "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e"
+  },
+  "cross_channel_anchors": [
+    {
+      "channel": "dns-txt",
+      "status": "present-matches",
+      "observed_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "qualifies_for_level4": true,
+      "qualification_reason": "qualifying-channel",
+      "evidence_url": "https://cloudflare-dns.com/dns-query?name=_assistant-guide.snapsynapse.github.io&type=TXT",
+      "fetched_at": "2026-09-05T20:00:00Z",
+      "redirects": []
+    },
+    {
+      "channel": "repository-file",
+      "status": "present-matches",
+      "observed_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "qualifies_for_level4": false,
+      "qualification_reason": "repository-independence-unestablished",
+      "independence": "unestablished",
+      "evidence_url": "https://raw.githubusercontent.com/snapsynapse/compat/HEAD/docs/.well-known/assistant-guide.txt",
+      "fetched_at": "2026-09-05T20:00:00Z",
+      "redirects": []
+    }
+  ],
+  "location_note": "This guide was verified at https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt, which is not the standard location. A conformant guide must be named assistant-guide.txt and served at https://snapsynapse.github.io/.well-known/assistant-guide.txt so assistants can discover it. Move or copy the file there.",
+  "compact_report": "Verifier: guidecheck-hosted 2.0.0\nGuide: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt\nProfile: 2.0.0 (declared 2.0.0)\nContent policy: corrected-content-1\nAnchor policy: 1.0.0-strict\nQualifying anchors: 1\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 4\nSHA-256: dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e\nBlocking findings: 0\nWarnings: 1\nHash pinned: yes\nProceed? yes",
+  "profile_selection": {
+    "declared_version": "2.0.0",
+    "evaluated_policy": "2.0.0",
+    "content_policy": "corrected-content-1",
+    "anchor_policy": "1.0.0-strict"
+  },
+  "qualifying_anchor_count": 1
+}

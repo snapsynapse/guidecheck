@@ -1,6 +1,10 @@
-.PHONY: test-verify-ui test-legacy-anchor-compatibility test-bounded-execution eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-scanner test release-archive conformance-kit
+.PHONY: test-verify-ui test-legacy-anchor-compatibility test-bounded-execution test-corrected-content eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-scanner test release-archive conformance-kit
 
 VERSION := $(shell python3 -c "import sys; sys.path.insert(0, 'scripts'); from guidecheck_constants import GUIDECHECK_VERSION; print(GUIDECHECK_VERSION)")
+
+.PHONY: test-package-consumer test-posix-cli-contract
+test-package-consumer:
+	python3 scripts/test_package_consumer.py
 
 eval:
 	python3 scripts/eval_guidecheck.py
@@ -38,22 +42,29 @@ test-fetch-replay:
 test-cli-contract:
 	python3 scripts/test_cli_contract.py
 
+test-posix-cli-contract:
+	python3 scripts/test_posix_cli_contract.py
+
 test-scanner:
 	python3 scripts/test_scanner.py
 
 test-bounded-execution:
 	python3 scripts/test_bounded_execution.py
 
+test-corrected-content:
+	python3 scripts/test_corrected_content.py
+
 test-legacy-anchor-compatibility:
 	python3 scripts/test_legacy_anchor_compatibility.py
 	python3 scripts/test_dispatch_compatibility.py
+	python3 scripts/test_strict_compatibility.py
 	python3 scripts/test_profile_dispatch.py
 
 # Keep the established Python-only test entry point usable without Node.
 test-verify-ui:
 	node scripts/test_verify_ui.mjs
 
-test: test-legacy-anchor-compatibility test-bounded-execution eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-scanner
+test: test-legacy-anchor-compatibility test-bounded-execution test-corrected-content eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-posix-cli-contract test-scanner
 
 # Full source archive for a GitHub release, matching prior build/ layout.
 release-archive:

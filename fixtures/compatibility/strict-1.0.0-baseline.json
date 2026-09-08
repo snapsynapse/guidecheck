@@ -1,0 +1,706 @@
+{
+  "source_commit": "1bd5f3d6e31f79ca6125e7da03ec1746934eb6b5",
+  "results": {
+    "local": {
+      "dns-only": {
+        "verifier": {
+          "name": "guidecheck-reference-local",
+          "version": "1.0.0",
+          "verifier_profile": "human-verifiable-assistant-guide-verifier",
+          "verifier_profile_version": "1.0.0",
+          "guide_profile": "human-verifiable-assistant-guide",
+          "guide_profile_version": "1.0.0"
+        },
+        "input": {
+          "evaluation_mode": "local-file",
+          "path": "$ROOT/fixtures/profiles/1.0.0/dns-only/guide.txt",
+          "manifest_path": "$ROOT/fixtures/profiles/1.0.0/dns-only/manifest.txt",
+          "anchor_paths": {
+            "dns-txt": "$ROOT/fixtures/profiles/1.0.0/dns-only/anchors/dns-txt.txt"
+          }
+        },
+        "guide": {
+          "bytes": 3403,
+          "sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+          "achieved_level": 3,
+          "level5_ready": false
+        },
+        "local_evaluation": {
+          "evaluated_at": "2026-09-05T20:00:00Z"
+        },
+        "summary": {
+          "blocking_findings": 1,
+          "warnings": 0,
+          "infos": 2
+        },
+        "findings": [
+          {
+            "id": "metadata.last-reviewed.age",
+            "severity": "info",
+            "message": "last-reviewed is 107 days old"
+          },
+          {
+            "id": "anchor.independent.missing",
+            "severity": "error",
+            "message": "no fetched qualifying independent anchor is available for Level 4"
+          },
+          {
+            "id": "level4.requires-fetch",
+            "severity": "info",
+            "message": "local evidence was checked for consistency only; Level 4 requires fetched qualifying evidence"
+          }
+        ],
+        "manifest": {
+          "path": "$ROOT/fixtures/profiles/1.0.0/dns-only/manifest.txt",
+          "sha256": "585b59ac211e35d68d7a8fa10cef75daa2a3d4a04032fbe8c7c8db572d5be73c",
+          "fetched": false,
+          "hash_match": true,
+          "bytes_match": true,
+          "valid": true,
+          "guide_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d"
+        },
+        "cross_channel_anchors": [
+          {
+            "channel": "dns-txt",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/dns-only/anchors/dns-txt.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched"
+          }
+        ],
+        "compact_report": "Verifier: guidecheck-reference-local 1.0.0\nGuide: $ROOT/fixtures/profiles/1.0.0/dns-only/guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nLevel: 3\nSHA-256: 57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d\nBlocking findings: 1\nWarnings: 0\nHash pinned: no\nProceed? no",
+        "profile_selection": {
+          "declared_version": "1.0.0",
+          "evaluated_policy": "1.0.0"
+        },
+        "qualifying_anchor_count": 0
+      },
+      "local-consistency": {
+        "verifier": {
+          "name": "guidecheck-reference-local",
+          "version": "1.0.0",
+          "verifier_profile": "human-verifiable-assistant-guide-verifier",
+          "verifier_profile_version": "1.0.0",
+          "guide_profile": "human-verifiable-assistant-guide",
+          "guide_profile_version": "1.0.0"
+        },
+        "input": {
+          "evaluation_mode": "local-file",
+          "path": "$ROOT/fixtures/profiles/1.0.0/local-consistency/guide.txt",
+          "manifest_path": "$ROOT/fixtures/profiles/1.0.0/local-consistency/manifest.txt",
+          "anchor_paths": {
+            "dns-txt": "$ROOT/fixtures/profiles/1.0.0/local-consistency/anchors/dns-txt.txt",
+            "repository-file": "$ROOT/fixtures/profiles/1.0.0/local-consistency/anchors/repository-file.txt"
+          }
+        },
+        "guide": {
+          "bytes": 3403,
+          "sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+          "achieved_level": 3,
+          "level5_ready": false
+        },
+        "local_evaluation": {
+          "evaluated_at": "2026-09-05T20:00:00Z"
+        },
+        "summary": {
+          "blocking_findings": 1,
+          "warnings": 1,
+          "infos": 2
+        },
+        "findings": [
+          {
+            "id": "metadata.last-reviewed.age",
+            "severity": "info",
+            "message": "last-reviewed is 107 days old"
+          },
+          {
+            "id": "anchor.repository-file.independence-unestablished",
+            "severity": "warning",
+            "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+          },
+          {
+            "id": "anchor.independent.missing",
+            "severity": "error",
+            "message": "no fetched qualifying independent anchor is available for Level 4"
+          },
+          {
+            "id": "level4.requires-fetch",
+            "severity": "info",
+            "message": "local evidence was checked for consistency only; Level 4 requires fetched qualifying evidence"
+          }
+        ],
+        "manifest": {
+          "path": "$ROOT/fixtures/profiles/1.0.0/local-consistency/manifest.txt",
+          "sha256": "585b59ac211e35d68d7a8fa10cef75daa2a3d4a04032fbe8c7c8db572d5be73c",
+          "fetched": false,
+          "hash_match": true,
+          "bytes_match": true,
+          "valid": true,
+          "guide_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d"
+        },
+        "cross_channel_anchors": [
+          {
+            "channel": "dns-txt",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/local-consistency/anchors/dns-txt.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched"
+          },
+          {
+            "channel": "repository-file",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/local-consistency/anchors/repository-file.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched",
+            "independence": "unestablished"
+          }
+        ],
+        "compact_report": "Verifier: guidecheck-reference-local 1.0.0\nGuide: $ROOT/fixtures/profiles/1.0.0/local-consistency/guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 3\nSHA-256: 57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d\nBlocking findings: 1\nWarnings: 1\nHash pinned: no\nProceed? no",
+        "profile_selection": {
+          "declared_version": "1.0.0",
+          "evaluated_policy": "1.0.0"
+        },
+        "qualifying_anchor_count": 0
+      },
+      "manifest-profile-mismatch": {
+        "verifier": {
+          "name": "guidecheck-reference-local",
+          "version": "1.0.0",
+          "verifier_profile": "human-verifiable-assistant-guide-verifier",
+          "verifier_profile_version": "1.0.0",
+          "guide_profile": "human-verifiable-assistant-guide",
+          "guide_profile_version": "1.0.0"
+        },
+        "input": {
+          "evaluation_mode": "local-file",
+          "path": "$ROOT/fixtures/profiles/1.0.0/manifest-profile-mismatch/guide.txt",
+          "manifest_path": "$ROOT/fixtures/profiles/1.0.0/manifest-profile-mismatch/manifest.txt",
+          "anchor_paths": {
+            "dns-txt": "$ROOT/fixtures/profiles/1.0.0/manifest-profile-mismatch/anchors/dns-txt.txt"
+          }
+        },
+        "guide": {
+          "bytes": 3403,
+          "sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+          "achieved_level": 3,
+          "level5_ready": false
+        },
+        "local_evaluation": {
+          "evaluated_at": "2026-09-05T20:00:00Z"
+        },
+        "summary": {
+          "blocking_findings": 2,
+          "warnings": 0,
+          "infos": 2
+        },
+        "findings": [
+          {
+            "id": "metadata.last-reviewed.age",
+            "severity": "info",
+            "message": "last-reviewed is 107 days old"
+          },
+          {
+            "id": "manifest.profile-version.mismatch",
+            "severity": "error",
+            "message": "manifest must declare exactly one matching profile name and version"
+          },
+          {
+            "id": "anchor.independent.missing",
+            "severity": "error",
+            "message": "no fetched qualifying independent anchor is available for Level 4"
+          },
+          {
+            "id": "level4.requires-fetch",
+            "severity": "info",
+            "message": "local evidence was checked for consistency only; Level 4 requires fetched qualifying evidence"
+          }
+        ],
+        "manifest": {
+          "path": "$ROOT/fixtures/profiles/1.0.0/manifest-profile-mismatch/manifest.txt",
+          "sha256": "f3a61dcb51a2dd7d8edd02236ce8b5277e76b6b136487603e15bcc4ed9002e9e",
+          "fetched": false,
+          "hash_match": true,
+          "bytes_match": true,
+          "valid": false,
+          "guide_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d"
+        },
+        "cross_channel_anchors": [
+          {
+            "channel": "dns-txt",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/manifest-profile-mismatch/anchors/dns-txt.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched"
+          }
+        ],
+        "compact_report": "Verifier: guidecheck-reference-local 1.0.0\nGuide: $ROOT/fixtures/profiles/1.0.0/manifest-profile-mismatch/guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nLevel: 3\nSHA-256: 57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d\nBlocking findings: 2\nWarnings: 0\nHash pinned: no\nProceed? no",
+        "profile_selection": {
+          "declared_version": "1.0.0",
+          "evaluated_policy": "1.0.0"
+        },
+        "qualifying_anchor_count": 0
+      },
+      "repository-and-dns": {
+        "verifier": {
+          "name": "guidecheck-reference-local",
+          "version": "1.0.0",
+          "verifier_profile": "human-verifiable-assistant-guide-verifier",
+          "verifier_profile_version": "1.0.0",
+          "guide_profile": "human-verifiable-assistant-guide",
+          "guide_profile_version": "1.0.0"
+        },
+        "input": {
+          "evaluation_mode": "local-file",
+          "path": "$ROOT/fixtures/profiles/1.0.0/repository-and-dns/guide.txt",
+          "manifest_path": "$ROOT/fixtures/profiles/1.0.0/repository-and-dns/manifest.txt",
+          "anchor_paths": {
+            "dns-txt": "$ROOT/fixtures/profiles/1.0.0/repository-and-dns/anchors/dns-txt.txt",
+            "repository-file": "$ROOT/fixtures/profiles/1.0.0/repository-and-dns/anchors/repository-file.txt"
+          }
+        },
+        "guide": {
+          "bytes": 3403,
+          "sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+          "achieved_level": 3,
+          "level5_ready": false
+        },
+        "local_evaluation": {
+          "evaluated_at": "2026-09-05T20:00:00Z"
+        },
+        "summary": {
+          "blocking_findings": 1,
+          "warnings": 1,
+          "infos": 2
+        },
+        "findings": [
+          {
+            "id": "metadata.last-reviewed.age",
+            "severity": "info",
+            "message": "last-reviewed is 107 days old"
+          },
+          {
+            "id": "anchor.repository-file.independence-unestablished",
+            "severity": "warning",
+            "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+          },
+          {
+            "id": "anchor.independent.missing",
+            "severity": "error",
+            "message": "no fetched qualifying independent anchor is available for Level 4"
+          },
+          {
+            "id": "level4.requires-fetch",
+            "severity": "info",
+            "message": "local evidence was checked for consistency only; Level 4 requires fetched qualifying evidence"
+          }
+        ],
+        "manifest": {
+          "path": "$ROOT/fixtures/profiles/1.0.0/repository-and-dns/manifest.txt",
+          "sha256": "585b59ac211e35d68d7a8fa10cef75daa2a3d4a04032fbe8c7c8db572d5be73c",
+          "fetched": false,
+          "hash_match": true,
+          "bytes_match": true,
+          "valid": true,
+          "guide_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d"
+        },
+        "cross_channel_anchors": [
+          {
+            "channel": "dns-txt",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/repository-and-dns/anchors/dns-txt.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched"
+          },
+          {
+            "channel": "repository-file",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/repository-and-dns/anchors/repository-file.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched",
+            "independence": "unestablished"
+          }
+        ],
+        "compact_report": "Verifier: guidecheck-reference-local 1.0.0\nGuide: $ROOT/fixtures/profiles/1.0.0/repository-and-dns/guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 3\nSHA-256: 57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d\nBlocking findings: 1\nWarnings: 1\nHash pinned: no\nProceed? no",
+        "profile_selection": {
+          "declared_version": "1.0.0",
+          "evaluated_policy": "1.0.0"
+        },
+        "qualifying_anchor_count": 0
+      },
+      "repository-conflict": {
+        "verifier": {
+          "name": "guidecheck-reference-local",
+          "version": "1.0.0",
+          "verifier_profile": "human-verifiable-assistant-guide-verifier",
+          "verifier_profile_version": "1.0.0",
+          "guide_profile": "human-verifiable-assistant-guide",
+          "guide_profile_version": "1.0.0"
+        },
+        "input": {
+          "evaluation_mode": "local-file",
+          "path": "$ROOT/fixtures/profiles/1.0.0/repository-conflict/guide.txt",
+          "manifest_path": "$ROOT/fixtures/profiles/1.0.0/repository-conflict/manifest.txt",
+          "anchor_paths": {
+            "dns-txt": "$ROOT/fixtures/profiles/1.0.0/repository-conflict/anchors/dns-txt.txt",
+            "repository-file": "$ROOT/fixtures/profiles/1.0.0/repository-conflict/anchors/repository-file.txt"
+          }
+        },
+        "guide": {
+          "bytes": 3403,
+          "sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+          "achieved_level": 3,
+          "level5_ready": false
+        },
+        "local_evaluation": {
+          "evaluated_at": "2026-09-05T20:00:00Z"
+        },
+        "summary": {
+          "blocking_findings": 1,
+          "warnings": 1,
+          "infos": 2
+        },
+        "findings": [
+          {
+            "id": "metadata.last-reviewed.age",
+            "severity": "info",
+            "message": "last-reviewed is 107 days old"
+          },
+          {
+            "id": "anchor.repository-file.independence-unestablished",
+            "severity": "warning",
+            "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+          },
+          {
+            "id": "anchor.repository-file.mismatch",
+            "severity": "error",
+            "message": "anchor hash does not match manifest guide-sha256",
+            "evidence": "repository-file"
+          },
+          {
+            "id": "level4.requires-fetch",
+            "severity": "info",
+            "message": "local evidence was checked for consistency only; Level 4 requires fetched qualifying evidence"
+          }
+        ],
+        "manifest": {
+          "path": "$ROOT/fixtures/profiles/1.0.0/repository-conflict/manifest.txt",
+          "sha256": "585b59ac211e35d68d7a8fa10cef75daa2a3d4a04032fbe8c7c8db572d5be73c",
+          "fetched": false,
+          "hash_match": true,
+          "bytes_match": true,
+          "valid": true,
+          "guide_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d"
+        },
+        "cross_channel_anchors": [
+          {
+            "channel": "dns-txt",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/repository-conflict/anchors/dns-txt.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched"
+          },
+          {
+            "channel": "repository-file",
+            "status": "present-mismatch",
+            "observed_sha256": "0108784ebf75bf74afd2843d89d2edf4b5a4977977c0b9c5480905a00badeb64",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/repository-conflict/anchors/repository-file.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "hash-mismatch",
+            "independence": "unestablished"
+          }
+        ],
+        "compact_report": "Verifier: guidecheck-reference-local 1.0.0\nGuide: $ROOT/fixtures/profiles/1.0.0/repository-conflict/guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nRepository hash: present-mismatch; independent provenance: unestablished; counts toward Level 4: no\nLevel: 3\nSHA-256: 57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d\nBlocking findings: 1\nWarnings: 1\nHash pinned: no\nProceed? no",
+        "profile_selection": {
+          "declared_version": "1.0.0",
+          "evaluated_policy": "1.0.0"
+        },
+        "qualifying_anchor_count": 0
+      },
+      "repository-only": {
+        "verifier": {
+          "name": "guidecheck-reference-local",
+          "version": "1.0.0",
+          "verifier_profile": "human-verifiable-assistant-guide-verifier",
+          "verifier_profile_version": "1.0.0",
+          "guide_profile": "human-verifiable-assistant-guide",
+          "guide_profile_version": "1.0.0"
+        },
+        "input": {
+          "evaluation_mode": "local-file",
+          "path": "$ROOT/fixtures/profiles/1.0.0/repository-only/guide.txt",
+          "manifest_path": "$ROOT/fixtures/profiles/1.0.0/repository-only/manifest.txt",
+          "anchor_paths": {
+            "repository-file": "$ROOT/fixtures/profiles/1.0.0/repository-only/anchors/repository-file.txt"
+          }
+        },
+        "guide": {
+          "bytes": 3403,
+          "sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+          "achieved_level": 3,
+          "level5_ready": false
+        },
+        "local_evaluation": {
+          "evaluated_at": "2026-09-05T20:00:00Z"
+        },
+        "summary": {
+          "blocking_findings": 1,
+          "warnings": 1,
+          "infos": 2
+        },
+        "findings": [
+          {
+            "id": "metadata.last-reviewed.age",
+            "severity": "info",
+            "message": "last-reviewed is 107 days old"
+          },
+          {
+            "id": "anchor.repository-file.independence-unestablished",
+            "severity": "warning",
+            "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+          },
+          {
+            "id": "anchor.independent.missing",
+            "severity": "error",
+            "message": "no fetched qualifying independent anchor is available for Level 4"
+          },
+          {
+            "id": "level4.requires-fetch",
+            "severity": "info",
+            "message": "local evidence was checked for consistency only; Level 4 requires fetched qualifying evidence"
+          }
+        ],
+        "manifest": {
+          "path": "$ROOT/fixtures/profiles/1.0.0/repository-only/manifest.txt",
+          "sha256": "585b59ac211e35d68d7a8fa10cef75daa2a3d4a04032fbe8c7c8db572d5be73c",
+          "fetched": false,
+          "hash_match": true,
+          "bytes_match": true,
+          "valid": true,
+          "guide_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d"
+        },
+        "cross_channel_anchors": [
+          {
+            "channel": "repository-file",
+            "status": "present-matches",
+            "observed_sha256": "57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d",
+            "evidence_path": "$ROOT/fixtures/profiles/1.0.0/repository-only/anchors/repository-file.txt",
+            "qualifies_for_level4": false,
+            "qualification_reason": "local-evidence-not-fetched",
+            "independence": "unestablished"
+          }
+        ],
+        "compact_report": "Verifier: guidecheck-reference-local 1.0.0\nGuide: $ROOT/fixtures/profiles/1.0.0/repository-only/guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 3\nSHA-256: 57ea123337d4b6679fe70e6ace6f64d0728d89a48f8b5d721428c3895dea1a8d\nBlocking findings: 1\nWarnings: 1\nHash pinned: no\nProceed? no",
+        "profile_selection": {
+          "declared_version": "1.0.0",
+          "evaluated_policy": "1.0.0"
+        },
+        "qualifying_anchor_count": 0
+      }
+    },
+    "hosted": [
+      {
+        "dns": false,
+        "status": 200,
+        "body": {
+          "verifier": {
+            "name": "guidecheck-hosted",
+            "version": "1.0.0",
+            "verifier_profile": "human-verifiable-assistant-guide-verifier",
+            "verifier_profile_version": "1.0.0",
+            "guide_profile": "human-verifiable-assistant-guide",
+            "guide_profile_version": "1.0.0"
+          },
+          "input": {
+            "evaluation_mode": "public-web",
+            "url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+            "submitted_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+            "auto_resolved": false
+          },
+          "outcome": "evaluated",
+          "fetch": {
+            "final_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+            "fetched_at": "2026-09-05T20:00:00Z",
+            "http_status": 200,
+            "headers": {
+              "content-type": "text/plain; charset=utf-8",
+              "x-content-type-options": "nosniff",
+              "strict-transport-security": "max-age=31536000"
+            },
+            "redirects": [],
+            "tls_valid": true,
+            "bytes": 3403
+          },
+          "guide": {
+            "bytes": 3403,
+            "sha256": "ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62",
+            "achieved_level": 3,
+            "level5_ready": false
+          },
+          "summary": {
+            "blocking_findings": 1,
+            "warnings": 1,
+            "infos": 1
+          },
+          "findings": [
+            {
+              "id": "metadata.last-reviewed.age",
+              "severity": "info",
+              "message": "last-reviewed is 107 days old"
+            },
+            {
+              "id": "anchor.repository-file.independence-unestablished",
+              "severity": "warning",
+              "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+            },
+            {
+              "id": "anchor.independent.missing",
+              "severity": "error",
+              "message": "no fetched qualifying independent anchor is available for Level 4"
+            }
+          ],
+          "hosted_limitations": [
+            "Profile 1.0.0 excludes repository-file hashes from Level 4 qualification; matching repository bytes remain corroboration.",
+            "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
+            "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched.",
+            "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
+            "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
+            "Level 5 runtime conformance is not evaluated."
+          ],
+          "manifest": {
+            "sha256": "e9bd1725c91b7ae0884cc834b864b538ce78b3f3d6da7fe922e298be657d60c3",
+            "fetched": true,
+            "hash_match": true,
+            "bytes_match": true,
+            "valid": true,
+            "guide_sha256": "ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62"
+          },
+          "cross_channel_anchors": [
+            {
+              "channel": "repository-file",
+              "status": "present-matches",
+              "observed_sha256": "ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62",
+              "qualifies_for_level4": false,
+              "qualification_reason": "repository-independence-unestablished",
+              "independence": "unestablished",
+              "evidence_url": "https://raw.githubusercontent.com/snapsynapse/compat/HEAD/docs/.well-known/assistant-guide.txt",
+              "fetched_at": "2026-09-05T20:00:00Z",
+              "redirects": []
+            }
+          ],
+          "location_note": "This guide was verified at https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt, which is not the standard location. A conformant guide must be named assistant-guide.txt and served at https://snapsynapse.github.io/.well-known/assistant-guide.txt so assistants can discover it. Move or copy the file there.",
+          "compact_report": "Verifier: guidecheck-hosted 1.0.0\nGuide: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 3\nSHA-256: ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62\nBlocking findings: 1\nWarnings: 1\nHash pinned: no\nProceed? no",
+          "profile_selection": {
+            "declared_version": "1.0.0",
+            "evaluated_policy": "1.0.0"
+          },
+          "qualifying_anchor_count": 0
+        }
+      },
+      {
+        "dns": true,
+        "status": 200,
+        "body": {
+          "verifier": {
+            "name": "guidecheck-hosted",
+            "version": "1.0.0",
+            "verifier_profile": "human-verifiable-assistant-guide-verifier",
+            "verifier_profile_version": "1.0.0",
+            "guide_profile": "human-verifiable-assistant-guide",
+            "guide_profile_version": "1.0.0"
+          },
+          "input": {
+            "evaluation_mode": "public-web",
+            "url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+            "submitted_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+            "auto_resolved": false
+          },
+          "outcome": "evaluated",
+          "fetch": {
+            "final_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+            "fetched_at": "2026-09-05T20:00:00Z",
+            "http_status": 200,
+            "headers": {
+              "content-type": "text/plain; charset=utf-8",
+              "x-content-type-options": "nosniff",
+              "strict-transport-security": "max-age=31536000"
+            },
+            "redirects": [],
+            "tls_valid": true,
+            "bytes": 3403
+          },
+          "guide": {
+            "bytes": 3403,
+            "sha256": "ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62",
+            "achieved_level": 3,
+            "level5_ready": false
+          },
+          "summary": {
+            "blocking_findings": 1,
+            "warnings": 1,
+            "infos": 1
+          },
+          "findings": [
+            {
+              "id": "metadata.last-reviewed.age",
+              "severity": "info",
+              "message": "last-reviewed is 107 days old"
+            },
+            {
+              "id": "anchor.repository-file.independence-unestablished",
+              "severity": "warning",
+              "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
+            },
+            {
+              "id": "anchor.independent.missing",
+              "severity": "error",
+              "message": "no fetched qualifying independent anchor is available for Level 4"
+            }
+          ],
+          "hosted_limitations": [
+            "Profile 1.0.0 excludes repository-file hashes from Level 4 qualification; matching repository bytes remain corroboration.",
+            "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
+            "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched.",
+            "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
+            "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
+            "Level 5 runtime conformance is not evaluated."
+          ],
+          "manifest": {
+            "sha256": "e9bd1725c91b7ae0884cc834b864b538ce78b3f3d6da7fe922e298be657d60c3",
+            "fetched": true,
+            "hash_match": true,
+            "bytes_match": true,
+            "valid": true,
+            "guide_sha256": "ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62"
+          },
+          "cross_channel_anchors": [
+            {
+              "channel": "repository-file",
+              "status": "present-matches",
+              "observed_sha256": "ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62",
+              "qualifies_for_level4": false,
+              "qualification_reason": "repository-independence-unestablished",
+              "independence": "unestablished",
+              "evidence_url": "https://raw.githubusercontent.com/snapsynapse/compat/HEAD/docs/.well-known/assistant-guide.txt",
+              "fetched_at": "2026-09-05T20:00:00Z",
+              "redirects": []
+            }
+          ],
+          "location_note": "This guide was verified at https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt, which is not the standard location. A conformant guide must be named assistant-guide.txt and served at https://snapsynapse.github.io/.well-known/assistant-guide.txt so assistants can discover it. Move or copy the file there.",
+          "compact_report": "Verifier: guidecheck-hosted 1.0.0\nGuide: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt\nProfile: 1.0.0 (declared 1.0.0)\nQualifying anchors: 0\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 3\nSHA-256: ec8a584189b52452e3bf8d66be00c1dcbfad46daac289264ed33e6553ecdcd62\nBlocking findings: 1\nWarnings: 1\nHash pinned: no\nProceed? no",
+          "profile_selection": {
+            "declared_version": "1.0.0",
+            "evaluated_policy": "1.0.0"
+          },
+          "qualifying_anchor_count": 0
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "evidence_fetched": true,
+  "achieved_level": 1,
+  "blocking_finding_ids": [
+    "byte-profile.no-carriage-returns",
+    "prohibited.encoded-execution",
+    "prohibited.skip-approval"
+  ],
+  "warning_finding_ids": [],
+  "qualifying_anchor_count": 1
+}

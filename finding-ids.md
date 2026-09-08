@@ -126,6 +126,7 @@ artifact fetching and the mismatch/transitive findings remain deferred.
 | ID | Severity | Trigger |
 |---|---|---|
 | `action.exec-unbounded` | error | An action invokes a bound in-repo artifact without inlining its commands or a valid `exec-sha256`, or declares `exec-opaque` on a bound artifact. |
+| `action.exec-target-unresolved` | error | Profile 2.0.0 cannot establish the effective execution target; a declared hash cannot identify an unresolved target. |
 | `action.exec-opaque` | warning | An action declares `exec-opaque: acknowledged` on an exempt external-dependency command; the guide is not self-contained at that action. |
 | `exec-sha256.mismatch` | error | A declared `exec-sha256` does not match the invoked artifact's bytes. |
 | `exec-sha256.transitive-unpinned` | error | A readable pinned artifact invokes a further in-repo artifact that is neither inlined nor pinned. |

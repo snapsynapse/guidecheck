@@ -2,18 +2,23 @@
 
 Status: non-normative companion to `spec.md`.
 
-Version note: the new development dispatcher preserves legacy evaluation and
-selects the stricter 1.0.0 policy only for a matching guide declaration. To require
-that policy, assert `required_profile_version` in a hosted request or use
-`--require-profile-version` locally. A legacy Level 4 result does not satisfy a
-1.0.0 requirement. Do not change an existing guide or its anchors merely to
-upgrade verifier software. See [adoption guidance](ADOPTION.md#version-aware-adoption).
+Version note: the current candidate profile is 2.0.0 and is unpublished;
+1.0.0 remains the last published profile. The candidate preserves legacy and
+1.0.0 evaluation while selecting `corrected-content-1` only for a matching
+2.0.0 guide declaration. To require a profile, assert
+`required_profile_version` in a hosted request or use
+`--require-profile-version` locally. Do not change an existing guide or its
+anchors merely to upgrade verifier software. See
+[adoption guidance](ADOPTION.md#version-aware-adoption) and
+[the candidate release notes](RELEASE_NOTES-2.0.0.md).
 
 During rollout, an older hosted verifier may ignore an unfamiliar request field.
-Consumers requiring 1.0.0 must also validate the response against the new schema
-and confirm `profile_selection.evaluated_policy` is `1.0.0`. HTTP 200 or a legacy
-Level 4 result is insufficient. The current production service has not received
-the new dispatcher in this session.
+Consumers requiring 2.0.0 must also validate the response against the candidate
+schema and confirm `profile_selection.evaluated_policy` is `2.0.0`. HTTP 200 or
+a legacy Level 4 result is insufficient. The current production service has not
+received this candidate in this session. The experimental POSIX CLI selector,
+`--contract posix-json-v1`, is independent of the guide-declared profile
+selector; see [the CLI contract](docs/cli-contract.md).
 
 This guide is for the operator: the person who authorizes an assistant to
 follow an `assistant-guide.txt` and supervises it while it acts. It is not

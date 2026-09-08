@@ -3,21 +3,19 @@
 from guidecheck_legacy import *  # Re-export the established helper API.
 import guidecheck_legacy as legacy
 import guidecheck_strict as strict
+import guidecheck_corrected as corrected
 from guidecheck_profiles import ProfileError, select_profile, check_legacy_manifest
 
 
 def evaluate_guide(data, manifest_text=None, anchor_texts=None, anchor_paths=None,
                    now=None, evidence_fetched=False, *, selection=None,
                    required_profile_version=None):
-    selection = selection or select_profile(data, required_profile_version)
-    if selection.guide_sha256 != hashlib.sha256(data).hexdigest():
-        raise ProfileError("profile-version-ambiguous", "profile selection belongs to different guide bytes")
-    if required_profile_version is not None:
-        required = select_profile(data, required_profile_version)
-        if required != selection:
-            raise ProfileError("profile-version-requirement-mismatch", "inconsistent profile selection")
+    selected_from_bytes = select_profile(data, required_profile_version)
+    if selection is not None and selection != selected_from_bytes:
+        raise ProfileError("profile-version-ambiguous", "caller selection does not match the guide-byte selector")
+    selection = selected_from_bytes
     check_legacy_manifest(selection, manifest_text)
-    engine = strict if selection.strict else legacy
+    engine = corrected if selection.corrected else strict if selection.strict else legacy
     return engine.evaluate_guide(data, manifest_text, anchor_texts, anchor_paths, now, evidence_fetched)
 
 
@@ -67,6 +65,8 @@ def output_for(evaluation):
     if selection is None:
         # Preserve callers that construct the established Evaluation dataclass.
         selection = select_profile(evaluation.data)
+    if selection.corrected:
+        return corrected.decorate_report(result, selection)
     return strict.decorate_report(result, selection) if selection.strict else result
 
 
@@ -92,7 +92,18 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = parse_args(argv or sys.argv[1:])
+    raw_argv = argv or sys.argv[1:]
+    from guidecheck_cli_contract import has_contract_selector, run_contract
+
+    if has_contract_selector(raw_argv):
+        return run_contract(
+            raw_argv,
+            evaluate_local_file=evaluate_local_file,
+            output_for=output_for,
+            profile_error_type=ProfileError,
+        )
+
+    args = parse_args(raw_argv)
     if not args.path.is_file():
         print(f"guidecheck_verify: guide not found: {args.path}", file=sys.stderr)
         return 2

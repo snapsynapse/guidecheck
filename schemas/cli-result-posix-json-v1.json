@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/cli-result-posix-json-v1.json",
+  "title": "GuideCheck POSIX JSON CLI result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "contract",
+    "operational",
+    "gate",
+    "report",
+    "legacy_exit_code",
+    "exit_code",
+    "terminal"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "contract": {
+      "type": "object",
+      "required": ["name", "version", "experimental"],
+      "properties": {
+        "name": { "const": "posix-json-v1" },
+        "version": { "const": 1 },
+        "experimental": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "operational": {
+      "type": "object",
+      "required": ["status", "error"],
+      "properties": {
+        "status": { "enum": ["complete", "failed"] },
+        "error": {
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": [
+                "id",
+                "exit_code",
+                "message",
+                "retryable",
+                "safe_to_repeat"
+              ],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "exit_code": { "type": "integer", "minimum": 1, "maximum": 255 },
+                "message": { "type": "string", "minLength": 1 },
+                "retryable": { "type": "boolean" },
+                "safe_to_repeat": { "type": "boolean" }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "complete" } } },
+          "then": { "properties": { "error": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "failed" } } },
+          "then": { "properties": { "error": { "type": "object" } } }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "gate": {
+      "type": "object",
+      "required": ["mode", "status", "requested_level", "fail_on_warning"],
+      "properties": {
+        "mode": { "const": "verify" },
+        "status": {
+          "enum": ["not_requested", "not_evaluated", "accepted", "rejected", "inconclusive"]
+        },
+        "requested_level": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "integer", "minimum": 0, "maximum": 4 }
+          ]
+        },
+        "fail_on_warning": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "report": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "object" }
+      ]
+    },
+    "legacy_exit_code": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "integer", "minimum": 0, "maximum": 2 }
+      ]
+    },
+    "exit_code": { "type": "integer", "minimum": 0, "maximum": 255 },
+    "terminal": { "const": true }
+  },
+  "additionalProperties": false
+}

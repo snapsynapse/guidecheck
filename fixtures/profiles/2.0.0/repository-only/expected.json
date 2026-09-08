@@ -1,0 +1,11 @@
+{
+  "evidence_fetched": true,
+  "achieved_level": 3,
+  "blocking_finding_ids": [
+    "anchor.independent.missing"
+  ],
+  "warning_finding_ids": [
+    "anchor.repository-file.independence-unestablished"
+  ],
+  "qualifying_anchor_count": 0
+}

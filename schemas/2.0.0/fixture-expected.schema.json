@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/2.0.0/fixture-expected.schema.json",
+  "title": "GuideCheck 2.0.0 anchor fixture expectations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["evidence_fetched", "achieved_level", "blocking_finding_ids", "warning_finding_ids", "qualifying_anchor_count"],
+  "properties": {
+    "evidence_fetched": {"type": "boolean"},
+    "achieved_level": {"type": "integer", "minimum": 0, "maximum": 4},
+    "blocking_finding_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"}},
+    "warning_finding_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"}},
+    "qualifying_anchor_count": {"type": "integer", "minimum": 0}
+  }
+}

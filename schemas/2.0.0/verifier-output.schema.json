@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/2.0.0/verifier-output.schema.json",
+  "title": "GuideCheck 2.0.0 Verifier Output",
+  "description": "Machine-readable output for the GuideCheck Verifier Conformance Profile.",
+  "type": "object",
+  "required": [
+    "verifier",
+    "input",
+    "guide",
+    "summary",
+    "findings",
+    "profile_selection",
+    "qualifying_anchor_count"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "verifier": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "verifier_profile",
+        "verifier_profile_version",
+        "guide_profile",
+        "guide_profile_version"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Software release identity; independent of the selected profile version."
+        },
+        "verifier_profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verifier_profile_version": {
+          "type": "string",
+          "const": "2.0.0"
+        },
+        "guide_profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "guide_profile_version": {
+          "type": "string",
+          "const": "2.0.0"
+        },
+        "build_id": {
+          "type": "string"
+        },
+        "fixture_suite_version": {
+          "type": "string"
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "evaluation_mode"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "evaluation_mode": {
+          "type": "string",
+          "enum": [
+            "public-web",
+            "local-file"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifest_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_canonical_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "expected_guide_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "expected_max_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    },
+    "fetch": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "final_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "fetched_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "http_status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "redirects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "from",
+              "to",
+              "status"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "uri"
+              },
+              "to": {
+                "type": "string",
+                "format": "uri"
+              },
+              "status": {
+                "type": "integer",
+                "minimum": 300,
+                "maximum": 399
+              }
+            }
+          }
+        },
+        "tls_valid": {
+          "type": "boolean"
+        }
+      }
+    },
+    "guide": {
+      "type": "object",
+      "required": [
+        "bytes",
+        "sha256",
+        "achieved_level"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "claimed_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "achieved_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "level5_ready": {
+          "type": "boolean",
+          "description": "Guide-side readiness signal for Level 4 guides. True does not mean achieved Level 5."
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "fetched": {
+          "type": "boolean"
+        },
+        "hash_match": {
+          "type": "boolean"
+        },
+        "bytes_match": {
+          "type": "boolean"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "guide_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "local_evaluation": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "evaluated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "staleness_threshold_days": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "cross_channel_anchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "channel",
+          "status",
+          "qualifies_for_level4",
+          "qualification_reason"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "dns-txt",
+              "package-registry",
+              "repository-file",
+              "signed-security-txt",
+              "transparency-log"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "present-matches",
+              "present-mismatch",
+              "unreachable",
+              "absent"
+            ]
+          },
+          "evidence_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "evidence_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "qualifies_for_level4": {
+            "type": "boolean"
+          },
+          "qualification_reason": {
+            "type": "string",
+            "enum": [
+              "qualifying-channel",
+              "repository-independence-unestablished",
+              "local-evidence-not-fetched",
+              "hash-mismatch",
+              "unreachable",
+              "absent"
+            ]
+          },
+          "independence": {
+            "type": "string",
+            "const": "unestablished"
+          },
+          "fetched_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "redirects": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "blocking_findings",
+        "warnings",
+        "infos"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "blocking_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "infos": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "severity",
+          "message"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "section": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "remediation": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "compact_report": {
+      "type": "string",
+      "description": "Human-readable compact report rendered as plain text."
+    },
+    "profile_selection": {
+      "type": "object",
+      "required": [
+        "declared_version",
+        "evaluated_policy",
+        "content_policy",
+        "anchor_policy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "declared_version": {
+          "type": "string",
+          "pattern": "^2\\.0\\.0(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+        },
+        "evaluated_policy": {
+          "type": "string",
+          "const": "2.0.0"
+        },
+        "content_policy": {
+          "type": "string",
+          "const": "corrected-content-1"
+        },
+        "anchor_policy": {
+          "type": "string",
+          "const": "1.0.0-strict"
+        }
+      }
+    },
+    "qualifying_anchor_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

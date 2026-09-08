@@ -12,6 +12,10 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -19,9 +23,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
 
       - name: Run local verification suite
         run: |
           make test test-verify-ui
           python3 scripts/build_public_contracts.py
+      - name: Verify installed wheel outside the checkout
+        run: python3 scripts/test_package_consumer.py

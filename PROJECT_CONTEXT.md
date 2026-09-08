@@ -64,7 +64,8 @@ notes), rather than a general PAICE-wide default.
 
 ## Current status
 
-Released, profile version 1.0.0 (see `CHANGELOG.md`). Most recent shipped work:
+The current candidate is 2.0.0 and is unpublished; 1.0.0 remains the last
+published profile (see `CHANGELOG.md`). Most recent shipped work:
 `guidecheck scan`, an instruction-surface scanner for pre-existing
 AGENTS.md/CLAUDE.md/README/SKILL/llms.txt-style files (2026-07-07).
 Undecided/open items live in
@@ -84,3 +85,13 @@ and delivery limits are in `docs/anchor-dispatch-validation.md`.
 Local bounded-execution findings are implemented in the shared verifier. Pins
 remain unverified, including through hosted callers. See roadmap.md for pending
 hosted fetching and independence decisions. Legacy profile behavior remains pinned to the pre-dispatch baseline.
+
+## Corrected-content candidate (2026-09-07)
+
+The 2.0.0 candidate adds an explicitly selected `corrected-content-1` policy
+while retaining the `1.0.0-strict` anchor policy. Legacy and 1.0.0 profiles,
+their reports, and the 0.7.1 self-guide remain frozen. Candidate status and
+scope are recorded in `RELEASE_NOTES-2.0.0.md` and
+`docs/corrected-content-policy-2026-09-07.md`. The experimental POSIX CLI
+selector `--contract posix-json-v1` is independent of the guide-declared
+profile selector; see `docs/cli-contract.md`.

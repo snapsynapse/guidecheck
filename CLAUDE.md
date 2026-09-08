@@ -53,6 +53,7 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
     3ceb30a evaluator and 0.7.1 report contract; frozen artifact digests and full
     report replays guard compatibility.
   - `guidecheck_strict.py` implements the opt-in 1.0.0 provenance policy.
+  - `guidecheck_corrected.py` implements the opt-in 2.0.0 corrected-content policy.
   - `guidecheck_verify.py` — local-file reference verifier CLI (Levels 1-3,
     plus internal-consistency checks on Level 4 sidecar manifests/anchors).
   - `guidecheck_scan.py` / `guidecheck_cli.py` — instruction-surface scanner
@@ -84,8 +85,9 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   consistent with them, not the other way around.
 - Software, engine, released-profile, and self-guide versions are separate in
   `scripts/guidecheck_constants.py`. The legacy engine has frozen constants.
-  `scripts/check_version_sync.py` checks release surfaces against 1.0.0 and legacy/self-guide surfaces against 0.7.1;
-  package upgrades must not rewrite the published self-guide or its anchors.
+  `scripts/check_version_sync.py` checks the 2.0.0 candidate surfaces while
+  legacy/self-guide surfaces remain 0.7.1; candidate work must not rewrite the
+  published self-guide or its anchors.
 - `finding-ids.md` is the normative registry for finding ids; new finding ids
   used by fixtures or emitted by verifiers/scanner must be registered there
   (see `CONTRIBUTING.md`).
@@ -129,7 +131,8 @@ builds and Sigstore-signs release + conformance-kit artifacts.
 
 ## Current state
 
-- Released, profile version 1.0.0 (see `CHANGELOG.md`).
+- The current candidate is 2.0.0 and is unpublished. Profile 1.0.0 remains the
+  last published profile (see `CHANGELOG.md`).
 - Most recent work (2026-07-07): added `guidecheck scan`, a standalone
   instruction-surface scanner for existing files (AGENTS.md/CLAUDE.md/
   README/SKILL/llms.txt/assistant-guide.txt) that flags hidden-instruction
@@ -162,3 +165,12 @@ the deterministic DOM contract separately. CI runs both.
 Local bounded-execution findings are implemented in the shared verifier. Pins
 remain unverified, including through hosted callers. See roadmap.md for pending
 hosted fetching and independence decisions. Legacy profile behavior remains pinned to the pre-dispatch baseline.
+
+## Corrected-content candidate (2026-09-07)
+
+The opt-in 2.0.0 candidate selects `corrected-content-1` while retaining the
+`1.0.0-strict` anchor policy. See `docs/corrected-content-policy-2026-09-07.md`
+and `RELEASE_NOTES-2.0.0.md`. It does not publish, migrate, or reinterpret
+legacy, 1.0.0, or self-guide bytes. The experimental POSIX CLI selector
+`--contract posix-json-v1` is independent of the guide-declared profile
+selector; see `docs/cli-contract.md`.

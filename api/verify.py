@@ -43,6 +43,7 @@ if _SCRIPTS not in sys.path:
 import guidecheck_verify as gv  # noqa: E402
 from guidecheck_profiles import ProfileError, select_profile  # noqa: E402
 from guidecheck_strict import decorate_report  # noqa: E402
+from guidecheck_corrected import decorate_report as decorate_corrected_report  # noqa: E402
 from guidecheck_constants import GUIDECHECK_VERSION, HOSTED_VERIFIER_NAME, LEGACY_ENGINE_VERSION  # noqa: E402
 from guidecheck_fetch import FetchError, safe_fetch, variation_request_profile  # noqa: E402
 from guidecheck_hosted_anchors import (  # noqa: E402
@@ -738,10 +739,13 @@ def build_evaluated(
     if note:
         result["location_note"] = note
     result["compact_report"] = _compact_report(result)
-    if selection is not None and selection.strict:
+    if selection is not None and selection.modern:
         for anchor in result.get("cross_channel_anchors", []):
             anchor.update((anchor_sources or {}).get(anchor["channel"] + " anchor", {}))
-        decorate_report(result, selection)
+        if selection.corrected:
+            decorate_corrected_report(result, selection)
+        else:
+            decorate_report(result, selection)
     return result
 
 
