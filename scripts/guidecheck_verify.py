@@ -92,7 +92,18 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = parse_args(argv or sys.argv[1:])
+    raw_argv = argv or sys.argv[1:]
+    from guidecheck_cli_contract import has_contract_selector, run_contract
+
+    if has_contract_selector(raw_argv):
+        return run_contract(
+            raw_argv,
+            evaluate_local_file=evaluate_local_file,
+            output_for=output_for,
+            profile_error_type=ProfileError,
+        )
+
+    args = parse_args(raw_argv)
     if not args.path.is_file():
         print(f"guidecheck_verify: guide not found: {args.path}", file=sys.stderr)
         return 2

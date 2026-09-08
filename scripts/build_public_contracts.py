@@ -25,7 +25,7 @@ def main() -> None:
     commit = os.environ.get('VERCEL_GIT_COMMIT_SHA') or subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True
     ).strip()
-    public_paths = ['index.html', 'verify/index.html', 'verify/verify.js', 'llms.txt',
+    public_paths = ['index.html', 'verify/index.html', 'verify/verify.js', 'llms.txt', 'cli-contract.md',
                     '.well-known/assistant-guide.txt', '.well-known/assistant-guide-manifest.txt']
     public_paths += [str(p.relative_to(output)) for name in ('schemas', 'profiles')
                      for p in (output / name).rglob('*') if p.is_file()]

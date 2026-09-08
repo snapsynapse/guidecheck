@@ -28,6 +28,7 @@ FINDING_ID = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
 SEMVER = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+].*)?$")
 SEVERITIES = {"error", "warning", "info"}
 SCHEMA_FILES = [
+    ROOT / "schemas" / "cli-result-posix-json-v1.json",
     ROOT / "schemas" / "manifest.schema.json",
     ROOT / "schemas" / "verifier-output.schema.json",
     ROOT / "schemas" / "fixture-expected.schema.json",

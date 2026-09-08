@@ -15,10 +15,10 @@ import venv
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(args, cwd, env):
+def run(args, cwd, env, expected_code=0):
     result = subprocess.run(args, cwd=cwd, env=env, text=True,
                             capture_output=True, timeout=240)
-    if result.returncode:
+    if result.returncode != expected_code:
         raise RuntimeError(f"{args!r} exited {result.returncode}\n{result.stdout}\n{result.stderr}")
     return result.stdout
 
@@ -62,7 +62,17 @@ def main():
             assert report["guide"]["achieved_level"] == 3, report
             if version == "2.0.0":
                 assert report["profile_selection"]["content_policy"] == "corrected-content-1"
+            terminal = json.loads(run(invoke + ["verify", str(guide), "--contract", "posix-json-v1"], temp, env))
+            assert terminal["gate"]["status"] == "accepted", terminal
+            assert terminal["report"]["guide"]["achieved_level"] == 3, terminal
             print(f"PASS installed wheel: profile {version}")
+        rejected = temp / "rejected.txt"
+        shutil.copy2(ROOT / "fixtures/invalid/missing-verification/guide.txt", rejected)
+        for path, expected_code, status in ((rejected, 2, "rejected"), (temp / "missing.txt", 66, "not_evaluated")):
+            terminal = json.loads(run(invoke + ["verify", str(path), "--contract", "posix-json-v1"], temp, env, expected_code))
+            assert terminal["exit_code"] == expected_code, terminal
+            assert terminal["gate"]["status"] == status, terminal
+        print("PASS installed wheel: contract rejection and missing input")
         scanned = temp / "README.md"
         scanned.write_text("# Public instructions\nRead the documented workflow.\n")
         json.loads(run(invoke + ["scan", str(scanned), "--json"], temp, env))
