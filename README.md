@@ -1,13 +1,7 @@
 # GuideCheck
 
-GuideCheck 2.0.0 adds an opt-in corrected-content policy while preserving
-legacy and 1.0.0 evaluations. It is the current release; the self-guide and
-frozen legacy reports remain 0.7.1. See the [2.0.0 profile](https://github.com/snapsynapse/guidecheck/blob/v2.0.0/profiles/2.0.0/spec.md),
-[corrected-content policy](docs/corrected-content-policy-2026-09-07.md), and
-[release notes](RELEASE_NOTES-2.0.0.md). The current release is 2.0.0.
-
 GuideCheck is a trust boundary protocol for agent instruction surfaces. It
-ensures the instructions humans approve are the same instructions agents
+helps ensure the instructions humans approve are the same instructions agents
 execute.
 
 AI setup guides can hide instructions a model reads but a human never sees. A
@@ -22,6 +16,12 @@ assistant-facing install, implementation, remediation, migration, and
 operational instructions that a human can review in full before an assistant
 acts on them. The core claim is review integrity: the reviewed instruction
 surface and the executed instruction surface should be one bounded artifact.
+
+The current release is 2.0.0. It adds an opt-in corrected-content policy while
+preserving legacy and 1.0.0 evaluations; GuideCheck's own self-guide and frozen
+legacy reports remain 0.7.1. See the [2.0.0 profile](https://github.com/snapsynapse/guidecheck/blob/v2.0.0/profiles/2.0.0/spec.md),
+[corrected-content policy](docs/corrected-content-policy-2026-09-07.md), and
+[release notes](RELEASE_NOTES-2.0.0.md).
 
 Canonical site: https://guidecheck.org/
 Verifier: https://guidecheck.org/verify
@@ -208,10 +208,12 @@ Run the local reference verifier with:
 python3 scripts/guidecheck_verify.py assistant-guide.txt --pretty
 ```
 
-Or install it as a standalone command via Homebrew (macOS and Linux):
+Or install it via Homebrew (macOS and Linux). The formula provides
+`guidecheck` (the `verify` and `scan` commands) and keeps the earlier
+`guidecheck-verify` command name:
 ```text
 brew install snapsynapse/tap/guidecheck
-guidecheck-verify assistant-guide.txt --pretty
+guidecheck verify assistant-guide.txt --pretty
 ```
 
 Check Level 4 sidecar evidence for consistency (still caps at Level 3 locally,

@@ -9,6 +9,16 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 - Correct the self-guide digest in the published `security.txt` metadata and
   make version-sync validation reject missing, malformed, duplicate, or stale
   `Assistant-Guide-SHA256` fields.
+- Align public claim wording with `INTENT.md`: the landing page, README, and
+  `llms.txt` now say GuideCheck helps ensure, rather than ensures, that approved
+  and executed instructions match. The landing page states that mechanical
+  enforcement of action blocks requires a Level 5 runtime, that no independent
+  verifier implementation exists yet, and that its example keeps a supported
+  legacy declaration.
+- Point the README Homebrew instructions at the 2.0.0 formula, which installs
+  the packaged `guidecheck` command and keeps `guidecheck-verify` as an alias.
+  The formula previously installed verifier 0.5.0.
+- Lead the README with the problem statement and move release notes below it.
 
 ## [2.0.0] - 2026-09-07
 

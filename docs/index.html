@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>GuideCheck &mdash; Trust boundary protocol for agent instruction surfaces</title>
-  <meta name="description" content="GuideCheck ensures the instructions humans approve are the same instructions agents execute: a bounded, verifiable assistant-guide.txt standard for agent instruction surfaces.">
+  <meta name="description" content="GuideCheck helps ensure the instructions humans approve are the same instructions agents execute: a bounded, verifiable assistant-guide.txt standard for agent instruction surfaces.">
   <meta name="keywords" content="guidecheck, assistant-guide.txt, human-verifiable assistant guide, AI setup guide, prompt injection defense, agent trust boundary, review integrity, MCP security, A2A security, conformance verifier, ASCII instruction surface">
   <meta name="author" content="Sam Rogers">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -23,7 +23,7 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="GuideCheck">
   <meta property="og:title" content="GuideCheck">
-  <meta property="og:description" content="GuideCheck ensures the instructions humans approve are the same instructions agents execute by forcing operational guidance into one bounded, verifiable plain-text artifact.">
+  <meta property="og:description" content="GuideCheck helps ensure the instructions humans approve are the same instructions agents execute by forcing operational guidance into one bounded, verifiable plain-text artifact.">
   <meta property="og:image" content="https://guidecheck.org/imgs/og.png">
   <meta property="og:image:alt" content="GuideCheck &mdash; the assistant-guide.txt artifact shown in full as plain text with [action] blocks, beside a six-rung conformance ladder">
   <meta property="og:image:width" content="1200">
@@ -44,7 +44,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GuideCheck">
-  <meta name="twitter:description" content="GuideCheck ensures the instructions humans approve are the same instructions agents execute.">
+  <meta name="twitter:description" content="GuideCheck helps ensure the instructions humans approve are the same instructions agents execute.">
   <meta name="twitter:image" content="https://guidecheck.org/imgs/og.png">
   <meta name="twitter:site" content="@snapsynapse">
   <meta name="twitter:creator" content="@snapsynapse">
@@ -60,7 +60,7 @@
     "@type": "TechArticle",
     "headline": "GuideCheck",
     "alternativeHeadline": "Trust boundary protocol for agent instruction surfaces",
-    "description": "GuideCheck ensures the instructions humans approve are the same instructions agents execute. It defines the Human-Verifiable Assistant Guide profile for assistant-guide.txt, a strict-ASCII, 8 KiB-capped plain-text artifact that makes the entire instruction surface reviewable before an assistant acts on it.",
+    "description": "GuideCheck helps ensure the instructions humans approve are the same instructions agents execute. It defines the Human-Verifiable Assistant Guide profile for assistant-guide.txt, a strict-ASCII, 8 KiB-capped plain-text artifact that makes the entire instruction surface reviewable before an assistant acts on it.",
     "inLanguage": "en",
     "url": "https://guidecheck.org/",
     "mainEntityOfPage": { "@type": "WebPage", "@id": "https://guidecheck.org/" },
@@ -517,7 +517,7 @@
 <section class="hero">
   <div class="container">
     <h1>Your AI assistant just followed instructions you never saw.</h1>
-    <p class="subtitle">GuideCheck ensures the instructions humans approve are the same instructions agents execute.</p>
+    <p class="subtitle">GuideCheck helps ensure the instructions humans approve are the same instructions agents execute.</p>
     <!-- Byline rel-attribute rule: combine values into a single rel attribute (rel="noopener author"). HTML allows only one rel per element; a second rel is silently dropped. -->
     <p class="byline">
       By <a href="https://linkedin.com/in/samrogers" target="_blank" rel="noopener author">Sam Rogers</a>, <a href="https://paice.foundation/" target="_blank" rel="noopener">PAICE.work PBC</a>
@@ -594,7 +594,7 @@
 <section id="profile">
   <div class="container">
     <h2>How GuideCheck repairs the trust boundary</h2>
-    <p>GuideCheck removes the presentation layer from agent instructions. The profile describes one artifact &mdash; a plain-text file named <code>assistant-guide.txt</code>, served at <code>/.well-known/assistant-guide.txt</code> &mdash; carrying assistant-facing install, implementation, remediation, migration, and operational instructions for a single bounded task. Three properties preserve review integrity: the instructions humans approve are the same instructions agents execute.</p>
+    <p>GuideCheck removes the presentation layer from agent instructions. The profile describes one artifact &mdash; a plain-text file named <code>assistant-guide.txt</code>, served at <code>/.well-known/assistant-guide.txt</code> &mdash; carrying assistant-facing install, implementation, remediation, migration, and operational instructions for a single bounded task. Three properties support review integrity: keeping the instructions humans approve the same as the instructions agents execute.</p>
 
     <div class="pillars">
       <div class="pillar">
@@ -603,10 +603,10 @@
       </div>
       <div class="pillar">
         <h3>Structured, so nothing is buried</h3>
-        <p>Instructions live in explicit <code>[action]</code> blocks with declared classes, approval gates, and command restrictions. The assistant executes blocks, never loose prose &mdash; there is no below the fold.</p>
+        <p>Instructions live in explicit <code>[action]</code> blocks with declared classes, approval gates, and command restrictions. A conforming assistant executes blocks, never loose prose &mdash; there is no below the fold. Mechanical enforcement of that contract requires a Level&nbsp;5 runtime.</p>
       </div>
       <div class="pillar">
-        <h3>Verifiable, so it cannot be swapped</h3>
+        <h3>Verifiable, so a swap is detectable</h3>
         <p>A sidecar manifest and cross-channel hash publication let a guide's identity be confirmed without trusting any single hosted service.</p>
       </div>
     </div>
@@ -661,6 +661,7 @@ status: active
 recommended-verifier: https://guidecheck.org/verify
 [/assistant-guide-metadata]</pre>
         <p class="annotation">Strict ASCII, 8 KiB maximum, plain text only &mdash; no HTML, no Markdown, no hidden bytes.</p>
+        <p class="annotation">This example keeps the supported legacy 0.7.1 declaration, as GuideCheck's own guide does. To adopt 2.0.0, declare <code>profile-version: 2.0.0</code> in both the guide and its manifest; see the <a href="https://github.com/snapsynapse/guidecheck/blob/main/ADOPTION.md" target="_blank" rel="noopener">adoption guide</a>.</p>
       </div>
 
       <div class="code-block">
@@ -675,7 +676,7 @@ GET /.well-known/assistant-guide.txt
 # A conformance claim is valid only when
 # backed by verifier output, guide hash,
 # achieved level, and findings.</pre>
-        <p class="annotation">Anyone may build a conformant verifier. The fixture suite keeps independent implementations in agreement.</p>
+        <p class="annotation">Anyone may build a conformant verifier. The fixture suite exists so independent implementations can show they agree. Today the only implementations are GuideCheck's own reference verifiers, and the hosted one is a preview.</p>
       </div>
     </div>
   </div>
