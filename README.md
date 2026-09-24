@@ -104,6 +104,7 @@ agents may execute another.
 - `operator-guide.md` - non-normative defense-in-depth practices for operators
 - `threat-register.md` - known risk classes for fixture, verifier, and runtime authors
 - `docs/acs-integration.md` - non-normative ACS runtime control patterns
+- `docs/owasp-crosswalk.md` - non-normative map to the OWASP Agentic Top 10 and ACS v0.1.0 hooks
 - `docs/mcp-integration.md` - non-normative MCP integration patterns
 - `docs/a2a-integration.md` - non-normative A2A integration patterns
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations

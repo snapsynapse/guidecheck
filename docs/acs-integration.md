@@ -24,6 +24,10 @@ runtime-enforcement preparation path.
 The intersection is direct: GuideCheck can provide a verified instruction and
 action contract that ACS middleware can enforce at runtime.
 
+ACS v0.1.0 is now part of the OWASP GenAI Security Project. The generic hook
+names below predate v0.1.0; `docs/owasp-crosswalk.md` maps GuideCheck evidence
+to the v0.1.0 `steps/*` and `agbom/*` method names.
+
 ## Control-plane mapping
 
 | ACS surface | GuideCheck evidence | Runtime use |
@@ -97,4 +101,6 @@ audit evidence.
 ## Sources
 
 - ACS homepage: https://agentcontrolstandard.ai/
+- ACS at OWASP GenAI: https://genai.owasp.org/resource/agent-control-standard-acs/
+- ACS repository: https://github.com/GenAI-Security-Project/agent-control-standard
 - ACS instrument specification: https://aos.owasp.org/spec/instrument/specification/

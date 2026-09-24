@@ -4,6 +4,12 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ## [Unreleased]
 
+### Added
+
+- Add `docs/owasp-crosswalk.md`, a non-normative threat, control, evidence,
+  and gap map against the OWASP Top 10 for Agentic Applications for 2026 and
+  the ACS v0.1.0 hook catalog, and point the ACS integration note at it.
+
 ### Fixed
 
 - Correct the self-guide digest in the published `security.txt` metadata and
