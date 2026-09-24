@@ -11,7 +11,7 @@ name = "guidecheck"
 description = "Scan and verify AI-assistant instruction surfaces for hidden-instruction channels (GuideCheck reference tools)."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Apache-2.0 OR MIT" }
+license = { text = "MIT" }
 dynamic = ["version"]
 
 [project.urls]
