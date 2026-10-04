@@ -1,0 +1,1557 @@
+{
+  "kind": "diagnostic-only",
+  "evaluation_time": "2026-10-03T12:00:00+00:00",
+  "mode": "offline supplied-evidence simulation; no public-web verification",
+  "source_sha256": {
+    "scripts/guidecheck_legacy.py": "b2f2e5afefaf949cdc50846ff1ad97d5f506da50fc787afa17e26e019963efda",
+    "scripts/guidecheck_hosted_anchors.py": "452a4d68d143aaff6296eb591955bffbcbd85916e4c1bc6b8dff4310cb93939e",
+    "scripts/guidecheck_profiles.py": "6ae4315dd481fa11ddf5dbe78ea54bbf7d7f30ff028f4abbb37443418f37ad06",
+    "scripts/guidecheck_strict.py": "f2a7740f9a732bacc1498d6e2e3be596294b3b12fd1ebb2d8010b11848618677",
+    "scripts/guidecheck_corrected.py": "3ef35978de1b4c6ddf60b21c0a2e87f52f8f7483cde2ccdcab0d8cd34b59ac05",
+    "scripts/guidecheck_verify.py": "d99297e0c7becc3d3db6d71cd2472b27bb578138f49a3068674890fb91bf7c86",
+    "fixtures/profiles/2.0.0/dns-only/guide.txt": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+    "fixtures/profiles/2.0.0/dns-only/manifest.txt": "9baa7da9113c2f3bda96251889a8a605385cc8b87fde3c9d91c32ac059c52241"
+  },
+  "rows": [
+    {
+      "profile": "0.1.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.1.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.1.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "2a118d4b99ce833bd850f824764d5fb366b2ebf90f1d0b4e3964fe732954c18a",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.2.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.2.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e8dc3f070c8580968c30f43bfea5731c14ce9dc663e922231a33399adb503254",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.3.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "83ffe6c75c928842f8690524b5cc647551f6f444aa462893c2c176fd3119ddc0",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.3.1",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.3.1",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "d21557b13b3bc59fe6458a786b19f071408647e06759497df82d402d06b7e4ea",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.4.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.4.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "e986e86ef7415c9efd51181ffde3fa42fabe39e90247403d0a28993759b57096",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.5.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.5.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "a586309c07476f0ba28ae9dade9a4db28dd47e75ed7ce8c9ced98ad2c0a3fa6f",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.6.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.6.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "7196f25d78163a43b6063dd9d4bb600a2a9959f89536e3d8b1d77d1c6c150a17",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.7.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "4ea26e0c50a093466f6bb103255d8860ed4c6652a5e7ec2653273a721b5b6694",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "0.7.1",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "0.7.1",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "562f7db4c85c6b4efcfdf56163be53fafd705d190dcb34dc625e9d3e2a551b71",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "1.0.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "1.0.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "fd4742718aacb3b1fde1de41b63b14fa72a23a97169ba05b50bb89a5b873f88f",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "valid",
+      "records": [
+        "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "wrong-hash",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "doubled-prefix",
+      "records": [
+        "v=1; sha256=sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "duplicate-identical",
+      "records": [
+        "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "conflict-correct-first",
+      "records": [
+        "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "conflict-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "embedded-field",
+      "records": [
+        "v=1; note=sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; note=sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "wrong-url",
+      "records": [
+        "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://other.example/guide.txt"
+      ],
+      "selected_record": null,
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": null,
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.missing"
+      ],
+      "anchor_status": null
+    },
+    {
+      "profile": "2.0.0",
+      "case": "rrset-correct-first",
+      "records": [
+        "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "achieved_level": 4,
+      "blocking_ids": [],
+      "anchor_status": "present-matches"
+    },
+    {
+      "profile": "2.0.0",
+      "case": "rrset-wrong-first",
+      "records": [
+        "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+        "v=1; sha256=dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt"
+      ],
+      "selected_record": "v=1; sha256=0000000000000000000000000000000000000000000000000000000000000000; url=https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
+      "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
+      "extracted_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "achieved_level": 3,
+      "blocking_ids": [
+        "anchor.independent.mismatch"
+      ],
+      "anchor_status": "present-mismatch"
+    }
+  ]
+}

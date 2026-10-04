@@ -4,6 +4,14 @@ Status: Working notes for documentation. Not part of the spec.
 
 This document captures the reasoning behind design choices in spec.md. Use it as source material when writing the README, FAQ, adoption guide, or any explanatory documentation for the repo. The spec is normative; this document is explanatory.
 
+## Why inspectable installation is the target
+
+An installation guide transfers human authority to an agent with tools. The review boundary must therefore connect the bytes a person reads, the action they approve and the command the runtime executes. Bounded plain text makes the first part inspectable. GuideCheck checks the artifact's form and selected provenance signals; a runtime must still bind approval to the selected action and enforce that boundary while executing.
+
+Hash-pinning an invoked script declares its identity, but the current local and hosted verifiers do not read and hash its bytes. They report the pin as unverified. Package lifecycle behavior, tool output and fetched content can also extend execution beyond the reviewed guide. These limits explain why a conforming artifact is not a secure installation guarantee and why the Level 5 fixture/evaluator gate remains necessary.
+
+The objective in [INTENT](INTENT.md#inspectable-installation-and-standards-integration) is to preserve this trust capability within a suitable larger standard. The [ACS mapping](docs/acs-integration.md) describes possible enforcement boundaries without adding a normative dependency or claiming an implemented runtime.
+
 ## 8 KiB size cap
 
 The spec sets a hard maximum file size of 8192 bytes for Level 2 and above. This section explains why.

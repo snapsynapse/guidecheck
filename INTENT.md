@@ -9,6 +9,12 @@ GuideCheck defines the Human-Verifiable Assistant Guide profile for `assistant-g
 
 The standard makes the instruction surface visible, bounded, and practical to review before an assistant acts on it. It preserves review integrity by helping ensure the instructions humans approve are the same instructions agents execute. It does not make instructions safe.
 
+## Inspectable installation and standards integration
+
+Sam clarified the direction on 2026-09-22: enable human trust in agents through software installation that is entirely inspectable by design. Removing prompt injection and related attacks from that scoped activity is the intended endpoint, not a delivered guarantee. Current guide checks do not establish that a runtime executes only approved instructions, verifies invoked script bytes, or enforces the declared environment and egress.
+
+The intended destination is integration into a suitable larger standard. Permanent standalone identity is not the objective. The [OWASP crosswalk](docs/owasp-crosswalk.md) and [ACS integration note](docs/acs-integration.md) identify an advisory integration path; neither establishes an implemented adapter, external acceptance, or a Level 5 claim. The existing maintenance and readiness gates still apply. Integration should preserve portable guide artifacts, independent verification and human approval without making ACS or any hosted service a conformance dependency.
+
 ## Why it exists
 
 AI-assisted setup guidance is increasingly consumed by tool-using assistants with real blast radius. The surfaces that carry that guidance, including HTML, rendered Markdown, PDFs, and copied terminal output, can hide content from the human while feeding it to the model. No existing convention solves this. `llms.txt` points assistants at documentation but defines no safety profile. `robots.txt` and `security.txt` are single-purpose and carry no assistant-executable instructions. The gap is real and the consequences are operational, not cosmetic: delegated authority can be diverted into credential exposure, destructive commands, malicious dependency installation, disabled safeguards, or unreviewed tool and agent delegation.
@@ -106,6 +112,7 @@ standard scope or authorize a cross-standard certification product. The Septembe
 
 ## Changelog
 
+- 2026-10-03: Carry the September 22 owner direction into component strategy: inspectable installation, an explicitly incomplete attack-prevention objective, and eventual standards integration. Preserve released behavior and existing investment/readiness gates.
 - 2026-09-07: Sam selected blocking unresolved execution targets for Level 3 on the opt-in corrected path; released evaluations remain frozen.
 - 2026-09-07: Sam selected preservation of frozen legacy reports with opt-in corrected content checks. Recorded the decision and remaining selector/version design scope; evaluator and published profiles remain unchanged.
 - 2026-09-05: Sam approved the version-aware anchor proposal with legacy compatibility required. The local 1.0.0 candidate excludes repository-file evidence from independent qualification, while the dispatcher preserves supported legacy evaluations and published self-guide bytes. Release and deployment remain separate. See `docs/anchor-policy-compatibility.md` and `docs/anchor-dispatch-validation.md`.

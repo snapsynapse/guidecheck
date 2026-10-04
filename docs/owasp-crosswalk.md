@@ -1,6 +1,6 @@
 # GuideCheck and OWASP GenAI Crosswalk
 
-Status: non-normative crosswalk, observed 2026-09-24. Advisory only: nothing
+Status: non-normative crosswalk, checked 2026-10-03. Advisory only: nothing
 in this note adds, changes, or implies a conformance requirement. The
 normative documents are the released profiles under `profiles/` and the
 legacy `spec.md` and `verifier-conformance.md`. This note does not claim
@@ -15,9 +15,12 @@ Project resources:
   Security Project and announced on 2026-09-01, used here as the runtime
   enforcement target
 
-The OWASP Top 10 for LLM Applications 2026 was published on 2026-09-01. Its
-item identifiers are not mapped here until they are checked against the
-published document.
+OWASP announced the LLM Top 10 2026 on 2026-09-01. Its resource page is dated
+August 3. The exact identifiers remain unverified: on October 3 the linked
+download returned an HTML page titled `No Access`, not the advertised document.
+The initiative page lists LLM workstream names but does not establish their
+edition. Do not relabel 2025 identifiers as 2026. This bounded source-access
+gap is tracked in the [roadmap](../roadmap.md#current-work-queue-reconciled-2026-10-03).
 
 ## Control status
 
@@ -52,11 +55,18 @@ meaning.
 
 ## ACS v0.1.0 hook crosswalk
 
-ACS v0.1.0 defines 19 `steps/*` hooks, the wrapped `protocols/MCP/*`
+The [pinned ACS hook catalog](https://github.com/GenAI-Security-Project/agent-control-standard/blob/27799c2c27414a483a4a043b957bfd2997d53231/docs/spec/instrument/hooks.md)
+defines 19 `steps/*` hooks, the wrapped `protocols/MCP/*`
 namespace, and the `agbom/*` inventory methods. A Guardian Agent receives
-each hook and returns allow, deny, or modify. The table shows the GuideCheck
+decision-eligible hooks and returns the dispositions allowed by each method;
+some lifecycle hooks are audit-only. The table shows the GuideCheck
 evidence a Guardian policy could use at each point. None of this is
 implemented as an ACS policy today.
+
+The source revision is `27799c2c27414a483a4a043b957bfd2997d53231`, checked
+2026-10-03. Repository version 0.1.2 and the v0.1.0 schema/wire contract are
+distinct. These policy inputs are not a claim that every GuideCheck value is
+a native field in an ACS hook payload.
 
 | ACS method | GuideCheck evidence | Guardian decision it enables |
 |---|---|---|
@@ -70,7 +80,7 @@ implemented as an ACS policy today.
 | `agbom/snapshot` | guide URL, profile version, SHA-256, manifest URL, achieved level | inventory the instruction artifact as a component of the agent system |
 | `protocols/MCP/*` | MCP install and configuration guides | apply the same checks to MCP server setup; see `docs/mcp-integration.md` |
 
-The ACS reference implementation currently evaluates `steps/toolCallRequest`
+The ACS reference implementation at the pinned revision evaluates `steps/toolCallRequest`
 and `steps/toolCallResult` live. The other rows depend on hosts and
 Guardians that emit and enforce those hooks.
 
@@ -80,12 +90,9 @@ Guardians that emit and enforce those hooks.
   surface. An ACS Guardian enforcing the hook policy above is a candidate
   Level 5 runtime. A Level 5 claim still requires the GuideCheck runtime
   fixture suite and evaluator, which do not exist yet.
-- AgBOM representation. Whether an `assistant-guide.txt` maps to an existing
-  AgBOM component type, such as `skill`, or needs a new one has not been
-  checked against the ACS schemas.
-- LLM Top 10 2026. Identifiers are not yet mapped.
-- `docs/acs-integration.md` uses generic hook names that predate ACS v0.1.0.
-  Use the method names above.
+- AgBOM representation is now schema-reviewed in the [integration note](acs-integration.md#agbom-representation): `skill` when registered as loadable content, or `knowledge_source` when retrieved as reference material. Neither classification proves approval or runtime enforcement. A complete-artifact digest cannot be replaced with a guide-only digest when other files are bundled.
+- LLM Top 10 2026 identifiers remain source-access-blocked as described above. Resume only from the official edition or a supplied copy with provenance.
+- An implemented adapter and its report/approval binding remain future work. The ACS note now uses the pinned method names; A2A wrapping remains reserved by that source.
 - Hosted verification of pinned execution targets and signed `security.txt`
   anchors remain open; see `roadmap.md`.
 

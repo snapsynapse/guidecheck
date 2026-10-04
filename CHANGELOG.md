@@ -6,12 +6,19 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Added
 
+- Add an offline 110-case DNS parsing diagnostic and dated evidence. It
+  characterizes released behavior without changing profiles or conformance fixtures.
+- Record current publisher/DNS evidence and pinned ACS schema review, including
+  conditional AgBOM representations and the unresolved LLM 2026 source-access gap.
 - Add `docs/owasp-crosswalk.md`, a non-normative threat, control, evidence,
   and gap map against the OWASP Top 10 for Agentic Applications for 2026 and
   the ACS v0.1.0 hook catalog, and point the ACS integration note at it.
 
 ### Fixed
 
+- Reconcile component positioning and operator guidance around inspectable
+  installation, update ACS hook names, and replace stale release/DNS/readiness
+  work items with remaining gaps. Preserve all anchored artifacts and released behavior.
 - Correct the self-guide digest in the published `security.txt` metadata and
   make version-sync validation reject missing, malformed, duplicate, or stale
   `Assistant-Guide-SHA256` fields.

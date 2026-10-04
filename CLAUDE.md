@@ -133,12 +133,15 @@ builds and Sigstore-signs release + conformance-kit artifacts.
 
 - The current release is 2.0.0. Profile 1.0.0 remains supported as a prior
   release (see `CHANGELOG.md`).
-- Most recent work (2026-07-07): added `guidecheck scan`, a standalone
+- Scanner foundation (2026-07-07): added `guidecheck scan`, a standalone
   instruction-surface scanner for existing files (AGENTS.md/CLAUDE.md/
   README/SKILL/llms.txt/assistant-guide.txt) that flags hidden-instruction
   channels independent of full assistant-guide.txt conformance — framed as
   "adoption steps 1-2," the low-friction front door ahead of full profile
   adoption. Packaged via `pyproject.toml` for `uvx guidecheck scan`.
+- For DNS, integration or parser follow-up, read
+  `docs/maintenance-evidence-2026-10-03.md` and the current roadmap queue.
+  The receipt distinguishes deployed source from local documentation work.
 - `roadmap.md` records current work and disposition; `handoffs/` contains
   only unprocessed temporary queues.
 - Release and conformance-kit signing is settled: 0.6.0 and later use Sigstore

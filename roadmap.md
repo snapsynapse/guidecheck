@@ -5,59 +5,72 @@ Status: planning notes for actions not yet executed and decisions not yet made.
 This roadmap is not normative. It records likely future work so unresolved
 items are visible without being treated as commitments.
 
-## Current work queue (reconciled 2026-09-07)
+## Current work queue (reconciled 2026-10-03)
 
-- Profile 2.0.0 release work is implemented and locally validated under
-  `docs/corrected-content-policy-2026-09-07.md`. The
-  [validation record](docs/corrected-content-validation-2026-09-07.md) pins the
-  base HEAD, local fingerprints, compatibility evidence, and delivery boundary.
-  The release uses explicit
-  guide-byte selection, corrected prohibited-pattern boundaries, blocking
-  unresolved execution targets, and the 1.0.0 strict anchor policy. It is not
-  deployed through this document, and no adopter report migrates automatically.
-- The experimental local verification CLI adapter is implemented under
-  [the POSIX JSON contract](docs/cli-contract.md). The software 2.0.0 release
-  and [delivery procedure](docs/release-2.0.0.md) are the next publication unit.
-  Complete production verification after main integration and release. Broader CLI
-  adoption follows pilot delivery; it does not block the corrected profile.
-- Local bounded-execution phases 1-3 and local phase 5 are included in release 1.0.0. Hosted artifact verification and transitive scanning are next,
-  after deciding fetch limits and budget. Class-warning promotion is a separate
-  conformance decision, not a prerequisite for local script blocking.
-- The approved AIDR-0001 version-aware anchor policy is included in release 1.0.0.
-  The 1.0.0 dispatcher preserves legacy results and applies repository-anchor
-  exclusion only to explicit 1.0.0 guides. Versioned specifications, schemas,
-  strict fixtures, and complete legacy report replay are present. The
-  [compatibility contract](docs/anchor-policy-compatibility.md) and
-  [validation evidence](docs/anchor-dispatch-validation.md) record the approved
-  behavior and tests. All 25 local guide paths and 16 public fetch/replay reports
-  matched the baseline; no dependent repository or anchor was changed.
-  Sam authorized staging, commit, push, release, and deployment. The delivery
-  procedure and verification gates are in `docs/release-1.0.0.md`. The AIDR preserves Sam's
-  approval verbatim in Evidence; its human-owned Arbitration section remains
-  available for Sam's formal record. The pre-publication evidence remains explicitly a snapshot.
-- DNS anchor rotation completed in July, confirmed by Sam on 2026-09-05.
-  This is operator confirmation, not a fresh DNS observation.
-- Exemption-list maintenance cadence and mixed built/pulled Docker Compose
-  services remain future hosted-classification design questions.
-- Signing/OpenSSF/citations remain queued in the September 1 handoff. Its
-  account-signing prerequisite pointer is missing and must be rediscovered before
-  relying on it. No badge, DOI, account change, or publication is authorized by
-  that handoff.
-- Second verifier, Level 5 fixtures/evaluator, higher provenance tiers, and
-  approval receipts remain demand/readiness-gated. Resolve the receipt identity
-  fork only after Level 5 fixture design.
-- Remaining maintenance candidates: signed security.txt fetching, TLS/header
-  replay and real HTTPS integration tests, browser report smoke tests, metadata
-  parser-confusion fixtures, size-boundary fuzzing, and explicit full-schema
-  coverage assessment. Existing dependency-free schema checks already run in CI.
+Current evidence and handoff disposition are recorded in the
+[maintenance receipt](docs/maintenance-evidence-2026-10-03.md). Completed
+foundations are not implementation tasks to repeat.
+
+- DNS parser policy is the next bounded decision. The
+  [110-case diagnostic](docs/dns-anchor-parsing-2026-10-03.md) reproduces
+  malformed-field acceptance and order-dependent conflicts across all supported
+  profiles. Prefer an explicitly selected correction; do not change frozen
+  legacy, 1.0.0 or 2.0.0 results without a separate compatibility decision.
+- Standards-integration documentation is reconciled around inspectable
+  installation. The [OWASP crosswalk](docs/owasp-crosswalk.md) and
+  [ACS integration note](docs/acs-integration.md) pin the upstream schemas,
+  method names and conditional AgBOM mappings. No adapter, runtime certification,
+  external contribution or acceptance is established by those documents.
+  A possible owner-selected public step is an ACS Discussion about instruction
+  vetting at skill registration/load or knowledge retrieval, citing the crosswalk.
+  No new outreach is selected; exploit-demonstration promotion remains excluded
+  by the prior owner decision.
+- LLM Top 10 2026 identifiers remain unmapped. The official linked download
+  returned a No Access HTML page on October 3; obtain the official edition or
+  a provenance-bearing supplied copy before mapping it. Do not substitute 2025
+  identifiers or infer edition from workstream names. This is the remaining
+  source-access item transferred from the September 22 handoff.
+- Signing/OpenSSF/citations remain a separate tranche in the September 1
+  handoff. The current commit is GitHub-verified, so account signing is no
+  longer wholly unestablished. Local verification still needs a configured
+  signer trust file. Scorecard review, a static-analysis gate, citation metadata,
+  optional attestations and badge/DOI decisions remain open; nothing here
+  authorizes account changes or publication.
+- Hosted execution-artifact verification and transitive scanning remain pending
+  fetch-limit and budget design. A declared execution pin remains unverified.
+  Exemption-list maintenance and mixed built/pulled Compose services remain
+  design questions; class-warning promotion is a separate conformance decision.
+- Second verifier, Level 5 fixtures/evaluator, higher provenance tiers and
+  approval receipts remain demand/readiness-gated. Resolve receipt identity
+  only after Level 5 fixture design. ACS documentation does not satisfy that gate.
+- Other maintenance candidates: signed security.txt fetching, TLS/header replay
+  and real HTTPS integration tests, browser report smoke tests, metadata
+  parser-confusion coverage, size-boundary fuzzing, and full-schema coverage
+  assessment. Dependency-free schema-backed checks already run in CI.
 - Harnessie follow-up: assess compact local Level 4-ready presentation separately
-  from the anchor-independence decision. Wrapped verification prose, eval prose,
-  Pages hosting guidance, immutable URL ordering, and rotation guidance shipped.
+  from anchor independence. Existing wrapped-verification, eval-prose, Pages,
+  immutable-URL ordering and rotation guidance already shipped.
 
-Completed foundations: scanner and Python CLI packaging, self-guide manifest,
-DNS/repository-file anchor support, immutable release references, contract checks,
-and Sigstore release/conformance-kit signing. Older milestone descriptions below
-are historical planning context where explicitly marked as shipped.
+Completed and freshly reconciled:
+
+- Software/profile 2.0.0 and the experimental POSIX JSON CLI are released. The
+  [delivery procedure](docs/release-2.0.0.md) remains a procedure, while the
+  maintenance receipt records the current release/CI/production observations.
+  Broader CLI adoption is separate.
+- AIDR-0001 version-aware anchor policy and local bounded-execution enforcement
+  shipped in 1.0.0. Historical validation in
+  [anchor-dispatch-validation.md](docs/anchor-dispatch-validation.md) retains its
+  original scope; legacy reports and self-guide bytes remain frozen.
+- Self-guide DNS now matches the unchanged guide and manifests. The hosted
+  self-guide report reached Level 4 on October 3. The security.txt metadata
+  repair is on remote main and matches live bytes. No DNS mutation is pending.
+- Package license metadata now declares MIT for the reference code. Public
+  claim wording, Homebrew instructions and the initial OWASP crosswalk are
+  already on main. Companion-doc refinements remain local until delivered.
+- Scanner and Python CLI packaging, self-guide manifests, DNS/repository-file
+  anchor support, immutable release references, contract checks and Sigstore
+  release/conformance-kit signing exist. Older milestone descriptions below
+  are historical where marked as shipped.
 
 ## Resolved in the 0.1.0 review
 
@@ -194,8 +207,8 @@ five finding ids in `finding-ids.md` and `verifier-conformance.md`. The profile 
 bumped to 0.7.0 across all surfaces. Reference-verifier and hosted-verifier
 enforcement of `action.exec-unbounded`, `exec-sha256` verification, and
 transitive-closure scanning is the work originally deferred to a 0.7.x
-release (local enforcement is now implemented; hosted reads remain pending), sequenced in `docs/0.7-verifier-enforcement-plan.md`; local script enforcement is now implemented but unreleased. Hosted artifact
-reads remain pending. The July DNS rotation was confirmed by Sam on September 5. The bound-versus-exempt axis and the adversarial hardening behind
+release (local enforcement is now implemented; hosted reads remain pending), sequenced in `docs/0.7-verifier-enforcement-plan.md`; local script enforcement shipped in 1.0.0. Hosted artifact
+reads remain pending. Current self-guide DNS evidence is linked from the work queue above. The bound-versus-exempt axis and the adversarial hardening behind
 it are summarized in the covered/landed/candidate notes in this section and in
 `threat-register.md`.
 
@@ -373,8 +386,9 @@ audience or the artifact the next step needs. Not commitments.
    https://genai.owasp.org/meetings/, OWASP Slack GenAI channels, and a
    GitHub issue or PR proposing GuideCheck for the AI Security Solutions
    Landscape); awesome-list entries for MCP and AI-security collections. The
-   existing non-normative AOS integration note (see Documentation work) is
-   the natural artifact to anchor the OWASP contribution.
+   existing OWASP crosswalk and ACS integration note are candidate artifacts
+   for an owner-selected public contribution. No contribution or new outreach
+   is recorded by this plan.
 
 Success measures per step: scanner installs and runs per week (1, 2), post
 engagement relative to prior spec posts (3), badge count in the wild (4),
@@ -387,11 +401,10 @@ plugin installs and registry listings (5).
   section numbers.
 - Expand verifier author guidance with examples of compact reports and full
   machine-readable output.
-- Add a non-normative AOS integration note describing how GuideCheck verifier
-  output, guide hashes, action ids, approval decisions, and stop conditions
-  can feed OWASP Agent Observability Standard trace, guardian, and AgBOM
-  surfaces. The note must not make AOS a GuideCheck conformance dependency or
-  imply OWASP endorsement.
+- Maintain the non-normative [ACS integration note](docs/acs-integration.md)
+  and [OWASP crosswalk](docs/owasp-crosswalk.md). The old AOS-note proposal is
+  covered by these documents; an implementation and any external contribution
+  remain separate decisions. Keep upstream revisions and evidence limits explicit.
 
 The three integration notes below were added in the 0.3.x cycle and are
 advisory perimeter documents, not core roadmap commitments. "Keep in sync"

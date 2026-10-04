@@ -26,17 +26,21 @@ Invalid current language:
 The guide-only verifier remains capped at achieved Level 4. It may report
 `level5_ready`, but that signal is guide-side preparation only.
 
-## Ordered blockers
+## Remaining gates
 
-1. Finish the Level 1 through Level 4 fixture contract.
-2. Validate fixture expectations, verifier output, and manifests against the
-   published schemas in the repo-local test path.
-3. Keep hosted verifier claim language conservative until it passes the
-   applicable fixture suite.
-4. Add GuideCheck's own Level 4 manifest and independent anchor only after the
-   external publication path is ready.
-5. Keep Level 5 runtime docs as design drafts until the runtime fixture suite
-   and evaluator profile exist.
+Reconciled 2026-10-03 against code and [publisher evidence](maintenance-evidence-2026-10-03.md).
+
+1. Assess completeness of the Level 1 through Level 4 fixture contract and
+   hosted coverage. Existing fixtures and green CI do not establish complete
+   hosted verifier conformance.
+2. Assess gaps between the dependency-free schema validator and the published
+   schemas. Schema-backed checks are already implemented; do not rebuild them
+   from the older checklist.
+3. Resolve newly characterized parser ambiguities under an explicit compatibility
+   policy. The [DNS diagnostic](dns-anchor-parsing-2026-10-03.md) is evidence of
+   a gap, not a new normative fixture contract.
+4. Design the runtime fixture suite and evaluator profile before implementing
+   or claiming Level 5. ACS mappings are advisory input, not runtime evidence.
 
 ## Repo-local work
 
@@ -73,23 +77,26 @@ be treated as part of repo-local readiness:
 - claiming GuideCheck's own guide reaches Level 4: in scope; the manifest
   at `docs/.well-known/assistant-guide-manifest.txt` plus the DNS TXT
   anchor plus the github.com repository-file anchor support a Level 4
-  claim for guidecheck.org's own guide once the DNS record is in place
+  claim for guidecheck.org's legacy self-guide. Matching live evidence was
+  rechecked on October 3; this is separate from hosted conformance completeness.
 
-## September 2026 reconciliation
+## October 2026 reconciliation
 
 Dependency-free schema-backed contract validation, static fixture expansion,
 self-guide manifest publication, and release signing are already implemented.
-The earlier checklist below is a coverage review, not a queue to rebuild those
-features. Sam confirmed July DNS rotation on 2026-09-05. Hosted conformance and
-runtime fixture/evaluator completeness remain separate, unresolved gates.
+The remaining gates above are a coverage review, not a queue to rebuild those
+features. The resolved self-guide DNS mismatch has a fresh hosted Level 4
+receipt. Hosted conformance and runtime fixture/evaluator completeness remain
+separate, unresolved gates.
 
 ## Recommended next implementation slice
 
 The next repo-local slice before Level 5 should:
 
-1. Add schema-backed validation to the existing contract checks.
-2. Promote small generated or documented gaps into static fixtures.
-3. Update fixture documentation so current coverage and remaining gaps are
-   explicit.
+1. Select one demonstrated gap and its compatibility policy, beginning with
+   the DNS parser diagnostic if that correction is approved.
+2. Add policy-specific static fixtures only after the expected behavior is decided.
+3. Assess schema and fixture coverage explicitly rather than claiming that the
+   presence of a validator proves complete coverage.
 4. Link Level 5 design drafts from planning docs only.
 5. Run the full local suite and keep Level 5 out of the verifier claim path.

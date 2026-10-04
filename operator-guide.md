@@ -14,8 +14,9 @@ anchors merely to upgrade verifier software. See
 During rollout, an older hosted verifier may ignore an unfamiliar request field.
 Consumers requiring 2.0.0 must also validate the response against the released
 schema and confirm `profile_selection.evaluated_policy` is `2.0.0`. HTTP 200 or
-a legacy Level 4 result is insufficient. The current production service has not
-received this release in this session. The experimental POSIX CLI selector,
+a legacy Level 4 result is insufficient. Production source identity and the
+self-guide result were rechecked in the [maintenance evidence](docs/maintenance-evidence-2026-10-03.md);
+that dated observation is not a guarantee about a later request. The experimental POSIX CLI selector,
 `--contract posix-json-v1`, is independent of the guide-declared profile
 selector; see [the CLI contract](docs/cli-contract.md).
 
@@ -26,11 +27,20 @@ adopting GuideCheck, regardless of how high a guide scores against the
 profile. Read it alongside `spec.md` section 27, which enumerates the threats
 the profile does not address.
 
-GuideCheck is one layer in a defense stack. It is the layer that prevents a
-presentation surface from hiding instructions from a human while feeding them
-to an assistant. It is not, by itself, a secure install procedure. The
+GuideCheck supports inspectable installation by checking a bounded instruction
+artifact for presentation tricks, structural violations and selected provenance
+signals. It does not establish that an assistant executes only the reviewed
+actions. It is not, by itself, a secure install procedure. The
 practices below remain the operator's responsibility regardless of how high a
 guide scores against the profile.
+
+## What the result establishes
+
+- Levels 1 through 3 check the guide artifact under its declared supported profile.
+- Hosted Level 4 also checks supported fetched provenance evidence. A guide hash identifies bytes; it does not establish publisher benevolence or safe command effects.
+- An `exec-sha256.unverified` finding means an execution pin was declared but the verifier did not read the invoked artifact. Review that artifact separately before approving its execution.
+- `level5_ready` describes guide-side preparation. No GuideCheck Level 5 runtime evaluation is currently delivered.
+- The [ACS integration pattern](docs/acs-integration.md) is advisory. Hook names and an inventory entry do not prove that a deployed host enforces the policy.
 
 ## Before authorizing the assistant
 

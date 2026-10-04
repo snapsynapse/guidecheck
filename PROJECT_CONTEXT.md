@@ -65,14 +65,17 @@ notes), rather than a general PAICE-wide default.
 ## Current status
 
 The current release is 2.0.0; 1.0.0 remains supported as a prior profile (see
-`CHANGELOG.md`). Most recent shipped work:
+`CHANGELOG.md`). Scanner foundation:
 `guidecheck scan`, an instruction-surface scanner for pre-existing
 AGENTS.md/CLAUDE.md/README/SKILL/llms.txt-style files (2026-07-07).
 Undecided/open items live in
 `roadmap.md` and `INTENT.md`: a possible second independent verifier
 implementation (language undecided), the Level 5 runtime-conformance fixture
 suite design, and a possible higher provenance tier. Release and conformance-
-kit signing is settled on Sigstore cosign keyless for 0.6.0 and later. See
+kit signing is settled on Sigstore cosign keyless for 0.6.0 and later. Current
+maintenance evidence and local integration/parser closeout are recorded in
+`docs/maintenance-evidence-2026-10-03.md`; that receipt distinguishes deployed
+source from local work. See
 `CLAUDE.md` for technical/agent-facing detail.
 
 ## Version-aware release (2026-09-05)
