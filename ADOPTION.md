@@ -14,6 +14,9 @@ qualify for 1.0.0 Level 4. Retain legacy declarations until deliberately migrati
 Consumers that require 1.0.0 can use the `required_profile_version` API field or
 `--require-profile-version` local CLI assertion. These reject an incompatible
 guide rather than reinterpret its bytes. Local evaluation still caps at Level 3.
+Under the 1.0.0 and 2.0.0 policies, a guide that declares `manifest-url` also
+reports blocking `anchor.independent.missing` and exits 1 locally even at
+Level 3; see [the roadmap](roadmap.md) for this open question.
 
 Deliberately adopting 2.0.0 requires matching guide and manifest profile
 declarations. Its `corrected-content-1` policy is opt-in and its

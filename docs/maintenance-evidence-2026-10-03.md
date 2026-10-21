@@ -1,5 +1,7 @@
 # Maintenance and integration evidence
 
+> Status note (2026-10-21): Point-in-time receipt. The tranche changes described as local were committed in 34331b9 and are on main. Handoff files it mentions no longer exist. Later main state, including c08b82e, is not covered.
+
 Date: 2026-10-03 America/Denver. Scope: GuideCheck component maintenance.
 Status: local documentation and diagnostic tranche; no commit, push, release or deployment performed by this tranche.
 

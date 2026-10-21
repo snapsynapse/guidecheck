@@ -52,9 +52,10 @@ fixture suite under `fixtures/` is the conformance target for verifier
 implementations. Add or update fixtures in the same change that alters a
 verifier requirement.
 
-Fixture-suite releases will be signed and versioned once
-`verifier-conformance.md` reaches a stable conformance target, so verifier
-authors can pin a trusted corpus. See `roadmap.md`.
+Fixture-suite (conformance kit) releases have been signed with Sigstore cosign
+keyless, and versioned, since 0.6.0, so verifier authors can pin a trusted
+corpus. See `SECURITY.md` for the verification procedure and `roadmap.md` for
+open conformance-target questions.
 
 ## Evals
 

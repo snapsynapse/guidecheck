@@ -1,5 +1,7 @@
 # Version-aware anchor dispatch validation
 
+> Status note (2026-10-21): Snapshot dated 2026-09-05, delivered in v1.0.0. Handoff files referenced below no longer exist; handoffs are temporary queues. The signing, OpenSSF, and citation tranche is tracked in roadmap.md.
+
 Date: 2026-09-05 America/Denver; public observations occurred on September 6 UTC.
 State: pre-publication validation snapshot. Subsequent release and deployment
 authority is recorded in `release-1.0.0.md`; this snapshot is not a live deployment receipt.

@@ -1,5 +1,7 @@
 # Version-aware anchor policy proposal
 
+> Status note (2026-10-21): Delivered in v1.0.0 (2026-09-05). The checkpoint table records the pre-release state; see [release-1.0.0.md](release-1.0.0.md).
+
 Status: approved implementation contract for 1.0.0. Publication and deployment authorized by Sam; delivery evidence is recorded separately.
 Scope: GuideCheck AIDR-0001, repository-anchor qualification only.
 Baseline: 3ceb30a58488f925844c51c5aad0bc0f94633ff7.

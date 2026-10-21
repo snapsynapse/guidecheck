@@ -644,6 +644,7 @@
     <h2>Adopt the profile</h2>
     <p>Publishing a conformant guide is plain-text work. Write the artifact, serve it at the well-known path, and check it against the verifier conformance profile. No registry, no account, no central oracle. The <a href="https://github.com/snapsynapse/guidecheck/blob/main/ADOPTION.md" target="_blank" rel="noopener">adoption guide</a> gives a level-by-level path and a guide-author checklist.</p>
     <p>For agent ecosystems, the same pattern applies at protocol boundaries. MCP server authors can use GuideCheck for install, tool, resource, and approval review; A2A implementers can use it for delegated-task guidance and returned artifacts that would otherwise become executable instructions. These are integration patterns, not conformance dependencies.</p>
+    <p>Existing AGENTS.md, CLAUDE.md, README, or skill files can be scanned with <code>python3 scripts/guidecheck_scan.py</code> for supported hidden-instruction channels. The scanner does not award a conformance level, and a scan with no findings does not mean the file is safe. See <a href="https://github.com/snapsynapse/guidecheck#have-an-instruction-file-rather-than-a-guide" target="_blank" rel="noopener">scanning an instruction file</a>.</p>
 
     <div class="code-grid">
       <div class="code-block">
@@ -687,6 +688,7 @@ GET /.well-known/assistant-guide.txt
     <div class="demo-block">
       <h2>Verify a guide</h2>
       <p>GuideCheck publishes a primary verifier for usability &mdash; never as the only authoritative verifier and never as a root of trust. It reports what it checked and what it did not. Guide files score up to Level 4 of 4; Level 5 is a separate runtime enforcement claim. Optional agent and expected-level fields help identify compatibility gaps without storing full submitted URLs, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.</p>
+      <p>The hosted verifier is a preview. The local reference CLI evaluates Levels 1-3 from a source checkout without executing the guide. Under a 1.0.0 or 2.0.0 profile, a guide that declares <code>manifest-url</code> reports the blocking finding <code>anchor.independent.missing</code> locally, because Level 4 needs fetched evidence. A captured failed verification and a step-by-step trial are in the <a href="https://github.com/snapsynapse/guidecheck#try-it" target="_blank" rel="noopener">README trial</a>.</p>
       <div class="demo-preview">verifier: human-verifiable-assistant-guide-verifier 0.7.1
 guide-sha256: a1b2c3 ... reviewed before use
 achieved-level: 4

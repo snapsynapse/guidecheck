@@ -14,7 +14,7 @@ Contract options use separate values only: write `--contract posix-json-v1`, not
 |---|---|
 | `invalid-invocation`, `unsupported-option-syntax`, `missing-contract-value`, `unsupported-contract`, `duplicate-option`, `conflicting-output-option`, `duplicate-anchor-channel` | Correct the contract arguments and run the command again. |
 | `invalid-profile-data`, `invalid-input-text` | Correct the guide, sidecar, or profile assertion before repeating. |
-| `guide-input-missing`, `manifest-input-missing`, `anchor-input-missing` | Provide the missing local input path. |
+| `guide-input-missing`, `manifest-input-missing`, `anchor-input-missing`, `input-missing` | Provide the missing local input path. |
 | `input-permission-denied` | Grant read access to the named input. |
 | `input-io-failure` | Resolve the identified local I/O condition. |
 | `operational-failure` | Inspect stderr and reconcile the local verifier state before repeating. |

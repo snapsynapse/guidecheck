@@ -13,6 +13,13 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 - Add `docs/owasp-crosswalk.md`, a non-normative threat, control, evidence,
   and gap map against the OWASP Top 10 for Agentic Applications for 2026 and
   the ACS v0.1.0 hook catalog, and point the ACS integration note at it.
+- Add `docs/readme-trial-evidence-2026-10-21.md`, the complete captured output
+  behind the README trial: a failing 2.0.0 fixture, a legacy positive control,
+  and a scanner run, from a clean shallow clone of the v2.0.0 tag.
+- Record in `roadmap.md` the open question of local exit status for guides that
+  claim Level 4: under the 1.0.0 and 2.0.0 policies a guide declaring
+  `manifest-url` reports blocking `anchor.independent.missing` and exits 1 locally
+  even at Level 3.
 
 ### Fixed
 
@@ -32,6 +39,12 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   the packaged `guidecheck` command and keeps `guidecheck-verify` as an alias.
   The formula previously installed verifier 0.5.0.
 - Lead the README with the problem statement and move release notes below it.
+- Lead the README with a captured failed verification and a source-checkout trial.
+  No package-index entry point is published; the package is not on PyPI or npm.
+- Complete a documentation reconciliation pass: the site Verify section and
+  `llms.txt` link the trial and the scanner, the `security.txt` Policy link is
+  corrected, the sitemap `lastmod` values are corrected, historical documents
+  carry status banners, and the finding-id registry header matches released behavior.
 
 ## [2.0.0] - 2026-09-07
 

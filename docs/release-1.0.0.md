@@ -1,5 +1,7 @@
 # GuideCheck 1.0.0 delivery procedure
 
+> Status note (2026-10-21): Delivered 2026-09-05 as v1.0.0. Local receipts under build/ are untracked and are not available in clones.
+
 Scope: this repository's approved version-aware dispatcher, public contracts,
 signed GitHub source/conformance assets, and Vercel deployment. Sam explicitly
 authorized staging, commit, push, release, and deployment after reviewing the

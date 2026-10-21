@@ -2,6 +2,6 @@ Contact: mailto:security@paice.work
 Expires: 2027-05-21T00:00:00.000Z
 Preferred-Languages: en
 Canonical: https://guidecheck.org/.well-known/security.txt
-Policy: https://guidecheck.org/SECURITY.md
+Policy: https://github.com/snapsynapse/guidecheck/blob/main/SECURITY.md
 Assistant-Guide: https://guidecheck.org/.well-known/assistant-guide.txt
 Assistant-Guide-SHA256: 4b30202c809a3db037290371da8fed6a9681255199e0e19cfe1a0a7fc1d5df9e

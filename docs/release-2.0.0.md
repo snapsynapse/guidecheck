@@ -1,5 +1,7 @@
 # GuideCheck 2.0.0 release
 
+> Status note (2026-10-21): Delivered 2026-09-07 as v2.0.0 (0991c18). This file remains the delivery procedure; observed release, CI, and production evidence is in [maintenance-evidence-2026-10-03.md](maintenance-evidence-2026-10-03.md).
+
 Release version: 2.0.0
 
 Status: Approved delivery procedure. This document defines the required

@@ -9,7 +9,7 @@ Assistant Guide profile for `assistant-guide.txt`. It defines a constrained,
 plain-text, ASCII-only instruction surface that a human can fully review
 before an AI assistant acts on it, closing the gap between "instructions a
 human approved" and "instructions an agent actually executes." It also ships
-a reference verifier and (new, 0.7.x) an instruction-surface scanner that
+a reference verifier and (since 0.7.x) an instruction-surface scanner that
 checks existing files (AGENTS.md, CLAUDE.md, README, SKILL, llms.txt,
 assistant-guide.txt) for hidden-instruction channels (HTML comments,
 invisible Unicode, CSS-hidden text, ANSI escapes).
@@ -57,7 +57,7 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   - `guidecheck_verify.py` — local-file reference verifier CLI (Levels 1-3,
     plus internal-consistency checks on Level 4 sidecar manifests/anchors).
   - `guidecheck_scan.py` / `guidecheck_cli.py` — instruction-surface scanner
-    (`guidecheck scan <url-or-file-or-dir>`), new in 0.7.x.
+    (`guidecheck scan <url-or-file-or-dir>`), added in 0.7.x.
   - `guidecheck_fetch.py`, `guidecheck_hosted_anchors.py` — fetch/anchor
     support for hosted verifier checks.
   - `guidecheck_constants.py` — single source of truth for the version
@@ -67,6 +67,13 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   - `check_reference_verifier.py`, `validate_contracts.py`,
     `check_guide_artifacts.py`, `check_version_sync.py`, and the
     `test_*.py` files — CI-run checks invoked via `make test`.
+- `profiles/` — versioned normative profile documents (`1.0.0/`, `2.0.0/`),
+  each with `spec.md`, `verifier-conformance.md`, and `example-report.json`.
+- `decisions/` — AI decision records (currently AIDR-0001, same-control-plane
+  repository anchors).
+- `api/` — `verify.py`, the hosted verifier function behind
+  `https://guidecheck.org/verify`.
+- `handoffs/` — temporary session queues; currently empty.
 - `fixtures/` — verifier conformance test corpus (static, pinned).
 - `schemas/` — JSON Schema for manifest / verifier output / fixture contracts.
 - `examples/` — sample conforming guides and a sample manifest.
@@ -98,8 +105,8 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   negatives.
 - Commits in this repo follow Conventional-ish free-text summaries with a
   detailed body explaining rationale; recent commits include a
-  `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>` trailer when an
-  agent contributed.
+  `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer (the model
+  name varies) when an agent contributed.
 - Roadmap/INTENT items are explicitly non-binding until resolved and moved
   into `spec.md`/`verifier-conformance.md`; don't treat roadmap language as
   normative.
@@ -125,9 +132,13 @@ Reference verifier direct invocation:
 python3 scripts/guidecheck_verify.py assistant-guide.txt --pretty
 ```
 
-CI (`.github/workflows/test.yml`) runs `make test` on every push to `main`
-and on pull requests. `release.yml` runs on `v*` tags: `make test`, then
-builds and Sigstore-signs release + conformance-kit artifacts.
+CI (`.github/workflows/test.yml`) runs on every push to `main` and on pull
+requests, on Python 3.10 and 3.12: `make test test-verify-ui`,
+`python3 scripts/build_public_contracts.py`, and
+`python3 scripts/test_package_consumer.py` (installed wheel verified outside
+the checkout). `release.yml` runs on `v*` tags: `make test test-verify-ui` and
+`build_public_contracts.py`, then builds and Sigstore-signs release +
+conformance-kit artifacts.
 
 ## Current state
 
@@ -138,12 +149,20 @@ builds and Sigstore-signs release + conformance-kit artifacts.
   README/SKILL/llms.txt/assistant-guide.txt) that flags hidden-instruction
   channels independent of full assistant-guide.txt conformance — framed as
   "adoption steps 1-2," the low-friction front door ahead of full profile
-  adoption. Packaged via `pyproject.toml` for `uvx guidecheck scan`.
+  adoption. Packaged via `pyproject.toml`. It is installable from a source
+  checkout (for example `uvx --from . guidecheck scan`) or through the
+  Homebrew tap; it is not published to PyPI or npm.
 - For DNS, integration or parser follow-up, read
   `docs/maintenance-evidence-2026-10-03.md` and the current roadmap queue.
-  The receipt distinguishes deployed source from local documentation work.
+  The 2026-10-03 documentation tranche is on `main` (34331b9); the receipt
+  distinguishes the deployed source from that documentation work.
+- The README leads with a captured failed verification and a source-checkout
+  trial (2026-10-21, c08b82e; evidence in
+  `docs/readme-trial-evidence-2026-10-21.md`), and `docs/index.html` links the
+  trial. Local exit status for 1.0.0 and 2.0.0 guides that declare
+  `manifest-url` is an open roadmap question.
 - `roadmap.md` records current work and disposition; `handoffs/` contains
-  only unprocessed temporary queues.
+  only unprocessed temporary queues and is currently empty.
 - Release and conformance-kit signing is settled: 0.6.0 and later use Sigstore
   cosign keyless in the tag-triggered release workflow; SHA256SUMS remains the
   integrity reference for 0.5.0 and earlier. Open items tracked in `roadmap.md`

@@ -74,8 +74,12 @@ implementation (language undecided), the Level 5 runtime-conformance fixture
 suite design, and a possible higher provenance tier. Release and conformance-
 kit signing is settled on Sigstore cosign keyless for 0.6.0 and later. Current
 maintenance evidence and local integration/parser closeout are recorded in
-`docs/maintenance-evidence-2026-10-03.md`; that receipt distinguishes deployed
-source from local work. See
+`docs/maintenance-evidence-2026-10-03.md`; the 2026-10-03
+documentation tranche is on `main` (34331b9) and the receipt distinguishes the
+deployed source from that documentation work. The README leads with a captured
+failed verification and a source-checkout trial (2026-10-21); the roadmap
+records the open question of local exit status for guides that declare
+`manifest-url`. See
 `CLAUDE.md` for technical/agent-facing detail.
 
 ## Version-aware release (2026-09-05)
@@ -93,8 +97,8 @@ hosted fetching and independence decisions. Legacy profile behavior remains pinn
 
 The 2.0.0 release adds an explicitly selected `corrected-content-1` policy
 while retaining the `1.0.0-strict` anchor policy. Legacy and 1.0.0 profiles,
-their reports, and the 0.7.1 self-guide remain frozen. Release scope and
-scope are recorded in `RELEASE_NOTES-2.0.0.md` and
+their reports, and the 0.7.1 self-guide remain frozen. Release scope is
+recorded in `RELEASE_NOTES-2.0.0.md` and
 `docs/corrected-content-policy-2026-09-07.md`. The experimental POSIX CLI
 selector `--contract posix-json-v1` is independent of the guide-declared
 profile selector; see `docs/cli-contract.md`.

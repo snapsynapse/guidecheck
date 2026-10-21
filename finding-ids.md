@@ -1,6 +1,6 @@
 # Finding ID Registry
 
-Status: draft for GuideCheck 0.2.0.
+Status: normative registry (see CONTRIBUTING.md); current through 2.0.0.
 
 This registry defines stable finding ids used by the current verifier
 conformance fixtures and local evals. Verifiers MAY emit additional finding
@@ -118,7 +118,7 @@ files.
 
 ## Bounded execution
 
-Defined for guide-profile 0.7.0. The unreleased shared verifier now emits
+Defined for guide-profile 0.7.0. The shared verifier emits (since 1.0.0)
 `action.exec-unbounded`, `action.exec-opaque`, and `exec-sha256.unverified`.
 Both local and hosted callers report pins as declared, not verified. Hosted
 artifact fetching and the mismatch/transitive findings remain deferred.

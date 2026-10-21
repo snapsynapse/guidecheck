@@ -29,9 +29,10 @@ foundations are not implementation tasks to repeat.
   returned a No Access HTML page on October 3; obtain the official edition or
   a provenance-bearing supplied copy before mapping it. Do not substitute 2025
   identifiers or infer edition from workstream names. This is the remaining
-  source-access item transferred from the September 22 handoff.
-- Signing/OpenSSF/citations remain a separate tranche in the September 1
-  handoff. The current commit is GitHub-verified, so account signing is no
+  source-access item from the processed September 22 queue (see the
+  [maintenance receipt](docs/maintenance-evidence-2026-10-03.md)).
+- Signing/OpenSSF/citations remain a separate tranche. Its September 1
+  handoff file no longer exists, so this bullet is the only record. The current commit is GitHub-verified, so account signing is no
   longer wholly unestablished. Local verification still needs a configured
   signer trust file. Scorecard review, a static-analysis gate, citation metadata,
   optional attestations and badge/DOI decisions remain open; nothing here
@@ -59,8 +60,10 @@ foundations are not implementation tasks to repeat.
   correction that leaves frozen 1.0.0 and 2.0.0 results intact. Evidence:
   [README trial evidence](docs/readme-trial-evidence-2026-10-21.md).
 - The README now leads with a captured failed verification and a source-checkout
-  trial (2026-10-21). The public site opening in `docs/index.html` has not been
-  aligned with it; that is separate site work needing its own authorization.
+  trial (2026-10-21). The site Verify section and `docs/llms.txt` link that
+  trial and the scanner route; the `docs/index.html` hero still leads with the
+  trust-boundary thesis. Rewriting the hero is separate site work needing its
+  own authorization.
 
 Completed and freshly reconciled:
 
@@ -77,7 +80,8 @@ Completed and freshly reconciled:
   repair is on remote main and matches live bytes. No DNS mutation is pending.
 - Package license metadata now declares MIT for the reference code. Public
   claim wording, Homebrew instructions and the initial OWASP crosswalk are
-  already on main. Companion-doc refinements remain local until delivered.
+  already on main. Companion-doc refinements from the 2026-10-03 tranche are on
+  main (34331b9).
 - Scanner and Python CLI packaging, self-guide manifests, DNS/repository-file
   anchor support, immutable release references, contract checks and Sigstore
   release/conformance-kit signing exist. Older milestone descriptions below
@@ -218,8 +222,9 @@ five finding ids in `finding-ids.md` and `verifier-conformance.md`. The profile 
 bumped to 0.7.0 across all surfaces. Reference-verifier and hosted-verifier
 enforcement of `action.exec-unbounded`, `exec-sha256` verification, and
 transitive-closure scanning is the work originally deferred to a 0.7.x
-release (local enforcement is now implemented; hosted reads remain pending), sequenced in `docs/0.7-verifier-enforcement-plan.md`; local script enforcement shipped in 1.0.0. Hosted artifact
-reads remain pending. Current self-guide DNS evidence is linked from the work queue above. The bound-versus-exempt axis and the adversarial hardening behind
+release and sequenced in `docs/0.7-verifier-enforcement-plan.md`. Local script
+enforcement shipped in 1.0.0 (commit 3ceb30a) and is carried in 2.0.0; hosted
+artifact reads remain pending. Current self-guide DNS evidence is linked from the work queue above. The bound-versus-exempt axis and the adversarial hardening behind
 it are summarized in the covered/landed/candidate notes in this section and in
 `threat-register.md`.
 
@@ -372,7 +377,9 @@ audience or the artifact the next step needs. Not commitments.
    the front door.
 2. Python CLI packaging shipped; remaining presentation work: one-command entry point. Package the scanner as `npx guidecheck scan
    <url-or-file>` (or `uvx guidecheck`) with ten seconds to first finding.
-   Lead the site and README with the command and a short demo recording;
+   The README now leads with a captured failed verification and a
+   source-checkout trial (2026-10-21); no package-index entry point is
+   published. Lead the site and README with the command and a short demo recording;
    reframe the top-line pitch from protocol language to "make sure your AI
    reads the same instructions you do." The spec moves one click deeper, not
    away.

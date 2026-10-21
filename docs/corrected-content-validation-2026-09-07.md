@@ -1,4 +1,7 @@
 # Corrected Profile 2.0.0 Local Validation
+
+> Status note (2026-10-21): Records checkpoint 20fd911 only. Released as v2.0.0 (0991c18, 2026-09-07); see [release-2.0.0.md](release-2.0.0.md). Handoff references below no longer resolve.
+
 Date: 2026-09-07
 
 Scope: historical local evidence for corrected-profile checkpoint `20fd911`,
