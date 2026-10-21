@@ -50,6 +50,17 @@ foundations are not implementation tasks to repeat.
 - Harnessie follow-up: assess compact local Level 4-ready presentation separately
   from anchor independence. Existing wrapped-verification, eval-prose, Pages,
   immutable-URL ordering and rotation guidance already shipped.
+- Local exit status for guides that claim Level 4 is an open compatibility
+  question. Under the 1.0.0 and 2.0.0 policies, a guide that declares
+  `manifest-url` gets blocking `anchor.independent.missing` in local-file mode
+  and exits 1 even at achieved Level 3, so no 2.0.0 fixture is a local exit-0
+  example. `profiles/2.0.0/verifier-conformance.md` says local mode MAY skip
+  cross-channel anchor checks. Any change needs an explicitly selected
+  correction that leaves frozen 1.0.0 and 2.0.0 results intact. Evidence:
+  [README trial evidence](docs/readme-trial-evidence-2026-10-21.md).
+- The README now leads with a captured failed verification and a source-checkout
+  trial (2026-10-21). The public site opening in `docs/index.html` has not been
+  aligned with it; that is separate site work needing its own authorization.
 
 Completed and freshly reconciled:
 
