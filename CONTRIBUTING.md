@@ -72,6 +72,15 @@ emphasis inside headings, triple-backtick code fences, no em dashes, bare
 `https` domains. Guide examples and fixtures must satisfy the byte profile
 they claim to demonstrate.
 
+## Verifying commit signatures
+
+The signing key used for maintainer commits is listed in `.github/allowed_signers`. With Git 2.34 or later, this command verifies the most recent commit against that file. It requires no edits.
+Literal
+```bash
+git -c gpg.ssh.allowedSignersFile=.github/allowed_signers log --show-signature -1
+```
+A good signature reports the committer email and the key fingerprint. Commits made on or before 2026-07-31 are unsigned. GitHub web-flow merge commits are signed by GitHub's own key, which is not listed in this file, so they report that the signature cannot be checked. That result is expected and does not indicate tampering by itself.
+
 ## Security issues
 
 Do not open a public issue for a vulnerability in the profile, a verifier, or a published guide. See `SECURITY.md`.

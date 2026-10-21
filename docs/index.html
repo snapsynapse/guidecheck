@@ -31,7 +31,7 @@
   <meta property="og:url" content="https://guidecheck.org/">
   <meta property="og:locale" content="en_US">
   <meta property="article:published_time" content="2026-05-21T00:00:00Z">
-  <meta property="article:modified_time" content="2026-09-07T00:00:00Z">
+  <meta property="article:modified_time" content="2026-10-21T00:00:00Z">
   <meta property="article:author" content="Sam Rogers">
   <meta property="article:publisher" content="https://paice.work/">
   <meta property="article:section" content="Open Standards">
@@ -65,7 +65,7 @@
     "url": "https://guidecheck.org/",
     "mainEntityOfPage": { "@type": "WebPage", "@id": "https://guidecheck.org/" },
     "datePublished": "2026-05-21",
-    "dateModified": "2026-09-07",
+    "dateModified": "2026-10-21",
     "author": {
       "@type": "Person",
       "name": "Sam Rogers",
@@ -278,6 +278,13 @@
       max-width: 640px;
       margin: 0 auto 2.5rem;
     }
+    .rejected { max-width: 760px; margin: 0 auto 1.5rem; text-align: left; }
+    .rejected pre { margin-bottom: 1rem; }
+    .rejected pre code { color: inherit; font-size: inherit; }
+    .rejected p { font-size: 0.95rem; color: var(--text-muted); }
+    .rejected .rejected-lead { margin-bottom: 0.5rem; }
+    .rejected figcaption { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.75rem; }
+    .hero .qualification { font-size: 0.95rem; color: var(--text-muted); max-width: 640px; margin: 0 auto 1.5rem; }
     .hero-img {
       display: block;
       width: 100%;
@@ -516,21 +523,52 @@
 <main id="main-content">
 <section class="hero">
   <div class="container">
-    <h1>Your AI assistant just followed instructions you never saw.</h1>
-    <p class="subtitle">GuideCheck helps ensure the instructions humans approve are the same instructions agents execute.</p>
+    <h1>Check an assistant setup guide before authorizing its actions.</h1>
+    <p class="subtitle">GuideCheck reports the exact guide hash, achieved conformance level, and blocking findings without executing the guide.</p>
     <!-- Byline rel-attribute rule: combine values into a single rel attribute (rel="noopener author"). HTML allows only one rel per element; a second rel is silently dropped. -->
     <p class="byline">
       By <a href="https://linkedin.com/in/samrogers" target="_blank" rel="noopener author">Sam Rogers</a>, <a href="https://paice.foundation/" target="_blank" rel="noopener">PAICE.work PBC</a>
       <span class="sep" aria-hidden="true">&middot;</span>
       Published <time datetime="2026-05-21">May 21, 2026</time>
       <span class="sep" aria-hidden="true">&middot;</span>
-      Updated <time datetime="2026-09-07">September 7, 2026</time>
+      Updated <time datetime="2026-10-21">October 21, 2026</time>
       <span class="sep" aria-hidden="true">&middot;</span>
       <span class="version">v2.0.0 release</span>
       <span class="sep" aria-hidden="true">&middot;</span>
       <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank">CC&nbsp;BY&nbsp;4.0</a>
     </p>
-    <p class="hook">AI setup guides reach assistants through HTML, rendered Markdown, PDFs, and copied terminal output. Those surfaces can hide text from a human while feeding it to a model. GuideCheck is the open standard that turns that trust boundary into one plain-text document: small enough, strict enough, and verifiable enough to review before delegated authority acts.</p>
+
+    <figure class="rejected">
+      <p class="rejected-lead">Here is a guide rejected because an action invokes repository code outside the bounded instruction surface. This is its only action block:</p>
+      <pre><code>[action]
+id: check-version
+class: code-executing
+approval: required
+command: npm --prefix subdir run check
+runner: argv
+cwd: .
+notes: Prints local version information only.
+[/action]</code></pre>
+      <p class="rejected-lead">This is the local reference verifier's compact report for that guide, with a requested gate of Level 3:</p>
+      <pre><code>Verifier: guidecheck-reference-local 2.0.0
+Guide: fixtures/profiles/2.0.0/corrected-bound-unpinned/guide.txt
+Profile: 2.0.0 (declared 2.0.0)
+Content policy: corrected-content-1
+Anchor policy: 1.0.0-strict
+Qualifying anchors: 0
+Level: 2
+SHA-256: 980af0ed73303120f7a9a5d643630b1b02e21579d1578c733174c1445518545c
+Blocking findings: 2
+Warnings: 0
+Hash pinned: no
+Proceed? no</code></pre>
+      <p class="rejected-result">Blocking finding <code>action.exec-unbounded</code>: the action asks for approval, but nothing bounds the repository code it runs. Achieved Level 2 against a requested Level 3; the verifier exited 1.</p>
+      <figcaption>Fixture <code>fixtures/profiles/2.0.0/corrected-bound-unpinned/guide.txt</code>. Reproduce it with the <a href="https://github.com/snapsynapse/guidecheck#try-it" target="_blank" rel="noopener">README local trial</a>; complete reports are in the <a href="https://github.com/snapsynapse/guidecheck/blob/main/docs/readme-trial-evidence-2026-10-21.md" target="_blank" rel="noopener">trial evidence file</a>.</figcaption>
+    </figure>
+
+    <p class="qualification">Conformance checks do not establish that the instructions are safe, the publisher is trustworthy, or a runtime will execute only approved instructions.</p>
+
+    <p class="hook">The reason for the check is the trust boundary. AI setup guides reach assistants through HTML, rendered Markdown, PDFs, and copied terminal output. Those surfaces can hide text from a human while feeding it to a model. GuideCheck is the open standard that turns that trust boundary into one plain-text document: small enough, strict enough, and verifiable enough to review before delegated authority acts.</p>
 
     <div class="trust-flow" aria-label="GuideCheck trust boundary sequence">
       <div class="trust-step">
@@ -560,6 +598,7 @@
     <div class="cta-row">
       <a href="/profiles/2.0.0/spec.md" class="btn btn-primary">Read the 2.0.0 Specification</a>
       <a href="/verify" class="btn btn-secondary">Verify a guide</a>
+      <a href="https://github.com/snapsynapse/guidecheck#try-it" class="btn btn-secondary" target="_blank" rel="noopener">Try it locally</a>
     </div>
   </div>
 </section>

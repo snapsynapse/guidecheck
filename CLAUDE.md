@@ -138,7 +138,11 @@ requests, on Python 3.10 and 3.12: `make test test-verify-ui`,
 `python3 scripts/test_package_consumer.py` (installed wheel verified outside
 the checkout). `release.yml` runs on `v*` tags: `make test test-verify-ui` and
 `build_public_contracts.py`, then builds and Sigstore-signs release +
-conformance-kit artifacts.
+conformance-kit artifacts. `codeql.yml` (Python and JavaScript) and
+`scorecard.yml` (OpenSSF Scorecard, `publish_results: false`) run on push to
+`main` and weekly. All Actions are pinned by full commit SHA. Commit signatures
+verify locally against `.github/allowed_signers`; citation metadata is in
+`CITATION.cff`.
 
 ## Current state
 

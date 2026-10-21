@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you cite or build on GuideCheck, cite the specification repository."
+title: "GuideCheck: Human-Verifiable Assistant Guide profile"
+version: "2.0.0"
+date-released: 2026-09-07
+type: software
+authors:
+  - family-names: Rogers
+    given-names: Sam
+url: "https://guidecheck.org/"
+repository-code: "https://github.com/snapsynapse/guidecheck"
+license:
+  - MIT
+  - CC-BY-4.0
+abstract: "GuideCheck is a constrained, plain-text, ASCII-only profile for assistant-guide.txt that a human can fully review before an AI assistant acts on it. The repository includes the normative profile, a verifier conformance profile, a reference verifier, and an instruction-surface scanner for hidden-instruction channels."
+keywords:
+  - ai-agents
+  - assistant-guide
+  - prompt-injection
+  - trust-boundary
+  - verification
+  - security-standard

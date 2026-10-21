@@ -20,6 +20,24 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   claim Level 4: under the 1.0.0 and 2.0.0 policies a guide declaring
   `manifest-url` reports blocking `anchor.independent.missing` and exits 1 locally
   even at Level 3.
+- Add `CITATION.cff` citation metadata for the 2.0.0 release.
+- Add `.github/allowed_signers` so contributors can verify SSH-signed commits
+  locally; `CONTRIBUTING.md` documents the command.
+- Add CodeQL (Python and JavaScript) and OpenSSF Scorecard workflows. Scorecard
+  results are uploaded as an artifact and to code scanning and are not published
+  to the OpenSSF API.
+
+### Changed
+
+- Pin every GitHub Action in the test and release workflows to a full commit
+  SHA, recording the version in a comment. Major versions are unchanged.
+- Lead the landing page with a captured failed verification, followed by the
+  conformance qualification and then the trust-boundary explanation, and add a
+  link to the README trial.
+- Version-sync validation no longer pins the landing page modification dates to
+  the release date. The structured, visible, and `article:modified_time` dates
+  must agree and fall between the release date and the current UTC date; the
+  stated release date remains pinned to the CHANGELOG.
 
 ### Fixed
 

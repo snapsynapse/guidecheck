@@ -73,6 +73,10 @@ Earlier releases (0.5.0 and prior) are unsigned. The `SHA256SUMS` file published
 
 Reports of misuse of the signing identity (a release that does not come from the workflow above) are in scope and welcome.
 
+## Continuous analysis and supply chain
+
+Two additional workflows run in CI. `.github/workflows/codeql.yml` runs CodeQL static analysis for Python and JavaScript on pushes and pull requests to `main` and on a weekly schedule. `.github/workflows/scorecard.yml` runs OpenSSF Scorecard on pushes to `main`, weekly, and on manual dispatch. Scorecard results are not published to the OpenSSF API; the SARIF output is retained as a workflow artifact and uploaded to code scanning only. Every GitHub Action used in `.github/workflows/` is pinned by full commit SHA, with the released version recorded in a trailing comment.
+
 ## Disclaimer
 
 This profile reduces a specific trust gap. It does not make instructions safe. Conformance is not safety. See `spec.md` section 1.

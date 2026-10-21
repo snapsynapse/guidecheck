@@ -12,7 +12,10 @@ Rules per surface: each listed pattern must match at least once, and every
 match must equal the independently pinned release, engine, or self-guide version.
 Also asserts the published .well-known guide copy is byte-identical to the
 repository guide (it drifted once at 0.3.1), and that security.txt declares
-the SHA-256 digest of those guide bytes.
+the SHA-256 digest of those guide bytes. Finally, the homepage release date must
+equal the CHANGELOG release date, and its three modification dates (JSON-LD
+dateModified, visible Updated date, article:modified_time) must each appear once,
+agree with one another, and fall between the release date and the current UTC date.
 """
 
 from __future__ import annotations
@@ -20,7 +23,7 @@ from __future__ import annotations
 import hashlib
 import re
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from guidecheck_constants import (GUIDECHECK_VERSION, LATEST_RELEASED_PROFILE_VERSION,
@@ -140,18 +143,61 @@ def check_dated_release_record() -> list[str]:
         return [f"CHANGELOG.md: missing dated release entry for {RELEASE_VERSION}"]
     release_date = date.fromisoformat(match.group(1))
     iso = release_date.isoformat()
-    label = f"{release_date:%B} {release_date.day}, {release_date.year}"
     page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
-    checks = [
-        ("structured modification date", r'"dateModified": "([^"]+)"', [iso]),
-        ("visible updated date", r'Updated <time datetime="([^"]+)">([^<]+)</time>', [(iso, label)]),
-        ("substantive release date", r'Release 2\.0\.0 published:\s*<time datetime="([^"]+)">([^<]+)</time>', [(iso, iso)]),
-    ]
-    return [
-        f"docs/index.html: {name} must match release {RELEASE_VERSION} ({iso})"
-        for name, pattern, expected in checks
-        if re.findall(pattern, page) != expected
-    ]
+    failures: list[str] = []
+
+    # The substantive release date must equal the CHANGELOG release date.
+    if re.findall(
+        r'Release 2\.0\.0 published:\s*<time datetime="([^"]+)">([^<]+)</time>', page
+    ) != [(iso, iso)]:
+        failures.append(
+            f"docs/index.html: substantive release date must match release "
+            f"{RELEASE_VERSION} ({iso})"
+        )
+
+    # The three modification dates must be present exactly once and agree.
+    structured = re.findall(r'"dateModified": "([^"]+)"', page)
+    visible = re.findall(r'Updated <time datetime="([^"]+)">([^<]+)</time>', page)
+    meta = re.findall(
+        r'<meta property="article:modified_time" content="([^"]+)">', page
+    )
+    if len(structured) != 1:
+        failures.append("docs/index.html: expected exactly one structured dateModified")
+    if len(visible) != 1:
+        failures.append("docs/index.html: expected exactly one visible Updated date")
+    if len(meta) != 1:
+        failures.append("docs/index.html: expected exactly one article:modified_time")
+    if failures:
+        return failures
+
+    modified_iso = structured[0]
+    try:
+        modified = date.fromisoformat(modified_iso)
+    except ValueError:
+        return [f"docs/index.html: structured dateModified is not an ISO date: {modified_iso}"]
+    label = f"{modified:%B} {modified.day}, {modified.year}"
+    if visible[0] != (modified_iso, label):
+        failures.append(
+            f"docs/index.html: visible updated date must match structured "
+            f"dateModified ({modified_iso}, {label})"
+        )
+    if meta[0] != f"{modified_iso}T00:00:00Z":
+        failures.append(
+            f"docs/index.html: article:modified_time must match structured "
+            f"dateModified ({modified_iso}T00:00:00Z)"
+        )
+    today = datetime.now(timezone.utc).date()
+    if modified < release_date:
+        failures.append(
+            f"docs/index.html: modification date {modified_iso} must not precede "
+            f"release {RELEASE_VERSION} ({iso})"
+        )
+    if modified > today:
+        failures.append(
+            f"docs/index.html: modification date {modified_iso} must not be later "
+            f"than the current UTC date ({today.isoformat()})"
+        )
+    return failures
 
 
 def check_byte_identical() -> list[str]:

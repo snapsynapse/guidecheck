@@ -31,11 +31,14 @@ foundations are not implementation tasks to repeat.
   identifiers or infer edition from workstream names. This is the remaining
   source-access item from the processed September 22 queue (see the
   [maintenance receipt](docs/maintenance-evidence-2026-10-03.md)).
-- Signing/OpenSSF/citations remain a separate tranche. Its September 1
-  handoff file no longer exists, so this bullet is the only record. The current commit is GitHub-verified, so account signing is no
-  longer wholly unestablished. Local verification still needs a configured
-  signer trust file. Scorecard review, a static-analysis gate, citation metadata,
-  optional attestations and badge/DOI decisions remain open; nothing here
+- Signing/OpenSSF/citations: the in-repo pieces landed on 2026-10-21. Commits
+  verify locally against `.github/allowed_signers` (SSH signing from 3ceb30a,
+  2026-09-05, onward; earlier history is unsigned and GitHub web-flow merges use
+  GitHub's key). `CITATION.cff`, a CodeQL gate, and a Scorecard workflow with
+  `publish_results: false` exist, and Actions are pinned by commit SHA. Still
+  open as owner decisions: reviewing the first Scorecard and CodeQL results,
+  publishing Scorecard results and a badge, release build-provenance
+  attestations, Dependabot for pinned Actions, and a DOI. Nothing here
   authorizes account changes or publication.
 - Hosted execution-artifact verification and transitive scanning remain pending
   fetch-limit and budget design. A declared execution pin remains unverified.
@@ -60,10 +63,10 @@ foundations are not implementation tasks to repeat.
   correction that leaves frozen 1.0.0 and 2.0.0 results intact. Evidence:
   [README trial evidence](docs/readme-trial-evidence-2026-10-21.md).
 - The README now leads with a captured failed verification and a source-checkout
-  trial (2026-10-21). The site Verify section and `docs/llms.txt` link that
-  trial and the scanner route; the `docs/index.html` hero still leads with the
-  trust-boundary thesis. Rewriting the hero is separate site work needing its
-  own authorization.
+  trial (2026-10-21). The landing page hero now leads with the same captured
+  failure, and the site Verify section and `docs/llms.txt` link the trial and
+  the scanner route. Page title and social descriptions still carry the
+  trust-boundary summary.
 
 Completed and freshly reconciled:
 
