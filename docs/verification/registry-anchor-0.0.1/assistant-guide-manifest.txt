@@ -1,0 +1,9 @@
+profile: human-verifiable-assistant-guide
+profile-version: 2.0.0
+guide-path: /verification/registry-anchor-0.0.1/assistant-guide.txt
+guide-version: 0.0.1
+guide-sha256: 3566a9b52bc4549bc40660211fbd13cebf2abc10fc091a047dcd885207ad1afe
+guide-bytes: 3580
+immutable-release-url: https://registry.npmjs.org/@snapsynapse%2Fguidecheck-registry-fixture/0.0.1
+canonical-url: https://guidecheck.org/verification/registry-anchor-0.0.1/assistant-guide.txt
+repository-url: https://github.com/snapsynapse/guidecheck
