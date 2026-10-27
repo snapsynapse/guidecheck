@@ -63,7 +63,7 @@ MAX_OUTBOUND_FETCHES = 7
 ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
     "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
-    "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched.",
+    "Hosted Level 4 supports package-registry, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; transparency-log and signed security.txt anchors are not fetched. Transparency-log independence and append-only evidence are not verified.",
     "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
     "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
     "Level 5 runtime conformance is not evaluated.",
@@ -496,14 +496,18 @@ def _hosted_level4_evidence(
     manifest = gv.parse_manifest(manifest_text)
     transparency_url = manifest.get("transparency-log-url")
     if transparency_url:
-        transparency_text = _fetch_text_evidence(
-            transparency_url,
-            "transparency-log anchor",
-            extra_findings,
-            fetch_context,
+        # A fetched hash alone cannot establish log identity, independence, or
+        # append-only history. Until a supported log adapter verifies those
+        # properties, do not let publisher-declared URLs supply this channel.
+        extra_findings.append(
+            gv.Finding(
+                "anchor.transparency-log.unverified",
+                "info",
+                "transparency-log evidence is not fetched or counted toward Level 4; "
+                "log independence and append-only evidence are not verified",
+                section="verifier-conformance.23",
+            )
         )
-        if transparency_text is not None:
-            anchor_texts["transparency-log"] = transparency_text
 
     repo_url = metadata.get("repository-url")
     source_path = metadata.get("source-path")

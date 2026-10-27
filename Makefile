@@ -35,6 +35,7 @@ test-hosted-anchors:
 
 test-hosted-api:
 	python3 scripts/test_hosted_api.py
+	python3 scripts/test_transparency_log_safety.py
 
 test-fetch-replay:
 	python3 scripts/test_fetch_replay.py

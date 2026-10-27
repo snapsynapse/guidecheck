@@ -36,7 +36,7 @@ Current release: 2.0.0. The release dispatches by the guide's declared profile. 
 - Verifier: https://guidecheck.org/verify
 - Scanner: scripts/guidecheck_scan.py checks existing instruction files for supported hidden-instruction channels; it does not award a conformance level.
 - Hosted verifier privacy: Product telemetry is limited to target host, path category, selected agent category, expected level, achieved level, outcome, failure category, and coarse duration. It does not store full submitted URLs, query strings, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.
-- Hosted verifier fetch scope: The hosted verifier uses a seven-fetch per-request outbound budget across the guide, content-variation refetch, manifest, and anchors. It supports package-registry, transparency-log, DNS TXT, and github.com repository-file anchors; signed security.txt anchors are not fetched. Budget exhaustion is reported with sanitized fetch evidence.
+- Hosted verifier fetch scope: The hosted verifier uses a seven-fetch per-request outbound budget across the guide, content-variation refetch, manifest, and anchors. It supports package-registry, DNS TXT, and github.com repository-file anchors. Transparency-log and signed security.txt anchors are not fetched. Declared transparency logs cannot qualify because log identity, independence, and append-only evidence are not verified. Budget exhaustion is reported with sanitized fetch evidence.
 
 ## Related patterns
 

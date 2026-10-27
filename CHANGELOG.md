@@ -41,6 +41,12 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Fixed
 
+- Stop the hosted verifier from fetching or qualifying arbitrary
+  `transparency-log-url` evidence. A matching hash does not establish an
+  independent append-only log. Report `anchor.transparency-log.unverified`
+  and require another supported anchor for Level 4. Frozen evaluator policies
+  and snapshots remain unchanged; hosted scope reporting and one historical
+  registry/log-alias response have explicit compatibility expectations.
 - Reconcile component positioning and operator guidance around inspectable
   installation, update ACS hook names, and replace stale release/DNS/readiness
   work items with remaining gaps. Preserve all anchored artifacts and released behavior.

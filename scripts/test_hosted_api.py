@@ -876,7 +876,7 @@ def test_fetch_budget_and_dedup() -> None:
     default_registry_calls = [call for call in calls if call == (registry_url, "default")]
     check("fetch budget status", request.status == 200)
     check("fetch budget capped", len(calls) <= hv.MAX_OUTBOUND_FETCHES, str(calls))
-    check("fetch dedup registry transparency", len(default_registry_calls) == 1, str(calls))
+    check("fetch registry once despite unsupported transparency declaration", len(default_registry_calls) == 1, str(calls))
     check("fetch budget level4", body.get("guide", {}).get("achieved_level") == 4)
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Differential contract captured from 3ceb30a before dispatch implementation."""
+"""Frozen evaluator replay with explicit hosted security reporting corrections."""
 from contextlib import redirect_stdout
+from copy import deepcopy
 from datetime import datetime, timezone
 import io
 import json
@@ -21,6 +22,39 @@ class FixedDateTime(datetime):
     @classmethod
     def now(cls, tz=None):
         return NOW if tz else NOW.replace(tzinfo=None)
+
+
+def hosted_security_expected(results):
+    """Apply only the reviewed SEC-001 hosted delta to historical expectations.
+
+    Snapshots and all local reports remain unchanged. Do not normalize actual
+    output: unexpected runtime changes must still fail the complete comparison.
+    """
+    expected = deepcopy(results)
+    old_scope = "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched."
+    new_scope = "Hosted Level 4 supports package-registry, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; transparency-log and signed security.txt anchors are not fetched. Transparency-log independence and append-only evidence are not verified."
+    affected = 0
+    for response in expected["hosted"]:
+        body = response["body"]
+        limitations = body["hosted_limitations"]
+        assert limitations.count(old_scope) == 1
+        limitations[limitations.index(old_scope)] = new_scope
+        anchors = body.get("cross_channel_anchors", [])
+        if any(a["channel"] == "transparency-log" for a in anchors):
+            # The sole historical case aliases an independently valid registry
+            # URL as a log. Its registry anchor and achieved level stay intact.
+            assert body["guide"]["sha256"] == "3301cc097ccdf4f5ce7c5f11ac0d43d7edbbbd6b5c79cf7832cfc3e137317d26"
+            assert [a["channel"] for a in anchors] == ["package-registry", "transparency-log"]
+            body["cross_channel_anchors"] = anchors[:1]
+            body["findings"].insert(1, {
+                "id": "anchor.transparency-log.unverified",
+                "severity": "info",
+                "message": "transparency-log evidence is not fetched or counted toward Level 4; log independence and append-only evidence are not verified",
+                "section": "verifier-conformance.23",
+            })
+            body["summary"]["infos"] += 1
+            affected += 1
+    return expected, affected
 
 
 def capture():
@@ -62,7 +96,9 @@ def capture():
 
 class DispatchCompatibilityTests(unittest.TestCase):
     def test_baseline_results_are_unchanged(self):
-        self.assertEqual(capture(), json.loads(SNAPSHOT.read_text())["results"])
+        expected, affected = hosted_security_expected(json.loads(SNAPSHOT.read_text())["results"])
+        self.assertEqual(affected, 1)
+        self.assertEqual(capture(), expected)
 
 
 if __name__ == "__main__":

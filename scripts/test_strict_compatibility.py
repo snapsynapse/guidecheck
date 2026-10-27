@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Replay complete released 1.0.0 reports, independently of current policy code."""
+"""Replay 1.0.0 reports with the explicit hosted security scope correction."""
 from contextlib import redirect_stdout
 from datetime import datetime
 import hashlib
@@ -13,6 +13,7 @@ import check_reference_verifier as fixtures
 import guidecheck_verify as verifier
 import test_hosted_api as hosted
 from test_legacy_anchor_compatibility import artifacts, GUIDE_URLS, RAW_URL, NOW
+from test_dispatch_compatibility import hosted_security_expected
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_COMMIT = "1bd5f3d6e31f79ca6125e7da03ec1746934eb6b5"
@@ -63,7 +64,9 @@ class StrictCompatibilityTests(unittest.TestCase):
     def test_complete_released_reports_are_unchanged(self):
         baseline = json.loads((ROOT / "fixtures/compatibility/strict-1.0.0-baseline.json").read_text())
         self.assertEqual(baseline["source_commit"], SOURCE_COMMIT)
-        self.assertEqual(capture(), baseline["results"])
+        expected, affected = hosted_security_expected(baseline["results"])
+        self.assertEqual(affected, 0)
+        self.assertEqual(capture(), expected)
 
 
 if __name__ == "__main__":

@@ -242,7 +242,7 @@ Both verifiers check Level 4 sidecar manifests plus guide hash and byte-count
 matches. The local reference CLI accepts local independent-anchor evidence with
 `--anchor` and confirms it is consistent, but does not assert Level 4 on local
 bytes (it caps at Level 3); only the hosted verifier, which fetches supported
-public-web anchors (package-registry metadata and transparency-log entries),
+public-web anchors (package-registry metadata and DNS TXT),
 asserts Level 4.
 
 The hosted verifier may report `level5_ready: true` for a Level 4 guide that
@@ -306,10 +306,12 @@ yet complete, and the hosted implementation has not been shown to pass it.
 
 Temporary limitations:
 
-- hosted Level 4 supports package-registry, transparency-log, DNS TXT, and
-  github.com repository-file anchors; signed `security.txt` anchors are not
-  fetched yet. Repository-file matches qualify only under legacy profiles;
-  1.0.0 requires another qualifying channel
+- hosted Level 4 supports package-registry, DNS TXT, and github.com
+  repository-file anchors. Transparency-log and signed `security.txt` anchors
+  are not fetched. Log identity, independence, and append-only evidence are not
+  verified, so a declared transparency log cannot qualify. Repository-file
+  matches qualify only under legacy profiles; 1.0.0 and 2.0.0 require another
+  qualifying channel
 - the hosted verifier is a Level 1-4 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
   redirects, response size limits, header capture, and content variation; each

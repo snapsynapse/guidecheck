@@ -178,6 +178,7 @@ Existing findings:
 | `anchor.independent.unreachable` | warning | A declared independent anchor could not be fetched or did not return usable evidence. |
 | `anchor.registry.unrecognized-host` | warning | `registry-url` host is not a recognized independent registry, so it does not count as a package-registry anchor. |
 | `anchor.registry.url-mismatch` | warning | Package-registry assistant-guide metadata names a URL that does not match `canonical-url`. |
+| `anchor.transparency-log.unverified` | info | A declared transparency log is not fetched or counted by the hosted verifier because log independence and append-only evidence are not verified. Another qualifying channel is required for Level 4. |
 | `anchor.repository-file.host-not-supported` | info | The hosted verifier does not allowlist the publisher's `repository-url` host for repository-file fetching in this profile, so the channel does not count toward Level 4 here. |
 | `level4.requires-fetch` | info | Level 4 evidence is internally consistent but was not fetched; local-file mode caps the achieved level at 3. |
 
