@@ -41,6 +41,10 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Fixed
 
+- Close unused redirect responses without reading their bodies, preventing
+  redirect-body buffering from bypassing the fetch size limit. Add offline
+  body-read/cleanup regressions and reconcile the security queue. Absolute
+  deadline enforcement remains separate (SEC-003).
 - Stop the hosted verifier from fetching or qualifying arbitrary
   `transparency-log-url` evidence. A matching hash does not establish an
   independent append-only log. Report `anchor.transparency-log.unverified`

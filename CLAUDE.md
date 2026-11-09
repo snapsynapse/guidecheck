@@ -73,7 +73,7 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   repository anchors).
 - `api/` — `verify.py`, the hosted verifier function behind
   `https://guidecheck.org/verify`.
-- `handoffs/` — temporary session queues; currently empty.
+- `handoffs/`: temporary session queues; the sponsors queue remains pending.
 - `fixtures/` — verifier conformance test corpus (static, pinned).
 - `schemas/` — JSON Schema for manifest / verifier output / fixture contracts.
 - `examples/` — sample conforming guides and a sample manifest.
@@ -165,8 +165,10 @@ verify locally against `.github/allowed_signers`; citation metadata is in
   `docs/readme-trial-evidence-2026-10-21.md`), and `docs/index.html` links the
   trial. Local exit status for 1.0.0 and 2.0.0 guides that declare
   `manifest-url` is an open roadmap question.
-- `roadmap.md` records current work and disposition; `handoffs/` contains
-  only unprocessed temporary queues and is currently empty.
+- For security remediation or delivery status, read
+  `docs/security/maintenance.md`; `roadmap.md` owns the wider work queue.
+  `handoffs/` contains only unprocessed temporary queues; the 2026-10-23
+  sponsors handoff remains pending. Keep the original security audit untracked.
 - Release and conformance-kit signing is settled: 0.6.0 and later use Sigstore
   cosign keyless in the tag-triggered release workflow; SHA256SUMS remains the
   integrity reference for 0.5.0 and earlier. Open items tracked in `roadmap.md`

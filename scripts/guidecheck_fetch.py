@@ -246,7 +246,10 @@ def safe_fetch(url: str, request_profile: str = "default", accept_override: str 
 
             if status in (301, 302, 303, 307, 308):
                 location = response.getheader("Location")
-                response.read()
+                # Each hop uses a fresh connection. Close the unused stream
+                # without draining an unbounded redirect body, including when
+                # http.client has detached it from the connection.
+                response.close()
                 if not location:
                     raise FetchError("bad-redirect", "a redirect response had no target")
                 nxt = urljoin(current, location)

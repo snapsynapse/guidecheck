@@ -5,13 +5,23 @@ Status: planning notes for actions not yet executed and decisions not yet made.
 This roadmap is not normative. It records likely future work so unresolved
 items are visible without being treated as commitments.
 
-## Current work queue (reconciled 2026-10-03)
+## Current work queue (reconciled 2026-11-08)
 
 Current evidence and handoff disposition are recorded in the
-[maintenance receipt](docs/maintenance-evidence-2026-10-03.md). Completed
+[maintenance receipt](docs/maintenance-evidence-2026-10-03.md) and
+[security maintenance record](docs/security/maintenance.md). Completed
 foundations are not implementation tasks to repeat.
 
-- DNS parser policy is the next bounded decision. The
+- SEC-002 redirect-body containment is implemented and locally reviewed, with
+  regression coverage and an explicit transport-source digest expectation.
+  A local commit is authorized; delivery remains pending. SEC-003 absolute-deadline
+  enforcement is the next security follow-up and remains separate; the security maintenance
+  record owns the remaining findings and dated delivery evidence. The original
+  audit stays local and untracked.
+- Sponsors setup remains in the separate 2026-10-23 handoff. SPONSORS.md and
+  .github/FUNDING.yml are pending an owning-entity wording decision.
+- DNS parser policy remains a bounded compatibility decision behind the
+  security-maintenance queue. The
   [110-case diagnostic](docs/dns-anchor-parsing-2026-10-03.md) reproduces
   malformed-field acceptance and order-dependent conflicts across all supported
   profiles. Prefer an explicitly selected correction; do not change frozen
@@ -319,9 +329,11 @@ Candidate work, not a commitment:
   consistency but caps at Level 3 (reporting `level4.requires-fetch`), since
   Level 4 requires fetched provenance. The hosted public-web verifier covers
   Level 1 through Level 4 for supported
-  public-web anchors: package-registry metadata, transparency-log entries,
-  DNS TXT records resolved over DNS-over-HTTPS, and repository-file evidence
-  served by github.com.
+  public-web anchors: package-registry metadata, DNS TXT records resolved over
+  DNS-over-HTTPS, and repository-file evidence served by github.com. Strict
+  profiles do not qualify repository evidence without established independence.
+  Declared transparency logs are not fetched or qualified; they produce
+  `anchor.transparency-log.unverified` pending a supported adapter.
   The hosted verifier is live as a preview at https://guidecheck.org/verify;
   do not present it as fully conformant, and do not claim Level 5 conformance,
   until the supporting runtime fixture suites are complete.
