@@ -20,6 +20,10 @@ foundations are not implementation tasks to repeat.
   audit stays local and untracked.
 - Sponsors setup remains in the separate 2026-10-23 handoff. SPONSORS.md and
   .github/FUNDING.yml are pending an owning-entity wording decision.
+- SEC-003 checkpoint 2 has started with a packaged local worker candidate and
+  regressions; active API/scanner callers remain unchanged. Target-runtime
+  validation and shared hosted-budget integration remain pending. See
+  [checkpoint-2 status](docs/security/sec003-checkpoint2.md).
 - DNS parser policy remains a bounded compatibility decision behind the
   security-maintenance queue. The
   [110-case diagnostic](docs/dns-anchor-parsing-2026-10-03.md) reproduces

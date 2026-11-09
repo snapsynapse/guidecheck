@@ -6,6 +6,9 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Added
 
+- Add an experimental, unactivated SEC-003 fetch-worker candidate, offline
+  process/transport-stage regressions and an isolated installed-wheel check.
+  Existing hosted and scanner fetch paths remain unchanged.
 - Add an offline 110-case DNS parsing diagnostic and dated evidence. It
   characterizes released behavior without changing profiles or conformance fixtures.
 - Record current publisher/DNS evidence and pinned ACS schema review, including

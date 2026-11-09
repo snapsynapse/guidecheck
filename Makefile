@@ -40,6 +40,10 @@ test-hosted-api:
 test-fetch-replay:
 	python3 scripts/test_fetch_replay.py
 
+.PHONY: test-fetch-worker
+test-fetch-worker:
+	python3 scripts/test_fetch_worker.py
+
 test-cli-contract:
 	python3 scripts/test_cli_contract.py
 
@@ -65,7 +69,7 @@ test-legacy-anchor-compatibility:
 test-verify-ui:
 	node scripts/test_verify_ui.mjs
 
-test: test-legacy-anchor-compatibility test-bounded-execution test-corrected-content eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-cli-contract test-posix-cli-contract test-scanner
+test: test-legacy-anchor-compatibility test-bounded-execution test-corrected-content eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-fetch-worker test-cli-contract test-posix-cli-contract test-scanner
 
 # Full source archive for a GitHub release, matching prior build/ layout.
 release-archive:

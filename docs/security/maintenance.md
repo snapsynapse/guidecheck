@@ -97,6 +97,12 @@ No packages or release archives were built and no live malicious probes ran.
 
 ## Remaining remediation queue
 
+SEC-003 checkpoint 2 has begun as a reviewed, unactivated worker
+candidate. The three checkpoint-1 proof findings passed re-review; Linux/Vercel
+platform gates, active-path integration and the shared hosted budget remain open.
+See [checkpoint-2 scope and validation](sec003-checkpoint2.md). This does not
+change the deployed SEC-003 disposition below.
+
 These are the twelve findings remaining after local SEC-002 containment. They
 retain their 2026-10-26 severity and evidence scope; no new full audit is claimed.
 Production also retains SEC-002 until a separately authorized delivery.

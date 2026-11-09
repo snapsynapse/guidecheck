@@ -44,6 +44,14 @@ def main():
         wheel, = wheels.glob("guidecheck-*.whl")
         run([str(python), "-m", "pip", "install", "--no-deps", str(wheel)], temp, env)
         run([str(python), "-I", "-c", "import guidecheck_corrected"], temp, env)
+        if os.name == 'posix':
+            run([str(python), '-I', '-c',
+                 "from guidecheck_fetch_worker import supervised_fetch; "
+                 "from guidecheck_fetch import FetchError; "
+                 "exec('try:\\n supervised_fetch(\"ftp://example.com/\")\\n'"
+                 " + 'except FetchError as exc:\\n assert exc.code == \"scheme\"\\n'"
+                 " + 'else:\\n raise AssertionError(\"worker failed to reject scheme\")')"], temp, env)
+            print('PASS installed wheel: isolated candidate worker and sanitized scheme rejection')
         # Exercise the actual installed console entry point outside the checkout.
         entrypoint = environment / ("Scripts/guidecheck.exe" if os.name == "nt" else "bin/guidecheck")
         invoke = [str(entrypoint)]
