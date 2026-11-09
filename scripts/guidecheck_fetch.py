@@ -197,6 +197,11 @@ def safe_fetch(url: str, request_profile: str = "default", accept_override: str 
     which needs `application/dns-json`). All other SSRF, size, redirect, and
     timeout controls are unchanged.
     """
+    return _fetch_in_process(url, request_profile=request_profile, accept_override=accept_override)
+
+
+def _fetch_in_process(url: str, request_profile: str = "default", accept_override: str | None = None) -> FetchResult:
+    """Run the synchronous transport directly, including inside the fixed worker."""
     start = time.monotonic()
     current = url
     redirects: list[dict[str, object]] = []

@@ -18,8 +18,11 @@ without rewriting that audit.
   cases cover all eleven supported profiles and positive controls. The trusted
   in-process evaluator interface retains its historical evidence contract.
 - Fixture commit `fad7f72` added two static files without changing verifier
-  logic. The public deployment manifest still identifies that commit on
-  2026-11-08. SEC-002's local changes have not been deployed.
+  logic. SEC-002 was subsequently committed and pushed as `96c648e`; exact-commit
+  CI and production verification passed on 2026-11-08. The production receipt
+  matched all fourteen source hashes and six served files, with benign DNS,
+  registry and redirect controls passing. This is dated delivery evidence;
+  later SEC-003 candidate delivery is separate from worker activation.
 - The retained 2026-10-26 registry receipt records publication of
   `@snapsynapse/guidecheck-registry-fixture@0.0.1`, matching `latest` and
   `verification` tags, and tarball SHA-256
@@ -38,11 +41,12 @@ without rewriting that audit.
   code-scanning alerts. Those alerts are separate from the audit findings.
   Successful CodeQL/Scorecard runs do not close either inventory.
 
-## SEC-002 local containment
+## SEC-002 containment and delivery
 
-Status: implemented and locally reviewed on base `fad7f72`; local commit
-authorized after review. Unpushed and undeployed. No software/profile version
-or dependency change.
+Status: committed, pushed and verified live as `96c648e` on 2026-11-08 after
+local review on base `fad7f72`. Linux Python 3.10/3.12, CodeQL and Scorecard CI
+passed at that commit. Retained evidence: `out/security-sec002-live-2026-11-08/`.
+No software/profile version or dependency change.
 
 `safe_fetch` captures each redirect's Location and closes the response without
 reading its body. Every hop already opens a fresh connection and sends
@@ -70,11 +74,13 @@ Regression coverage in `scripts/test_fetch_replay.py` includes:
 
 The historical `fixtures/compatibility/preserved-artifacts.json` is unchanged.
 It includes the old fetch-source digest, so `test_profile_dispatch.py` explicitly
-asserts that historical value and pins the reviewed SEC-002 replacement digest.
+asserts that historical value and pins the current reviewed transport digest.
+The subsequent SEC-003 private extraction preserves the transport body while
+changing its function boundary; its explicit digest expectation is separate.
 All other preserved-artifact checks and full report replays remain unchanged.
 This exception permits this transport correction, not profile reinterpretation.
 
-Validation on 2026-11-08:
+Historical local validation on 2026-11-08, before the delivery checks above:
 
 | Check | Result |
 |---|---|
@@ -93,23 +99,25 @@ Local logs: `/private/tmp/guidecheck-sec002-red-final.log`,
 `/private/tmp/guidecheck-sec002-full-tests.log`, and
 `/private/tmp/guidecheck-sec002-python312-tests.log`. These temporary logs are
 supporting receipts; the results above remain here if temporary files expire.
-No packages or release archives were built and no live malicious probes ran.
+No packages or release archives were built during this SEC-002 proof, and no live
+malicious probes ran.
 
 ## Remaining remediation queue
 
 SEC-003 checkpoint 2 has begun as a reviewed, unactivated worker
-candidate. The three checkpoint-1 proof findings passed re-review; Linux/Vercel
-platform gates, active-path integration and the shared hosted budget remain open.
+candidate. The three checkpoint-1 proof findings passed re-review. The reviewed
+candidate passed Linux CI on Python 3.10/3.12; standalone-proof Linux validation,
+Vercel worker capability, active-path integration and the shared hosted budget
+remain open. The private extraction preserves public synchronous behavior.
 See [checkpoint-2 scope and validation](sec003-checkpoint2.md). This does not
 change the deployed SEC-003 disposition below.
 
-These are the twelve findings remaining after local SEC-002 containment. They
+These are the twelve findings remaining after delivered SEC-002 containment. They
 retain their 2026-10-26 severity and evidence scope; no new full audit is claimed.
-Production also retains SEC-002 until a separately authorized delivery.
 
 | Order | Finding | Severity | Next bounded work |
 |---|---|---|---|
-| 1 | SEC-003: total deadline during I/O | Medium | Bound DNS and remaining-budget socket operations, use incremental reads, and design the hosted overall budget. Separate from SEC-002. |
+| 1 | SEC-003: total deadline during I/O | Medium | Validate the supervised candidate on target runtimes, cover real socket/parser behavior, and implement the shared hosted budget before activation. Separate from SEC-002. |
 | 2 | SEC-007: nonlinear scanner CPU cost | Medium | Replace styled-element/comment regexes and repeated neighbor scans with bounded tokenization and linear passes. Scanner scope, not attributed to the hosted verifier. |
 | 3 | SEC-008: clean result for truncated local prefix | Medium | Limit-plus-one local reads and an incomplete, nonzero result. |
 | 3 | SEC-009: skipped NUL input returns success | Medium | Define skipped/incomplete counters and exit semantics with compatibility review. |
@@ -138,9 +146,10 @@ The processed 2026-10-26 security handoff is replaced by this durable record and
 the current roadmap. The unrelated 2026-10-23 sponsors handoff remains pending
 and unchanged; owning-entity wording still needs Sam's decision.
 
-The authorized tranche is SEC-002, regression tests, and queue reconciliation.
-Sam authorized a local commit after review. SEC-003 implementation, pushes,
-publication, deployment, DNS/registry mutations, and GitHub/provider-setting changes are not
-part of this tranche. Prior fixture publication authority was consumed by that
-completed work. Preserve frozen evaluators, normative profiles, schemas,
+SEC-002 delivery and later SEC-003 proof/candidate work are separate tranches.
+Sam authorized the reviewed candidate and private extraction, status reconciliation,
+commits/pushes, exact-commit CI checks and inactive deployment verification. Worker
+activation, a worker-capability preview, tagging/releases, DNS/registry mutations
+and provider-setting changes remain outside this tranche. Prior fixture publication
+authority was consumed by that completed work. Preserve frozen evaluators, normative profiles, schemas,
 snapshots, guide/manifest/anchor bytes, and the published npm fixture version.

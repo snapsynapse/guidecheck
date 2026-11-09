@@ -1,7 +1,8 @@
 # SEC-003 checkpoint 2: local worker candidate
 
-Scope: first local implementation slice after re-reviewing the corrected
-checkpoint-1 proof. No activation, deployment, release, or profile change.
+Scope: worker candidate and private synchronous transport extraction after
+re-reviewing the corrected checkpoint-1 proof. No activation, release, or profile
+change. Commit, CI and inactive deployment identity are separate delivery checks.
 Review base: `96c648e`. The reviewed candidate remains inactive; delivery is
 recorded in git history separately from activation and SEC-003 closure.
 
@@ -48,14 +49,13 @@ does not mitigate the deployed SEC-003 path yet.
 
 ## Local validation
 
-- Fourteen worker tests pass on Python 3.12 and 3.15, including binary data,
+- Nineteen worker/boundary tests pass on Python 3.12 and 3.15, including binary data,
   profile/Accept forwarding, 60 KiB request writes, protocol/body limits, deadline
   expiry during validation, shared admission, cancellation, and cleanup faults.
 - The checkpoint-2 cancellation review finding is fixed: incomplete cleanup
   preserves a propagating caller exception while retaining resources/admission
   for recovery. A regression proves KeyboardInterrupt identity, reaping,
-  retained admission, pipe recovery and subsequent success. The focused suites
-  pass after this fix; the wider gates below describe the earlier candidate.
+  retained admission, pipe recovery and subsequent success.
 - Test-only fixed child fixtures drive the actual transport into blocked DNS,
   TLS/connect, write, headers, body and real HTTPResponse chunk-parser stages.
   Each stage writes a temporary marker before blocking, so timeout assertions
@@ -67,18 +67,41 @@ does not mitigate the deployed SEC-003 path yet.
   imports correctly and rejects a plaintext scheme with a sanitized error.
   Existing profile, CLI and scanner consumer checks pass. The wheel was built
   and installed only in a temporary test environment; it was not published.
+- The pushed `dd15e8b` candidate passed Linux CI on Python 3.10 and 3.12, plus
+  CodeQL and Scorecard. This is evidence for that candidate; subsequent extraction
+  CI is recorded separately. The standalone checkpoint-1 proof has not run on Linux.
+
+## Private transport extraction
+
+The reviewed inactive candidate was committed and pushed as `dd15e8b`. The
+subsequent extraction was implemented and locally validated against that baseline.
+
+- Public `safe_fetch` keeps its original synchronous signature and delegates to
+  `_fetch_in_process`. The extracted transport body matches the previous body's
+  AST; socket timeouts, redirect ordering and all network policies are unchanged.
+- The default worker calls `_fetch_in_process` directly, removing its dependency
+  on public `safe_fetch` before any later supervisor integration. Active API and
+  scanner callers still use the public synchronous path.
+- Five new regressions prove argument/result forwarding, original FetchError
+  identity, unchanged synchronous interface without spawning, private child
+  binding when public fetch is poisoned, and sanitized private error categories.
+  They failed before extraction; all nineteen tests pass afterward. Full Python
+  3.12/UI and temporary installed-wheel gates also pass on this extraction.
+- Only the explicit transport digest expectation changed. The historical
+  preserved-artifacts record and evaluator/profile/guide bytes remain intact.
 
 ## Remaining implementation and validation
 
-1. Run corrected proof and candidate tests on Linux Python 3.10/3.12. Verify
+1. Retain Linux Python 3.10/3.12 CI coverage for the extracted candidate and run
+   the corrected standalone proof on those runtimes. Verify
    actual Vercel worker execution, imports, signal/reaping behavior, concurrency,
    memory/descriptor costs and effective duration in a separately authorized
-   isolated preview. No VM, CI dispatch, preview or production deployment has
-   been performed for this work.
-2. Before wiring active callers, give the synchronous transport an explicit
-   private in-process entrypoint and point the child at it. The current child
-   delegates to the still-synchronous public safe_fetch; simply replacing that
-   function with the supervisor would recurse and must not be done.
+   isolated preview. The standalone worker-capability proof has not been deployed
+   or exercised on Vercel. Inactive production source identity and benign controls
+   are verified separately from worker execution capability.
+2. Active public-fetch wiring remains a separate slice after platform validation.
+   Preserve direct private transport binding in the child and prevent recursive
+   supervision when introducing any public deadline/supervisor interface.
 3. Apply remaining-budget timeouts to the actual raw/TLS sockets. Add the shared
    hosted outbound-I/O deadline, preserve cache keys and the seven-fetch cap,
    and replace TypeError fallback retries with explicit test adapters.

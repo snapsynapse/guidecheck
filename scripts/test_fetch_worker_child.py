@@ -95,7 +95,7 @@ def fetcher(url, request_profile='default', accept_override=None):
     gf._resolve = resolve
     gf._open_tls = tls
     gf.http.client.HTTPSConnection = Connection
-    return gf.safe_fetch(url, request_profile, accept_override)
+    return gf._fetch_in_process(url, request_profile, accept_override)
 
 
 if __name__ == '__main__':

@@ -12,17 +12,17 @@ Current evidence and handoff disposition are recorded in the
 [security maintenance record](docs/security/maintenance.md). Completed
 foundations are not implementation tasks to repeat.
 
-- SEC-002 redirect-body containment is implemented and locally reviewed, with
-  regression coverage and an explicit transport-source digest expectation.
-  A local commit is authorized; delivery remains pending. SEC-003 absolute-deadline
-  enforcement is the next security follow-up and remains separate; the security maintenance
+- SEC-002 redirect-body containment was committed, pushed and verified live as
+  `96c648e` on 2026-11-08, with regression coverage and an explicit transport-source
+  digest expectation. SEC-003 absolute-deadline enforcement remains separate; the security maintenance
   record owns the remaining findings and dated delivery evidence. The original
   audit stays local and untracked.
 - Sponsors setup remains in the separate 2026-10-23 handoff. SPONSORS.md and
   .github/FUNDING.yml are pending an owning-entity wording decision.
-- SEC-003 checkpoint 2 has started with a packaged local worker candidate and
-  regressions; active API/scanner callers remain unchanged. Target-runtime
-  validation and shared hosted-budget integration remain pending. See
+- SEC-003 checkpoint 2 has a packaged inactive worker candidate, private transport
+  extraction and regressions. Public `safe_fetch` stays synchronous. Linux CI
+  passed for the earlier candidate; standalone-proof Linux and Vercel worker
+  validation, active-path wiring and shared hosted-budget integration remain pending. See
   [checkpoint-2 status](docs/security/sec003-checkpoint2.md).
 - DNS parser policy remains a bounded compatibility decision behind the
   security-maintenance queue. The

@@ -252,11 +252,11 @@ class ProfileDispatchTests(unittest.TestCase):
         for name, digest in record["sha256"].items():
             with self.subTest(path=name):
                 if name == "scripts/guidecheck_fetch.py":
-                    # SEC-002 changes transport cleanup only. Keep the historical
-                    # record intact and pin the reviewed replacement explicitly;
+                    # SEC-002 cleanup and SEC-003 private transport extraction.
+                    # Keep the historical record intact and pin the replacement;
                     # evaluator/profile/guide digests and report replays stay frozen.
                     self.assertEqual(digest, "87bcb051610ab85d10faf2bf9d11bdda8b58b5d6982e3e778e9165f48e1a6479")
-                    digest = "f0cb011a8a7b0778a87f5d016c39e2fc2036b2ac5106e4e3d88658c37dd89b2c"
+                    digest = "08738f80dd760182425f4167ee32228d8dc8005d3b130a9f9b20a0a2cce641b3"
                 self.assertEqual(hashlib.sha256((ROOT / name).read_bytes()).hexdigest(), digest)
 
 

@@ -265,8 +265,8 @@ def _emit(value):
 def _serve(fetcher=None):
     """Fixed child protocol. Injection is for trusted test entrypoints only."""
     if fetcher is None:
-        from guidecheck_fetch import safe_fetch
-        fetcher = safe_fetch
+        from guidecheck_fetch import _fetch_in_process
+        fetcher = _fetch_in_process
     pid = os.getpid()
     _emit({'event': 'ready', 'pid': pid})
     try:

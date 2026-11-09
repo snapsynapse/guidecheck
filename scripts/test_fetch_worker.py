@@ -1,4 +1,6 @@
 """Offline tests for the unactivated SEC-003 worker candidate."""
+import inspect
+import io
 import json
 import os
 from pathlib import Path
@@ -19,6 +21,47 @@ FIXTURE = Path(__file__).with_name('test_fetch_worker_child.py')
 
 def fd_count():
     return len(os.listdir('/dev/fd' if sys.platform == 'darwin' else '/proc/self/fd'))
+
+
+class TransportBoundaryTests(unittest.TestCase):
+    def test_public_entrypoint_forwards_arguments_and_result(self):
+        result = gf.FetchResult('https://example.com/final', 200, {'content-type': 'text/plain'}, b'ok')
+        with (
+            patch.object(worker.subprocess, 'Popen', side_effect=AssertionError('public fetch must not spawn')),
+            patch.object(gf, '_fetch_in_process', return_value=result) as transport,
+        ):
+            self.assertIs(gf.safe_fetch('https://example.com/'), result)
+            transport.assert_called_once_with('https://example.com/', request_profile='default', accept_override=None)
+            transport.reset_mock()
+            self.assertIs(gf.safe_fetch('https://example.com/', 'variation-cli', 'application/dns-json'), result)
+            transport.assert_called_once_with('https://example.com/', request_profile='variation-cli',
+                                              accept_override='application/dns-json')
+            transport.reset_mock()
+            self.assertIs(gf.safe_fetch('https://example.com/', request_profile='variation-browser',
+                                        accept_override='text/plain'), result)
+            transport.assert_called_once_with('https://example.com/', request_profile='variation-browser',
+                                              accept_override='text/plain')
+
+    def test_public_entrypoint_preserves_fetch_error(self):
+        error = gf.FetchError('blocked-target', 'the host resolves to a non-public address')
+        with (
+            patch.object(worker.subprocess, 'Popen', side_effect=AssertionError('public fetch must not spawn')),
+            patch.object(gf, '_fetch_in_process', side_effect=error),
+        ):
+            with self.assertRaises(gf.FetchError) as raised:
+                gf.safe_fetch('https://example.com/')
+        self.assertIs(raised.exception, error)
+
+    def test_public_entrypoint_stays_synchronous_without_spawning(self):
+        signature = inspect.signature(gf.safe_fetch)
+        self.assertEqual(list(signature.parameters), ['url', 'request_profile', 'accept_override'])
+        self.assertEqual(signature.parameters['request_profile'].default, 'default')
+        self.assertIsNone(signature.parameters['accept_override'].default)
+        self.assertFalse(inspect.iscoroutinefunction(gf.safe_fetch))
+        with patch.object(worker.subprocess, 'Popen', side_effect=AssertionError('public fetch must not spawn')):
+            with self.assertRaises(gf.FetchError) as raised:
+                gf.safe_fetch('ftp://example.com/')
+        self.assertEqual(raised.exception.code, 'scheme')
 
 
 @unittest.skipUnless(os.name == 'posix', 'experimental POSIX worker candidate')
@@ -230,6 +273,43 @@ class WorkerTests(unittest.TestCase):
         with self.assertRaises(gf.FetchError) as raised:
             worker.supervised_fetch('ftp://example.com/')
         self.assertEqual(raised.exception.code, 'scheme')
+
+    def test_default_child_binds_private_transport_without_public_recursion(self):
+        result = gf.FetchResult('https://example.com/final', 200, {'content-type': 'text/plain'}, b'\x00\xff',
+                                [{'from': 'https://example.com/', 'to': 'https://example.com/final', 'status': 302}])
+        for profile, accept in (('default', None), ('variation-cli', 'application/dns-json')):
+            request = {'url': 'https://example.com/', 'request_profile': profile, 'accept_override': accept}
+            with self.subTest(profile=profile), io.TextIOWrapper(io.BytesIO(json.dumps(request).encode())) as stdin:
+                with (
+                    patch.object(gf, 'safe_fetch', side_effect=AssertionError('must not recurse through public fetch')) as public,
+                    patch.object(gf, '_fetch_in_process', return_value=result) as transport,
+                    patch.object(worker.sys, 'stdin', stdin),
+                    patch.object(worker, '_emit') as emit,
+                ):
+                    worker._serve()
+                public.assert_not_called()
+                transport.assert_called_once_with(**request)
+                raw = b'\n'.join(json.dumps(call.args[0]).encode() for call in emit.call_args_list)
+                self.assertEqual(worker._decode(raw, os.getpid()), result)
+
+    def test_default_child_preserves_private_error_category(self):
+        request = {'url': 'https://example.com/', 'request_profile': 'default', 'accept_override': None}
+        error = gf.FetchError('tls', 'SECRET diagnostic')
+        with io.TextIOWrapper(io.BytesIO(json.dumps(request).encode())) as stdin:
+            with (
+                patch.object(gf, 'safe_fetch', side_effect=AssertionError('must not call public fetch')) as public,
+                patch.object(gf, '_fetch_in_process', side_effect=error) as transport,
+                patch.object(worker.sys, 'stdin', stdin),
+                patch.object(worker, '_emit') as emit,
+            ):
+                worker._serve()
+        public.assert_not_called()
+        transport.assert_called_once_with(**request)
+        raw = b'\n'.join(json.dumps(call.args[0]).encode() for call in emit.call_args_list)
+        result = worker._decode(raw, os.getpid())
+        self.assertIsInstance(result, gf.FetchError)
+        self.assertEqual(result.code, 'tls')
+        self.assertNotIn('SECRET', str(result))
 
 
 if __name__ == '__main__':
