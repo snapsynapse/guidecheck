@@ -12,6 +12,16 @@ Current evidence and handoff disposition are recorded in the
 [security maintenance record](docs/security/maintenance.md). Completed
 foundations are not implementation tasks to repeat.
 
+- Owner directions selected 2026-11-11 (see `INTENT.md`, Format over tool) set
+  the order of work: a security containment tranche first; then the Level 3
+  restricted command grammar as an opt-in profile, fixtures before code; then
+  promotion planning. Scanner reduction to the deterministic byte check and
+  Level 4 as a signed-artifact requirement are selected directions with no
+  implementation scheduled. A second local audit dated 2026-11-11 exists and is
+  untracked like the first; the security maintenance record has not been
+  reconciled with it and still describes the 2026-10-26 baseline. SEC-003
+  checkpoint 2 stays open behind the containment tranche. This entry was added
+  without re-reconciling the rest of the queue below.
 - SEC-002 redirect-body containment was committed, pushed and verified live as
   `96c648e` on 2026-11-08, with regression coverage and an explicit transport-source
   digest expectation. SEC-003 absolute-deadline enforcement remains separate; the security maintenance

@@ -110,8 +110,53 @@ counterparty requesting conformance checking. This does not change GuideCheck's
 standard scope or authorize a cross-standard certification product. The September
 5 session implements existing bounded-execution obligations as maintenance.
 
+## Format over tool
+
+Decided by Sam on 2026-11-11, after a second local security audit and a review
+of the 2026 landscape of instruction-file scanners, signing tools and sandboxes:
+GuideCheck defines checkable formats and requirements, and stops maintaining
+tooling where a format can be cited and the check delegated. The directions
+below are selected for design work. None is a released change. Released
+profiles, frozen evaluators, schemas, fixtures and the published self-guide stay
+as they are until a new profile is explicitly selected.
+
+1. Scanner scope. `guidecheck scan` reduces to the deterministic byte check: the
+   Level 2 allowlist applied to existing instruction files. Pattern and
+   heuristic detection of hidden-instruction channels is left to other tools,
+   which scanner output may point to without endorsing. A classifier, if one is
+   used, runs after the byte check, is advisory, never determines a level, and
+   is specified by interface so that no vendor becomes a dependency.
+2. Level 3 restricted command grammar. A new opt-in profile (working identity
+   3.0.0, policy `restricted-argv-1`) replaces denylist command checks with an
+   allowlist grammar: argv-only commands over a fixed character set. Sam assigned
+   the draft's open design questions to the build session. The draft is local
+   and unpublished.
+3. Level 4 as a signed-artifact requirement. Level 4 moves toward requiring a
+   standard signature bundle over the guide hash with a named signer, with
+   verification delegated to existing verifiers and the result stated relative
+   to a trust policy. This exercises the recalibration gate on signature and
+   transparency-log evidence. Before any profile change it must be reconciled
+   with invariant 5 and admission criterion 5: the requirement has to be
+   satisfiable without one hosted service or a single root of trust.
+   Interoperability of third-party bundles with standard verifiers is
+   unconfirmed.
+4. Hosted verifier. Kept, as a usability surface for Levels 1 to 3.
+
+Sequence selected by Sam: a security containment tranche first, then the Level 3
+build, then promotion planning. Directions 1 and 3 have no implementation
+scheduled.
+
+Not stated by Sam and recorded as open: whether direction 2 is maintenance under
+the June 9 demand gate, as the September 7 corrected-content work was, or new
+investment that needs the gate revisited.
+
+Level 5 ownership is unchanged. The landscape review found no runtime that meets
+the Level 5 requirements; the missing piece is a guide-aware driver, not a
+sandbox. That is an input to Level 5 fixture design, not a new commitment.
+
 ## Changelog
 
+- 2026-11-11: Sam selected format over tool: scanner reduced to the deterministic byte check, a Level 3 restricted command grammar as an opt-in profile, Level 4 as a signed-artifact requirement with delegated verification, and the hosted verifier kept for Levels 1 to 3. Directions only; released behavior is unchanged. Sequence: security containment, Level 3 build, promotion planning.
 - 2026-10-03: Carry the September 22 owner direction into component strategy: inspectable installation, an explicitly incomplete attack-prevention objective, and eventual standards integration. Preserve released behavior and existing investment/readiness gates.
 - 2026-09-07: Sam selected blocking unresolved execution targets for Level 3 on the opt-in corrected path; released evaluations remain frozen.
 - 2026-09-07: Sam selected preservation of frozen legacy reports with opt-in corrected content checks. Recorded the decision and remaining selector/version design scope; evaluator and published profiles remain unchanged.

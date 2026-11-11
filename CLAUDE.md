@@ -74,6 +74,9 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
 - `api/` — `verify.py`, the hosted verifier function behind
   `https://guidecheck.org/verify`.
 - `handoffs/`: temporary session queues; the sponsors queue remains pending.
+- `research/` and `docs/security/audits/`: local, ignored by git, never
+  published from here. `docs/` is the public site root, so a draft goes public
+  only by placing a reviewed copy there on Sam's instruction.
 - `fixtures/` — verifier conformance test corpus (static, pinned).
 - `schemas/` — JSON Schema for manifest / verifier output / fixture contracts.
 - `examples/` — sample conforming guides and a sample manifest.
@@ -179,6 +182,13 @@ verify locally against `.github/allowed_signers`; citation metadata is in
 - The hosted verifier at guidecheck.org/verify is explicitly a preview: its
   conformance fixture suite is incomplete and it has not been shown to pass
   it; signed `security.txt` anchors are not yet fetched by the hosted path.
+
+## Format over tool (2026-11-11)
+
+Sam selected four directions and a work order; `INTENT.md` section "Format over
+tool" is the single source. Order: security containment, then the Level 3
+restricted command grammar as an opt-in profile, then promotion planning. Each
+has a brief in `handoffs/`. Nothing released has changed.
 
 ## Version-aware release (2026-09-05)
 
