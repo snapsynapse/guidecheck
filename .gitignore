@@ -28,6 +28,12 @@ __pycache__/
 handoff/
 handoffs/
 
+# Local research and unpublished drafts. Kept outside /docs, which is the site root.
+/research/
+
+# Local security audits (unremediated finding detail)
+/docs/security/audits/
+
 # Verifier scratch output
 /out/
 *.verifier-output.json
