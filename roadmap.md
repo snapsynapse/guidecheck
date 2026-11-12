@@ -18,8 +18,8 @@ foundations are not implementation tasks to repeat.
   promotion planning. Scanner reduction to the deterministic byte check and
   Level 4 as a signed-artifact requirement are selected directions with no
   implementation scheduled. A second local audit dated 2026-11-11 exists and is
-  untracked like the first. The containment tranche, SEC-015, is committed
-  locally and not yet pushed or deployed: the hosted verifier stops awarding
+  untracked like the first. The containment tranche, SEC-015, was pushed and
+  deployed on 2026-11-12 (`1377fcc`): the hosted verifier stops awarding
   Level 4 and reports declared anchors as unverified (see the security
   maintenance record). The rest of the second audit is not yet reconciled into
   that record. SEC-003 checkpoint 2 stays open. This entry was added without

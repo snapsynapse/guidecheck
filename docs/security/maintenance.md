@@ -108,9 +108,9 @@ malicious probes ran.
 
 ## SEC-015 containment
 
-Status: committed locally on 2026-11-12, not pushed or deployed. Production
-still awards hosted Level 4 until this change is pushed and deployed. No
-software/profile version or dependency change.
+Status: pushed to `main` and deployed to production on 2026-11-12 as
+`1377fcc`, with exact-commit CI passing and a production check of the
+self-guide recorded below. No software/profile version or dependency change.
 
 Finding: the hosted handler derived every anchor location from fields in the
 guide bytes (DNS name from `canonical-url`, registry record from
@@ -180,8 +180,17 @@ Local validation on 2026-11-12:
 | `build_public_contracts.py`, `check_version_sync.py`, `validate_contracts.py` | Passed; `anchor.hosted.unverified` is registered in `finding-ids.md`. |
 | `git diff --check` | Passed. No frozen evaluator, profile, schema, fixture, snapshot or published guide byte changed. |
 
-No live probe ran. Pushing, exact-commit CI, deployment and a production
-check of the self-guide need Sam's go.
+Delivery on 2026-11-12, after Sam's go:
+
+| Check | Result |
+|---|---|
+| Push | `0d749a3..1377fcc` to `main`. |
+| Exact-commit CI on `1377fcc` | `test` (Python 3.10 and 3.12), `codeql` and `scorecard` passed. |
+| Vercel production deployment | Completed for `1377fcc`. Deployed `/verify` bytes match `docs/verify/index.html`. |
+| Production check, `https://guidecheck.org/.well-known/assistant-guide.txt` | HTTP 200; `achieved_level` 3; `level5_ready` false; findings `metadata.last-reviewed.age` and `anchor.hosted.unverified`, both info; both reported anchors `present-matches` with `hosted_verification: unverified`; compact report `Blocking findings: 0`, `Warnings: 0`, `Hash pinned: no`, `Proceed? yes`; guide SHA-256 `4b30202c...5df9e`, unchanged from the published bytes; new Level 1 to 3 limitation text served. |
+
+The production check submitted only the site's own guide. No live malicious
+probe ran.
 
 ## Remaining remediation queue
 
