@@ -170,7 +170,8 @@ class ProfileDispatchTests(unittest.TestCase):
                 self.fail(url)
             with redirect_stdout(io.StringIO()):
                 request = hosted.run_post({"url": GUIDE_URLS[0]}, fetch)
-            self.assertEqual(request.body["guide"]["achieved_level"], 4 if version == "0.7.1" else 3)
+            # SEC-015: the hosted path awards no Level 4 under any profile.
+            self.assertEqual(request.body["guide"]["achieved_level"], 3)
             if version in {"1.0.0", "2.0.0"}:
                 anchor = request.body["cross_channel_anchors"][0]
                 self.assertEqual(anchor["evidence_url"], RAW_URL)

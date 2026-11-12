@@ -3,6 +3,9 @@
 
 These are compatibility contracts against 3ceb30a, not reconstructions of
 historical verifier releases or evidence that the future strict path works.
+One reviewed hosted delta applies: the hosted verifier no longer awards Level 4
+(SEC-015), so hosted repository-only results are capped at Level 3 with the
+anchor still reported. Local results are unchanged.
 All fetches are replayed; no adopter files, DNS records, or servers are changed.
 """
 
@@ -63,7 +66,7 @@ def artifacts(version, guide_url):
 
 
 class LegacyAnchorCompatibilityTests(unittest.TestCase):
-    def test_repository_only_hosted_results_remain_level4(self):
+    def test_repository_only_hosted_results_are_capped_at_level3(self):
         for version in LEGACY_VERSIONS:
             for guide_url in GUIDE_URLS:
                 with self.subTest(version=version, guide_url=guide_url):
@@ -83,16 +86,18 @@ class LegacyAnchorCompatibilityTests(unittest.TestCase):
                     result = request.body
                     self.assertEqual(request.status, 200)
                     self.assertEqual(result["outcome"], "evaluated")
-                    self.assertEqual(result["guide"]["achieved_level"], 4)
-                    self.assertTrue(result["guide"]["level5_ready"])
+                    self.assertEqual(result["guide"]["achieved_level"], 3)
+                    self.assertFalse(result["guide"]["level5_ready"])
                     self.assertEqual(result["summary"]["blocking_findings"], 0)
                     self.assertEqual(result["summary"]["warnings"], 0)
-                    self.assertIn("Level: 4\n", result["compact_report"])
-                    self.assertIn("Hash pinned: yes\nProceed? yes", result["compact_report"])
+                    self.assertIn("anchor.hosted.unverified", [f["id"] for f in result["findings"]])
+                    self.assertIn("Level: 3\n", result["compact_report"])
+                    self.assertIn("Hash pinned: no\nProceed? yes", result["compact_report"])
                     self.assertEqual(result["cross_channel_anchors"], [{
                         "channel": "repository-file",
                         "status": "present-matches",
                         "observed_sha256": hashlib.sha256(data).hexdigest(),
+                        "hosted_verification": "unverified",
                     }])
 
     def test_local_cap_and_mismatch_blocking_remain(self):

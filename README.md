@@ -79,7 +79,7 @@ python3 scripts/guidecheck_verify.py 'GUIDE_PATH' --level 3 --pretty
 ```
 Native exit codes are 0 when the requested gate is accepted, 1 for blocking findings or a result below the requested level, and 2 for handled missing-input or profile-selection errors. Treat operational failures separately from conformance rejection. The experimental `--contract posix-json-v1` selector has different exit semantics; see [docs/cli-contract.md](docs/cli-contract.md) if you are integrating the verifier into another tool.
 
-Read `guide.achieved_level` and the finding list, not the exit code alone, when your guide declares profile 2.0.0 or 1.0.0 and includes a `manifest-url`. Declaring `manifest-url` claims Level 4. Level 4 provenance requires fetched evidence, which the local check cannot supply, so it reports blocking `anchor.independent.missing` and exits 1 even when `achieved_level` is 3. The hosted verifier, which is a preview, is where fetched evidence is checked. This is current behavior of the local verifier.
+Read `guide.achieved_level` and the finding list, not the exit code alone, when your guide declares profile 2.0.0 or 1.0.0 and includes a `manifest-url`. Declaring `manifest-url` claims Level 4. Level 4 provenance requires fetched evidence, which the local check cannot supply, so it reports blocking `anchor.independent.missing` and exits 1 even when `achieved_level` is 3. The hosted verifier, which is a preview, fetches and reports declared anchor evidence but does not verify it, so it also caps at Level 3. No GuideCheck verifier currently awards Level 4. This is current behavior of both verifiers.
 
 ## Have an instruction file rather than a guide?
 
@@ -223,8 +223,11 @@ Verifier work is split by evaluation mode. Two verifiers exist:
   provenance, which can only be established by fetching the evidence from its
   real location
 - a hosted public-web verifier at https://guidecheck.org/verify, which fetches
-  a guide by URL and applies Level 1-4 checks when supported public-web
-  provenance evidence is available. The hosted verifier also accepts optional
+  a guide by URL and applies Level 1-3 checks. It fetches and reports declared
+  Level 4 evidence but does not verify it, because the guide names where its
+  anchors live and nothing binds them to the checked host, so it caps the
+  achieved level at 3 and reports `anchor.hosted.unverified`. The hosted
+  verifier also accepts optional
   agent category and expected-level inputs so product telemetry can show where
   specific agent families routinely miss expected conformance levels.
 
@@ -241,14 +244,15 @@ Both verifiers:
 Both verifiers check Level 4 sidecar manifests plus guide hash and byte-count
 matches. The local reference CLI accepts local independent-anchor evidence with
 `--anchor` and confirms it is consistent, but does not assert Level 4 on local
-bytes (it caps at Level 3); only the hosted verifier, which fetches supported
-public-web anchors (package-registry metadata and DNS TXT),
-asserts Level 4.
+bytes (it caps at Level 3). The hosted verifier fetches declared public-web
+anchors (package-registry metadata, DNS TXT, github.com repository files) and
+reports them as unverified evidence; it also caps at Level 3. Neither verifier
+currently asserts Level 4.
 
-The hosted verifier may report `level5_ready: true` for a Level 4 guide that
-also passes the guide-side preparation checks for runtime enforcement (Level 5
-readiness is evaluated only once Level 4 is achieved, so it does not apply in
-local-file mode). This is not an achieved Level 5 claim; Level 5 still requires
+A verifier may report `level5_ready: true` for a Level 4 guide that also
+passes the guide-side preparation checks for runtime enforcement. Level 5
+readiness is evaluated only once Level 4 is achieved, so neither the local CLI
+nor the hosted verifier reports it as true today. This is not an achieved Level 5 claim; Level 5 still requires
 a conformant assistant runtime.
 
 User-facing score language should treat this as `Guide score: Level 4 of 4`
@@ -284,7 +288,7 @@ Customize
 guidecheck verify 'GUIDE_PATH' --pretty
 ```
 Check Level 4 sidecar evidence for consistency (still caps at Level 3 locally,
-reporting `level4.requires-fetch`; use the hosted verifier to assert Level 4):
+reporting `level4.requires-fetch`):
 
 Replace: GUIDE_PATH -> the path to the assistant-guide.txt to verify.
 Replace: MANIFEST_PATH -> the path to the guide's sidecar manifest file.
@@ -306,13 +310,13 @@ yet complete, and the hosted implementation has not been shown to pass it.
 
 Temporary limitations:
 
-- hosted Level 4 supports package-registry, DNS TXT, and github.com
-  repository-file anchors. Transparency-log and signed `security.txt` anchors
+- the hosted verifier does not award Level 4. It fetches declared
+  package-registry, DNS TXT, and github.com repository-file anchors and reports
+  them as unverified, because the guide names their locations and nothing binds
+  them to the checked host. Transparency-log and signed `security.txt` anchors
   are not fetched. Log identity, independence, and append-only evidence are not
-  verified, so a declared transparency log cannot qualify. Repository-file
-  matches qualify only under legacy profiles; 1.0.0 and 2.0.0 require another
-  qualifying channel
-- the hosted verifier is a Level 1-4 preview; its SSRF and abuse controls are
+  verified, so a declared transparency log is reported but never fetched
+- the hosted verifier is a Level 1-3 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
   redirects, response size limits, header capture, and content variation; each
   hosted request is capped by a seven-fetch outbound budget

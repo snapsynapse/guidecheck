@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Replay 1.0.0 reports with the explicit hosted security scope correction."""
+"""Replay 1.0.0 reports with the explicit SEC-001 and SEC-015 hosted corrections."""
 from contextlib import redirect_stdout
 from datetime import datetime
 import hashlib
@@ -64,8 +64,9 @@ class StrictCompatibilityTests(unittest.TestCase):
     def test_complete_released_reports_are_unchanged(self):
         baseline = json.loads((ROOT / "fixtures/compatibility/strict-1.0.0-baseline.json").read_text())
         self.assertEqual(baseline["source_commit"], SOURCE_COMMIT)
-        expected, affected = hosted_security_expected(baseline["results"])
+        expected, affected, capped = hosted_security_expected(baseline["results"], lambda index: True)
         self.assertEqual(affected, 0)
+        self.assertEqual(capped, 0)  # neither released hosted result reached Level 4
         self.assertEqual(capture(), expected)
 
 

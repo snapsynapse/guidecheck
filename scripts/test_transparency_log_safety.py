@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Offline regressions for unestablished hosted transparency-log evidence."""
+"""Offline regressions for unestablished hosted transparency-log evidence.
+
+Since SEC-015 no hosted anchor qualifies for Level 4; see
+test_hosted_level4_containment.py.
+"""
 
 from contextlib import redirect_stdout
 import hashlib
@@ -78,17 +82,22 @@ class TransparencyLogSafetyTests(unittest.TestCase):
                     if version in {"1.0.0", "2.0.0"}:
                         self.assertEqual(body["qualifying_anchor_count"], 0)
 
-    def test_supported_independent_anchor_still_establishes_level4(self):
+    def test_other_declared_anchor_is_reported_but_hosted_level_is_capped(self):
+        # SEC-015: the hosted path reports DNS and registry anchors as
+        # unverified evidence and awards no Level 4 by any channel.
         for version in ("0.7.1", "1.0.0", "2.0.0"):
             for channel in ("dns-txt", "package-registry"):
                 with self.subTest(version=version, channel=channel):
                     body = self.verify(version, "https://different.example/log-entry.txt", channel)
-                    self.assertEqual(body["guide"]["achieved_level"], 4)
+                    self.assertEqual(body["guide"]["achieved_level"], 3)
                     self.assertEqual(body["summary"]["blocking_findings"], 0)
-                    self.assertIn("Proceed? yes", body["compact_report"])
+                    self.assertIn("Hash pinned: no\nProceed? yes", body["compact_report"])
                     self.assertEqual([a["channel"] for a in body["cross_channel_anchors"]], [channel])
+                    self.assertEqual(body["cross_channel_anchors"][0]["status"], "present-matches")
+                    self.assertEqual(body["cross_channel_anchors"][0]["hosted_verification"], "unverified")
+                    self.assertIn("anchor.hosted.unverified", [f["id"] for f in body["findings"]])
                     if version != "0.7.1":
-                        self.assertEqual(body["qualifying_anchor_count"], 1)
+                        self.assertEqual(body["qualifying_anchor_count"], 0)
 
 
 if __name__ == "__main__":

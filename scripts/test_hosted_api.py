@@ -170,9 +170,18 @@ def test_evaluated_level4_package_registry() -> None:
     body = request.body or {}
     anchors = body.get("cross_channel_anchors", [])
     check("level4 status", request.status == 200)
-    check("level4 achieved", body.get("guide", {}).get("achieved_level") == 4)
-    check("level4 level5-ready", body.get("guide", {}).get("level5_ready") is True)
-    check("level4 hash pinned", "Hash pinned: yes" in body.get("compact_report", ""))
+    # SEC-015: hosted anchors are reported, never verified; Level 3 is the cap.
+    check("level4 claim capped at 3", body.get("guide", {}).get("achieved_level") == 3)
+    check("level4 claim not level5-ready", body.get("guide", {}).get("level5_ready") is False)
+    check("level4 claim hash not pinned", "Hash pinned: no\nProceed? yes" in body.get("compact_report", ""))
+    check(
+        "level4 claim unverified finding",
+        "anchor.hosted.unverified" in [f["id"] for f in body.get("findings", [])],
+    )
+    check(
+        "level4 claim anchor marked unverified",
+        bool(anchors) and all(a.get("hosted_verification") == "unverified" for a in anchors),
+    )
     check("level4 manifest valid", body.get("manifest", {}).get("valid") is True)
     check("level4 manifest fetched", body.get("manifest", {}).get("fetched") is True)
     check(
@@ -334,7 +343,7 @@ def test_package_registry_url_mismatch_warns() -> None:
     body = request.body or {}
     warnings = [finding["id"] for finding in body.get("findings", []) if finding["severity"] == "warning"]
     check("registry url mismatch status", request.status == 200)
-    check("registry url mismatch still level4", body.get("guide", {}).get("achieved_level") == 4)
+    check("registry url mismatch capped at 3", body.get("guide", {}).get("achieved_level") == 3)
     check("registry url mismatch warning", "anchor.registry.url-mismatch" in warnings)
 
 
@@ -382,9 +391,9 @@ def test_evaluated_level4_not_level5_ready() -> None:
     body = request.body or {}
     warnings = [finding["id"] for finding in body.get("findings", []) if finding["severity"] == "warning"]
     check("level4 not level5-ready status", request.status == 200)
-    check("level4 not level5-ready achieved", body.get("guide", {}).get("achieved_level") == 4)
+    check("level4 not level5-ready capped at 3", body.get("guide", {}).get("achieved_level") == 3)
     check("level4 not level5-ready flag", body.get("guide", {}).get("level5_ready") is False)
-    check("level4 not level5-ready warning", "level5.runner.missing" in warnings)
+    check("level4 not level5-ready readiness not evaluated", "level5.runner.missing" not in warnings)
 
 
 def test_evaluated_level4_missing_anchor() -> None:
@@ -466,7 +475,7 @@ def test_evaluated_level4_repository_file_github() -> None:
     body = request.body or {}
     anchors = body.get("cross_channel_anchors", [])
     check("repo-file status", request.status == 200)
-    check("repo-file achieved", body.get("guide", {}).get("achieved_level") == 4)
+    check("repo-file capped at 3", body.get("guide", {}).get("achieved_level") == 3)
     check(
         "repo-file anchor present",
         any(
@@ -524,7 +533,7 @@ def test_evaluated_level4_dns_txt() -> None:
     body = request.body or {}
     anchors = body.get("cross_channel_anchors", [])
     check("dns-txt status", request.status == 200)
-    check("dns-txt achieved", body.get("guide", {}).get("achieved_level") == 4)
+    check("dns-txt capped at 3", body.get("guide", {}).get("achieved_level") == 3)
     check(
         "dns-txt anchor present",
         any(
@@ -663,7 +672,7 @@ def test_evaluated_level4_repository_file_github_ref_urls() -> None:
         anchors = body.get("cross_channel_anchors", [])
         check(f"repo-file {label} status", request.status == 200)
         check(f"repo-file {label} raw url fetched", raw_url in calls, str(calls))
-        check(f"repo-file {label} achieved", body.get("guide", {}).get("achieved_level") == 4)
+        check(f"repo-file {label} capped at 3", body.get("guide", {}).get("achieved_level") == 3)
         check(
             f"repo-file {label} anchor present",
             any(
@@ -877,7 +886,7 @@ def test_fetch_budget_and_dedup() -> None:
     check("fetch budget status", request.status == 200)
     check("fetch budget capped", len(calls) <= hv.MAX_OUTBOUND_FETCHES, str(calls))
     check("fetch registry once despite unsupported transparency declaration", len(default_registry_calls) == 1, str(calls))
-    check("fetch budget level4", body.get("guide", {}).get("achieved_level") == 4)
+    check("fetch budget capped at 3", body.get("guide", {}).get("achieved_level") == 3)
 
 
 def test_fetch_budget_exhaustion_evidence() -> None:

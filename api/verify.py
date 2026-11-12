@@ -3,8 +3,8 @@ GuideCheck hosted verifier API.
 
 POST /api/verify with { "url": "https://..." }. The function resolves the
 target, fetches it over the public web with SSRF protections, classifies the
-outcome, and for a real guide artifact runs the GuideCheck Level 1-4 checks
-where supported public-web provenance evidence is available.
+outcome, and for a real guide artifact runs the GuideCheck Level 1-3 checks.
+Declared Level 4 evidence is fetched and reported, but not verified.
 
 A bare origin (no path) is resolved to the standard guide location at
 /.well-known/assistant-guide.txt, so a user can paste a site URL and still
@@ -18,8 +18,8 @@ Outcomes (HTTP 200, body carries "outcome"):
 Genuine failures (bad request, https/SSRF rejection, DNS, timeout, rate
 limit) return HTTP 4xx with an {"error": ...} body.
 
-This hosted verifier evaluates Levels 1 through 4, with a scoped Level 4
-anchor set, and always returns a hosted_limitations field. Check logic is
+This hosted verifier evaluates Levels 1 through 3 and always returns a
+hosted_limitations field. Check logic is
 shared with the local reference verifier via
 scripts/guidecheck_verify.evaluate_guide.
 """
@@ -62,8 +62,8 @@ MAX_REQUEST_BODY = 4096
 MAX_OUTBOUND_FETCHES = 7
 ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
-    "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
-    "Hosted Level 4 supports package-registry, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; transparency-log and signed security.txt anchors are not fetched. Transparency-log independence and append-only evidence are not verified.",
+    "This verifier evaluates Levels 1 through 3. It does not award Level 4.",
+    "Declared package-registry, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors are fetched and reported as unverified evidence: their locations are named by the guide itself and are not bound to the checked host, so they do not count toward Level 4. The repository-file allowlist is currently scoped to github.com; transparency-log and signed security.txt anchors are not fetched. Transparency-log independence and append-only evidence are not verified.",
     "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
     "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
     "Level 5 runtime conformance is not evaluated.",
@@ -552,6 +552,39 @@ def _hosted_level4_evidence(
     return manifest_text, anchor_texts, extra_findings
 
 
+def _withhold_hosted_level4(
+    body: bytes,
+    achieved_level: int,
+    findings: list[gv.Finding],
+    cross_channel_anchors,
+) -> int:
+    """Cap every hosted result at Level 3 and mark anchor evidence unverified.
+
+    Each anchor location is derived from fields in the guide bytes, so the
+    party who writes the guide chooses where its evidence comes from. Nothing
+    here binds an anchor to the checked host, so no anchor may qualify.
+    Level 5 readiness is only evaluated for Level 4 results, so its findings
+    are dropped with the level.
+    """
+    for anchor in cross_channel_anchors or []:
+        if getattr(anchor, "qualifies_for_level4", False):
+            anchor.qualifies_for_level4 = False
+    if achieved_level >= 4:
+        findings[:] = [f for f in findings if not f.id.startswith("level5.")]
+    if _guide_metadata(body).get("manifest-url"):
+        findings.append(
+            gv.Finding(
+                "anchor.hosted.unverified",
+                "info",
+                "the hosted verifier reports declared anchor evidence but does not verify it: "
+                "anchor locations are named by the guide and are not bound to the checked host, "
+                "so Level 4 is not awarded here",
+                section="verifier-conformance.23",
+            )
+        )
+    return min(achieved_level, 3)
+
+
 def _fetch_dns_txt_anchor(
     query_url: str,
     canonical_url: str | None,
@@ -737,7 +770,8 @@ def build_evaluated(
         result["manifest"] = manifest_evidence.as_dict()
     if cross_channel_anchors:
         result["cross_channel_anchors"] = [
-            anchor.as_dict() for anchor in cross_channel_anchors
+            {**anchor.as_dict(), "hosted_verification": "unverified"}
+            for anchor in cross_channel_anchors
         ]
     note = _location_note(checked)
     if note:
@@ -901,6 +935,10 @@ class handler(BaseHTTPRequestHandler):
         if selection.strict and any(f.severity == "error" and f.id.startswith(("anchor.", "manifest.")) for f in findings):
             achieved_level = min(achieved_level, 3)
             level5_ready = False
+        achieved_level = _withhold_hosted_level4(
+            fetched.body, achieved_level, findings, cross_channel_anchors,
+        )
+        level5_ready = False
         _log_product_event(
             now=now,
             started=started,

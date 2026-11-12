@@ -76,7 +76,7 @@ Hash pinned: no
 Proceed? yes</pre>
 
     <h2>Local-File Level 4 Evidence Check (caps at Level 3)</h2>
-    <p>The local reference CLI confirms that sidecar manifest and anchor evidence is internally consistent, but it does not fetch that evidence from its real location, so it caps the achieved level at 3 and reports <code>level4.requires-fetch</code>. Level 4 is asserted only by the hosted verifier, which fetches the manifest and anchors.</p>
+    <p>The local reference CLI confirms that sidecar manifest and anchor evidence is internally consistent, but it does not fetch that evidence from its real location, so it caps the achieved level at 3 and reports <code>level4.requires-fetch</code>. The hosted verifier fetches the manifest and declared anchors but reports them as unverified, because the guide names their locations and nothing binds them to the checked host, so it also caps at Level 3.</p>
     <pre>Verifier: guidecheck-reference-local 0.7.1
 Guide: fixtures/valid/level-4/guide.txt
 Level: 3

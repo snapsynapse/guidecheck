@@ -1,7 +1,7 @@
 # Security maintenance
 
 Scope: GuideCheck repository security remediation and its remaining work queue.
-Updated: 2026-11-08, America/Denver.
+Updated: 2026-11-12, America/Denver.
 
 ## Baseline and delivery state
 
@@ -37,6 +37,10 @@ without rewriting that audit.
   `out/registry-anchor-verification-plan/live-verification.md` and its
   `live-evidence/` directory. The earlier mocked SEC-002/SEC-003 observations
   remain in `out/security-followup-2026-10-26/fetch-probe.json`.
+- A second local audit, dated 2026-11-11, is untracked at
+  `docs/security/audits/audit-2026-11-11.md`. This record tracks SEC-015 from
+  it, below. Reconciling the rest of that audit into this record is a separate
+  decision.
 - As of 2026-11-08, GitHub has no open issues or PRs and thirteen open
   code-scanning alerts. Those alerts are separate from the audit findings.
   Successful CodeQL/Scorecard runs do not close either inventory.
@@ -101,6 +105,83 @@ Local logs: `/private/tmp/guidecheck-sec002-red-final.log`,
 supporting receipts; the results above remain here if temporary files expire.
 No packages or release archives were built during this SEC-002 proof, and no live
 malicious probes ran.
+
+## SEC-015 containment
+
+Status: committed locally on 2026-11-12, not pushed or deployed. Production
+still awards hosted Level 4 until this change is pushed and deployed. No
+software/profile version or dependency change.
+
+Finding: the hosted handler derived every anchor location from fields in the
+guide bytes (DNS name from `canonical-url`, registry record from
+`registry-url`, repository file from `repository-url`). Nothing compared them
+with the checked URL, so whoever writes the guide chooses where its
+"independent" evidence comes from. The audit reproduced Level 4 with zero
+blockers from a foreign-domain DNS anchor, an attacker-named npm package, and
+a legacy-profile attacker repository.
+
+Containment by removal, as decided by Sam on 2026-11-11: the hosted verifier
+no longer awards Level 4. Binding anchors to the checked host was the
+alternative and was not chosen. In `api/verify.py`:
+
+- every hosted result is capped at Level 3 and `level5_ready` is false, under
+  every supported profile;
+- declared anchors are still fetched and reported; each reported anchor
+  carries `hosted_verification: unverified`, and under 1.0.0 and 2.0.0
+  `qualifies_for_level4` is false and `qualifying_anchor_count` is 0;
+- a guide that declares `manifest-url` receives the info finding
+  `anchor.hosted.unverified`; by Sam's 2026-11-12 choice it is not blocking,
+  so the compact report reads `Hash pinned: no` and `Proceed?` follows the
+  remaining blocking findings;
+- Level 5 readiness findings, evaluated only for Level 4 results, are dropped
+  with the level.
+
+The existing `qualification_reason` value is left as the profile policy
+computed it, because the released schemas fix that enum. A reason value for
+hosted non-qualification belongs to a future profile, not this containment.
+
+Unchanged: the local CLI, the in-process evaluator interface, frozen engines,
+released profiles, schemas, fixtures, snapshots, `preserved-artifacts.json`,
+and published guide, manifest and anchor bytes. Replay tests
+(`test_dispatch_compatibility.py`, `test_strict_compatibility.py`) apply an
+explicit SEC-015 delta to the frozen snapshots and assert how many results it
+caps: eight legacy hosted results and none of the released 1.0.0 results. The
+expected `anchor.hosted.unverified` finding is derived from whether each
+replayed guide declares `manifest-url`, never from the response under test.
+
+Known consequence: the hosted report for guidecheck.org's own guide drops from
+Level 4 to Level 3. Public copy on the landing page, verify page, verifier
+examples, `llms.txt`, README, operator guide and examples README now states the
+Level 1 to 3 scope.
+
+Regression and adversarial coverage, all with mocked fetches, in
+`scripts/test_hosted_level4_containment.py` (8 tests, 110 subtests across all
+eleven supported profiles):
+
+| Route back to hosted Level 4 | Before (HEAD handler) | After |
+|---|---|---|
+| Foreign-domain DNS anchor (audit reproduction 1) | Level 4, all 11 profiles | Level 3 |
+| Attacker-named registry package (reproduction 2) | Level 4, all 11 profiles | Level 3 |
+| Attacker repository (reproduction 3) | Level 4 for 9 legacy profiles; already Level 3 under 1.0.0 and 2.0.0 | Level 3 |
+| DNS, registry and repository anchors together | Level 4, all 11 profiles | Level 3 |
+| Redirect that lands on the canonical host | Level 4, all 11 profiles | Level 3 |
+| DNS anchor on the checked host itself | Level 4, all 11 profiles | Level 3, no blockers |
+| Anchor fields placed in the manifest | Not fetched; Level 3 | Not fetched; Level 3 |
+| Caller `required_profile_version` assertion | Level 4 in 3 of 33 cases; others 400 | Level 3 or 400 |
+
+Local validation on 2026-11-12:
+
+| Check | Result |
+|---|---|
+| New suite against the unmodified HEAD handler | 67 subtests reached Level 4; 2 errored on the missing finding; exit 1. No network. |
+| New suite, patched | 8 tests passed. |
+| `make test test-verify-ui`, Python 3.15.2 | Passed, including frozen report replays with the counted delta, preserved-artifact checks, hosted API, transparency-log and UI contract suites. |
+| `make test`, Python 3.12.16 | Passed. Python 3.10 was not available locally. |
+| `build_public_contracts.py`, `check_version_sync.py`, `validate_contracts.py` | Passed; `anchor.hosted.unverified` is registered in `finding-ids.md`. |
+| `git diff --check` | Passed. No frozen evaluator, profile, schema, fixture, snapshot or published guide byte changed. |
+
+No live probe ran. Pushing, exact-commit CI, deployment and a production
+check of the self-guide need Sam's go.
 
 ## Remaining remediation queue
 

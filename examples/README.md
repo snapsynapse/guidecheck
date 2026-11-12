@@ -17,8 +17,9 @@ The result must equal the `guide-sha256` value in `manifest.txt`.
 To check Level 4 evidence locally, provide the guide, manifest, and at least one
 independent anchor file to the reference CLI. The CLI confirms the evidence is
 internally consistent but caps at Level 3 (reporting `level4.requires-fetch`),
-because Level 4 requires fetched provenance; use the hosted verifier at
-https://guidecheck.org/verify to assert Level 4:
+because Level 4 requires fetched provenance. The hosted verifier at
+https://guidecheck.org/verify reports declared anchors as unverified and also
+caps at Level 3, so no GuideCheck verifier currently asserts Level 4:
 ```
 python3 ../scripts/guidecheck_verify.py level-3-assistant-guide.txt --manifest manifest.txt --anchor dns-txt=anchor.txt --pretty
 ```

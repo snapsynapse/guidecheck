@@ -37,7 +37,7 @@ guide scores against the profile.
 ## What the result establishes
 
 - Levels 1 through 3 check the guide artifact under its declared supported profile.
-- Hosted Level 4 also checks supported fetched provenance evidence. A guide hash identifies bytes; it does not establish publisher benevolence or safe command effects.
+- The hosted verifier fetches and reports declared Level 4 provenance evidence but does not verify it, so it does not award Level 4. A guide hash identifies bytes; it does not establish publisher benevolence or safe command effects.
 - An `exec-sha256.unverified` finding means an execution pin was declared but the verifier did not read the invoked artifact. Review that artifact separately before approving its execution.
 - `level5_ready` describes guide-side preparation. No GuideCheck Level 5 runtime evaluation is currently delivered.
 - The [ACS integration pattern](docs/acs-integration.md) is advisory. Hook names and an inventory entry do not prove that a deployed host enforces the policy.

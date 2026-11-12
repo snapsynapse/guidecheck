@@ -18,10 +18,12 @@ foundations are not implementation tasks to repeat.
   promotion planning. Scanner reduction to the deterministic byte check and
   Level 4 as a signed-artifact requirement are selected directions with no
   implementation scheduled. A second local audit dated 2026-11-11 exists and is
-  untracked like the first; the security maintenance record has not been
-  reconciled with it and still describes the 2026-10-26 baseline. SEC-003
-  checkpoint 2 stays open behind the containment tranche. This entry was added
-  without re-reconciling the rest of the queue below.
+  untracked like the first. The containment tranche, SEC-015, is committed
+  locally and not yet pushed or deployed: the hosted verifier stops awarding
+  Level 4 and reports declared anchors as unverified (see the security
+  maintenance record). The rest of the second audit is not yet reconciled into
+  that record. SEC-003 checkpoint 2 stays open. This entry was added without
+  re-reconciling the rest of the queue below.
 - SEC-002 redirect-body containment was committed, pushed and verified live as
   `96c648e` on 2026-11-08, with regression coverage and an explicit transport-source
   digest expectation. SEC-003 absolute-deadline enforcement remains separate; the security maintenance
@@ -342,9 +344,9 @@ Candidate work, not a commitment:
   it checks supplied sidecar manifest and independent-anchor evidence for
   consistency but caps at Level 3 (reporting `level4.requires-fetch`), since
   Level 4 requires fetched provenance. The hosted public-web verifier covers
-  Level 1 through Level 4 for supported
-  public-web anchors: package-registry metadata, DNS TXT records resolved over
-  DNS-over-HTTPS, and repository-file evidence served by github.com. Strict
+  Level 1 through Level 3. It fetches declared package-registry metadata, DNS
+  TXT records resolved over DNS-over-HTTPS, and repository-file evidence served
+  by github.com, and reports them as unverified; it does not award Level 4. Strict
   profiles do not qualify repository evidence without established independence.
   Declared transparency logs are not fetched or qualified; they produce
   `anchor.transparency-log.unverified` pending a supported adapter.

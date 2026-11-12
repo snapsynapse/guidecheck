@@ -44,6 +44,17 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Fixed
 
+- Stop the hosted verifier from awarding Level 4. Every hosted anchor location
+  was named by fields in the guide bytes and nothing bound it to the checked
+  host, so the guide's author chose where its "independent" evidence came from.
+  Hosted results are now capped at Level 3 under every supported profile;
+  declared DNS TXT, package-registry and repository-file anchors are still
+  fetched and reported, marked `hosted_verification: unverified`, and guides
+  that declare `manifest-url` receive the info finding
+  `anchor.hosted.unverified`. Level 5 readiness is not reported for capped
+  results. The local CLI, frozen evaluators, released profiles, schemas,
+  fixtures, snapshots and published guide bytes are unchanged; replay tests
+  apply an explicit, counted hosted delta (SEC-015).
 - Close unused redirect responses without reading their bodies, preventing
   redirect-body buffering from bypassing the fetch size limit. Add offline
   body-read/cleanup regressions and reconcile the security queue. Absolute

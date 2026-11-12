@@ -726,12 +726,11 @@ GET /.well-known/assistant-guide.txt
   <div class="container">
     <div class="demo-block">
       <h2>Verify a guide</h2>
-      <p>GuideCheck publishes a primary verifier for usability &mdash; never as the only authoritative verifier and never as a root of trust. It reports what it checked and what it did not. Guide files score up to Level 4 of 4; Level 5 is a separate runtime enforcement claim. Optional agent and expected-level fields help identify compatibility gaps without storing full submitted URLs, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.</p>
+      <p>GuideCheck publishes a primary verifier for usability &mdash; never as the only authoritative verifier and never as a root of trust. It reports what it checked and what it did not. Guide files score up to Level 4 of 4; Level 5 is a separate runtime enforcement claim. The hosted verifier scores Levels 1 to 3: it reports a guide's declared Level 4 anchor evidence but does not verify it, so it does not award Level 4. Optional agent and expected-level fields help identify compatibility gaps without storing full submitted URLs, prompts, model responses, IP addresses, or stable visitor identifiers as product telemetry.</p>
       <p>The hosted verifier is a preview. The local reference CLI evaluates Levels 1-3 from a source checkout without executing the guide. Under a 1.0.0 or 2.0.0 profile, a guide that declares <code>manifest-url</code> reports the blocking finding <code>anchor.independent.missing</code> locally, because Level 4 needs fetched evidence. A captured failed verification and a step-by-step trial are in the <a href="https://github.com/snapsynapse/guidecheck#try-it" target="_blank" rel="noopener">README trial</a>.</p>
       <div class="demo-preview">verifier: human-verifiable-assistant-guide-verifier 0.7.1
 guide-sha256: a1b2c3 ... reviewed before use
-achieved-level: 4
-level5-ready: true
+achieved-level: 3
 findings: 0 blocking, 1 advisory
 note: conformance is not safety &mdash; read the guide</div>
       <div class="cta-row">

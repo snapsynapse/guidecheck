@@ -5,6 +5,7 @@ from copy import deepcopy
 from datetime import datetime, timezone
 import io
 import json
+import re
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -24,8 +25,69 @@ class FixedDateTime(datetime):
         return NOW if tz else NOW.replace(tzinfo=None)
 
 
-def hosted_security_expected(results):
-    """Apply only the reviewed SEC-001 hosted delta to historical expectations.
+# Hosted replay results that the frozen snapshot records at Level 4.
+SEC015_CAPPED_HOSTED_RESULTS = 8
+SEC015_OLD_LEVELS = "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available."
+SEC015_NEW_LEVELS = "This verifier evaluates Levels 1 through 3. It does not award Level 4."
+SEC015_NEW_SCOPE = "Declared package-registry, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors are fetched and reported as unverified evidence: their locations are named by the guide itself and are not bound to the checked host, so they do not count toward Level 4. The repository-file allowlist is currently scoped to github.com; transparency-log and signed security.txt anchors are not fetched. Transparency-log independence and append-only evidence are not verified."
+SEC015_FINDING = {
+    "id": "anchor.hosted.unverified",
+    "severity": "info",
+    "message": "the hosted verifier reports declared anchor evidence but does not verify it: "
+               "anchor locations are named by the guide and are not bound to the checked host, "
+               "so Level 4 is not awarded here",
+    "section": "verifier-conformance.23",
+}
+
+
+def _apply_sec015(body, declared_manifest):
+    """The reviewed SEC-015 hosted delta: no hosted result reaches Level 4."""
+    limitations = body["hosted_limitations"]
+    assert limitations.count(SEC015_OLD_LEVELS) == 1
+    limitations[limitations.index(SEC015_OLD_LEVELS)] = SEC015_NEW_LEVELS
+    old_scope = next(s for s in limitations if s.startswith("Hosted Level 4 supports "))
+    limitations[limitations.index(old_scope)] = SEC015_NEW_SCOPE
+    if body.get("outcome") != "evaluated":
+        return False
+    guide, summary = body["guide"], body["summary"]
+    was_level4 = guide["achieved_level"] >= 4
+    if was_level4:
+        # Level 5 readiness is evaluated only for Level 4 results.
+        dropped = [f for f in body["findings"] if f["id"].startswith("level5.")]
+        body["findings"] = [f for f in body["findings"] if not f["id"].startswith("level5.")]
+        for finding in dropped:
+            key = {"error": "blocking_findings", "warning": "warnings", "info": "infos"}[finding["severity"]]
+            summary[key] -= 1
+    guide["achieved_level"] = min(guide["achieved_level"], 3)
+    guide["level5_ready"] = False
+    if declared_manifest:
+        body["findings"].append(dict(SEC015_FINDING))
+        summary["infos"] += 1
+    for anchor in body.get("cross_channel_anchors", []):
+        if "qualifies_for_level4" in anchor:
+            anchor["qualifies_for_level4"] = False
+        anchor["hosted_verification"] = "unverified"
+    if "qualifying_anchor_count" in body:
+        body["qualifying_anchor_count"] = 0
+    lines = []
+    for line in body["compact_report"].split("\n"):
+        key = line.split(":", 1)[0]
+        line = {
+            "Qualifying anchors": "Qualifying anchors: 0",
+            "Level": f"Level: {guide['achieved_level']}",
+            "Blocking findings": f"Blocking findings: {summary['blocking_findings']}",
+            "Warnings": f"Warnings: {summary['warnings']}",
+            "Hash pinned": "Hash pinned: no",
+        }.get(key, line)
+        if line.startswith("Proceed? "):
+            line = f"Proceed? {'yes' if summary['blocking_findings'] == 0 else 'no'}"
+        lines.append(line)
+    body["compact_report"] = "\n".join(lines)
+    return was_level4
+
+
+def hosted_security_expected(results, declared_manifest):
+    """Apply only the reviewed SEC-001 and SEC-015 hosted deltas to historical expectations.
 
     Snapshots and all local reports remain unchanged. Do not normalize actual
     output: unexpected runtime changes must still fail the complete comparison.
@@ -54,7 +116,11 @@ def hosted_security_expected(results):
             })
             body["summary"]["infos"] += 1
             affected += 1
-    return expected, affected
+    capped = sum(
+        _apply_sec015(response["body"], declared_manifest(index))
+        for index, response in enumerate(expected["hosted"])
+    )
+    return expected, affected, capped
 
 
 def capture():
@@ -70,11 +136,23 @@ def capture():
         )
         local[str(path.relative_to(ROOT))] = gv.output_for(evaluation)
     responses = []
+    declared = []
     original = hosted.run_post
 
-    def record(*args, **kwargs):
-        request = original(*args, **kwargs)
+    def record(payload, fake_fetch, *args, **kwargs):
+        # Record only an input fact (does the guide declare manifest-url?),
+        # never anything derived from the response under test.
+        guide_bytes = []
+
+        def spy(url, *fetch_args, **fetch_kwargs):
+            response = fake_fetch(url, *fetch_args, **fetch_kwargs)
+            if not guide_bytes:
+                guide_bytes.append(getattr(response, "body", b""))
+            return response
+
+        request = original(payload, spy, *args, **kwargs)
         responses.append({"status": request.status, "body": request.body})
+        declared.append(bool(guide_bytes) and re.search(rb"^manifest-url:", guide_bytes[0], re.M) is not None)
         return request
 
     # Existing hosted scenarios exercise the real handler with replayed fetches.
@@ -91,14 +169,20 @@ def capture():
     finally:
         hosted.PASSED, hosted.FAILED = old_counts
     # Only machine-specific paths are normalized. Time is fixed at evaluation.
-    return json.loads(json.dumps({"local": local, "hosted": responses}).replace(str(ROOT), "$ROOT"))
+    results = json.loads(json.dumps({"local": local, "hosted": responses}).replace(str(ROOT), "$ROOT"))
+    return results, declared
 
 
 class DispatchCompatibilityTests(unittest.TestCase):
     def test_baseline_results_are_unchanged(self):
-        expected, affected = hosted_security_expected(json.loads(SNAPSHOT.read_text())["results"])
+        actual, declared = capture()
+        expected, affected, capped = hosted_security_expected(
+            json.loads(SNAPSHOT.read_text())["results"], declared.__getitem__,
+        )
         self.assertEqual(affected, 1)
-        self.assertEqual(capture(), expected)
+        self.assertEqual(capped, SEC015_CAPPED_HOSTED_RESULTS)
+        self.maxDiff = None
+        self.assertEqual(actual, expected)
 
 
 if __name__ == "__main__":
