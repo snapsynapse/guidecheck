@@ -67,6 +67,10 @@ test-bounded-execution:
 test-corrected-content:
 	python3 scripts/test_corrected_content.py
 
+.PHONY: test-restricted-argv
+test-restricted-argv:
+	python3 scripts/test_restricted_argv.py
+
 test-legacy-anchor-compatibility:
 	python3 scripts/test_legacy_anchor_compatibility.py
 	python3 scripts/test_dispatch_compatibility.py
@@ -77,7 +81,7 @@ test-legacy-anchor-compatibility:
 test-verify-ui:
 	node scripts/test_verify_ui.mjs
 
-test: test-legacy-anchor-compatibility test-bounded-execution test-corrected-content eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-fetch-worker test-cli-contract test-posix-cli-contract test-scanner test-release-gate
+test: test-legacy-anchor-compatibility test-bounded-execution test-corrected-content test-restricted-argv eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-fetch-worker test-cli-contract test-posix-cli-contract test-scanner test-release-gate
 
 # Full source archive for a GitHub release, matching prior build/ layout.
 release-archive:

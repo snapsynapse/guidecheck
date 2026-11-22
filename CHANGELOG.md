@@ -6,6 +6,15 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Added
 
+- Add `scripts/guidecheck_restricted.py`, the first slice of the opt-in
+  `restricted-argv-1` content policy selected in `INTENT.md` for a future
+  profile 3.0.0, with `scripts/test_restricted_argv.py`. The slice covers a
+  size gate, a byte allowlist, exact action fences, reserved action field labels, a fixed action
+  key list, an action `id` grammar and an allowlist command grammar. It is
+  unreleased and partial: no released entry point imports it, the dispatcher
+  still refuses 3.0.0, it awards no level, and released profiles, engines,
+  schemas, fixtures and guide bytes are unchanged. Its finding ids are
+  registered as unreleased in `finding-ids.md`.
 - Add an experimental, unactivated SEC-003 fetch-worker candidate, offline
   process/transport-stage regressions and an isolated installed-wheel check.
   Existing hosted and scanner fetch paths remain unchanged.

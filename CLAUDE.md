@@ -54,6 +54,11 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
     report replays guard compatibility.
   - `guidecheck_strict.py` implements the opt-in 1.0.0 provenance policy.
   - `guidecheck_corrected.py` implements the opt-in 2.0.0 corrected-content policy.
+  - `guidecheck_restricted.py` is the first slice of the unreleased
+    `restricted-argv-1` policy (working profile 3.0.0): size gate, byte allowlist,
+    exact action fences, fixed keys, `id` grammar, command grammar. No entry point imports
+    it and the dispatcher still refuses 3.0.0; `test_restricted_argv.py`
+    asserts both. It imports only `Finding` from the legacy engine.
   - `guidecheck_verify.py` — local-file reference verifier CLI (Levels 1-3,
     plus internal-consistency checks on Level 4 sidecar manifests/anchors).
   - `guidecheck_scan.py` / `guidecheck_cli.py` — instruction-surface scanner
