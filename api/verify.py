@@ -60,6 +60,13 @@ HOSTED_VERSION = LEGACY_ENGINE_VERSION
 WELL_KNOWN_PATH = "/.well-known/assistant-guide.txt"
 MAX_REQUEST_BODY = 4096
 MAX_OUTBOUND_FETCHES = 7
+# Every supported profile caps a guide at 8192 bytes. A larger file cannot
+# conform, and the content checks are not linear in input size, so the hosted
+# path refuses it before any evaluator runs instead of reporting on it.
+MAX_GUIDE_BYTES = 8192
+MAX_REPORTED_HEADER_CHARS = 200
+MAX_REPORTED_URL_CHARS = 2048
+_MEDIA_TYPE_CHARS = frozenset("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$&^_.+-")
 ANALYTICS_EVENT = "guidecheck_verify"
 HOSTED_LIMITATIONS = [
     "This verifier evaluates Levels 1 through 3. It does not award Level 4.",
@@ -120,6 +127,73 @@ class HostedFetchContext:
         return fetched
 
 
+def _printable(value: object, limit: int) -> str:
+    """Reduce text from a remote server to printable ASCII of bounded length.
+
+    Response headers and redirect targets are written by the checked server.
+    They are reported, never trusted, and must not be able to add lines or
+    control sequences to a report that a person or an assistant reads.
+    """
+    text = value if isinstance(value, str) else str(value)
+    return "".join(ch if " " <= ch <= "~" else "?" for ch in text)[:limit]
+
+
+def _reported_headers(fetched) -> dict[str, str]:
+    return {
+        _printable(key, MAX_REPORTED_HEADER_CHARS).lower(): _printable(value, MAX_REPORTED_HEADER_CHARS)
+        for key, value in (fetched.headers or {}).items()
+    }
+
+
+def _reported_redirects(redirects) -> list:
+    reported = []
+    for hop in redirects or []:
+        if isinstance(hop, dict):
+            hop = {
+                key: _printable(value, MAX_REPORTED_URL_CHARS) if isinstance(value, str) else value
+                for key, value in hop.items()
+            }
+        reported.append(hop)
+    return reported
+
+
+def _media_type(content_type: str) -> str:
+    """Return the bare media type of a Content-Type value, or 'unknown'."""
+    candidate = content_type.split(";", 1)[0].strip()
+    kind, slash, subtype = candidate.partition("/")
+    if slash and kind and subtype and len(candidate) <= 80 and set(candidate) <= _MEDIA_TYPE_CHARS | {"/"} and "/" not in subtype:
+        return candidate
+    return "unknown"
+
+
+def submitted_url_problem(url: str) -> str | None:
+    """Return why a submitted URL is refused, or None when it is acceptable.
+
+    The submitted string is echoed into the report, so it is held to what a
+    report line can safely carry: visible ASCII only, no fragment, no
+    userinfo, no backslash, and a host that parses. The fetch layer re-parses
+    the URL and silently drops tabs, newlines and the fragment, which would
+    otherwise let the echoed string differ from the URL that was fetched.
+    """
+    if any(not ("!" <= ch <= "~") for ch in url):
+        return "the guide URL must contain only visible ASCII characters, with no spaces or line breaks"
+    if "\\" in url:
+        return "the guide URL must not contain a backslash"
+    if "#" in url:
+        return "the guide URL must not contain a fragment"
+    try:
+        parts = urlsplit(url)
+        host = parts.hostname
+        parts.port  # raises ValueError for a malformed or out-of-range port
+    except ValueError:
+        return "the guide URL could not be parsed"
+    if not host:
+        return "the guide URL has no host"
+    if "@" in parts.netloc:
+        return "the guide URL must not contain a user name or password"
+    return None
+
+
 def _rate_ok(client_ip: str) -> bool:
     now = time.monotonic()
     hits = [t for t in _rate_hits.get(client_ip, []) if now - t < _RATE_WINDOW]
@@ -156,7 +230,15 @@ def _target_info(url: str | None) -> dict:
             "target_path_kind": "unknown",
             "target_scheme": "unknown",
         }
-    parts = urlsplit(url)
+    try:
+        parts = urlsplit(url)
+        hostname = parts.hostname
+    except ValueError:
+        return {
+            "target_host": "unknown",
+            "target_path_kind": "unknown",
+            "target_scheme": "unknown",
+        }
     path = parts.path or "/"
     if path == WELL_KNOWN_PATH:
         path_kind = "well-known"
@@ -164,7 +246,7 @@ def _target_info(url: str | None) -> dict:
         path_kind = "root"
     else:
         path_kind = "custom"
-    host = (parts.hostname or "unknown").lower()
+    host = (hostname or "unknown").lower()
     if host.startswith("www."):
         host = host[4:]
     return {
@@ -195,8 +277,10 @@ def _analytics_context(payload: dict | None) -> dict:
 
 def _failure_category(outcome: str, findings: list[gv.Finding] | None = None, error_code: str | None = None) -> str:
     if error_code:
-        if error_code in {"scheme", "bad-request"}:
+        if error_code in {"scheme", "bad-request", "invalid-url"}:
             return "request_invalid"
+        if error_code == "evaluation-failed":
+            return "evaluation_failed"
         if error_code == "rate-limited":
             return "rate_limited"
         return "fetch_failed"
@@ -303,7 +387,7 @@ def _body_text(body: bytes) -> str:
 
 
 def _header_findings(fetched) -> list[gv.Finding]:
-    headers = {str(k).lower(): str(v) for k, v in (fetched.headers or {}).items()}
+    headers = _reported_headers(fetched)
     findings: list[gv.Finding] = []
     content_type = headers.get("content-type", "")
     content_type_lower = content_type.lower()
@@ -442,9 +526,9 @@ def _fetch_text_evidence(
         )
         return None
     fetch_context.evidence[evidence_kind] = {
-        "evidence_url": fetched.final_url,
+        "evidence_url": _printable(fetched.final_url, MAX_REPORTED_URL_CHARS),
         "fetched_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "redirects": fetched.redirects,
+        "redirects": _reported_redirects(fetched.redirects),
     }
     return _body_text(fetched.body)
 
@@ -619,9 +703,9 @@ def _fetch_dns_txt_anchor(
     selected = select_dns_txt_record(records, canonical_url)
     if selected is not None:
         fetch_context.evidence["dns-txt anchor"] = {
-            "evidence_url": fetched.final_url,
+            "evidence_url": _printable(fetched.final_url, MAX_REPORTED_URL_CHARS),
             "fetched_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-            "redirects": fetched.redirects,
+            "redirects": _reported_redirects(fetched.redirects),
         }
     return selected
 
@@ -648,11 +732,11 @@ def _input_block(submitted: str, checked: str, auto_resolved: bool) -> dict:
 
 def _fetch_block(fetched, now: datetime) -> dict:
     return {
-        "final_url": fetched.final_url,
+        "final_url": _printable(fetched.final_url, MAX_REPORTED_URL_CHARS),
         "fetched_at": now.isoformat().replace("+00:00", "Z"),
         "http_status": fetched.status,
-        "headers": fetched.headers,
-        "redirects": fetched.redirects,
+        "headers": _reported_headers(fetched),
+        "redirects": _reported_redirects(fetched.redirects),
         "tls_valid": fetched.tls_valid,
         "bytes": len(fetched.body),
     }
@@ -712,7 +796,7 @@ def build_not_found(submitted, checked, auto_resolved, fetched, now) -> dict:
 
 
 def build_not_a_guide(submitted, checked, auto_resolved, fetched, now) -> dict:
-    content_type = fetched.headers.get("content-type", "unknown")
+    content_type = _media_type(_reported_headers(fetched).get("content-type", "unknown"))
     message = (
         f"{checked} returned an HTML web page (content-type: {content_type}), "
         f"not a plain-text assistant-guide.txt. A conformant guide is a plain "
@@ -787,6 +871,50 @@ def build_evaluated(
     return result
 
 
+def _evaluate_fetched(url, checked_url, auto_resolved, fetched, fetch_context, payload, now):
+    """Evaluate a fetched guide and build the evaluated response body."""
+    if "required_profile_version" in payload and not isinstance(payload["required_profile_version"], str):
+        raise ProfileError("profile-version-unsupported", "required_profile_version must be a string")
+    selection = select_profile(fetched.body, payload.get("required_profile_version"))
+
+    hosted_fetch_findings = _header_findings(fetched)
+    hosted_fetch_findings.extend(_content_variation_findings(checked_url, fetched, fetch_context, now))
+    manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(
+        fetched.body,
+        fetch_context,
+    )
+    findings, achieved_level, level5_ready, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
+        fetched.body, manifest_text, anchor_texts, now=now,
+        evidence_fetched=True, selection=selection,
+    )
+    if manifest_evidence is not None:
+        manifest_evidence.fetched = True
+    findings.extend(hosted_fetch_findings)
+    findings.extend(hosted_evidence_findings)
+    if selection.strict and any(f.severity == "error" and f.id.startswith(("anchor.", "manifest.")) for f in findings):
+        achieved_level = min(achieved_level, 3)
+        level5_ready = False
+    achieved_level = _withhold_hosted_level4(
+        fetched.body, achieved_level, findings, cross_channel_anchors,
+    )
+    level5_ready = False
+    result = build_evaluated(
+        url,
+        checked_url,
+        auto_resolved,
+        fetched,
+        findings,
+        achieved_level,
+        level5_ready,
+        now,
+        manifest_evidence,
+        cross_channel_anchors,
+        selection=selection,
+        anchor_sources=fetch_context.evidence,
+    )
+    return result, achieved_level, findings
+
+
 class handler(BaseHTTPRequestHandler):
     # Vercel's Python runtime dispatches to this class per request.
 
@@ -855,7 +983,8 @@ class handler(BaseHTTPRequestHandler):
         try:
             payload = json.loads(raw)
             url = payload["url"]
-        except (json.JSONDecodeError, KeyError, TypeError):
+        except (ValueError, KeyError, TypeError, RecursionError):
+            # ValueError covers malformed JSON and a body that is not UTF-8.
             fail(400, "bad-request", "the body must be JSON with a string url field")
             return
         if not isinstance(url, str) or not url.strip():
@@ -866,6 +995,13 @@ class handler(BaseHTTPRequestHandler):
         if not url.lower().startswith("https://"):
             checked_url = url
             fail(400, "scheme", "the guide URL must use https")
+            return
+
+        problem = submitted_url_problem(url)
+        if problem:
+            # checked_url is still unset here, so a refused string is neither
+            # echoed in the response nor recorded in the product event.
+            fail(400, "invalid-url", problem)
             return
 
         checked_url, auto_resolved = resolve_target_url(url)
@@ -906,39 +1042,28 @@ class handler(BaseHTTPRequestHandler):
             self._write_json(200, build_not_a_guide(url, checked_url, auto_resolved, fetched, now))
             return
 
-        try:
-            if "required_profile_version" in payload and not isinstance(payload["required_profile_version"], str):
-                raise ProfileError("profile-version-unsupported", "required_profile_version must be a string")
-            selection = select_profile(fetched.body, payload.get("required_profile_version"))
-        except ProfileError as exc:
-            fail(400, exc.code, exc.message)
+        if len(fetched.body) > MAX_GUIDE_BYTES:
+            fail(
+                400,
+                "too-large",
+                f"the file is {len(fetched.body)} bytes; a guide may be at most "
+                f"{MAX_GUIDE_BYTES} bytes, so it was not evaluated",
+            )
             return
 
-        hosted_fetch_findings = _header_findings(fetched)
-        hosted_fetch_findings.extend(_content_variation_findings(checked_url, fetched, fetch_context, now))
-        manifest_text, anchor_texts, hosted_evidence_findings = _hosted_level4_evidence(
-            fetched.body,
-            fetch_context,
-        )
         try:
-            findings, achieved_level, level5_ready, manifest_evidence, cross_channel_anchors = gv.evaluate_guide(
-                fetched.body, manifest_text, anchor_texts, now=now,
-                evidence_fetched=True, selection=selection,
+            result, achieved_level, findings = _evaluate_fetched(
+                url, checked_url, auto_resolved, fetched, fetch_context, payload, now,
             )
         except ProfileError as exc:
             fail(400, exc.code, exc.message)
             return
-        if manifest_evidence is not None:
-            manifest_evidence.fetched = True
-        findings.extend(hosted_fetch_findings)
-        findings.extend(hosted_evidence_findings)
-        if selection.strict and any(f.severity == "error" and f.id.startswith(("anchor.", "manifest.")) for f in findings):
-            achieved_level = min(achieved_level, 3)
-            level5_ready = False
-        achieved_level = _withhold_hosted_level4(
-            fetched.body, achieved_level, findings, cross_channel_anchors,
-        )
-        level5_ready = False
+        except Exception:
+            # Guide and evidence bytes are untrusted. A parser or evaluator
+            # fault must end in a structured refusal, never in a report and
+            # never in an unhandled error whose text reaches platform logs.
+            fail(500, "evaluation-failed", "the guide could not be evaluated")
+            return
         _log_product_event(
             now=now,
             started=started,
@@ -950,20 +1075,4 @@ class handler(BaseHTTPRequestHandler):
             achieved_level=achieved_level,
             findings=findings,
         )
-        self._write_json(
-            200,
-            build_evaluated(
-                url,
-                checked_url,
-                auto_resolved,
-                fetched,
-                findings,
-                achieved_level,
-                level5_ready,
-                now,
-                manifest_evidence,
-                cross_channel_anchors,
-                selection=selection,
-                anchor_sources=fetch_context.evidence,
-            ),
-        )
+        self._write_json(200, result)
