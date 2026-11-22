@@ -27,6 +27,7 @@ scripts/guidecheck_verify.evaluate_guide.
 from __future__ import annotations
 
 import hashlib
+import ipaddress
 import json
 import os
 import sys
@@ -44,7 +45,12 @@ import guidecheck_verify as gv  # noqa: E402
 from guidecheck_profiles import ProfileError, select_profile  # noqa: E402
 from guidecheck_strict import decorate_report  # noqa: E402
 from guidecheck_corrected import decorate_report as decorate_corrected_report  # noqa: E402
-from guidecheck_constants import GUIDECHECK_VERSION, HOSTED_VERIFIER_NAME, LEGACY_ENGINE_VERSION  # noqa: E402
+from guidecheck_constants import (  # noqa: E402
+    GUIDECHECK_VERSION,
+    HOSTED_VERIFIER_NAME,
+    LEGACY_ENGINE_VERSION,
+    STANDARD_PRIMARY_VERIFIER,
+)
 from guidecheck_fetch import FetchError, safe_fetch, variation_request_profile  # noqa: E402
 from guidecheck_hosted_anchors import (  # noqa: E402
     DOH_ACCEPT,
@@ -80,6 +86,10 @@ HOSTED_LIMITATIONS = [
 # only constrains a warm instance; it is a first line, not the whole control.
 _RATE_WINDOW = 60.0
 _RATE_MAX = 12
+# Upper bound on distinct client keys held by one warm instance. Without it a
+# caller that varies its address grows the table for as long as the instance
+# lives.
+_RATE_MAX_KEYS = 4096
 _rate_hits: dict[str, list[float]] = {}
 
 AGENT_CHOICES = {
@@ -166,6 +176,32 @@ def _media_type(content_type: str) -> str:
     return "unknown"
 
 
+def _is_json_request(content_type: str | None) -> bool:
+    """True only for a Content-Type whose media type is application/json."""
+    if not content_type:
+        return False
+    return content_type.split(";", 1)[0].strip().lower() == "application/json"
+
+
+def _foreign_origin(origin: str | None, hosts: list[str | None]) -> bool:
+    """True when a browser says the request came from another site.
+
+    Browsers attach Origin to cross-site POSTs. A request without it is not a
+    cross-site browser request and is left alone; one whose Origin names a
+    host other than the one being served is refused. Comparison is against
+    the host the request was addressed to, so previews and self-hosted copies
+    work without a configured list.
+    """
+    if not origin:
+        return False
+    try:
+        origin_host = (urlsplit(origin).netloc or "").lower()
+    except ValueError:
+        return True
+    served = {host.strip().lower() for host in hosts if host and host.strip()}
+    return not origin_host or origin_host not in served
+
+
 def submitted_url_problem(url: str) -> str | None:
     """Return why a submitted URL is refused, or None when it is acceptable.
 
@@ -194,15 +230,40 @@ def submitted_url_problem(url: str) -> str | None:
     return None
 
 
+def _rate_key(client_ip: str) -> str:
+    """Reduce a reported client address to the unit that is rate limited.
+
+    One IPv6 subscriber normally holds a whole /64 and can pick a new address
+    in it for every request, so IPv6 clients are limited per /64. Text that is
+    not an address shares a single bucket instead of minting a key per value.
+    """
+    try:
+        address = ipaddress.ip_address(client_ip.strip())
+    except ValueError:
+        return "unparseable"
+    if isinstance(address, ipaddress.IPv6Address):
+        mapped = address.ipv4_mapped
+        if mapped is not None:
+            return str(mapped)
+        return str(ipaddress.ip_network((address, 64), strict=False))
+    return str(address)
+
+
 def _rate_ok(client_ip: str) -> bool:
+    key = _rate_key(client_ip)
     now = time.monotonic()
-    hits = [t for t in _rate_hits.get(client_ip, []) if now - t < _RATE_WINDOW]
-    if len(hits) >= _RATE_MAX:
-        _rate_hits[client_ip] = hits
-        return False
-    hits.append(now)
-    _rate_hits[client_ip] = hits
-    return True
+    hits = [t for t in _rate_hits.pop(key, []) if now - t < _RATE_WINDOW]
+    allowed = len(hits) < _RATE_MAX
+    if allowed:
+        hits.append(now)
+    # Re-insert so the table stays ordered by most recent activity.
+    _rate_hits[key] = hits
+    if len(_rate_hits) > _RATE_MAX_KEYS:
+        for stale in [k for k, seen in _rate_hits.items() if not seen or now - seen[-1] >= _RATE_WINDOW]:
+            del _rate_hits[stale]
+        while len(_rate_hits) > _RATE_MAX_KEYS:
+            del _rate_hits[next(iter(_rate_hits))]
+    return allowed
 
 
 def _day(now: datetime) -> str:
@@ -277,7 +338,7 @@ def _analytics_context(payload: dict | None) -> dict:
 
 def _failure_category(outcome: str, findings: list[gv.Finding] | None = None, error_code: str | None = None) -> str:
     if error_code:
-        if error_code in {"scheme", "bad-request", "invalid-url"}:
+        if error_code in {"scheme", "bad-request", "invalid-url", "origin-not-allowed", "unsupported-media-type"}:
             return "request_invalid"
         if error_code == "evaluation-failed":
             return "evaluation_failed"
@@ -969,6 +1030,22 @@ class handler(BaseHTTPRequestHandler):
         client_ip = forwarded.split(",")[0].strip() or self.client_address[0]
         if not _rate_ok(client_ip):
             fail(429, "rate-limited", "too many requests; try again shortly")
+            return
+
+        if _foreign_origin(
+            self.headers.get("Origin"),
+            [
+                self.headers.get("Host"),
+                self.headers.get("X-Forwarded-Host"),
+                # The canonical site is always its own origin, whatever host
+                # name the platform hands the function.
+                urlsplit(STANDARD_PRIMARY_VERIFIER).netloc,
+            ],
+        ):
+            fail(403, "origin-not-allowed", "this endpoint does not accept requests from other sites")
+            return
+        if not _is_json_request(self.headers.get("Content-Type")):
+            fail(415, "unsupported-media-type", "send the request with Content-Type: application/json")
             return
 
         try:

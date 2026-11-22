@@ -53,6 +53,25 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Fixed
 
+- Harden how the scanner reads, names and prints untrusted input. Directory
+  mode no longer reads a surface through a symbolic link or outside the
+  scanned tree, and lists the links it did not follow. A file is read only up
+  to the 2 MiB limit instead of being loaded whole, and a larger file is
+  marked `truncated`. JSON output gains `summary.surfaces_incomplete` and
+  `links_not_followed`; the text report says when a result does not cover
+  every surface. Exit codes are unchanged. A target is never read as an
+  option (`scan -h/AGENTS.md` previously printed help and exited 0), option
+  abbreviations are no longer accepted, and `--` reaches a file named like an
+  option. A URL carrying a user name or password is refused without being
+  echoed, and an unparseable URL is a usage error instead of a traceback.
+  Evidence excerpts, surface names, notes and error text escape every
+  character that does not print as itself. Regressions are in
+  `scripts/test_scanner_hardening.py`.
+- Tighten the hosted endpoint's request handling. It now requires
+  `Content-Type: application/json` and refuses a request whose `Origin` names
+  another site. The best-effort rate limit counts an IPv6 client by /64,
+  puts text that is not an address in one shared bucket, and bounds its key
+  table. Reports for accepted requests are unchanged.
 - Say what a local result does and does not establish. The reference CLI now
   prints a note on stderr when the guide's own declaration selected a policy
   older than the latest released profile and the caller required none, when
