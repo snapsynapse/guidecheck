@@ -93,7 +93,7 @@ Customize
 ```bash
 python3 scripts/guidecheck_scan.py 'INSTRUCTION_FILE' --json
 ```
-The scanner reports findings such as `surface.hidden-html-comment`, invisible Unicode, supported CSS-hidden text, and ANSI escapes. It does not award a conformance level. Run against this repository's own `CLAUDE.md` it reported 0 findings (exit 0). Detection favors precision over recall: no findings means no supported channel was detected in that input, not that the file is safe or that all prompt injection was excluded.
+The scanner reports findings such as `surface.hidden-html-comment`, invisible Unicode, supported CSS-hidden text, and ANSI escapes. It does not award a conformance level. Run against this repository's own `CLAUDE.md` it reported 0 findings (exit 0). Detection favors precision over recall: no findings means no supported channel was detected in that input, not that the file is safe or that all prompt injection was excluded. In directory mode the scanner does not follow symbolic links and reads at most 2 MiB of each file; `summary.surfaces_incomplete` in the JSON output counts surfaces that were skipped, truncated or not followed, and the exit code does not reflect them, so check that field when a clean result has to mean every surface was read.
 
 ## What to do with a blocking finding
 
@@ -322,6 +322,10 @@ Temporary limitations:
   8192-byte guide limit (`too-large`) and a submitted URL that contains a
   fragment, userinfo, whitespace, a backslash, or non-ASCII characters
   (`invalid-url`); it runs under a 30 second function limit
+- the hosted endpoint accepts only `Content-Type: application/json`
+  (`unsupported-media-type` otherwise) and refuses a browser request whose
+  `Origin` is another site (`origin-not-allowed`); its best-effort rate limit
+  counts an IPv6 client by /64
 - the hosted verifier is a Level 1-3 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
   redirects, response size limits, header capture, and content variation; each

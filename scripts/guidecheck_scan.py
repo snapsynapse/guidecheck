@@ -30,6 +30,7 @@ import hashlib
 import json
 import re
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -169,6 +170,12 @@ class SurfaceReport:
     size: int
     findings: list[ScanFinding] = field(default_factory=list)
     skipped: str | None = None
+    truncated: bool = False
+
+    @property
+    def incomplete(self) -> bool:
+        """True when some or all of the surface's bytes were not scanned."""
+        return self.skipped is not None or self.truncated
 
     def as_dict(self) -> dict[str, object]:
         result: dict[str, object] = {
@@ -179,6 +186,9 @@ class SurfaceReport:
         }
         if self.skipped is not None:
             result["skipped"] = self.skipped
+        if self.truncated:
+            # sha256 and bytes describe the scanned prefix, not the whole file.
+            result["truncated"] = True
         return result
 
 
@@ -209,23 +219,60 @@ def _is_invisible_codepoint(cp: int) -> bool:
     )
 
 
+# Characters that render as nothing, as layout, or as a new line even though
+# Unicode does not class them as control or format characters.
+_UNSEEN_CODEPOINTS = (
+    {0x034F, 0x115F, 0x1160, 0x17B4, 0x17B5, 0x2800, 0x3164, 0xFFA0}
+    | set(range(0x180B, 0x1810))
+    | set(range(0xFE00, 0xFE10))
+    | set(range(0xE0100, 0xE01F0))
+)
+# Cc control, Cf format, Cs surrogate, Co private use, Cn unassigned,
+# Zl and Zp line and paragraph separators, Zs space separators.
+_UNSEEN_CATEGORIES = {"Cc", "Cf", "Cs", "Co", "Cn", "Zl", "Zp", "Zs"}
+
+
+def _escape_unseen(ch: str) -> str:
+    """Return ch, or a visible escape when it would not print as itself."""
+    cp = ord(ch)
+    if 0x20 <= cp < 0x7F:
+        return ch
+    if cp < 0x100 and (cp < 0x20 or 0x7F <= cp < 0xA0):
+        return f"\\x{cp:02x}"
+    if (
+        _is_invisible_codepoint(cp)
+        or cp in _UNSEEN_CODEPOINTS
+        or unicodedata.category(ch) in _UNSEEN_CATEGORIES
+    ):
+        return f"\\u{cp:04x}" if cp <= 0xFFFF else f"\\U{cp:08x}"
+    return ch
+
+
+def printable_label(text: str) -> str:
+    """Make a path, URL or note safe to print on one line of a text report.
+
+    Surface names come from directory entries and from the final URL a server
+    redirected to. Either can carry line breaks or terminal control
+    sequences, so nothing that would not print as itself is passed through.
+    """
+    return "".join(_escape_unseen(ch) for ch in text)
+
+
 def sanitize_excerpt(text: str, limit: int = EVIDENCE_MAX) -> str:
     """Make an excerpt safe to print: escape invisibles and control bytes.
 
     Findings must never smuggle the hidden channel they report, so every
-    invisible or control character is rendered as a visible escape.
+    character that would not print as itself is rendered as a visible
+    escape: controls (C0 and C1), format characters, separators other than
+    the plain space, variation selectors, fillers, private-use and
+    unassigned code points.
     """
     out: list[str] = []
     for ch in text:
-        cp = ord(ch)
         if ch in ("\n", "\r", "\t"):
             out.append(" ")
-        elif cp < 0x20 or cp == 0x7F:
-            out.append(f"\\x{cp:02x}")
-        elif _is_invisible_codepoint(cp):
-            out.append(f"\\u{cp:04x}" if cp <= 0xFFFF else f"\\U{cp:08x}")
         else:
-            out.append(ch)
+            out.append(_escape_unseen(ch))
     excerpt = "".join(out).strip()
     if len(excerpt) > limit:
         excerpt = excerpt[: limit - 3] + "..."
@@ -450,25 +497,54 @@ def scan_bytes(data: bytes, surface: str) -> SurfaceReport:
 
 
 def scan_file(path: Path, surface: str | None = None) -> SurfaceReport:
-    data = path.read_bytes()
-    if len(data) > MAX_LOCAL_BYTES:
-        data = data[:MAX_LOCAL_BYTES]
-    return scan_bytes(data, surface or str(path))
+    # Read one byte past the limit: enough to know the file is larger without
+    # loading it, so a huge or sparse file cannot exhaust memory.
+    with path.open("rb") as handle:
+        data = handle.read(MAX_LOCAL_BYTES + 1)
+    truncated = len(data) > MAX_LOCAL_BYTES
+    report = scan_bytes(data[:MAX_LOCAL_BYTES], surface or str(path))
+    report.truncated = truncated
+    return report
 
 
-def iter_directory_surfaces(root: Path) -> list[Path]:
-    """Known instruction-surface files under root, skipping vendored trees."""
+def directory_surfaces(root: Path) -> tuple[list[Path], list[Path]]:
+    """Known instruction-surface files under root, and the links not followed.
+
+    A scanned tree is untrusted. A surface name that is a symbolic link, or
+    that resolves outside the tree through a linked directory, is not read:
+    following it would put another file's size, hash and excerpts into the
+    report of a repository that does not contain it.
+    """
     matches: list[Path] = []
+    not_followed: list[Path] = []
+    try:
+        resolved_root = root.resolve()
+    except OSError:
+        resolved_root = root
     for path in sorted(root.rglob("*")):
         relative_parts = path.relative_to(root).parts
         if any(part in SKIP_DIRS for part in relative_parts[:-1]):
             continue
+        name = path.name.lower()
+        if not (name in SURFACE_FILENAMES or name.endswith(SURFACE_SUFFIX)):
+            continue
+        if path.is_symlink():
+            not_followed.append(path)
+            continue
         if not path.is_file():
             continue
-        name = path.name.lower()
-        if name in SURFACE_FILENAMES or name.endswith(SURFACE_SUFFIX):
-            matches.append(path)
-    return matches
+        try:
+            path.resolve().relative_to(resolved_root)
+        except (OSError, ValueError):
+            not_followed.append(path)
+            continue
+        matches.append(path)
+    return matches, not_followed
+
+
+def iter_directory_surfaces(root: Path) -> list[Path]:
+    """Known instruction-surface files under root, skipping vendored trees."""
+    return directory_surfaces(root)[0]
 
 
 def _fetch_surface(url: str) -> SurfaceReport:
@@ -488,11 +564,20 @@ def scan_url(
     emit: "callable[[SurfaceReport], None] | None" = None,
 ) -> None:
     """Scan an https URL; bare origins probe common instruction surfaces."""
-    parts = urlsplit(target)
+    try:
+        parts = urlsplit(target)
+        hostname = parts.hostname
+        parts.port  # raises ValueError for a malformed or out-of-range port
+    except ValueError:
+        raise ScanError("the URL could not be parsed")
     if parts.scheme != "https":
         raise ScanError("only https URLs are supported")
-    if not parts.hostname:
-        raise ScanError(f"the URL has no host: {target}")
+    if "@" in parts.netloc:
+        # Credentials in a URL are never sent by the fetcher, and the URL is
+        # written to the report and to logs. Refuse without echoing it.
+        raise ScanError("the URL must not contain a user name or password")
+    if not hostname:
+        raise ScanError("the URL has no host")
     bare_origin = parts.path in ("", "/") and not parts.query
 
     if not bare_origin:
@@ -523,7 +608,12 @@ def scan_url(
         )
 
 
-def output_for(target: str, reports: list[SurfaceReport], fetch_notes: list[str]) -> dict[str, object]:
+def output_for(
+    target: str,
+    reports: list[SurfaceReport],
+    fetch_notes: list[str],
+    not_followed: list[str] | None = None,
+) -> dict[str, object]:
     findings = [finding.as_dict() for report in reports for finding in report.findings]
     severity_counts = {"error": 0, "warning": 0, "info": 0}
     for report in reports:
@@ -540,6 +630,10 @@ def output_for(target: str, reports: list[SurfaceReport], fetch_notes: list[str]
         "findings": findings,
         "summary": {
             "surfaces_scanned": len(reports),
+            # Surfaces counted above whose bytes were skipped or only partly
+            # read, plus links that were not followed. Zero means every
+            # discovered surface was read in full.
+            "surfaces_incomplete": sum(1 for report in reports if report.incomplete) + len(not_followed or []),
             "findings": len(findings),
             "errors": severity_counts["error"],
             "warnings": severity_counts["warning"],
@@ -548,17 +642,21 @@ def output_for(target: str, reports: list[SurfaceReport], fetch_notes: list[str]
     }
     if fetch_notes:
         result["fetch_notes"] = fetch_notes
+    if not_followed:
+        result["links_not_followed"] = list(not_followed)
     return result
 
 
 def print_report(report: SurfaceReport) -> None:
+    surface = printable_label(report.surface)
     if report.skipped is not None:
-        print(f"{report.surface}: skipped ({report.skipped})")
+        print(f"{surface}: skipped ({report.skipped})")
         return
+    partial = f" in the first {report.size} bytes; the rest of the file was not scanned" if report.truncated else ""
     if not report.findings:
-        print(f"{report.surface}: clean")
+        print(f"{surface}: no findings{partial}" if report.truncated else f"{surface}: clean")
         return
-    print(f"{report.surface}: {len(report.findings)} finding(s)")
+    print(f"{surface}: {len(report.findings)} finding(s){partial}")
     for finding in report.findings:
         location = ""
         if finding.line is not None:
@@ -569,9 +667,33 @@ def print_report(report: SurfaceReport) -> None:
             print(f"      evidence: {finding.evidence}")
 
 
+_OPTIONS = {"-h", "--help", "--json", "--pretty", "--"}
+
+
+def _targets_are_not_options(argv: list[str]) -> list[str]:
+    """Keep a path that begins with a dash from being read as an option.
+
+    `scan -h/AGENTS.md` used to print help and exit 0 without scanning. Any
+    argument that is not exactly a known option is a target, so it is given a
+    `./` prefix before parsing. A file named exactly like an option still
+    needs `--` in front of it.
+    """
+    normalized: list[str] = []
+    literal = False
+    for argument in argv:
+        if literal or argument in _OPTIONS or not argument.startswith("-"):
+            literal = literal or argument == "--"
+            normalized.append(argument)
+        else:
+            normalized.append("./" + argument)
+    return normalized
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="guidecheck scan",
+        allow_abbrev=False,
+        epilog="Put -- before a target whose name is exactly an option, for example: scan -- --help",
         description=(
             "Scan an instruction surface (file, directory, or https URL) for "
             "supported forms of four hidden-instruction channels: HTML comments, "
@@ -584,7 +706,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("target", help="File path, directory, or https URL")
     parser.add_argument("--json", action="store_true", help="Emit JSON output")
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output")
-    return parser.parse_args(argv)
+    return parser.parse_args(_targets_are_not_options(argv))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -594,15 +716,18 @@ def main(argv: list[str] | None = None) -> int:
 
     reports: list[SurfaceReport] = []
     fetch_notes: list[str] = []
+    not_followed: list[str] = []
     try:
         if target.startswith(("https://", "http://")):
             scan_url(target, reports, fetch_notes, emit)
         else:
             path = Path(target)
             if path.is_dir():
-                surfaces = iter_directory_surfaces(path)
+                surfaces, links = directory_surfaces(path)
+                not_followed = [str(link) for link in links]
                 if not surfaces:
-                    raise ScanError(f"no known instruction surfaces found under {path}")
+                    detail = f" ({len(links)} symbolic link(s) were not followed)" if links else ""
+                    raise ScanError(f"no known instruction surfaces found under {path}{detail}")
                 for surface_path in surfaces:
                     report = scan_file(surface_path)
                     reports.append(report)
@@ -616,21 +741,26 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 raise ScanError(f"target not found: {target}")
     except ScanError as exc:
-        print(f"guidecheck scan: {exc}", file=sys.stderr)
+        print(printable_label(f"guidecheck scan: {exc}"), file=sys.stderr)
         return 2
 
     total = sum(len(report.findings) for report in reports)
     if args.json:
         indent = 2 if args.pretty else None
-        print(json.dumps(output_for(target, reports, fetch_notes), indent=indent, sort_keys=bool(indent)))
+        print(json.dumps(output_for(target, reports, fetch_notes, not_followed), indent=indent, sort_keys=bool(indent)))
     else:
         for note in fetch_notes:
-            print(f"note: {note}")
+            print(printable_label(f"note: {note}"))
+        for link in not_followed:
+            print(printable_label(f"note: {link}: symbolic link, not followed and not scanned"))
         surfaces_word = "surface" if len(reports) == 1 else "surfaces"
         if total:
             print(f"\n{total} finding(s) across {len(reports)} {surfaces_word}.")
         else:
             print(f"\nNo findings across {len(reports)} {surfaces_word}.")
+        incomplete = sum(1 for report in reports if report.incomplete) + len(not_followed)
+        if incomplete:
+            print(f"{incomplete} surface(s) were skipped, truncated or not followed; this result does not cover them.")
     return 1 if total else 0
 
 

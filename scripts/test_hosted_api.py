@@ -47,7 +47,7 @@ class FakeRequest:
             raw = payload
         else:
             raw = json.dumps(payload).encode("utf-8")
-        self.headers = {"Content-Length": str(len(raw))}
+        self.headers = {"Content-Length": str(len(raw)), "Content-Type": "application/json"}
         self.rfile = io.BytesIO(raw)
         self.client_address = (ip, 12345)
         self.status: int | None = None

@@ -315,5 +315,113 @@ class RemoteTextTests(unittest.TestCase):
         self.assertEqual(block["redirects"][0]["status"], 302)
 
 
+def post_with_headers(payload, fetch, headers):
+    """Run the real handler with chosen request headers (None removes one)."""
+    import test_hosted_api as ha
+
+    request = ha.FakeRequest(payload)
+    for name, value in headers.items():
+        if value is None:
+            request.headers.pop(name, None)
+        else:
+            request.headers[name] = value
+    original = hv.safe_fetch
+    hv.safe_fetch = fetch
+    hv._rate_hits.clear()
+    log = io.StringIO()
+    try:
+        with redirect_stdout(log):
+            hv.handler.do_POST(request)
+    finally:
+        hv.safe_fetch = original
+        hv._rate_hits.clear()
+    events = [json.loads(line) for line in log.getvalue().splitlines() if line.startswith("{")]
+    return request, (events[-1] if events else None)
+
+
+class RequestHeaderTests(unittest.TestCase):
+    def test_only_json_requests_reach_the_fetch(self):
+        refused = {
+            "missing": None,
+            "text/plain": "text/plain",
+            "form": "application/x-www-form-urlencoded",
+            "json-looking": "text/json",
+            "prefix": "application/jsonp",
+            "empty": "",
+        }
+        for name, value in refused.items():
+            with self.subTest(name):
+                request, event = post_with_headers({"url": URL}, refuse_fetch, {"Content-Type": value})
+                self.assertEqual((request.status, request.body["error"]["code"]), (415, "unsupported-media-type"))
+                self.assertEqual(event["failure_category"], "request_invalid")
+        for value in ("application/json", "application/json; charset=utf-8", "Application/JSON ;charset=UTF-8"):
+            with self.subTest(value):
+                request, _ = post_with_headers({"url": URL}, serve(GUIDE), {"Content-Type": value})
+                self.assertEqual(request.status, 200)
+
+    def test_cross_site_browser_requests_are_refused(self):
+        for origin in ("https://evil.example", "https://guidecheck.org.evil.example", "null",
+                       "http://[", "https://example.org:8443"):
+            with self.subTest(origin):
+                request, event = post_with_headers(
+                    {"url": URL}, refuse_fetch, {"Origin": origin, "Host": "example.org"})
+                self.assertEqual((request.status, request.body["error"]["code"]), (403, "origin-not-allowed"))
+                self.assertEqual(event["status"], 403)
+
+    def test_same_site_and_non_browser_requests_are_accepted(self):
+        accepted = (
+            {},                                                            # curl, agents: no Origin
+            {"Origin": "https://example.org", "Host": "example.org"},
+            {"Origin": "https://EXAMPLE.org", "Host": "example.org"},
+            {"Origin": "https://preview-abc.example.app", "Host": "internal", "X-Forwarded-Host": "preview-abc.example.app"},
+            {"Origin": "https://guidecheck.org", "Host": "some-internal-name"},  # canonical site, whatever Host says
+            {"Origin": "http://localhost:3000", "Host": "localhost:3000"},
+        )
+        for headers in accepted:
+            with self.subTest(headers):
+                request, _ = post_with_headers({"url": URL}, serve(GUIDE), headers)
+                self.assertEqual(request.status, 200)
+
+
+class RateKeyTests(unittest.TestCase):
+    def setUp(self):
+        hv._rate_hits.clear()
+        self.addCleanup(hv._rate_hits.clear)
+
+    def test_ipv6_clients_are_limited_per_64(self):
+        addresses = [f"2001:db8:1:2:{i:x}::{i:x}" for i in range(1, hv._RATE_MAX + 2)]
+        results = [hv._rate_ok(address) for address in addresses]
+        self.assertEqual(results, [True] * hv._RATE_MAX + [False])
+        self.assertEqual(len(hv._rate_hits), 1)
+        self.assertTrue(hv._rate_ok("2001:db8:1:3::1"))  # a different /64 is a different client
+
+    def test_ipv4_and_mapped_forms_share_a_key(self):
+        self.assertEqual(hv._rate_key("203.0.113.7"), hv._rate_key("::ffff:203.0.113.7"))
+        self.assertEqual(hv._rate_key(" 203.0.113.7 "), "203.0.113.7")
+        self.assertNotEqual(hv._rate_key("203.0.113.7"), hv._rate_key("203.0.113.8"))
+
+    def test_text_that_is_not_an_address_shares_one_bucket(self):
+        for value in ("x" * 4000, "", "unknown", "203.0.113.7, 10.0.0.1", "example.com"):
+            self.assertEqual(hv._rate_key(value), "unparseable")
+        for i in range(hv._RATE_MAX):
+            self.assertTrue(hv._rate_ok(f"junk-{i}"))
+        self.assertFalse(hv._rate_ok("more-junk"))
+        self.assertEqual(len(hv._rate_hits), 1)
+
+    def test_key_table_is_bounded(self):
+        for i in range(hv._RATE_MAX_KEYS + 500):
+            hv._rate_ok(f"198.51.{i // 256}.{i % 256}")
+        self.assertLessEqual(len(hv._rate_hits), hv._RATE_MAX_KEYS)
+        # The most recent clients are the ones kept.
+        last = hv._RATE_MAX_KEYS + 499
+        self.assertIn(f"198.51.{last // 256}.{last % 256}", hv._rate_hits)
+        self.assertNotIn("198.51.0.0", hv._rate_hits)
+
+    def test_limit_still_applies_per_client(self):
+        results = [hv._rate_ok("203.0.113.50") for _ in range(hv._RATE_MAX + 1)]
+        self.assertEqual(results, [True] * hv._RATE_MAX + [False])
+        self.assertTrue(hv._rate_ok("203.0.113.51"))
+
+
 if __name__ == "__main__":
     unittest.main()

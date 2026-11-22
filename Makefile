@@ -55,6 +55,7 @@ test-posix-cli-contract:
 
 test-scanner:
 	python3 scripts/test_scanner.py
+	python3 scripts/test_scanner_hardening.py
 
 .PHONY: test-release-gate
 test-release-gate:
