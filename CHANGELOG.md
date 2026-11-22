@@ -44,6 +44,19 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Fixed
 
+- Gate release signing on the tag. The release workflow now triggers only on
+  `v<major>.<minor>.<patch>` tags and runs `scripts/check_release_ref.py`
+  before anything is built: the tag must equal the software version, its
+  release notes must exist, it must be an annotated tag signed by a key in
+  the allowed signers read from `main`, and its commit must be on `main`.
+  Tests and archive builds run in a job with a read-only token and no OIDC;
+  a separate job that runs no repository code signs the artifacts, attaches
+  them to a draft release with the GitHub CLI, and publishes it, which keeps
+  the workflow compatible with release immutability. The signing identity is
+  unchanged. The gate lives in the tagged
+  tree, so it stops mistakes and credentials that cannot sign, not a party
+  able to rewrite the workflow; repository rules cover that case. Hermetic
+  regressions are in `scripts/test_release_ref_gate.py` (SEC-014, SEC-031).
 - Contain the hosted verifier's request boundary. A fetched file larger than
   the profile's 8192-byte guide limit is now refused with `too-large` before
   profile selection, evaluation or any further fetch, because the content
