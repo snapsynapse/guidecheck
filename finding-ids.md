@@ -218,6 +218,25 @@ CSS-hidden findings are gated on instruction-likeness to keep precision high.
 | `surface.css-hidden-text` | error | Instruction-like text sits inside an element styled invisible (`display:none`, `visibility:hidden`, `font-size:0`, `opacity:0`, or color matching background). |
 | `surface.ansi-escape` | error | An ESC-based escape sequence can conceal or restyle terminal output. |
 
+## Restricted argv policy (unreleased)
+
+Emitted by `scripts/guidecheck_restricted.py`, an unreleased and partial
+policy for a future profile. No released profile, fixture, schema or entry
+point uses these ids, and they may change before a release. The module also
+emits `byte-profile.size-limit`, `byte-profile.non-ascii-byte`,
+`action-block.malformed`, `action-block.missing-required` and
+`action-block.duplicate-id` from the sections above, with the triggers its
+own docstring states.
+
+| ID | Severity | Trigger |
+|---|---|---|
+| `action-block.unknown-key` | error | An action block uses a key outside the fixed key list. |
+| `action-block.field-outside-block` | error | A line labelled `id`, `class`, `approval`, or `command` appears outside an exact action block. |
+| `action-block.id.invalid` | error | An action `id` is not 1 to 32 letters, digits, or hyphens. |
+| `command.grammar` | error | A command is outside the restricted argv grammar. |
+| `command.path.escape` | error | A command contains a parent-directory component. |
+| `command.path.absolute` | error | A command contains an absolute path and the action does not require approval. |
+
 ## Change control
 
 Finding ids are part of the verifier fixture contract. Renaming or removing a
