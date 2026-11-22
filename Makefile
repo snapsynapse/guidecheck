@@ -55,6 +55,10 @@ test-posix-cli-contract:
 test-scanner:
 	python3 scripts/test_scanner.py
 
+.PHONY: test-release-gate
+test-release-gate:
+	python3 scripts/test_release_ref_gate.py
+
 test-bounded-execution:
 	python3 scripts/test_bounded_execution.py
 
@@ -71,7 +75,7 @@ test-legacy-anchor-compatibility:
 test-verify-ui:
 	node scripts/test_verify_ui.mjs
 
-test: test-legacy-anchor-compatibility test-bounded-execution test-corrected-content eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-fetch-worker test-cli-contract test-posix-cli-contract test-scanner
+test: test-legacy-anchor-compatibility test-bounded-execution test-corrected-content eval verify-fixtures validate-contracts test-contract-schema-validation test-parser-edge-cases check-guide-artifacts check-version-sync test-fetch-safety test-hosted-anchors test-hosted-api test-fetch-replay test-fetch-worker test-cli-contract test-posix-cli-contract test-scanner test-release-gate
 
 # Full source archive for a GitHub release, matching prior build/ layout.
 release-archive:

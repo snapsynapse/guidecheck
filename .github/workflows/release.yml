@@ -1,27 +1,54 @@
 name: release
 
+# Two jobs with different authority.
+#
+# build:   read-only token, no OIDC. Refuses the tag unless it is a signed,
+#          merged, correctly named version tag, then runs the test suite and
+#          builds the archives. All repository code runs here.
+# publish: holds contents: write and id-token: write. It never checks out or
+#          runs repository code; it signs and uploads the files the build job
+#          produced.
+#
+# The signing identity is unchanged:
+#   .github/workflows/release.yml@refs/tags/v<version>
+
 on:
   push:
     tags:
-      - "v*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 permissions:
-  contents: write       # upload release assets
-  id-token: write       # Sigstore keyless OIDC
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
       - name: Check out repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
+          persist-credentials: false
+
+      # Checkout can leave the triggering tag as a lightweight ref to the
+      # commit. Fetch the tag object itself so its signature can be checked.
+      - name: Fetch the pushed tag object
+        run: git fetch --force --no-tags origin "+refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.12"
+
+      - name: Refuse a tag that is not a signed, merged version tag
+        run: python3 scripts/check_release_ref.py "${GITHUB_REF_NAME}" --expect-commit "${GITHUB_SHA}" --main-ref origin/main
 
       - name: Run local verification suite
         run: |
@@ -41,6 +68,40 @@ jobs:
             guidecheck-*.zip \
             guidecheck-conformance-kit-*.tar.gz \
             > SHA256SUMS
+
+      - name: Stage release notes beside the artifacts
+        run: cp "RELEASE_NOTES-${GITHUB_REF_NAME#v}.md" build/RELEASE_NOTES.md
+
+      - name: Hand the unsigned artifacts to the publish job
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-artifacts
+          path: |
+            build/guidecheck-[0-9]*.tar.gz
+            build/guidecheck-*.zip
+            build/guidecheck-conformance-kit-*.tar.gz
+            build/SHA256SUMS
+            build/RELEASE_NOTES.md
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write       # upload release assets
+      id-token: write       # Sigstore keyless OIDC
+    steps:
+      - name: Receive the artifacts built by the unprivileged job
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: release-artifacts
+          path: build
+
+      - name: Check the artifacts against SHA256SUMS
+        working-directory: build
+        run: shasum -a 256 --check --strict SHA256SUMS
 
       - name: Install cosign
         uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
@@ -63,20 +124,38 @@ jobs:
               "${artifact}"
           done
 
-      - name: Resolve release notes
-        id: release-notes
-        shell: bash
-        run: echo "path=RELEASE_NOTES-${GITHUB_REF_NAME#v}.md" >> "$GITHUB_OUTPUT"
+      # Draft, attach, then publish. With release immutability enabled, assets
+      # cannot be added after publication, so every file is attached while the
+      # release is still a draft. The GitHub CLI on the runner does this; no
+      # third-party action runs with the write and OIDC permissions.
+      - name: Create the draft release with every artifact attached
+        working-directory: build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --verify-tag \
+            --draft \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.md \
+            guidecheck-[0-9]*.tar.gz \
+            guidecheck-*.zip \
+            guidecheck-conformance-kit-*.tar.gz \
+            SHA256SUMS \
+            *.sig \
+            *.crt
 
-      - name: Upload release artifacts
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
-        with:
-          files: |
-            build/guidecheck-[0-9]*.tar.gz
-            build/guidecheck-*.zip
-            build/guidecheck-conformance-kit-*.tar.gz
-            build/SHA256SUMS
-            build/*.sig
-            build/*.crt
-          body_path: ${{ steps.release-notes.outputs.path }}
-          fail_on_unmatched_files: true
+      - name: Confirm the draft holds all twelve assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          count="$(gh release view "${GITHUB_REF_NAME}" --json assets --jq '.assets | length')"
+          test "${count}" = "12" || { echo "expected 12 assets on the draft, found ${count}"; exit 1; }
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release edit "${GITHUB_REF_NAME}" --draft=false
