@@ -44,6 +44,22 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Fixed
 
+- Contain the hosted verifier's request boundary. A fetched file larger than
+  the profile's 8192-byte guide limit is now refused with `too-large` before
+  profile selection, evaluation or any further fetch, because the content
+  checks are not linear in input size and such a file cannot conform. The
+  submitted URL is refused with `invalid-url` unless it is visible ASCII with
+  no fragment, userinfo or backslash and a host that parses, so the string
+  echoed into a report is the URL that was fetched. A fault while evaluating
+  guide or evidence bytes returns `evaluation-failed` instead of an unhandled
+  error, and a request body that is not UTF-8 returns `bad-request`. Response
+  headers and redirect targets from the checked server are reported as bounded
+  printable ASCII, and the `not-a-guide` message names only the bare media
+  type. Reports for accepted requests are unchanged; frozen evaluators,
+  released profiles, schemas, fixtures, snapshots and replay expectations are
+  untouched. Offline regressions are in
+  `scripts/test_hosted_request_containment.py`. Absolute fetch deadlines
+  (SEC-003) and the hosted rate limit remain separate.
 - Stop the hosted verifier from awarding Level 4. Every hosted anchor location
   was named by fields in the guide bytes and nothing bound it to the checked
   host, so the guide's author chose where its "independent" evidence came from.
