@@ -406,8 +406,11 @@ audience or the artifact the next step needs. Not commitments.
    sequences. A scan must deliver value at zero ecosystem adoption of
    `assistant-guide.txt`; the profile is the remediation path, the scanner is
    the front door.
-2. Python CLI packaging shipped; remaining presentation work: one-command entry point. Package the scanner as `npx guidecheck scan
-   <url-or-file>` (or `uvx guidecheck`) with ten seconds to first finding.
+2. Python CLI packaging shipped; remaining presentation work: a one-command
+   entry point from a package this project publishes, with ten seconds to
+   first finding. Until then the supported paths are a source checkout
+   (`uvx --from <checkout> guidecheck scan <url-or-file>`) and the Homebrew
+   tap; GuideCheck is not published to npm or PyPI.
    The README now leads with a captured failed verification and a
    source-checkout trial (2026-10-21); no package-index entry point is
    published. Lead the site and README with the command and a short demo recording;

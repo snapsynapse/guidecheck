@@ -646,7 +646,7 @@ Proceed? no</code></pre>
       </div>
       <div class="pillar">
         <h3>Verifiable, so a swap is detectable</h3>
-        <p>A sidecar manifest and cross-channel hash publication let a guide's identity be confirmed without trusting any single hosted service.</p>
+        <p>A sidecar manifest and cross-channel hash publication let a guide's identity be confirmed without trusting any single hosted service. No GuideCheck verifier confirms that evidence yet; today a reader compares the published hashes by hand.</p>
       </div>
     </div>
 
@@ -709,7 +709,8 @@ recommended-verifier: https://guidecheck.org/verify
 <pre># Serve the artifact at the well-known path
 GET /.well-known/assistant-guide.txt
 
-# Run a conformant verifier against the URL.
+# Run a verifier against the URL. The hosted
+# verifier is a Level 1-3 preview.
 # Output reports: guide SHA-256, achieved
 # level, and any blocking findings.
 

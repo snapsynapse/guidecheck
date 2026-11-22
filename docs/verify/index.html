@@ -221,7 +221,7 @@
             <label for="requested-level">Expected level</label>
             <select id="requested-level" name="requested_level">
               <option value="">Not specified</option>
-              <option value="4">Level 4</option>
+              <option value="4">Level 4 (not awarded by this verifier)</option>
               <option value="3">Level 3</option>
               <option value="2">Level 2</option>
               <option value="1">Level 1</option>
@@ -282,7 +282,7 @@
     </ul>
 
     <h2>What a verifier reports</h2>
-    <p>A GuideCheck conformance claim is valid only when backed by verifier output, the guide SHA-256, the achieved level, and the findings. For Level 4 guides, verifier output may also report <code>level5_ready</code>. That means the guide has reached the highest guide-file score and is prepared for a Level 5 runtime check. It is not an achieved Level 5 claim.</p>
+    <p>A GuideCheck conformance claim is valid only when backed by verifier output, the guide SHA-256, the achieved level, and the findings. <code>level5_ready</code> is evaluated only for a Level 4 result. This verifier does not award Level 4, so it always reports that field as false. A true value would mean the guide is prepared for a Level 5 runtime check, not that Level 5 was achieved.</p>
     <p>Example legacy report, whose engine identity remains 0.7.1:</p>
     <pre>verifier: human-verifiable-assistant-guide-verifier 0.7.1
 guide-url: https://example.com/.well-known/assistant-guide.txt

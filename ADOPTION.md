@@ -30,6 +30,21 @@ The guidance below describes the published legacy profile. See the
 [corrected-content policy](docs/corrected-content-policy-2026-09-07.md), and
 [release notes](RELEASE_NOTES-2.0.0.md) for selection and status.
 
+Current verifier status, 2026-11-22: no GuideCheck verifier awards Level 4. The
+local CLI caps at Level 3 and the hosted verifier reports declared anchors as
+fetched but unverified. The Level 4 steps and checklist below therefore
+describe how to publish the evidence, not a result a verifier confirms today.
+`level5_ready` is evaluated only for a Level 4 result, so no verifier reports
+it as true.
+
+When a verifier result gates anything, state the gate: locally,
+`--require-profile-version 2.0.0 --level 3`. Without a required profile the
+guide's own declaration selects the evaluator, so its author decides which
+checks run. Without a required level, exit status 0 means only that no
+blocking finding was raised. The local CLI prints a note on stderr in both
+cases. The report's `Proceed?` line counts blocking findings only; do not gate
+on it.
+
 This is the practical on-ramp to GuideCheck. It explains what an
 `assistant-guide.txt` artifact is, what the conformance ladder means in
 operational terms, and how to publish a conforming guide one level at a time.
@@ -104,7 +119,8 @@ safety claim.
   plain-text work and removes the presentation-layer attack surface
   immediately.
 - Level 3 is the recommended target for any guide that drives real
-  operational actions. It is the first level with mechanical approval gates.
+  operational actions. It is the first level at which a verifier checks that
+  approval gates are declared; enforcing them is a Level 5 runtime duty.
 - Level 4 suits high-consequence guides where the publisher can host a
   manifest and publish a hash on an independent channel.
 - Level 5 is a joint guide-plus-runtime claim. A guide author reaches Level 4;
@@ -173,7 +189,8 @@ spending effort on an unavailable Pages setting or overstating the result.
    plane: a DNS TXT record, package registry metadata, a public repository
    file, a signed `security.txt`, or a public append-only transparency log.
 3. Confirm a verifier reports both the manifest match and one agreeing
-   independent anchor.
+   independent anchor. The hosted verifier currently reports the anchor as
+   matching and unverified; see the status note above.
 
 Package registry examples:
 
@@ -287,7 +304,7 @@ Level 5 readiness
 - [ ] every networked action uses `approval: required`
 - [ ] shell actions use `runner: shell`, require approval, and include a narrow `notes` rationale
 - [ ] applicable `cwd`, `env`, and `egress` fields are narrow and explicit
-- [ ] verifier output reports `level5_ready: true`
+- [ ] verifier output reports `level5_ready: true` (no current verifier reports this; see the status note above)
 
 ## Conformance is not safety
 

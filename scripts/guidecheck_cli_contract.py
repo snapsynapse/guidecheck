@@ -398,7 +398,10 @@ def run_contract(
         if blocking or warning_rejection:
             gate_status = "rejected"
             exit_code = 2
-        elif args.level == 4 and level_unmet:
+        elif args.level == 4 and achieved == 3:
+            # Level 4 cannot be established locally, so a Level 3 result is
+            # inconclusive for it. Below Level 3 the local run has already
+            # shown the guide cannot reach Level 4, which is a rejection.
             gate_status = "inconclusive"
             exit_code = 3
         elif level_unmet:

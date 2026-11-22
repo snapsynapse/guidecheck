@@ -20,7 +20,7 @@ Risks here are not redundant with section 27 of the spec (Residual Threats). Sec
 
 ## Origin and hosting risks
 
-- Web host compromise: an attacker controlling the guide host can publish a conforming malicious guide. Level 4 raises the forge cost through independent anchors, but cannot prove publisher intent.
+- Web host compromise: an attacker controlling the guide host can publish a conforming malicious guide. Level 4 raises the forge cost through independent anchors, but cannot prove publisher intent. As of 2026-11-22 no GuideCheck verifier awards Level 4, so this mitigation is a profile property that no shipped tool confirms.
 - CDN or edge cache poisoning: a verifier and an agent may receive different bytes from different edge locations or cache states. Hash pinning and byte comparison reduce this, but availability and inconsistency remain.
 - Stale cache serving old guides: an old guide may remain reachable after revocation or supersession. `status`, `valid-until`, and hash rotation help only if the verifier and agent fetch fresh enough bytes and honor status.
 - Split-horizon DNS or regional content variation: verifiers in different locations may fetch different guide bytes. The profile can detect hash differences when anchors are stable, but cannot force global hosting consistency.
@@ -68,7 +68,7 @@ Risks here are not redundant with section 27 of the spec (Residual Threats). Sec
 ## Agent and runtime risks
 
 - Agent fetches different bytes than verifier: if the agent re-fetches the guide and does not compare hash or pinned bytes, it may act on content the verifier did not evaluate.
-- Time-of-check time-of-use gap: a guide can change between verification, user review, and action execution. Level 4 hash pinning and Level 5 session pinning reduce this gap.
+- Time-of-check time-of-use gap: a guide can change between verification, user review, and action execution. Level 4 hash pinning and Level 5 session pinning reduce this gap. Neither is delivered by a current verifier or runtime; today the reported guide hash is the only handle, and comparing it with the bytes the agent fetched is left to the consumer.
 - Nonconformant agent behavior: an agent may execute prose, ignore action blocks, batch approvals, skip verification, or follow chained guides. Level 5 defines runtime enforcement, but the file format cannot force an arbitrary agent to comply.
 - Raw prompt ingestion: if the guide is pasted into an agent as instructions rather than parsed as data, prose can influence behavior outside action blocks. The invocation prompt and Level 5 parser-mediated execution reduce this risk.
 - Long-term memory contamination: an agent may store guide content, commands, or approvals and reuse them later outside the original context. The spec prohibits this without reconfirmation, but enforcement belongs to the runtime.

@@ -43,6 +43,13 @@ This is a documentation pattern, not an A2A extension requirement.
 
 ## Delegated task pattern
 
+Current verifier status: as of 2026-11-22 no GuideCheck verifier awards Level 4,
+and the hosted verifier is a Level 1 to 3 preview. Where a step below says
+"verify", state the bar: the required profile version, an achieved level of 3,
+and zero blocking findings. The compact report's `Proceed?` line counts
+blocking findings only and is not a gate, and no independent second verifier
+exists yet to cross-check a result.
+
 Before sending a high-consequence task to a remote agent, a client or host can
 use a GuideCheck guide as a policy input:
 

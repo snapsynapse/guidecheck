@@ -2,8 +2,10 @@
 """
 Console entry point for the packaged `guidecheck` command.
 
-One-command entry (adoption roadmap step 2): `uvx guidecheck scan <target>`
-should reach a first finding within seconds. This module only dispatches:
+One-command entry (adoption roadmap step 2): from a source checkout,
+`uvx --from <checkout> guidecheck scan <target>` should reach a first finding
+within seconds. GuideCheck is not published to PyPI or npm; do not install a
+package named `guidecheck` from either. This module only dispatches:
 
   guidecheck scan <file|dir|https-url> [--json] [--pretty]
   guidecheck verify <path> [verify options]
@@ -26,8 +28,9 @@ commands:
   scan <file|dir|https-url>   Scan instruction surfaces (AGENTS.md, CLAUDE.md,
                               READMEs, skill files, assistant-guide.txt) for
                               hidden-instruction channels.
-  verify <path>               Verify a local assistant-guide.txt through
-                              GuideCheck Level 4 (reference verifier).
+  verify <path>               Verify a local assistant-guide.txt at
+                              GuideCheck Levels 1 through 3 (reference
+                              verifier; Level 4 is never awarded locally).
 
 Run `guidecheck scan --help` or `guidecheck verify --help` for options.
 """
