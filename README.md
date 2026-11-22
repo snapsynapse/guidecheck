@@ -79,6 +79,8 @@ python3 scripts/guidecheck_verify.py 'GUIDE_PATH' --level 3 --pretty
 ```
 Native exit codes are 0 when the requested gate is accepted, 1 for blocking findings or a result below the requested level, and 2 for handled missing-input or profile-selection errors. Treat operational failures separately from conformance rejection. The experimental `--contract posix-json-v1` selector has different exit semantics; see [docs/cli-contract.md](docs/cli-contract.md) if you are integrating the verifier into another tool.
 
+If a result gates anything, state the gate: `--require-profile-version 2.0.0 --level 3`. Without `--require-profile-version`, the guide's own declaration selects the evaluator, so its author decides which checks run. Without `--level`, exit code 0 means only that no blocking finding was raised, at whatever level was achieved. The verifier prints a note on stderr in both cases; the report on stdout is unchanged. The report's `Proceed?` line counts blocking findings only and does not reflect `--level` or `--fail-on-warning`, so do not gate on it.
+
 Read `guide.achieved_level` and the finding list, not the exit code alone, when your guide declares profile 2.0.0 or 1.0.0 and includes a `manifest-url`. Declaring `manifest-url` claims Level 4. Level 4 provenance requires fetched evidence, which the local check cannot supply, so it reports blocking `anchor.independent.missing` and exits 1 even when `achieved_level` is 3. The hosted verifier, which is a preview, fetches and reports declared anchor evidence but does not verify it, so it also caps at Level 3. No GuideCheck verifier currently awards Level 4. This is current behavior of both verifiers.
 
 ## Have an instruction file rather than a guide?
@@ -316,6 +318,10 @@ Temporary limitations:
   them to the checked host. Transparency-log and signed `security.txt` anchors
   are not fetched. Log identity, independence, and append-only evidence are not
   verified, so a declared transparency log is reported but never fetched
+- the hosted verifier refuses, without evaluating it, a file larger than the
+  8192-byte guide limit (`too-large`) and a submitted URL that contains a
+  fragment, userinfo, whitespace, a backslash, or non-ASCII characters
+  (`invalid-url`); it runs under a 30 second function limit
 - the hosted verifier is a Level 1-3 preview; its SSRF and abuse controls are
   covered by unit tests in `scripts/test_fetch_safety.py`; replay tests cover
   redirects, response size limits, header capture, and content variation; each

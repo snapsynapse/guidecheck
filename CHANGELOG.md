@@ -44,6 +44,27 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Fixed
 
+- Say what a local result does and does not establish. The reference CLI now
+  prints a note on stderr when the guide's own declaration selected a policy
+  older than the latest released profile and the caller required none, when
+  it exits 0 below Level 3 because no level was required, and when it exits 1
+  for an unmet `--level` or `--fail-on-warning` while the report's `Proceed?`
+  line still reads yes. Reports on stdout and native exit codes are unchanged;
+  the notes do not appear in `--contract posix-json-v1` mode. Regressions are
+  in `scripts/test_caller_notes.py`.
+- In the experimental `posix-json-v1` contract, report `--level 4` as
+  `inconclusive` only for a guide that reached Level 3. A guide below Level 3
+  is now `rejected` (exit 2, previously exit 3).
+- Correct statements that no longer matched delivered behavior: the CLI help
+  said the local verifier checks "through Level 4"; adoption and integration
+  notes described Level 4 and `level5_ready` results that no verifier
+  currently produces and did not state a gate; the landing, verify and
+  example pages implied a conformant URL verifier and a confirmable hash
+  swap; the scanner help and OWASP crosswalk listed detection channels
+  without the supported-forms limit; and the roadmap and CLI docstring showed
+  a bare `guidecheck` package command although the project publishes to
+  neither npm nor PyPI. README states the hosted verifier's size and URL
+  refusals.
 - Gate release signing on the tag. The release workflow now triggers only on
   `v<major>.<minor>.<patch>` tags and runs `scripts/check_release_ref.py`
   before anything is built: the tag must equal the software version, its

@@ -77,6 +77,18 @@ this schema review does not implement that adapter or validate a runtime.
 
 ## Policy pattern
 
+Current verifier status: as of 2026-11-22 no GuideCheck verifier awards Level 4
+or reports `level5_ready: true`. The two policies below that depend on them
+cannot be satisfied today, and a runtime should refuse rather than relax them
+to Level 3 silently. A Level 3 result means the guide met the form rules of
+the profile version its own bytes declare; command analysis at that level is
+heuristic and has known gaps. A runtime that gates on verifier output should
+require the profile explicitly (`required_profile_version`, or
+`--require-profile-version 2.0.0` locally), require an achieved level, require
+zero blocking findings, and keep its own approval and sandbox controls. The
+compact report's `Proceed?` line counts blocking findings only and is not a
+gate. Verifier output is one input, never the only control before execution.
+
 An ACS-compatible runtime can treat GuideCheck verifier output as one policy
 input:
 

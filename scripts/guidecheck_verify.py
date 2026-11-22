@@ -5,6 +5,7 @@ import guidecheck_legacy as legacy
 import guidecheck_strict as strict
 import guidecheck_corrected as corrected
 from guidecheck_profiles import ProfileError, select_profile, check_legacy_manifest
+from guidecheck_constants import LATEST_RELEASED_PROFILE_VERSION
 
 
 def evaluate_guide(data, manifest_text=None, anchor_texts=None, anchor_paths=None,
@@ -70,8 +71,49 @@ def output_for(evaluation):
     return strict.decorate_report(result, selection) if selection.strict else result
 
 
+def caller_notes(selection, *, required_profile_version, requested_level, fail_on_warning,
+                 achieved, blocking, warnings) -> list[str]:
+    """Explain what the exit status does and does not mean for this run.
+
+    The report and the exit status are a released contract and are not changed
+    here. These notes go to stderr only. They cover the cases where a reader
+    of the exit status, or of the report's last line, would assume more was
+    checked or required than actually was: the party who wrote the guide chose
+    the evaluator, or no level was required, or the exit status reflects a
+    gate that the report's own summary line does not.
+    """
+    notes: list[str] = []
+    if required_profile_version is None and selection.policy_version != LATEST_RELEASED_PROFILE_VERSION:
+        declared = selection.declared_version or "no profile version"
+        notes.append(
+            f"evaluated under the {selection.policy_version} policy because the guide declares {declared}. "
+            f"The guide's author makes that choice, and the checks added by profile "
+            f"{LATEST_RELEASED_PROFILE_VERSION} did not run. Pass --require-profile-version "
+            f"{LATEST_RELEASED_PROFILE_VERSION} to refuse guides that do not declare it."
+        )
+    if blocking:
+        return notes
+    if requested_level is None and achieved < 3:
+        notes.append(
+            f"exit status 0 at achieved Level {achieved}: no blocking finding was raised and no level "
+            f"was required. Required sections and action blocks are checked only when a guide "
+            f"qualifies for Level 3 evaluation. Pass --level 3 to require them."
+        )
+    elif requested_level is not None and achieved < requested_level:
+        notes.append(
+            f"exit status 1: achieved Level {achieved} is below the requested Level {requested_level}. "
+            f"The report's 'Proceed?' line counts blocking findings only and does not reflect --level."
+        )
+    elif fail_on_warning and warnings:
+        notes.append(
+            f"exit status 1: --fail-on-warning with {warnings} warning(s). The report's 'Proceed?' "
+            f"line counts blocking findings only and does not reflect --fail-on-warning."
+        )
+    return notes
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Verify a local assistant-guide.txt through GuideCheck Level 4.")
+    parser = argparse.ArgumentParser(description="Verify a local assistant-guide.txt at GuideCheck Levels 1 through 3. Level 4 evidence is checked for consistency only; Level 4 is never awarded locally.")
     parser.add_argument("path", type=Path, help="Path to assistant-guide.txt")
     parser.add_argument("--manifest", type=Path, help="Optional local sidecar manifest path")
     parser.add_argument(
@@ -127,6 +169,16 @@ def main(argv: list[str] | None = None) -> int:
     blocking = result["summary"]["blocking_findings"]  # type: ignore[index]
     warnings = result["summary"]["warnings"]  # type: ignore[index]
     achieved = result["guide"]["achieved_level"]  # type: ignore[index]
+    for note in caller_notes(
+        evaluation.profile_selection,
+        required_profile_version=args.require_profile_version,
+        requested_level=args.level,
+        fail_on_warning=args.fail_on_warning,
+        achieved=achieved,
+        blocking=blocking,
+        warnings=warnings,
+    ):
+        print(f"guidecheck_verify: note: {note}", file=sys.stderr)
     if blocking:
         return 1
     if args.level is not None and achieved < args.level:

@@ -140,6 +140,17 @@ Host and client implementers can use GuideCheck verifier output as input to
 runtime policy. This is Level 5 design research until a runtime conformance
 fixture suite exists.
 
+Current verifier status: as of 2026-11-22 no GuideCheck verifier awards Level 4,
+and the hosted verifier at https://guidecheck.org/verify is a Level 1 to 3
+preview. "A verified guide" below therefore needs a stated bar: the required
+profile version (`required_profile_version`, or `--require-profile-version
+2.0.0` locally), an achieved level of 3, and zero blocking findings. Without a
+required profile the guide's own declaration selects the evaluator, and
+without a required level a result below Level 3 can carry no finding at all.
+The compact report's `Proceed?` line counts blocking findings only and is not
+a gate. Command analysis at Level 3 is heuristic and has known gaps, so a host
+should not install or enable a server on verifier output alone.
+
 A host or client policy can:
 
 - require a verified guide before installing or enabling an MCP server

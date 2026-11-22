@@ -574,8 +574,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         prog="guidecheck scan",
         description=(
             "Scan an instruction surface (file, directory, or https URL) for "
-            "hidden-instruction channels: HTML comments, invisible Unicode, "
-            "CSS-hidden text, and escape sequences."
+            "supported forms of four hidden-instruction channels: HTML comments, "
+            "invisible Unicode, inline CSS-hidden text, and ANSI escape sequences. "
+            "Detection favors precision over recall. Exit status 0 means no "
+            "supported form was detected in the content that was read; it does "
+            "not mean the input is safe or that every surface was read in full."
         ),
     )
     parser.add_argument("target", help="File path, directory, or https URL")
