@@ -1,0 +1,332 @@
+{
+  "profile-version": "3.0.0",
+  "entries": [
+    {
+      "id": "git-version",
+      "argv": [
+        "git",
+        "--version"
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "python3-version",
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "git-status-short",
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "git-status-short-branch",
+      "argv": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "git-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "git-rev-parse-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "rg-files",
+      "argv": [
+        "rg",
+        "--files"
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "cat-file",
+      "argv": [
+        "cat",
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "head-lines",
+      "argv": [
+        "head",
+        "-n",
+        {
+          "slot": "number"
+        },
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "shasum-256-file",
+      "argv": [
+        "shasum",
+        "-a",
+        "256",
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "jq-empty-file",
+      "argv": [
+        "jq",
+        "empty",
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "normal"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "npm-ci",
+      "argv": [
+        "npm",
+        "ci"
+      ],
+      "class-floor": [
+        "networked",
+        "persistence-changing",
+        "code-executing"
+      ],
+      "execution": "exempt"
+    },
+    {
+      "id": "npm-test",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "class-floor": [
+        "code-executing"
+      ],
+      "execution": "bound",
+      "pin": {
+        "file": "package.json"
+      }
+    },
+    {
+      "id": "npm-run-script",
+      "argv": [
+        "npm",
+        "run",
+        {
+          "slot": "word"
+        }
+      ],
+      "class-floor": [
+        "code-executing"
+      ],
+      "execution": "bound",
+      "pin": {
+        "file": "package.json"
+      }
+    },
+    {
+      "id": "node-script",
+      "argv": [
+        "node",
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "code-executing"
+      ],
+      "execution": "bound",
+      "pin": {
+        "slot": 1
+      }
+    },
+    {
+      "id": "python3-script",
+      "argv": [
+        "python3",
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "code-executing"
+      ],
+      "execution": "bound",
+      "pin": {
+        "slot": 1
+      }
+    },
+    {
+      "id": "bash-script",
+      "argv": [
+        "bash",
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "code-executing"
+      ],
+      "execution": "bound",
+      "pin": {
+        "slot": 1
+      }
+    },
+    {
+      "id": "sh-script",
+      "argv": [
+        "sh",
+        {
+          "slot": "local-ref"
+        }
+      ],
+      "class-floor": [
+        "code-executing"
+      ],
+      "execution": "bound",
+      "pin": {
+        "slot": 1
+      }
+    },
+    {
+      "id": "git-clone-tag",
+      "argv": [
+        "git",
+        "clone",
+        "--branch",
+        {
+          "slot": "word"
+        },
+        "--depth",
+        "1",
+        {
+          "slot": "https-url"
+        }
+      ],
+      "class-floor": [
+        "networked",
+        "persistence-changing"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "git-clone-tag-into",
+      "argv": [
+        "git",
+        "clone",
+        "--branch",
+        {
+          "slot": "word"
+        },
+        "--depth",
+        "1",
+        {
+          "slot": "https-url"
+        },
+        {
+          "slot": "word"
+        }
+      ],
+      "class-floor": [
+        "networked",
+        "persistence-changing"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "curl-get",
+      "argv": [
+        "curl",
+        "-sS",
+        {
+          "slot": "https-url"
+        }
+      ],
+      "class-floor": [
+        "networked"
+      ],
+      "execution": "none"
+    },
+    {
+      "id": "curl-download",
+      "argv": [
+        "curl",
+        "-fsSL",
+        "-o",
+        {
+          "slot": "local-ref"
+        },
+        {
+          "slot": "https-url"
+        }
+      ],
+      "class-floor": [
+        "networked",
+        "persistence-changing"
+      ],
+      "execution": "none"
+    }
+  ]
+}

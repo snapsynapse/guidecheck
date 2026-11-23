@@ -15,6 +15,13 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   caller requires. The text is unreleased: no verifier evaluates it, the
   dispatcher still refuses 3.0.0, and its shape registry and fixtures do not
   exist yet. Profiles 1.0.0 and 2.0.0 are unchanged.
+- Add the evaluator for draft profile 3.0.0 to `scripts/guidecheck_restricted.py`,
+  the shape registry `profiles/3.0.0/shape-registry.json` (22 exact shapes), and
+  a 128-case fixture suite in `fixtures/profiles/3.0.0/` run by
+  `scripts/test_restricted_fixtures.py`. Every registry entry has a matching
+  and a near fixture, and every report is held to the 3.0.0 schema and report
+  invariants. The evaluator is still not reachable from any released entry
+  point.
 - Add draft schemas for profile 3.0.0 in `schemas/3.0.0/` (verifier output,
   manifest, fixture expectations and the shape registry), an example report,
   `scripts/profile_3_0_0_invariants.py` for the relations between fields that

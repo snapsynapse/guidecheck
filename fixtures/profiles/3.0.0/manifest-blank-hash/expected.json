@@ -1,0 +1,26 @@
+{
+  "description": "a supplied manifest with a blank hash is blocking, not an absence of evidence",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 3,
+  "blocking_finding_ids": [
+    "manifest.malformed",
+    "manifest.missing-required"
+  ],
+  "warning_finding_ids": [],
+  "info_finding_ids": [
+    "level4.requires-fetch",
+    "metadata.last-reviewed.age"
+  ],
+  "actions": {
+    "total": 1,
+    "shape_listed": 1,
+    "opaque": 0
+  },
+  "verdict": {
+    "proceed": false,
+    "reason": "blocking findings"
+  },
+  "qualifying_anchor_count": 0
+}

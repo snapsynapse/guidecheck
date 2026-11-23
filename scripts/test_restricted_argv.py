@@ -172,7 +172,8 @@ class PolicyBoundaryTests(unittest.TestCase):
                 imported.add(node.module)
             elif isinstance(node, ast.Attribute):
                 self.assertNotIn(node.attr, {"splitlines", "strip", "lstrip", "rstrip"}, f"line {node.lineno}")
-        self.assertLessEqual(imported, {"dataclasses", "guidecheck_legacy"})
+        self.assertLessEqual(imported, {"dataclasses", "datetime", "hashlib", "json", "pathlib", "guidecheck_legacy",
+                                        "profile_3_0_0_invariants"})
 
 
 class SizeGateTests(unittest.TestCase):

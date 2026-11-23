@@ -1,0 +1,25 @@
+{
+  "description": "marker text outside an exact marker line is blocking and does not hide its fields",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 2,
+  "blocking_finding_ids": [
+    "action-block.field-outside-block",
+    "action-block.malformed"
+  ],
+  "warning_finding_ids": [],
+  "info_finding_ids": [
+    "metadata.last-reviewed.age"
+  ],
+  "actions": {
+    "total": 1,
+    "shape_listed": 1,
+    "opaque": 0
+  },
+  "verdict": {
+    "proceed": false,
+    "reason": "blocking findings"
+  },
+  "qualifying_anchor_count": 0
+}

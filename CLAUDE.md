@@ -54,11 +54,13 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
     report replays guard compatibility.
   - `guidecheck_strict.py` implements the opt-in 1.0.0 provenance policy.
   - `guidecheck_corrected.py` implements the opt-in 2.0.0 corrected-content policy.
-  - `guidecheck_restricted.py` is the first slice of the unreleased
-    `restricted-argv-1` policy (working profile 3.0.0): size gate, byte allowlist,
-    exact action fences, fixed keys, `id` grammar, command grammar. No entry point imports
+  - `guidecheck_restricted.py` is the evaluator for the unreleased
+    `restricted-argv-1` policy (draft profile 3.0.0): size gate, exact fences,
+    command grammar, shape registry tiers, pins, field grammars, metadata,
+    headings, levels, and a report in the 3.0.0 schema. No entry point imports
     it and the dispatcher still refuses 3.0.0; `test_restricted_argv.py`
-    asserts both. It imports only `Finding` from the legacy engine.
+    asserts both. It reuses only the anchor text parsers of the legacy engine.
+    `test_restricted_fixtures.py` runs it over `fixtures/profiles/3.0.0/`.
   - `guidecheck_verify.py` — local-file reference verifier CLI (Levels 1-3,
     plus internal-consistency checks on Level 4 sidecar manifests/anchors).
   - `guidecheck_scan.py` / `guidecheck_cli.py` — instruction-surface scanner
@@ -82,7 +84,8 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   cannot state (verdict, derived compact report, refusal shape, registry
   overlap, manifest text form); `scripts/test_profile_3_0_0_schemas.py`
   covers both and pins the inventory of schema bounds.
-  It has no shape registry file or fixtures yet, and no evaluator implements it.
+  `shape-registry.json` there lists the exact invocation shapes; every entry
+  has a matching and a near fixture under `fixtures/profiles/3.0.0/`.
 - `decisions/` — AI decision records (currently AIDR-0001, same-control-plane
   repository anchors).
 - `api/` — `verify.py`, the hosted verifier function behind

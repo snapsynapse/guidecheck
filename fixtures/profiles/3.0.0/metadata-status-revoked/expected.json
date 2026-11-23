@@ -1,0 +1,26 @@
+{
+  "description": "a revoked guide is capped at Level 1",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 1,
+  "blocking_finding_ids": [
+    "metadata.status.revoked"
+  ],
+  "warning_finding_ids": [
+    "metadata.superseded-by.missing"
+  ],
+  "info_finding_ids": [
+    "metadata.last-reviewed.age"
+  ],
+  "actions": {
+    "total": 1,
+    "shape_listed": 1,
+    "opaque": 0
+  },
+  "verdict": {
+    "proceed": false,
+    "reason": "blocking findings"
+  },
+  "qualifying_anchor_count": 0
+}

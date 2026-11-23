@@ -1,0 +1,22 @@
+{
+  "description": "a guide over 8192 bytes is refused and nothing else is examined",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 0,
+  "blocking_finding_ids": [
+    "byte-profile.size-limit"
+  ],
+  "warning_finding_ids": [],
+  "info_finding_ids": [],
+  "actions": {
+    "total": 0,
+    "shape_listed": 0,
+    "opaque": 0
+  },
+  "verdict": {
+    "proceed": false,
+    "reason": "blocking findings"
+  },
+  "qualifying_anchor_count": 0
+}

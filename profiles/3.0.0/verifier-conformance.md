@@ -1,8 +1,8 @@
 Status: draft profile 3.0.0, unreleased. No released verifier implements this
 profile. Profiles 1.0.0 and 2.0.0 remain the released contracts and are not
-changed by this document. The 3.0.0 schemas are in `schemas/3.0.0/`. Section 29
-still lists the 2.0.0 fixture suite; the shape registry file and the 3.0.0
-fixture suite do not exist yet.
+changed by this document. The 3.0.0 schemas are in `schemas/3.0.0/`, the shape registry is
+`shape-registry.json` in this directory, and the fixture suite is
+`fixtures/profiles/3.0.0/`. Section 29 still lists the 2.0.0 fixture names.
 
 # GuideCheck Verifier Conformance Profile
 
@@ -326,7 +326,7 @@ The verifier MUST NOT interpret any token as a prefix. `sudo` is a program name 
 The verifier MUST load the shape registry of the declared profile version and MUST assign each action to exactly one tier. The registry MUST validate against the versioned [registry schema](../../schemas/3.0.0/shape-registry.schema.json). The schema requires position 0 of every entry to be a literal program. The verifier MUST also refuse a registry in which two entries share an `id`, in which a `pin` slot does not name an existing `local-ref` position of its entry, or in which a literal element has a parent-directory component under rule G3. No command may contain such a token, so an entry that requires one can never match.
 An action is shape-listed when its argument vector matches a registry entry: equal length, and at every position either the exact string or a slot of the stated type (`local-ref`, `https-url`, `word`, `number`, as defined in guide-profile section 12). No entry matches a prefix of an argument vector. A registry in which two entries can match the same argument vector is invalid, and the verifier MUST refuse to use it. An action that declares `params` is never shape-listed.
 For a shape-listed action the verifier MUST emit:
-- `action-block.class.under-declared` when the declared classes do not include every class in the entry's floor
+- `action-block.class.under-declared` when the declared classes do not include every class in the entry's floor other than `normal`
 - `action-block.malformed` when the action declares `exec-opaque`
 Every other action is opaque. For an opaque action the verifier MUST emit:
 - `action.program-opaque` (warning), once per action
@@ -687,5 +687,6 @@ The versioned [output schema](../../schemas/3.0.0/verifier-output.schema.json),
 [fixture schema](../../schemas/3.0.0/fixture-expected.schema.json) and
 [registry schema](../../schemas/3.0.0/shape-registry.schema.json), with the
 [complete example](example-report.json), define the 3.0.0 contracts. The shape
-registry file itself and the fixture suite are not yet published; this draft
-cannot be implemented to conformance until they are.
+registry is [shape-registry.json](shape-registry.json) and the fixture suite is
+`fixtures/profiles/3.0.0/`. A verifier conforms to this draft when it gives
+every fixture its exact expected result.

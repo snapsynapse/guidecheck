@@ -1,0 +1,22 @@
+{
+  "description": "evidence that was not fetched is an info finding and the guide still reaches Level 3",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 3,
+  "blocking_finding_ids": [],
+  "warning_finding_ids": [],
+  "info_finding_ids": [
+    "level4.requires-fetch",
+    "metadata.last-reviewed.age"
+  ],
+  "actions": {
+    "total": 1,
+    "shape_listed": 1,
+    "opaque": 0
+  },
+  "verdict": {
+    "proceed": true
+  },
+  "qualifying_anchor_count": 0
+}

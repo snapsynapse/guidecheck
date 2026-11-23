@@ -1,8 +1,8 @@
 Status: draft profile 3.0.0, unreleased. No released verifier evaluates this
 profile and no published guide should declare it yet. Profiles 1.0.0 and 2.0.0
 remain the released contracts and are not changed by this document. Its schemas
-are in `schemas/3.0.0/`; its shape registry file and fixture suite do not exist
-yet.
+are in `schemas/3.0.0/`, its shape registry is `shape-registry.json` in this
+directory, and its fixture suite is `fixtures/profiles/3.0.0/`.
 
 # GuideCheck Human-Verifiable Assistant Guide Profile
 
@@ -623,7 +623,7 @@ The registry is a JSON object with a `profile-version` string and an `entries` a
 
 - `id`: a name for the shape, unique within the registry
 - `argv`: an array with one element per argument-vector position. An element is either a string, which matches only that exact token, or a slot object `{"slot": "<type>"}`. The element at position 0 MUST be a string: no entry has a wildcard program. A string element MUST itself satisfy rule G3
-- `class-floor`: an array of categories the action MUST declare
+- `class-floor`: an array of categories the action MUST declare. A floor of `normal` requires nothing, because `normal` excludes every other class; an action may always declare a stricter one
 - `execution`: `none`, `exempt`, or `bound`
 - `pin`, required when `execution` is `bound`: either `{"slot": <index>}` naming the `local-ref` position whose file is pinned, or `{"file": "<relative path>"}` naming a file relative to `cwd`, such as a dispatch manifest
 
