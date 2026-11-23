@@ -38,6 +38,8 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 - Add CodeQL (Python and JavaScript) and OpenSSF Scorecard workflows. Scorecard
   results are uploaded as an artifact and to code scanning and are not published
   to the OpenSSF API.
+- Add `.github/dependabot.yml` so Dependabot proposes weekly updates to the
+  SHA-pinned GitHub Actions.
 
 ### Changed
 
