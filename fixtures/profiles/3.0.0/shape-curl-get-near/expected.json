@@ -7,8 +7,7 @@
   "blocking_finding_ids": [
     "action-block.class.under-declared",
     "action.program-opaque.unacknowledged",
-    "approval.required-missing",
-    "command.grammar"
+    "approval.required-missing"
   ],
   "warning_finding_ids": [
     "action.program-opaque"

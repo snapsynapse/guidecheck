@@ -321,6 +321,7 @@
               "qualifying-channel",
               "repository-independence-unestablished",
               "local-evidence-not-fetched",
+              "registry-record-unidentified",
               "hash-mismatch",
               "unreachable",
               "absent"

@@ -776,7 +776,7 @@ class ConstraintCoverageTests(unittest.TestCase):
     # that every stated bound is enforced; this shows that no bound was dropped or loosened.
     # A schema change is deliberate: recompute with `constraint_digest` and update the pin.
     CONSTRAINTS = {
-        "verifier-output": "f6710ead7c5e3dd3b97aa8ed94fd3d67838ddf539542c3f2a9ca18225c7d1579",
+        "verifier-output": "cd8f31eed11976415d1d26a77094caf568d96eef3f85919e5d85cfa76a17c4b5",
         "manifest": "3ae250d36d91ca214c8a44cc03052d42bbf1fb1077b52b1ea0c09076ce828616",
         "fixture-expected": "2a0d25cec9225b2d3a71306bc9a111a8800005e48ded3eefb519e83ae2689ec8",
         "shape-registry": "b906d47054ac05be5892b3aa13264e32ca12cc3b792a4c3d2f121c4e2128d132",

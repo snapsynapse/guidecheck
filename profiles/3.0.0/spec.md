@@ -271,7 +271,7 @@ Authority
 
 A verifier identifies these sections by their heading lines and by nothing else. A phrase inside a sentence is not a heading. The heading establishes that the section exists and where it starts; it does not establish that the prose beneath it is adequate, which remains a matter for the human reviewer.
 
-The title is the first line of the guide and MUST begin with `Assistant Guide: `.
+The title is the first line of the guide. It MUST begin with `Assistant Guide: ` and MUST name something after it.
 
 ### 10.2 Required content at Level 1 and above: canonical verification instruction
 
@@ -384,7 +384,7 @@ URL paths are case-sensitive and SHOULD use the canonical lowercase form.
 
 ### Profile and guide versioning
 
-Both `profile-version` and `guide-version` are semantic versions. Profile-version MAJOR is incremented when a change removes a field, tightens a constraint, or invalidates previously conforming guides. MINOR is incremented for additive optional fields or relaxed constraints. PATCH is for editorial fixes. Guide-version is owned by the publisher and follows their release semantics.
+Both `profile-version` and `guide-version` are semantic versions. A `guide-version` that is not one is a conformance failure. Profile-version MAJOR is incremented when a change removes a field, tightens a constraint, or invalidates previously conforming guides. MINOR is incremented for additive optional fields or relaxed constraints. PATCH is for editorial fixes. Guide-version is owned by the publisher and follows their release semantics.
 
 ### Provenance (Level 4)
 
@@ -652,6 +652,8 @@ A verifier reports each opaque action, and the compact report states the counts,
 
 `exec-opaque` MUST NOT appear on a shape-listed action.
 
+A shape's class floor describes the invocation as written. It does not cover what the listed program does because of its own configuration files, hooks or environment. That is residual risk (section 27): the registry lists `curl` only with `-q`, which makes it ignore its configuration file, and a Level 5 runtime SHOULD neutralize program configuration that can run code, such as repository-local `git` settings.
+
 The registry is an optimization that lets common commands avoid approval or carry a narrower class. It is not the security boundary. An author gains nothing by using a program the registry does not list: the action lands in the strictest tier.
 
 ### Local references and pins
@@ -661,7 +663,7 @@ A local reference is a token, or the text after the first `=` of a token, that b
 Guide authors MUST write every argument that names a repository file as a local reference.
 
 - A `local-path` program MUST be pinned with `exec-sha256`.
-- In a `code-executing` action, every local reference MUST be pinned.
+- In a `code-executing` action, every local reference MUST be pinned. An opaque action is code-executing whether or not it declares the class, so the same holds for every opaque action.
 - An action MUST NOT contain more than one local reference that requires a pin, so one `exec-sha256` is unambiguous.
 - A local reference that requires a pin MUST name one regular file, not a directory. A file that does not exist yet, such as one an earlier action downloads, is pinned by the hash it is expected to have.
 - `exec-sha256` MUST NOT appear on an action that has nothing to pin: no local reference that requires a pin and no `bound` registry entry. A declared hash cannot identify a target the action does not name.
@@ -676,7 +678,7 @@ A static verifier and a repository-reading verifier can therefore differ on the 
 
 An action MAY declare `params` with a list of names. A name is 2 to 32 characters, each an uppercase ASCII letter, a digit, or an underscore. Each name MUST appear in the command as a whole token or as the whole text after the first `=` of a token, and MUST NOT be declared twice. A parameter name MUST NOT be the program token.
 
-An action that declares `params` is opaque. A registry slot never matches a value that is not yet known.
+An action that declares `params` is opaque. A registry slot never matches a value that is not yet known. An action that declares `env` is opaque for the same reason: a shape describes one invocation, and a variable passed through to the program can change what that invocation does.
 
 At run time the user supplies each value. The runtime substitutes it as a single argument-vector element with no re-tokenization, and displays the substituted command before approval. Because no shell interprets the result, a value cannot add arguments or operators.
 

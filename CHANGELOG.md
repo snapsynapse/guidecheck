@@ -16,10 +16,18 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   unchanged.
 - Add the evaluator for draft profile 3.0.0 to `scripts/guidecheck_restricted.py`,
   the shape registry `profiles/3.0.0/shape-registry.json` (22 exact shapes), and
-  a 128-case fixture suite in `fixtures/profiles/3.0.0/` run by
+  a fixture suite in `fixtures/profiles/3.0.0/` run by
   `scripts/test_restricted_fixtures.py`. Every registry entry has a matching
   and a near fixture, and every report is held to the 3.0.0 schema and report
   invariants.
+- Tighten the draft 3.0.0 evaluator after an independent conformance review:
+  package-registry evidence qualifies only when the guide names a registry
+  record on a recognized host, compared exactly; a data URL is detected
+  whatever its media type; a manifest byte count is compared as text;
+  `guide-version` must be a semantic version; the registry is checked against
+  its full form when loaded; the report builder refuses inputs that would
+  contradict the report; an action that declares `env` is opaque; and the two
+  `curl` shapes carry `-q`. The fixture suite grows to 137 cases.
 - The local reference CLI (`guidecheck verify`) evaluates a guide that
   declares profile 3.0.0, prints a note that the profile is an unreleased
   draft, and exits by the verdict: non-zero for any blocking finding, for any

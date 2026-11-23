@@ -204,6 +204,8 @@ The verifier MUST detect disallowed constructs from the guide profile, including
 - data URLs
 - rich-document constructs
 - terminal escape sequences
+A data URL is the text `data:` followed directly by any character other than a space, whatever media type it names.
+This draft's reference verifier detects HTML-like tags, Markdown images, data URLs and `javascript:` URLs. It does not detect CSS, script statements or Markdown links, and neither do the released profiles.
 The verifier SHOULD warn on encoded or obfuscated command blobs intended for execution and on instructions to decode and execute hidden content. These are prose scans (section 21) and do not decide a level.
 For Level 3, the verifier MUST emit a blocking finding for any line that contains three consecutive backticks or three consecutive tildes (`construct.code-fence`). The finding does not affect Level 1 or Level 2.
 Detection MAY include heuristic warnings for prose patterns. Heuristic warnings MUST be labeled as warnings unless the underlying rule is exact and blocking.
@@ -223,6 +225,7 @@ The verifier MUST reject metadata blocks with:
 - malformed `key: value` lines
 - keys outside lowercase ASCII letters, digits, and hyphens
 - values outside the guide byte profile
+The verifier MUST check that `guide-version` is a semantic version (`metadata.malformed`).
 The verifier MUST check Level 3 required fields:
 - `identifier`
 - `profile`
@@ -250,7 +253,7 @@ The verifier SHOULD warn when `canonical-url`, `repository-url`, `registry-url`,
 The verifier SHOULD warn when `recommended-verifier` is not on the same registered domain as `canonical-url`, unless the guide explicitly identifies it as third-party or the URL matches the standard primary verifier for the applicable verifier-profile version.
 The reference verifier emits `metadata.recommended-verifier.off-domain` for an off-domain `recommended-verifier` unless it is the configured standard primary verifier for the applicable profile version.
 The verifier MUST NOT warn solely because `recommended-verifier` differs from `canonical-url` when `recommended-verifier` matches the standard primary verifier configured for the applicable profile version.
-When package-registry metadata is used as an independent Level 4 anchor, the verifier MUST require `registry-url` and MUST validate that it identifies a specific registry record rather than a registry homepage or search result.
+When package-registry metadata is used as an independent Level 4 anchor, the verifier MUST require `registry-url` and MUST validate that it identifies a specific registry record rather than a registry homepage or search result. The host is compared exactly against the recognized registry hosts; a `registry-url` that names no record is blocking (`metadata.registry-url.not-record`), and registry evidence for a guide without a valid `registry-url` does not qualify (`qualification_reason` `registry-record-unidentified`).
 When `registry-url` is absent and no other Level 4 independent anchor is available, a fetching verifier SHOULD emit an informational finding for Level 3 and a blocking finding for Level 4.
 
 ## 15. Verification Instruction Checks
@@ -263,7 +266,7 @@ The verifier SHOULD check whether DNS TXT or signed `security.txt` fields identi
 ## 16. Required Section Checks
 For Level 3 and above, the verifier MUST check each of the ten named sections of guide-profile section 10.1 by its heading line. A heading line is a whole line equal to the section name, or to the section name preceded by `# `, `## ` or `### `. Each section MUST have exactly one heading line. A missing heading and a repeated heading are both blocking, under the `content.required.*` id for that section.
 The verifier MUST NOT identify a section by a phrase inside a line, by letter case folding, or by any other approximate match.
-The verifier MUST check that the first line of the guide begins with `Assistant Guide: ` (`content.required.title`), that `canonical-url` and `repository-url` are present in the metadata block (`metadata.missing-required`), and that at least one exact action block is present (`content.required.actions`).
+The verifier MUST check that the first line of the guide begins with `Assistant Guide: ` and continues after it (`content.required.title`), that `canonical-url` and `repository-url` are present in the metadata block (`metadata.missing-required`), and that at least one exact action block is present (`content.required.actions`).
 The Level 3 checks of sections 16 through 21 MUST run for every guide that declares this profile. They do not depend on whether an action block parsed or on any phrase being present.
 
 ## 17. Action Block Parsing
@@ -323,8 +326,8 @@ For a command in the grammar the verifier MUST:
 The verifier MUST NOT interpret any token as a prefix. `sudo` is a program name like any other.
 
 ### Tier assignment
-The verifier MUST load the shape registry of the declared profile version and MUST assign each action to exactly one tier. The registry MUST validate against the versioned [registry schema](../../schemas/3.0.0/shape-registry.schema.json). The schema requires position 0 of every entry to be a literal program. The verifier MUST also refuse a registry in which two entries share an `id`, in which a `pin` slot does not name an existing `local-ref` position of its entry, or in which a literal element has a parent-directory component under rule G3. No command may contain such a token, so an entry that requires one can never match.
-An action is shape-listed when its argument vector matches a registry entry: equal length, and at every position either the exact string or a slot of the stated type (`local-ref`, `https-url`, `word`, `number`, as defined in guide-profile section 12). No entry matches a prefix of an argument vector. A registry in which two entries can match the same argument vector is invalid, and the verifier MUST refuse to use it. An action that declares `params` is never shape-listed.
+The verifier MUST load the shape registry of the declared profile version and MUST assign each action to exactly one tier. The registry MUST validate against the versioned [registry schema](../../schemas/3.0.0/shape-registry.schema.json), and the verifier MUST check that before it uses the registry. The schema requires position 0 of every entry to be a literal program. The verifier MUST also refuse a registry in which two entries share an `id`, in which a `pin` slot does not name an existing `local-ref` position of its entry, or in which a literal element has a parent-directory component under rule G3. No command may contain such a token, so an entry that requires one can never match.
+An action is shape-listed when its argument vector matches a registry entry: equal length, and at every position either the exact string or a slot of the stated type (`local-ref`, `https-url`, `word`, `number`, as defined in guide-profile section 12). No entry matches a prefix of an argument vector. A registry in which two entries can match the same argument vector is invalid, and the verifier MUST refuse to use it. An action that declares `params` or `env` is never shape-listed.
 For a shape-listed action the verifier MUST emit:
 - `action-block.class.under-declared` when the declared classes do not include every class in the entry's floor other than `normal`
 - `action-block.malformed` when the action declares `exec-opaque`
@@ -336,7 +339,7 @@ Every other action is opaque. For an opaque action the verifier MUST emit:
 The verifier MUST report the number of shape-listed and opaque actions.
 
 ### Local references and pins
-A local reference is a token, or the text after the first `=` of a token, that begins with `./`. A reference requires a pin when it is the program token, or when the action's class list includes `code-executing`. An entry with `execution: bound` requires a pin on the file its `pin` field names.
+A local reference is a token, or the text after the first `=` of a token, that begins with `./`. A reference requires a pin when it is the program token, when the action's class list includes `code-executing`, or when the action is opaque. An entry with `execution: bound` requires a pin on the file its `pin` field names.
 The verifier MUST emit:
 - `command.local-ref.unpinned` when an action has a reference or bound entry that requires a pin and no `exec-sha256`, or has more than one reference that requires a pin
 - `action-block.malformed` when `exec-sha256` is not 64 lowercase hexadecimal characters

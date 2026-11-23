@@ -219,7 +219,8 @@ def parse_manifest_text(text):
         found.append("manifest.hash-invalid")
         del fields["guide-sha256"]
     if "guide-bytes" in fields:
-        if _PLAIN_COUNT.fullmatch(fields["guide-bytes"]):
+        # No guide is longer than 8192 bytes, so a longer number is refused before it is converted.
+        if _PLAIN_COUNT.fullmatch(fields["guide-bytes"]) and len(fields["guide-bytes"]) <= 4:
             fields["guide-bytes"] = int(fields["guide-bytes"])
         else:
             found.append("manifest.bytes-invalid")

@@ -1,0 +1,23 @@
+{
+  "description": "an action that passes environment variables through is opaque",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 3,
+  "blocking_finding_ids": [],
+  "warning_finding_ids": [
+    "action.program-opaque"
+  ],
+  "info_finding_ids": [
+    "metadata.last-reviewed.age"
+  ],
+  "actions": {
+    "total": 1,
+    "shape_listed": 0,
+    "opaque": 1
+  },
+  "verdict": {
+    "proceed": true
+  },
+  "qualifying_anchor_count": 0
+}

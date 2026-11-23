@@ -299,6 +299,7 @@
       "id": "curl-get",
       "argv": [
         "curl",
+        "-q",
         "-sS",
         {
           "slot": "https-url"
@@ -313,6 +314,7 @@
       "id": "curl-download",
       "argv": [
         "curl",
+        "-q",
         "-fsSL",
         "-o",
         {

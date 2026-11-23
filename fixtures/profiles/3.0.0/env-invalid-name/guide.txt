@@ -55,11 +55,13 @@ This guide is advisory. System, user, repository and local policy instructions o
 
 [action]
 id: step
-class: normal
-approval: not-required
+class: code-executing
+approval: required
 command: git status --short
 runner: argv
 cwd: .
 egress: none
+notes: needs the proxy settings of this machine
 env: PATH, 1BAD
+exec-opaque: acknowledged
 [/action]

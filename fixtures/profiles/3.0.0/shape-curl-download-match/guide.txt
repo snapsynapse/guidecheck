@@ -57,7 +57,7 @@ This guide is advisory. System, user, repository and local policy instructions o
 id: step
 class: networked, persistence-changing
 approval: required
-command: curl -fsSL -o ./tmp/guide.txt https://example.com/.well-known/assistant-guide.txt
+command: curl -q -fsSL -o ./tmp/guide.txt https://example.com/.well-known/assistant-guide.txt
 runner: argv
 cwd: .
 egress: example.com

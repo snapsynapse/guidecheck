@@ -127,6 +127,20 @@ class FixtureSuiteTests(unittest.TestCase):
                 {"id": "x", "argv": ["cat", "./a/../b"], "class-floor": ["normal"], "execution": "none"}),
             "another profile": lambda d: d.update({"profile-version": "2.0.0"}),
             "not an object": lambda d: d.update(entries="none"),
+            "unknown root key": lambda d: d.update(notes="x"),
+            "unknown entry key": lambda d: d["entries"][0].update(options=["--short"]),
+            "unknown execution": lambda d: d["entries"][0].update(execution="bogus"),
+            "empty class floor": lambda d: d["entries"][0].update({"class-floor": []}),
+            "unknown class": lambda d: d["entries"][0].update({"class-floor": ["harmless"]}),
+            "id as prose": lambda d: d["entries"][0].update(id="Guide text with spaces"),
+            "unknown slot type": lambda d: d["entries"][7].update(argv=["cat", {"slot": "anything"}]),
+            "slot with an extra key": lambda d: d["entries"][7].update(argv=["cat", {"slot": "word", "pattern": ".*"}]),
+            "bound without a pin": lambda d: d["entries"][14].pop("pin"),
+            "pin on an entry that is not bound": lambda d: d["entries"][0].update(pin={"file": "Makefile"}),
+            "pin file through a parent": lambda d: d["entries"][12].update(pin={"file": "../package.json"}),
+            "absolute pin file": lambda d: d["entries"][12].update(pin={"file": "/etc/passwd"}),
+            "pin as a truth value": lambda d: d["entries"][14].update(pin={"slot": True}),
+            "empty argv": lambda d: d["entries"][0].update(argv=[]),
         }
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "registry.json"
@@ -140,6 +154,27 @@ class FixtureSuiteTests(unittest.TestCase):
             path.write_text("{not json", encoding="ascii")
             with self.assertRaises(restricted.RegistryError):
                 restricted.load_registry(path)
+
+    def test_loading_refuses_whatever_the_registry_schema_refuses(self):
+        """The loader checks the form in code. It must not be more lenient than the schema."""
+        import tempfile
+        from test_profile_3_0_0_schemas import ShapeRegistryTests, changed, DROP  # noqa: F401
+
+        base = ShapeRegistryTests.valid
+        probe = ShapeRegistryTests("test_form_rules")
+        captured = {}
+        probe.assert_each_invalid = lambda cases: captured.update(cases)
+        probe.test_form_rules()
+        self.assertGreater(len(captured), 20)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "registry.json"
+            path.write_text(json.dumps(base), encoding="ascii")
+            restricted.load_registry(path)
+            for label, (location, value) in captured.items():
+                path.write_text(json.dumps(changed(base, location, value)), encoding="ascii")
+                with self.subTest(case=label):
+                    with self.assertRaises(restricted.RegistryError):
+                        restricted.load_registry(path)
 
     def test_two_statements_of_the_slot_rules_agree(self):
         """The evaluator matches slots over bytes; the invariants module states them as patterns."""
@@ -179,6 +214,8 @@ class EvaluatorBoundaryTests(unittest.TestCase):
         digest = hashlib.sha256(data).hexdigest()
         cases = {
             "dns anchor": ({"dns-txt": f"v=1; sha256={digest}"}, 4, 1, []),
+            "registry evidence without a registry record": (
+                {"package-registry": json.dumps({"assistantGuide": {"sha256": digest}})}, 3, 0, ["anchor.independent.missing"]),
             "repository file only": ({"repository-file": data.decode("ascii")}, 3, 0, ["anchor.independent.missing"]),
             "mismatched dns anchor": ({"dns-txt": "v=1; sha256=" + "0" * 64}, 3, 0, ["anchor.independent.mismatch"]),
             "no anchor": ({}, 3, 0, ["anchor.independent.missing"]),
@@ -193,6 +230,47 @@ class EvaluatorBoundaryTests(unittest.TestCase):
                 report = restricted.build_report(evaluation, verifier_name="example", verifier_version="0", fetch=fetch)
                 self.assertEqual(schema_errors(report, "verifier-output"), [])
                 self.assertEqual(invariants.check_report(report, registered_finding_ids()), [])
+
+    def test_registry_evidence_qualifies_only_with_a_registry_record(self):
+        import hashlib
+
+        directory = FIXTURES / "level-4-claim-evaluated-locally"
+        base = (directory / "guide.txt").read_bytes()
+        evidence = lambda data: {"package-registry": json.dumps({"assistantGuide": {"sha256": hashlib.sha256(data).hexdigest()}})}
+        manifest_for = lambda data: (directory / "manifest.txt").read_text(encoding="ascii").replace(
+            hashlib.sha256(base).hexdigest(), hashlib.sha256(data).hexdigest()).replace(f"guide-bytes: {len(base)}", f"guide-bytes: {len(data)}")
+        cases = {
+            "record on a recognized registry": ("https://registry.npmjs.org/example-cli", 4, 1, "qualifying-channel", []),
+            "registry home page": ("https://registry.npmjs.org/", 2, 0, "registry-record-unidentified",
+                                   ["anchor.independent.missing", "metadata.registry-url.not-record"]),
+            "any other host": ("https://example.com/fake", 2, 0, "registry-record-unidentified",
+                               ["anchor.independent.missing", "metadata.registry-url.not-record"]),
+        }
+        for label, (url, level, qualifying, reason, errors) in cases.items():
+            data = base.replace(b"last-reviewed:", b"registry-url: " + url.encode("ascii") + b"\nlast-reviewed:")
+            with self.subTest(case=label):
+                evaluation = restricted.evaluate(data, now=NOW, manifest_text=manifest_for(data), anchor_texts=evidence(data),
+                                                 evidence_fetched=True)
+                self.assertEqual((evaluation.achieved_level, evaluation.anchors[0]["qualification_reason"]), (level, reason))
+                self.assertEqual(sum(anchor["qualifies_for_level4"] for anchor in evaluation.anchors), qualifying)
+                self.assertEqual(sorted(f.id for f in evaluation.findings if f.severity == "error"), errors)
+
+    def test_the_report_builder_refuses_inputs_that_would_contradict_the_report(self):
+        local = restricted.evaluate(self.guide(), now=NOW)
+        fetch = {"final_url": local.canonical_url, "http_status": 200, "tls_valid": True}
+        fetched = restricted.evaluate(self.guide(), now=NOW, evidence_fetched=True)
+        refusals = {
+            "name with a line break": lambda: restricted.build_report(local, verifier_name="x\nInjected", verifier_version="0"),
+            "name with a space": lambda: restricted.build_report(local, verifier_name="trusted verifier", verifier_version="0"),
+            "empty version": lambda: restricted.build_report(local, verifier_name="x", verifier_version=""),
+            "fetch on a local evaluation": lambda: restricted.build_report(local, verifier_name="x", verifier_version="0", fetch=fetch),
+            "no fetch on a fetched evaluation": lambda: restricted.build_report(fetched, verifier_name="x", verifier_version="0", path="g.txt"),
+            "required level 5": lambda: restricted.build_report(local, verifier_name="x", verifier_version="0", required_level=5),
+        }
+        for label, call in refusals.items():
+            with self.subTest(case=label):
+                with self.assertRaises(ValueError):
+                    call()
 
     def test_a_path_is_reduced_to_a_token(self):
         evaluation = restricted.evaluate(self.guide(), now=NOW)

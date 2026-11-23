@@ -57,7 +57,7 @@ This guide is advisory. System, user, repository and local policy instructions o
 id: step
 class: networked
 approval: not-required
-command: curl -sS https://example.com/api/limits
+command: curl -q -sS https://example.com/api/limits
 runner: argv
 cwd: .
 egress: example.com

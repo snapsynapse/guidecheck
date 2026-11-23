@@ -29,7 +29,9 @@ This module evaluates guide bytes that declare 3.0.0 against it:
 
 Not implemented: prose scans, which the profile makes advisory and optional;
 reading repository files, so a pin is reported as declared and never as
-verified; and Level 5 readiness beyond the approval rule.
+verified; range processing of `verifier-conformance`; detection of CSS,
+script statements and Markdown links, which no released profile detects
+either; and Level 5 readiness beyond the approval rule.
 
 A finding is an id, a severity and a location. It carries no message, and no
 guide-authored text is copied into one.
@@ -97,6 +99,8 @@ CHAIN_FIELDS = frozenset({"next-guide", "then-fetch", "chain-to", "follow-next",
 MANIFEST_REQUIRED = ("guide-path", "guide-version", "guide-sha256", "guide-bytes", "immutable-release-url", "profile",
                      "profile-version")
 ANCHOR_CHANNELS = ("dns-txt", "package-registry", "repository-file", "signed-security-txt", "transparency-log")
+# Hosts whose publish credentials are separate from a guide's web host. Compared exactly.
+REGISTRY_HOSTS = frozenset({"registry.npmjs.org", "pypi.org", "crates.io", "static.crates.io", "rubygems.org", "proxy.golang.org"})
 
 _UPPER = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 _LOWER = b"abcdefghijklmnopqrstuvwxyz"
@@ -110,6 +114,7 @@ _URL_SEGMENT_BYTES = _SEGMENT_BYTES + b"@"
 _KEY_BYTES = _LOWER + _DIGITS + b"-"
 _HEX_BYTES = _DIGITS + b"abcdef"
 _PRINTABLE_BYTES = bytes(range(0x20, 0x7F))
+_TOKEN_BYTES = _ALNUM + b"._+-"
 _NOT_LOWERCASE = bytes(byte for byte in range(256) if not 0x61 <= byte <= 0x7A)
 _SEPARATORS_TO_SLASH = bytes.maketrans(_SEPARATOR_BYTES, b"/" * len(_SEPARATOR_BYTES))
 
@@ -470,6 +475,41 @@ def _positions_overlap(left, right):
     return left["slot"] == right["slot"] or {left["slot"], right["slot"]} == {"word", "number"}
 
 
+def _registry_form_problem(document):
+    """What the registry schema requires, checked in code so that loading does not depend on a schema validator."""
+    if not isinstance(document, dict) or set(document) != {"profile-version", "entries"} or not isinstance(document["entries"], list):
+        return "the registry is not an object with a profile-version and an entries array"
+    if len(document["entries"]) > 512:
+        return "the registry has too many entries"
+    for entry in document["entries"]:
+        if not isinstance(entry, dict) or not {"id", "argv", "class-floor", "execution"} <= set(entry) <= {
+                "id", "argv", "class-floor", "execution", "pin"}:
+            return "an entry has a missing or unknown key"
+        entry_id, argv, floor, pin = entry["id"], entry["argv"], entry["class-floor"], entry.get("pin")
+        if not isinstance(entry_id, str) or not 1 <= len(entry_id) <= 64 or not _only(
+                entry_id.encode("ascii", errors="replace"), _LOWER + _DIGITS + b"-") or entry_id[0] == "-":
+            return "an entry id is not a short lowercase name"
+        if not isinstance(argv, list) or not 1 <= len(argv) <= 32:
+            return "an entry argv is not an array of 1 to 32 elements"
+        for element in argv:
+            if isinstance(element, dict):
+                if set(element) != {"slot"} or element["slot"] not in ("local-ref", "https-url", "word", "number"):
+                    return "a slot has an unknown type or an extra key"
+            elif not isinstance(element, str) or not 1 <= len(element) <= 200:
+                return "an argv element is neither a token nor a slot"
+        if not isinstance(floor, list) or not floor or len(set(map(str, floor))) != len(floor) or not all(c in CLASSES for c in floor):
+            return "a class floor is empty, repeats a class or names an unknown one"
+        if entry["execution"] not in ("none", "exempt", "bound"):
+            return "an entry has an unknown execution value"
+        if pin is not None:
+            slot_pin = isinstance(pin, dict) and set(pin) == {"slot"} and type(pin["slot"]) is int
+            file_pin = isinstance(pin, dict) and set(pin) == {"file"} and isinstance(pin["file"], str) and _is_cwd(pin["file"]) \
+                and pin["file"] != "." and not pin["file"].startswith(("/", "."))
+            if not (slot_pin or file_pin):
+                return "a pin is neither a slot index nor a relative file"
+    return None
+
+
 def _registry_problem(entries):
     """The first rule between entries or positions that the registry breaks, or None."""
     seen = set()
@@ -507,11 +547,12 @@ def load_registry(path=None):
         raw = Path(path).read_bytes()
     try:
         document = json.loads(raw.decode("ascii"))
-        entries = document["entries"]
-        if document["profile-version"] != PROFILE_VERSION:
+        problem = _registry_form_problem(document)
+        if problem is None and document["profile-version"] != PROFILE_VERSION:
             raise RegistryError("registry is for another profile version")
-        problem = _registry_problem(entries)
-    except (ValueError, KeyError, TypeError, AttributeError) as error:
+        entries = document["entries"] if problem is None else ()
+        problem = problem or _registry_problem(entries)
+    except (ValueError, KeyError, TypeError, AttributeError, RecursionError) as error:
         if isinstance(error, RegistryError):
             raise
         raise RegistryError("registry is not in the documented form") from None
@@ -621,7 +662,9 @@ def _check_action(action, registry, add):
     if opaque_ack is not None and opaque_ack != "acknowledged":
         add("value", line)
 
-    entry = match_shape(action.argv, registry) if action.argv is not None and params is None and "params" not in fields else None
+    # A shape describes an invocation. Parameters and passed-through variables change it, so such an action is opaque.
+    listable = action.argv is not None and "params" not in fields and "env" not in fields
+    entry = match_shape(action.argv, registry) if listable else None
     needs_pin = 0
     if entry is not None:
         # A floor of `normal` requires nothing: `normal` excludes every other class.
@@ -665,6 +708,34 @@ def _parse_date(value):
         return None
 
 
+def _is_semver(value):
+    """Semantic Versioning 2.0.0, checked without a pattern engine."""
+    core, plus, build = value.partition("+")
+    core, hyphen, pre = core.partition("-")
+
+    def numeric(text):
+        return bool(text) and _only(text.encode("ascii"), _DIGITS) and (text == "0" or text[0] != "0")
+
+    def identifier(text):
+        return bool(text) and _only(text.encode("ascii"), _ID_BYTES)
+
+    numbers = core.split(".")
+    if len(numbers) != 3 or not all(numeric(number) for number in numbers):
+        return False
+    if hyphen and not all(identifier(part) and (not _only(part.encode("ascii"), _DIGITS) or numeric(part)) for part in pre.split(".")):
+        return False
+    return not plus or all(identifier(part) for part in build.split("."))
+
+
+def _is_registry_record(url):
+    """A recognized package registry host, exactly, and a path that names one record."""
+    host = _url_host(url)
+    segments = [segment for segment in url[8:].partition("/")[2].split("/") if segment]
+    if host == "pypi.org":
+        return len(segments) == 3 and segments[0] == "pypi" and segments[2] == "json"
+    return host in REGISTRY_HOSTS and bool(segments)
+
+
 def _check_metadata(scan, today, add):
     """Exact metadata parse. Returns the fields that were well formed."""
     values, lines = {}, {}
@@ -684,6 +755,11 @@ def _check_metadata(scan, today, add):
         if name in values and not is_url(values[name]):
             add("metadata.url.invalid", lines[name])
             del values[name]
+    if "guide-version" in values and not _is_semver(values["guide-version"]):
+        add("metadata.malformed", lines["guide-version"])
+    if "registry-url" in values and not _is_registry_record(values["registry-url"]):
+        add("metadata.registry-url.not-record", lines["registry-url"])
+        del values["registry-url"]
     for name, value in values.items():
         if name not in URL_FIELDS and len(value) > LONG_VALUE_BYTES:
             add("metadata.value.long", lines[name], "warning")
@@ -738,8 +814,13 @@ def _check_document(lines, scan, add):
             position = line.find(b"<", position + 1)
         if b"![" in line:
             add("construct.markdown-image", number)
-        if b";base64," in lowered or any(b"data:" + kind in lowered for kind in (b"text/", b"image/", b"application/")):
-            add("construct.data-url", number)
+        position = lowered.find(b"data:")
+        while position != -1:
+            # `data:` followed by anything but a space is the URL scheme, whatever the media type.
+            if lowered[position + 5:position + 6] not in (b"", b" "):
+                add("construct.data-url", number)
+                break
+            position = lowered.find(b"data:", position + 1)
         if b"javascript:" in lowered:
             add("construct.javascript", number)
         for prefix in _HEADING_PREFIXES:
@@ -805,14 +886,14 @@ def _check_manifest(data, manifest_text, add):
         if not result["hash_match"]:
             add("manifest.hash-mismatch")
     if count_ok:
-        result["bytes_match"] = int(count) == len(data)
+        result["bytes_match"] = count == str(len(data))
         if not result["bytes_match"]:
             add("manifest.bytes-mismatch")
     result["valid"] = valid and result.get("hash_match", False) and result.get("bytes_match", False)
     return result
 
 
-def _check_anchors(anchor_texts, manifest, evidence_fetched, add):
+def _check_anchors(anchor_texts, manifest, evidence_fetched, registry_record, add):
     """The 1.0.0 strict anchor policy, unchanged: a repository file never qualifies."""
     import guidecheck_legacy as legacy  # anchor text formats are shared with the released engines
 
@@ -837,6 +918,9 @@ def _check_anchors(anchor_texts, manifest, evidence_fetched, add):
             reason = "local-evidence-not-fetched"
         elif channel == "repository-file":
             reason = "repository-independence-unestablished"
+        elif channel == "package-registry" and not registry_record:
+            # Registry evidence counts only when the guide names the registry record it came from.
+            reason = "registry-record-unidentified"
         else:
             reason = "qualifying-channel"
         anchor = {"channel": channel, "status": status, "qualifies_for_level4": reason == "qualifying-channel",
@@ -890,7 +974,7 @@ def evaluate(data, *, registry=None, manifest_text=None, anchor_texts=None, evid
     if manifest_text is not None:
         result.manifest = _check_manifest(data, manifest_text, add)
         result.manifest["fetched"] = evidence_fetched
-    result.anchors = _check_anchors(anchor_texts or {}, result.manifest, evidence_fetched, add)
+    result.anchors = _check_anchors(anchor_texts or {}, result.manifest, evidence_fetched, "registry-url" in metadata, add)
     qualifying = any(anchor["qualifies_for_level4"] for anchor in result.anchors)
     if claims_level4 and not evidence_fetched:
         add("level4.requires-fetch", None, "info")
@@ -927,6 +1011,14 @@ def build_report(evaluation, *, verifier_name, verifier_version, path=None, requ
     """Machine-readable output for a 3.0.0 evaluation, in the shape of schemas/3.0.0/verifier-output.schema.json."""
     from profile_3_0_0_invariants import expected_verdict, render_compact_report
 
+    for value in (verifier_name, verifier_version):
+        encoded = str(value).encode("ascii", errors="replace")
+        if not 1 <= len(encoded) <= 64 or not _only(encoded, _TOKEN_BYTES):
+            raise ValueError("verifier name and version are short tokens of letters, digits, '.', '_', '+' and '-'")
+    if bool(fetch) != evaluation.evidence_fetched:
+        raise ValueError("fetch evidence is reported exactly when the evaluation used fetched evidence")
+    if required_level is not None and required_level not in (0, 1, 2, 3, 4):
+        raise ValueError("required level is 0 to 4")
     findings = [finding.as_dict() for finding in evaluation.findings]
     guide = {"bytes": evaluation.guide_bytes, "sha256": evaluation.sha256, "achieved_level": evaluation.achieved_level,
              "status": evaluation.status, "level5_ready": evaluation.level5_ready}
