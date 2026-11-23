@@ -1,8 +1,9 @@
 """restricted-argv-1: the content policy of draft guide profile 3.0.0.
 
-Status: unreleased. No released entry point imports this module, and the public
-dispatcher in `guidecheck_profiles.py` still refuses 3.0.0 as unsupported.
-Nothing here changes how a released profile is evaluated.
+Status: unreleased draft. The dispatcher in `guidecheck_profiles.py` selects
+3.0.0 only for a caller that passes `allow_draft`, and the only such caller is
+the local reference CLI. The hosted verifier and every other caller refuse it
+as unsupported. Nothing here changes how a released profile is evaluated.
 
 The normative text is `profiles/3.0.0/spec.md` and `verifier-conformance.md`.
 This module evaluates guide bytes that declare 3.0.0 against it:
@@ -426,6 +427,11 @@ def _scan(data):
     return _Scan(findings, actions, selected, metadata, first_action)
 
 
+def declares_profile(data: bytes) -> bool:
+    """Whether the bytes declare 3.0.0 exactly once in one exact metadata block. One linear pass."""
+    return _scan(bytes(data)).selected
+
+
 def check_structure(data: bytes) -> StructureReport:
     """Check action structure and command grammar for bytes that declare 3.0.0.
 
@@ -493,7 +499,12 @@ def _registry_problem(entries):
 
 def load_registry(path=None):
     """Load and check the shape registry. Raises RegistryError when it cannot be used."""
-    raw = Path(path or REGISTRY_PATH).read_bytes()
+    if path is None:
+        # An installed package has no profiles directory. The registry travels
+        # as a module whose bytes a test holds equal to the profile's file.
+        from guidecheck_restricted_registry import REGISTRY_BYTES as raw
+    else:
+        raw = Path(path).read_bytes()
     try:
         document = json.loads(raw.decode("ascii"))
         entries = document["entries"]

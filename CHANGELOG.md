@@ -12,16 +12,21 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   fences, field labels, required headings and the verification instruction
   exact, sorts every action into a shape-listed or opaque tier, makes prose
   scans advisory, and ties the `Proceed?` line to Level 3 and to any level the
-  caller requires. The text is unreleased: no verifier evaluates it, the
-  dispatcher still refuses 3.0.0, and its shape registry and fixtures do not
-  exist yet. Profiles 1.0.0 and 2.0.0 are unchanged.
+  caller requires. The text is unreleased. Profiles 1.0.0 and 2.0.0 are
+  unchanged.
 - Add the evaluator for draft profile 3.0.0 to `scripts/guidecheck_restricted.py`,
   the shape registry `profiles/3.0.0/shape-registry.json` (22 exact shapes), and
   a 128-case fixture suite in `fixtures/profiles/3.0.0/` run by
   `scripts/test_restricted_fixtures.py`. Every registry entry has a matching
   and a near fixture, and every report is held to the 3.0.0 schema and report
-  invariants. The evaluator is still not reachable from any released entry
-  point.
+  invariants.
+- The local reference CLI (`guidecheck verify`) evaluates a guide that
+  declares profile 3.0.0, prints a note that the profile is an unreleased
+  draft, and exits by the verdict: non-zero for any blocking finding, for any
+  result below Level 3, and for any result below `--level`. The dispatcher
+  selects 3.0.0 only for a caller that passes `allow_draft`; the hosted
+  verifier and the experimental CLI contract still refuse it, and released
+  profiles behave exactly as before.
 - Add draft schemas for profile 3.0.0 in `schemas/3.0.0/` (verifier output,
   manifest, fixture expectations and the shape registry), an example report,
   `scripts/profile_3_0_0_invariants.py` for the relations between fields that

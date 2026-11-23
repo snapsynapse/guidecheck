@@ -221,7 +221,7 @@ CSS-hidden findings are gated on instruction-likeness to keep precision high.
 ## Restricted argv policy (unreleased)
 
 Emitted by `scripts/guidecheck_restricted.py`, an unreleased and partial
-policy for a future profile. No released profile, fixture, schema or entry
+policy for a future profile. No released profile, fixture or schema
 point uses these ids, and they may change before a release. The module also
 emits `byte-profile.size-limit`, `byte-profile.non-ascii-byte`,
 `action-block.malformed`, `action-block.missing-required` and

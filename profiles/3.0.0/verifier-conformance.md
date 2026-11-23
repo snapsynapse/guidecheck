@@ -1,5 +1,5 @@
-Status: draft profile 3.0.0, unreleased. No released verifier implements this
-profile. Profiles 1.0.0 and 2.0.0 remain the released contracts and are not
+Status: draft profile 3.0.0, unreleased. The local reference verifier
+implements it for guides that declare it; the hosted verifier refuses it. Profiles 1.0.0 and 2.0.0 remain the released contracts and are not
 changed by this document. The 3.0.0 schemas are in `schemas/3.0.0/`, the shape registry is
 `shape-registry.json` in this directory, and the fixture suite is
 `fixtures/profiles/3.0.0/`. Section 29 still lists the 2.0.0 fixture names.

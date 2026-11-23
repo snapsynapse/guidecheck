@@ -57,9 +57,12 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
   - `guidecheck_restricted.py` is the evaluator for the unreleased
     `restricted-argv-1` policy (draft profile 3.0.0): size gate, exact fences,
     command grammar, shape registry tiers, pins, field grammars, metadata,
-    headings, levels, and a report in the 3.0.0 schema. No entry point imports
-    it and the dispatcher still refuses 3.0.0; `test_restricted_argv.py`
-    asserts both. It reuses only the anchor text parsers of the legacy engine.
+    headings, levels, and a report in the 3.0.0 schema. The dispatcher selects
+    3.0.0 only for a caller that passes `allow_draft`; the local CLI
+    (`guidecheck_verify.py`) is the only one. The hosted verifier, the CLI
+    contract and every other caller still refuse it; `test_restricted_cli.py`
+    asserts that. The registry travels in `guidecheck_restricted_registry.py`,
+    held byte-equal to `profiles/3.0.0/shape-registry.json`. It reuses only the anchor text parsers of the legacy engine.
     `test_restricted_fixtures.py` runs it over `fixtures/profiles/3.0.0/`.
   - `guidecheck_verify.py` — local-file reference verifier CLI (Levels 1-3,
     plus internal-consistency checks on Level 4 sidecar manifests/anchors).
@@ -203,6 +206,9 @@ verify locally against `.github/allowed_signers`; citation metadata is in
 - The hosted verifier at guidecheck.org/verify is explicitly a preview: its
   conformance fixture suite is incomplete and it has not been shown to pass
   it; signed `security.txt` anchors are not yet fetched by the hosted path.
+  Since 2026-11-12 it awards no Level 4 under any profile and reports declared
+  anchors as unverified (see `docs/security/maintenance.md`). It does not
+  evaluate profile 3.0.0.
 
 ## Format over tool (2026-11-11)
 
