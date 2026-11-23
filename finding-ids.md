@@ -238,7 +238,10 @@ own docstring states.
 | `command.path.absolute` | error | A command contains an absolute path and the action does not require approval. |
 
 The draft text in `profiles/3.0.0/` also names the ids below. No code emits
-them yet. Ids that the draft marks as proposed are not listed here.
+them yet. The draft also widens two ids from the sections above:
+`exec-sha256.mismatch` covers a pinned reference that exists and is not a
+regular file, and `level4.requires-fetch` is reported whenever a guide declares
+`manifest-url` and its evidence was not fetched.
 
 | ID | Severity | Trigger |
 |---|---|---|
@@ -246,6 +249,15 @@ them yet. Ids that the draft marks as proposed are not listed here.
 | `action-block.class.under-declared` | error | An action's declared classes do not include its tier's class floor. |
 | `action.program-opaque` | warning | An action's command matches no registry shape and is treated as arbitrary code execution. |
 | `egress.pattern` | error | An `egress` value is not `none` or a list of valid host patterns. |
+| `egress.class-mismatch` | error | An action that is not `networked` declares a host pattern. |
+| `action.program-opaque.unacknowledged` | error | An opaque action lacks `exec-opaque: acknowledged` or a `notes` rationale. |
+| `construct.code-fence` | error | A Level 3 guide contains a line with three consecutive backticks or tildes. |
+| `metadata.status.deprecated` | error | The guide status is `deprecated`. |
+| `manifest.hash-invalid` | error | Manifest `guide-sha256` is not 64 lowercase hexadecimal characters. |
+| `manifest.malformed` | error | A manifest key appears more than once. |
+| `filesystem.cwd.invalid` | error | A `cwd` value is outside its grammar, or is absolute without required approval. |
+| `env.invalid` | error | An `env` value is not a list of valid variable names. |
+| `params.invalid` | error | A `params` value is not a list of valid names that each occur in the command. |
 
 ## Change control
 

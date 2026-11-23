@@ -131,7 +131,7 @@ This profile does not:
 
 A conforming guide is a `.txt` file named `assistant-guide.txt`.
 
-The canonical filename is `assistant-guide.txt`. When served over HTTP, the canonical well-known path is `/.well-known/assistant-guide.txt`. A repository copy at the repository root is RECOMMENDED. Publishers MAY serve the guide at both the well-known path and the repository root. When both are served, the two copies MUST be byte-identical; a divergence is a forge and confusion vector, and the repository-file provenance anchor of section 11 depends on the copies matching. A verifier that can reach both copies MUST emit a failure on any divergence. The well-known path takes precedence for HTTP discovery.
+The canonical filename is `assistant-guide.txt`. When served over HTTP, the canonical well-known path is `/.well-known/assistant-guide.txt`. A repository copy at the repository root is RECOMMENDED. Publishers MAY serve the guide at both the well-known path and the repository root. When both are served, the two copies MUST be byte-identical; a divergence is a forge and confusion vector, and the repository-file evidence of section 11 depends on the copies matching. A verifier that can reach both copies MUST emit a failure on any divergence. The well-known path takes precedence for HTTP discovery.
 
 The guide gives an assistant a bounded task prompt, safety rules, action classes, allowed commands or command patterns, stop-and-ask conditions, and acceptance criteria.
 
@@ -377,7 +377,7 @@ All URL values MUST resolve to ASCII hostnames. Internationalized domain names M
 
 URL paths are case-sensitive and SHOULD use the canonical lowercase form.
 
-`canonical-url` is the URL at which the guide itself is served. `repository-url` is the root of the publisher's source repository, where the guide's source and revision history live (for example `https://github.com/example/example-project`). It is a single field; it is not a project landing page, a documentation site, or a marketing page. The repository-file provenance anchor in the cross-channel section below resolves `source-path` against `repository-url`; a `repository-url` that does not point at a source repository disables that anchor.
+`canonical-url` is the URL at which the guide itself is served. `repository-url` is the root of the publisher's source repository, where the guide's source and revision history live (for example `https://github.com/example/example-project`). It is a single field; it is not a project landing page, a documentation site, or a marketing page. The repository-file evidence in the cross-channel section below resolves `source-path` against `repository-url`; a `repository-url` that does not point at a source repository disables that evidence.
 
 ### Profile and guide versioning
 
@@ -660,11 +660,14 @@ Guide authors MUST write every argument that names a repository file as a local 
 - A `local-path` program MUST be pinned with `exec-sha256`.
 - In a `code-executing` action, every local reference MUST be pinned.
 - An action MUST NOT contain more than one local reference that requires a pin, so one `exec-sha256` is unambiguous.
+- A local reference that requires a pin MUST name one regular file, not a directory. A file that does not exist yet, such as one an earlier action downloads, is pinned by the hash it is expected to have.
 - `exec-sha256` MUST NOT appear on an action that has nothing to pin: no local reference that requires a pin and no `bound` registry entry. A declared hash cannot identify a target the action does not name.
 
-`exec-sha256` commits the guide to the exact bytes of one file. A verifier that can read the file MUST recompute the SHA-256, report a mismatch as a blocking finding, and require any further repository file the pinned bytes invoke to be pinned in turn. A verifier that cannot read the file reports the pin as declared but unverified and MUST NOT present it as satisfied. A matching `exec-sha256` asserts the identity of one file's bytes and nothing about what those bytes do.
+`exec-sha256` commits the guide to the exact bytes of one file. A verifier that can read the file MUST recompute the SHA-256, and report a mismatch as a blocking finding. A verifier that cannot read the file reports the pin as declared but unverified and MUST NOT present it as satisfied. A matching `exec-sha256` asserts the identity of one file's bytes and nothing about what those bytes do. A pin does not extend to any file the pinned file runs. That is residual risk: the human reviews the pinned file, including what it calls.
 
 A static verifier cannot see a bare filename such as `setup.py`. A repository-reading verifier and a Level 5 runtime can, by resolving each bare argument against `cwd`. When one resolves to an existing file in a `code-executing` action, the verifier MUST report a blocking finding and the runtime MUST stop.
+
+A static verifier and a repository-reading verifier can therefore differ on the same guide, in one direction only. A repository-reading verifier may add blocking findings to what a static verifier reports and MUST NOT remove any. A report states whether the verifier read repository files.
 
 ### Parameters
 
@@ -679,7 +682,7 @@ At run time the user supplies each value. The runtime substitutes it as a single
 - Pinned script. Put the pipeline, the regular expression, or the multi-step logic in a repository file and invoke it as a `local-path` program or as a pinned local reference, for example `sh ./scripts/step.sh` with `exec-sha256`. The human reviews the file; the hash binds it. This is the only route for shell logic.
 - Parameters. A value the guide cannot fix in advance, or cannot write in the grammar, is supplied by the user at run time through `params`.
 
-A fetch that is followed by execution is two actions: one downloads to a local reference, the next runs that local reference with a pin. The pin makes the downloaded bytes part of what was reviewed.
+A fetch that is followed by execution is two actions: one downloads to a local reference, the next runs that local reference with a pin. The pin makes the downloaded bytes part of what was reviewed. In practice the download action is shape-listed. In an opaque action the local reference would need a pin, and a pin on a file that does not exist yet cannot be checked before the action runs.
 
 ### Action atomicity and approval scope
 
@@ -976,7 +979,7 @@ Projects SHOULD make `assistant-guide.txt` discoverable from at least one canoni
 
 Discovery mechanisms MUST NOT require script execution.
 
-Some of the surfaces above are also cross-channel hash anchors (DNS TXT, package registry metadata, public repository file, signed security.txt). Others are discovery aids only and provide no forge resistance (HTML link, HTTP response header, unsigned security.txt). Section 11 defines which is which.
+Some of the surfaces above are also cross-channel hash anchors (DNS TXT, package registry metadata, signed security.txt). A public repository file is corroborating evidence and not an anchor. Others are discovery aids only and provide no forge resistance (HTML link, HTTP response header, unsigned security.txt). Section 11 defines which is which.
 
 ### llms.txt versus llm.txt
 
@@ -1030,7 +1033,7 @@ A verifier for this profile SHOULD:
 - compare public guide content to repository copies when available
 - count required approvals and warn when the total exceeds a threshold (default 10), since approval fatigue degrades the human's review quality
 - compare the fetched bytes against the `guide-sha256` value in the manifest at Level 4
-- enumerate every cross-channel hash anchor it can find (DNS TXT `_assistant-guide.<domain>`, package registry metadata, public repository file, signed security.txt) and compare each against the manifest hash; emit a failure on divergence and an info finding when no independent channel is present at Level 3 or above
+- enumerate every cross-channel hash anchor it can find (DNS TXT `_assistant-guide.<domain>`, package registry metadata, signed security.txt, transparency log) and compare each against the manifest hash, and compare a public repository file as corroborating evidence only; emit a failure on divergence; when no independent channel is present, emit an info finding, or an error when the verifier fetched the evidence and the guide declares `manifest-url`
 - record which channels were checked and which were unreachable; absence of an optional channel is an info finding, not an error
 - report the `last-reviewed` age as an informational finding, and warn when `valid-until` is in the past or malformed; there is no fixed `last-reviewed` expiry, because only the publisher's `valid-until` is a non-arbitrary staleness signal
 - emit structured evidence and remediation, not only a score
@@ -1062,6 +1065,8 @@ The `Proceed?` line is the verdict a reader acts on, so it states the whole resu
 - In every other case the line is `Proceed? no`, followed by a line `Reason:` with one of the fixed phrases `blocking findings`, `below Level 3`, or `below the required level`. When more than one applies, the first in that order is rendered.
 
 A guide below Level 3 has had no action checked. Its report never reads as a pass.
+
+Evidence a verifier did not fetch is not a blocking finding. A local evaluation of a guide that declares `manifest-url` reports that Level 4 requires fetching and can still reach Level 3. Evidence that was fetched or supplied and does not match is always blocking.
 
 Field rendering by achieved level:
 

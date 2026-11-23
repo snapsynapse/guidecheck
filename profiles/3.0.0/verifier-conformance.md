@@ -37,14 +37,14 @@ Fixture suite
 : The official test corpus of valid and invalid guides, manifests, anchors, fetch scenarios, and expected findings.
 
 Standard primary verifier
-: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For verifier-profile version 1.0.x the designated standard primary verifier is `https://guidecheck.org/verify`, published by the PAICE Foundation.
+: A verifier URL published by the standards project for a specific verifier-profile version as the default hosted conformance checker. It is not the only conformant verifier and is not an oracle, but it is exempt from off-domain recommended-verifier warnings. For this profile the designated standard primary verifier is `https://guidecheck.org/verify`, published by GuideCheck as the standards project for this profile.
 
 ## 4. Scope
 This profile defines two evaluation modes.
 
 Public-web mode is the primary mode. The input is an HTTPS URL to an `assistant-guide.txt` resource. The verifier performs all fetches, header checks, cross-channel anchor checks, redirect handling, and TLS validation defined in this profile.
 
-Local-file mode is a normative extension. The input is a path to a local `assistant-guide.txt` file plus an optional path to a sidecar manifest. The verifier performs all byte-level, content, action-block, approval, command, prohibited-pattern, status, and staleness checks. The verifier MUST skip checks that depend on a live HTTP fetch (HTTP headers, redirect chain, TLS validation, content-variation re-fetch, hosted-verifier SSRF checks). Local-file mode MAY skip cross-channel anchor checks when the verifier has no network access; when network access is available the verifier SHOULD still resolve DNS TXT, registry, repository, and signed security.txt anchors named in metadata.
+Local-file mode is a normative extension. The input is a path to a local `assistant-guide.txt` file plus an optional path to a sidecar manifest. The verifier performs all byte-level, content, action-block, approval, command, prohibited-pattern, status, and staleness checks. The verifier MUST skip checks that depend on a live HTTP fetch (HTTP headers, redirect chain, TLS validation, content-variation re-fetch, hosted-verifier SSRF checks). Local-file mode MAY skip cross-channel anchor checks when the verifier has no network access; when network access is available the verifier SHOULD still resolve DNS TXT, registry, and signed security.txt anchors, and compare the repository file named in metadata.
 
 A verifier MUST report the mode it ran in (`evaluation_mode: public-web` or `evaluation_mode: local-file`). A local-file evaluation MUST NOT report an achieved level higher than Level 3 unless the verifier also fetches and verifies the manifest and at least one independent cross-channel anchor; the level rules of section 25 still apply, but the absence of fetch evidence prevents Level 4 from being asserted on local bytes alone.
 
@@ -204,7 +204,7 @@ The verifier MUST detect disallowed constructs from the guide profile, including
 - rich-document constructs
 - terminal escape sequences
 The verifier SHOULD warn on encoded or obfuscated command blobs intended for execution and on instructions to decode and execute hidden content. These are prose scans (section 21) and do not decide a level.
-For Level 3, the verifier MUST emit a blocking finding for any line that contains three consecutive backticks or three consecutive tildes (proposed id `construct.code-fence`). The finding does not affect Level 1 or Level 2.
+For Level 3, the verifier MUST emit a blocking finding for any line that contains three consecutive backticks or three consecutive tildes (`construct.code-fence`). The finding does not affect Level 1 or Level 2.
 Detection MAY include heuristic warnings for prose patterns. Heuristic warnings MUST be labeled as warnings unless the underlying rule is exact and blocking.
 
 ## 14. Metadata Parsing
@@ -250,7 +250,7 @@ The verifier SHOULD warn when `recommended-verifier` is not on the same register
 The reference verifier emits `metadata.recommended-verifier.off-domain` for an off-domain `recommended-verifier` unless it is the configured standard primary verifier for the applicable profile version.
 The verifier MUST NOT warn solely because `recommended-verifier` differs from `canonical-url` when `recommended-verifier` matches the standard primary verifier configured for the applicable profile version.
 When package-registry metadata is used as an independent Level 4 anchor, the verifier MUST require `registry-url` and MUST validate that it identifies a specific registry record rather than a registry homepage or search result.
-When `registry-url` is absent and no other Level 4 independent anchor is available, the verifier SHOULD emit an informational finding for Level 3 and a blocking finding for Level 4.
+When `registry-url` is absent and no other Level 4 independent anchor is available, a fetching verifier SHOULD emit an informational finding for Level 3 and a blocking finding for Level 4.
 
 ## 15. Verification Instruction Checks
 For Level 1 and above, the verifier MUST check that the canonical verification instruction of guide-profile section 10.2 is present: three consecutive whole lines equal, byte for byte, to the three lines given there, with the first of them before the first exact `[action]` line.
@@ -331,7 +331,7 @@ Every other action is opaque. For an opaque action the verifier MUST emit:
 - `action.program-opaque` (warning), once per action
 - `action-block.class.under-declared` when the declared classes do not include `code-executing`
 - `approval.required-missing` when `approval` is not `required`
-- a blocking finding (proposed id `action.program-opaque.unacknowledged`) when `exec-opaque: acknowledged` or `notes` is absent
+- a blocking finding (`action.program-opaque.unacknowledged`) when `exec-opaque: acknowledged` or `notes` is absent
 The verifier MUST report the number of shape-listed and opaque actions.
 
 ### Local references and pins
@@ -340,17 +340,19 @@ The verifier MUST emit:
 - `command.local-ref.unpinned` when an action has a reference or bound entry that requires a pin and no `exec-sha256`, or has more than one reference that requires a pin
 - `action-block.malformed` when `exec-sha256` is not 64 lowercase hexadecimal characters
 - `action.exec-target-unresolved` when `exec-sha256` is declared and nothing in the action requires a pin
-- `exec-sha256.unverified` (info) when the verifier did not read the pinned file
+- `exec-sha256.unverified` (info) when the verifier did not read the pinned file, or the file does not exist yet
 - `exec-sha256.mismatch` when it read the file and the hash differs
-- `exec-sha256.transitive-unpinned` when a readable pinned file invokes a further repository file that is not pinned
+- `exec-sha256.mismatch` when it read the repository and the reference that requires a pin exists and is not a regular file
+A pin does not extend to any file the pinned file runs, and the verifier makes no finding about such files.
 A static verifier does not resolve bare filenames. A verifier that reads the repository MUST resolve each argument of a `code-executing` action against `cwd` and MUST emit `command.local-ref.unpinned` when one names an existing file that is not written as a pinned local reference.
+A repository-reading verifier MAY add blocking findings to what a static verifier reports and MUST NOT remove any. The report MUST state whether the verifier read repository files. Two verifiers that agree on that and on the evaluation mode of section 8, and that are given the same guide bytes and the same repository bytes, MUST agree.
 
 ## 20. Filesystem, Environment, Egress, and Parameter Checks
-The verifier MUST check `cwd` against its grammar: `.`, or segments of ASCII letters, digits, `-`, `_`, `.` and `+` joined by `/`, with no `..` segment, optionally preceded by `/`. A value outside the grammar, and an absolute value on an action without `approval: required`, are blocking (proposed id `filesystem.cwd.invalid`).
+The verifier MUST check `cwd` against its grammar: `.`, or segments of ASCII letters, digits, `-`, `_`, `.` and `+` joined by `/`, with no `..` segment, optionally preceded by `/`. A value outside the grammar, and an absolute value on an action without `approval: required`, are blocking (`filesystem.cwd.invalid`).
 The verifier MUST check `egress`: the literal `none`, or host patterns separated by a comma and one space, each two or more DNS labels joined by `.`, optionally preceded by `*.` and then at least two labels. A value outside the grammar is `egress.pattern`.
-The verifier MUST emit `egress.missing` when an action whose class list includes `networked` declares `egress: none`, and a blocking finding (proposed id `egress.class-mismatch`) when an action that does not include `networked` declares a host pattern.
-The verifier MUST check `env` as names separated by a comma and one space, each an ASCII letter or underscore followed by letters, digits or underscores (proposed id `env.invalid`). A command cannot reference a variable, so there is no reference check.
-The verifier MUST check `params`: names of 2 to 32 uppercase ASCII letters, digits or underscores, separated by a comma and one space, none repeated, each occurring in the command as a whole token or as the whole text after the first `=` of a token, and none as the program token (proposed id `params.invalid`).
+The verifier MUST emit `egress.missing` when an action whose class list includes `networked` declares `egress: none`, and a blocking finding (`egress.class-mismatch`) when an action that does not include `networked` declares a host pattern.
+The verifier MUST check `env` as names separated by a comma and one space, each an ASCII letter or underscore followed by letters, digits or underscores (`env.invalid`). A command cannot reference a variable, so there is no reference check.
+The verifier MUST check `params`: names of 2 to 32 uppercase ASCII letters, digits or underscores, separated by a comma and one space, none repeated, each occurring in the command as a whole token or as the whole text after the first `=` of a token, and none as the program token (`params.invalid`).
 
 ## 21. Prohibited Pattern Checks
 The exact field names `next-guide`, `then-fetch`, `chain-to`, `follow-next` and `continue-with` are blocking as metadata keys (section 14) and are blocking in an action block as unknown keys (section 17).
@@ -378,7 +380,7 @@ The verifier MUST parse at least these manifest fields:
 The verifier MUST recompute SHA-256 over the fetched guide bytes and compare it with `guide-sha256`.
 The verifier MUST compare `guide-bytes` with the fetched byte count.
 The verifier MUST report a Level 4 conformance failure when manifest hash or byte count does not match.
-The verifier MUST validate manifest values before comparing them. `guide-sha256` MUST be 64 lowercase hexadecimal characters (proposed id `manifest.hash-invalid`). `guide-bytes` MUST be ASCII digits with no sign, separator or leading zero (`manifest.bytes-invalid`). A key that appears twice is blocking (proposed id `manifest.malformed`). An empty value is not a match and is not an absence: a manifest that is supplied and is not valid MUST produce a blocking finding.
+The verifier MUST validate manifest values before comparing them. `guide-sha256` MUST be 64 lowercase hexadecimal characters (`manifest.hash-invalid`). `guide-bytes` MUST be ASCII digits with no sign, separator or leading zero (`manifest.bytes-invalid`). A key that appears twice is blocking (`manifest.malformed`). An empty value is not a match and is not an absence: a manifest that is supplied and is not valid MUST produce a blocking finding.
 The verifier MAY continue Level 3 content evaluation after Level 4 failure.
 When `signature` is present, the verifier SHOULD report it. Signature verification is not required by this profile unless a future profile version makes it required.
 When `transparency-log-url` is present, the verifier SHOULD retrieve the referenced log entry and check it as a cross-channel anchor under section 23.
@@ -406,7 +408,7 @@ Same-origin discovery aids MUST NOT count as independent anchors:
 ## 24. Status and Staleness Checks
 The verifier MUST parse `status` when present.
 If `status: revoked`, the verifier MUST emit an error and achieved level MUST be no higher than Level 1.
-If `status: deprecated`, the verifier MUST emit an error (proposed id `metadata.status.deprecated`), the achieved level MUST be no higher than Level 2, and the verifier MUST report the `superseded-by` URL when it is present and satisfies the URL grammar.
+If `status: deprecated`, the verifier MUST emit an error (`metadata.status.deprecated`), the achieved level MUST be no higher than Level 2, and the verifier MUST report the `superseded-by` URL when it is present and satisfies the URL grammar.
 When `status` is `deprecated` or `revoked`, missing `superseded-by` is a finding.
 The verifier MUST parse `last-reviewed` when present.
 The verifier SHOULD parse `valid-until` when present.
@@ -457,6 +459,7 @@ The compact report's last line is the verdict. The verifier MUST render `Proceed
 - the achieved level is at least the level the caller required, when the caller required one
 Otherwise the verifier MUST render `Proceed? no` followed by a `Reason:` line carrying the first applicable phrase of `blocking findings`, `below Level 3`, `below the required level`.
 The exit status or response status of a verifier MUST agree with the verdict: a result that is not `Proceed? yes` MUST NOT be reported as success.
+A verifier that did not fetch a guide's Level 4 evidence MUST NOT emit an `error` for its absence (section 32), so that absence does not change the verdict.
 
 ## 26. Finding Severity
 The verifier MUST use these severities:
@@ -641,7 +644,7 @@ The fixture suite SHOULD include:
 - TLS failure cases
 Fixture expected outputs SHOULD specify normalized findings, not byte-for-byte full reports.
 Fixture-suite releases SHOULD eventually be signed and versioned once the suite becomes a stable conformance target.
-Equivalent verifier outputs MAY differ in wording but MUST agree on:
+Equivalent verifier outputs in the same evaluation mode MAY differ in wording but MUST agree on:
 - achieved level
 - blocking finding ids
 - warning finding ids required by the fixture
@@ -726,6 +729,15 @@ when a hash is observed; mismatching repository bytes emit
 `anchor.channel.unsupported` (warning) and MUST NOT qualify. All manifest and
 anchor errors MUST prevent Level 4. Anchor fields, qualification reasons and
 their precedence are as defined for profile 2.0.0.
+
+A verifier that evaluates a guide that declares `manifest-url` without fetching
+its Level 4 evidence reports `level4.requires-fetch` (info) and caps the level
+at 3. It MUST NOT emit
+`anchor.independent.missing` or any other error for evidence it did not fetch.
+A fetching verifier that completes its lookups and has no qualifying anchor for
+a guide that declares `manifest-url`, whether the channels were absent or
+unreachable, emits `anchor.independent.missing` (error). A hash or byte-count
+mismatch in evidence that was fetched or supplied is an error in every mode.
 
 The 3.0.0 report MUST identify `declared_version: 3.0.0`,
 `evaluated_policy: 3.0.0`, `content_policy: restricted-argv-1`, and
