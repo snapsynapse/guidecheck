@@ -75,8 +75,14 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
 - `profiles/` — versioned normative profile documents (`1.0.0/`, `2.0.0/`),
   each with `spec.md`, `verifier-conformance.md`, and `example-report.json`.
   `3.0.0/` holds draft, unreleased text for the `restricted-argv-1` profile:
-  `spec.md` and `verifier-conformance.md` only. It has no schemas, shape
-  registry, example report or fixtures yet, and no evaluator implements it.
+  `spec.md`, `verifier-conformance.md` and a hand-written `example-report.json`,
+  with draft schemas in `schemas/3.0.0/` (output, manifest, fixture
+  expectations, shape registry). The schemas are closed and bound every
+  string. `scripts/profile_3_0_0_invariants.py` holds the rules a schema
+  cannot state (verdict, derived compact report, refusal shape, registry
+  overlap, manifest text form); `scripts/test_profile_3_0_0_schemas.py`
+  covers both and pins the inventory of schema bounds.
+  It has no shape registry file or fixtures yet, and no evaluator implements it.
 - `decisions/` — AI decision records (currently AIDR-0001, same-control-plane
   repository anchors).
 - `api/` — `verify.py`, the hosted verifier function behind

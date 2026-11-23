@@ -254,7 +254,7 @@ regular file, and `level4.requires-fetch` is reported whenever a guide declares
 | `construct.code-fence` | error | A Level 3 guide contains a line with three consecutive backticks or tildes. |
 | `metadata.status.deprecated` | error | The guide status is `deprecated`. |
 | `manifest.hash-invalid` | error | Manifest `guide-sha256` is not 64 lowercase hexadecimal characters. |
-| `manifest.malformed` | error | A manifest key appears more than once. |
+| `manifest.malformed` | error | A manifest line is not in key, colon, space, value form, or a key appears more than once. |
 | `filesystem.cwd.invalid` | error | A `cwd` value is outside its grammar, or is absolute without required approval. |
 | `env.invalid` | error | An `env` value is not a list of valid variable names. |
 | `params.invalid` | error | A `params` value is not a list of valid names that each occur in the command. |

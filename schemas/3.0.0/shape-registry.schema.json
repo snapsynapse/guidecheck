@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/3.0.0/shape-registry.schema.json",
+  "title": "GuideCheck 3.0.0 Shape Registry",
+  "description": "Registry of exact invocation shapes for profile 3.0.0. An entry matches an argument vector of the same length, position by position. Three rules relate entries or positions to each other and are checked beside this schema, as verifier-conformance section 19 requires: ids are unique, no two entries match the same argument vector, and a pin slot names an existing local-ref position. Draft, unreleased.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "profile-version": {
+      "type": "string",
+      "const": "3.0.0"
+    },
+    "entries": {
+      "type": "array",
+      "maxItems": 512,
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$(?!\\n)"
+              },
+              "argv": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "description": "One element per argument-vector position. Position 0 is a literal program.",
+                "prefixItems": [
+                  {
+                    "type": "string",
+                    "pattern": "^(?:[A-Za-z0-9._+-]+|\\./[A-Za-z0-9._+-]+(?:/[A-Za-z0-9._+-]+)*)$(?!\\n)"
+                  }
+                ],
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9._+/:=@,-]{1,200}$(?!\\n)"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "slot": {
+                          "type": "string",
+                          "enum": [
+                            "local-ref",
+                            "https-url",
+                            "word",
+                            "number"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "slot"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "class-floor": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "normal",
+                    "networked",
+                    "destructive",
+                    "privileged",
+                    "persistence-changing",
+                    "data-accessing",
+                    "code-executing"
+                  ]
+                }
+              },
+              "execution": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "exempt"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "argv",
+              "class-floor",
+              "execution"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$(?!\\n)"
+              },
+              "argv": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "description": "One element per argument-vector position. Position 0 is a literal program.",
+                "prefixItems": [
+                  {
+                    "type": "string",
+                    "pattern": "^(?:[A-Za-z0-9._+-]+|\\./[A-Za-z0-9._+-]+(?:/[A-Za-z0-9._+-]+)*)$(?!\\n)"
+                  }
+                ],
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9._+/:=@,-]{1,200}$(?!\\n)"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "slot": {
+                          "type": "string",
+                          "enum": [
+                            "local-ref",
+                            "https-url",
+                            "word",
+                            "number"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "slot"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "class-floor": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "normal",
+                    "networked",
+                    "destructive",
+                    "privileged",
+                    "persistence-changing",
+                    "data-accessing",
+                    "code-executing"
+                  ]
+                }
+              },
+              "execution": {
+                "type": "string",
+                "const": "bound"
+              },
+              "pin": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "slot": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 31
+                      }
+                    },
+                    "required": [
+                      "slot"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "file": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9_+-][A-Za-z0-9._+-]*(?:/[A-Za-z0-9_+-][A-Za-z0-9._+-]*)*$(?!\\n)"
+                      }
+                    },
+                    "required": [
+                      "file"
+                    ]
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "argv",
+              "class-floor",
+              "execution",
+              "pin"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "profile-version",
+    "entries"
+  ]
+}

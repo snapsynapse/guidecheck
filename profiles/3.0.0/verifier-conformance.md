@@ -1,7 +1,8 @@
 Status: draft profile 3.0.0, unreleased. No released verifier implements this
 profile. Profiles 1.0.0 and 2.0.0 remain the released contracts and are not
-changed by this document. Sections 27 and 29 still describe the 2.0.0 output
-and fixture contracts; the 3.0.0 schemas and fixture suite do not exist yet.
+changed by this document. The 3.0.0 schemas are in `schemas/3.0.0/`. Section 29
+still lists the 2.0.0 fixture suite; the shape registry file and the 3.0.0
+fixture suite do not exist yet.
 
 # GuideCheck Verifier Conformance Profile
 
@@ -295,7 +296,7 @@ Allowed classes are:
 - `data-accessing`
 - `code-executing`
 The verifier MUST emit `action-block.approval.invalid` unless `approval` is `required` or `not-required`, and `action-block.runner.invalid` unless `runner` is `argv`.
-A finding MUST locate its line by number. The verifier MUST NOT copy an action id, a key, a value, or any other guide-authored text into a finding message or evidence field.
+A finding MUST locate its line by number. The verifier MUST NOT copy an action id, a key, a value, or any other guide-authored text into a finding.
 
 ## 18. Action Approval Checks
 The verifier MUST emit an error when an action whose class list includes any of the following has `approval: not-required`:
@@ -322,7 +323,7 @@ For a command in the grammar the verifier MUST:
 The verifier MUST NOT interpret any token as a prefix. `sudo` is a program name like any other.
 
 ### Tier assignment
-The verifier MUST load the shape registry of the declared profile version and MUST assign each action to exactly one tier.
+The verifier MUST load the shape registry of the declared profile version and MUST assign each action to exactly one tier. The registry MUST validate against the versioned [registry schema](../../schemas/3.0.0/shape-registry.schema.json). The schema requires position 0 of every entry to be a literal program. The verifier MUST also refuse a registry in which two entries share an `id`, in which a `pin` slot does not name an existing `local-ref` position of its entry, or in which a literal element has a parent-directory component under rule G3. No command may contain such a token, so an entry that requires one can never match.
 An action is shape-listed when its argument vector matches a registry entry: equal length, and at every position either the exact string or a slot of the stated type (`local-ref`, `https-url`, `word`, `number`, as defined in guide-profile section 12). No entry matches a prefix of an argument vector. A registry in which two entries can match the same argument vector is invalid, and the verifier MUST refuse to use it. An action that declares `params` is never shape-listed.
 For a shape-listed action the verifier MUST emit:
 - `action-block.class.under-declared` when the declared classes do not include every class in the entry's floor
@@ -380,7 +381,7 @@ The verifier MUST parse at least these manifest fields:
 The verifier MUST recompute SHA-256 over the fetched guide bytes and compare it with `guide-sha256`.
 The verifier MUST compare `guide-bytes` with the fetched byte count.
 The verifier MUST report a Level 4 conformance failure when manifest hash or byte count does not match.
-The verifier MUST validate manifest values before comparing them. `guide-sha256` MUST be 64 lowercase hexadecimal characters (`manifest.hash-invalid`). `guide-bytes` MUST be ASCII digits with no sign, separator or leading zero (`manifest.bytes-invalid`). A key that appears twice is blocking (`manifest.malformed`). An empty value is not a match and is not an absence: a manifest that is supplied and is not valid MUST produce a blocking finding.
+The parsed manifest MUST validate against the versioned [manifest schema](../../schemas/3.0.0/manifest.schema.json), which applies the URL grammar to every URL field of the manifest. The manifest text is read as lines ending at LF. A blank line is skipped; every other line is a key of lowercase ASCII letters, digits and hyphens, a colon, one space, and a printable ASCII value with no leading or trailing space. A line of any other form is blocking (`manifest.malformed`). The verifier MUST validate manifest values before comparing them. `guide-sha256` MUST be 64 lowercase hexadecimal characters (`manifest.hash-invalid`). `guide-bytes` MUST be ASCII digits with no sign, separator or leading zero (`manifest.bytes-invalid`). A key that appears twice is blocking (`manifest.malformed`). An empty value is not a match and is not an absence: a manifest that is supplied and is not valid MUST produce a blocking finding.
 The verifier MAY continue Level 3 content evaluation after Level 4 failure.
 When `signature` is present, the verifier SHOULD report it. Signature verification is not required by this profile unless a future profile version makes it required.
 When `transparency-log-url` is present, the verifier SHOULD retrieve the referenced log entry and check it as a cross-channel anchor under section 23.
@@ -417,7 +418,7 @@ The verifier SHOULD warn when:
 - `valid-until` is in the past
 - `valid-until` is malformed
 - dates are in the future in a way that appears erroneous
-The verifier MUST report the date and time used for staleness evaluation.
+The verifier MUST report the date and time used for staleness evaluation, as `evaluated_at`.
 
 ## 25. Level Calculation
 The verifier MUST calculate `achieved_level` from evidence.
@@ -466,138 +467,67 @@ The verifier MUST use these severities:
 - `error`: blocks the claimed or target conformance level
 - `warning`: does not block the achieved level but should be reviewed
 - `info`: observational evidence
-The verifier MAY include implementation-specific severities in an extension field, but MUST map them to `error`, `warning`, or `info`.
-A finding MUST NOT contain guide-authored text. Messages are fixed strings, location is a line number, and an evidence field carries only values the verifier computed. Outside findings, a report may render a guide value only when it is a URL field that satisfies the URL grammar.
+A finding MUST NOT contain guide-authored text, and under this profile it contains no message text at all. A finding is an id, a severity, a location, and values the verifier computed. What an id means is defined by this profile and by `finding-ids.md`; a report renderer supplies wording from there. A verifier has no field in which to describe a guide in its own words, so it cannot be led into repeating the guide's.
 Every finding MUST include:
-- stable finding id
+- stable finding id, registered in `finding-ids.md`
 - severity
-- message
-- evidence location when available
-- affected profile section when available
-- remediation text when available
+A finding SHOULD include, when available:
+- the line, and the column, of the evidence
+- the affected profile section
 
 ## 27. Required Output Schema
-A conformant verifier MUST emit machine-readable output.
-The following complete example conforms to the versioned output schema:
-```json
-{
-  "verifier": {
-    "name": "guidecheck-hosted",
-    "version": "1.0.0",
-    "verifier_profile": "human-verifiable-assistant-guide-verifier",
-    "verifier_profile_version": "2.0.0",
-    "guide_profile": "human-verifiable-assistant-guide",
-    "guide_profile_version": "2.0.0"
-  },
-  "input": {
-    "evaluation_mode": "public-web",
-    "url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
-    "submitted_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
-    "auto_resolved": false
-  },
-  "outcome": "evaluated",
-  "fetch": {
-    "final_url": "https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt",
-    "fetched_at": "2026-09-05T20:00:00Z",
-    "http_status": 200,
-    "headers": {
-      "content-type": "text/plain; charset=utf-8",
-      "x-content-type-options": "nosniff",
-      "strict-transport-security": "max-age=31536000"
-    },
-    "redirects": [],
-    "tls_valid": true,
-    "bytes": 3403
-  },
-  "guide": {
-    "bytes": 3403,
-    "sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
-    "achieved_level": 4,
-    "level5_ready": true
-  },
-  "summary": {
-    "blocking_findings": 0,
-    "warnings": 1,
-    "infos": 1
-  },
-  "findings": [
-    {
-      "id": "metadata.last-reviewed.age",
-      "severity": "info",
-      "message": "last-reviewed is 109 days old"
-    },
-    {
-      "id": "anchor.repository-file.independence-unestablished",
-      "severity": "warning",
-      "message": "repository hash evidence does not establish independent provenance and cannot qualify for Level 4"
-    }
-  ],
-  "hosted_limitations": [
-    "Profile 2.0.0 uses the 1.0.0 strict anchor policy and excludes repository-file hashes from Level 4 qualification.",
-    "This verifier evaluates Levels 1 through 4 when supported Level 4 evidence is available.",
-    "Hosted Level 4 supports package-registry, transparency-log, DNS TXT (resolved via DNS-over-HTTPS), and repository-file anchors. The repository-file allowlist is currently scoped to github.com; signed security.txt anchors are not fetched.",
-    "DNS TXT lookups use cloudflare-dns.com as the DoH resolver; DNSSEC validation is taken from the resolver's AD bit.",
-    "Hosted verification uses a seven-fetch per-request budget across guide, variation, manifest, and anchor fetches.",
-    "Level 5 runtime conformance is not evaluated."
-  ],
-  "manifest": {
-    "sha256": "9baa7da9113c2f3bda96251889a8a605385cc8b87fde3c9d91c32ac059c52241",
-    "fetched": true,
-    "hash_match": true,
-    "bytes_match": true,
-    "valid": true,
-    "guide_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e"
-  },
-  "cross_channel_anchors": [
-    {
-      "channel": "dns-txt",
-      "status": "present-matches",
-      "observed_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
-      "qualifies_for_level4": true,
-      "qualification_reason": "qualifying-channel",
-      "evidence_url": "https://cloudflare-dns.com/dns-query?name=_assistant-guide.snapsynapse.github.io&type=TXT",
-      "fetched_at": "2026-09-05T20:00:00Z",
-      "redirects": []
-    },
-    {
-      "channel": "repository-file",
-      "status": "present-matches",
-      "observed_sha256": "dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e",
-      "qualifies_for_level4": false,
-      "qualification_reason": "repository-independence-unestablished",
-      "independence": "unestablished",
-      "evidence_url": "https://raw.githubusercontent.com/snapsynapse/compat/HEAD/docs/.well-known/assistant-guide.txt",
-      "fetched_at": "2026-09-05T20:00:00Z",
-      "redirects": []
-    }
-  ],
-  "location_note": "This guide was verified at https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt, which is not the standard location. A conformant guide must be named assistant-guide.txt and served at https://snapsynapse.github.io/.well-known/assistant-guide.txt so assistants can discover it. Move or copy the file there.",
-  "compact_report": "Verifier: guidecheck-hosted 1.0.0\nGuide: https://snapsynapse.github.io/compat/.well-known/assistant-guide.txt\nProfile: 2.0.0 (declared 2.0.0)\nContent policy: corrected-content-1\nAnchor policy: 1.0.0-strict\nQualifying anchors: 1\nRepository hash: present-matches; independent provenance: unestablished; counts toward Level 4: no\nLevel: 4\nSHA-256: dcc28648441d8c5270984bd319850007470421e2c64428383cd481ca9be16c7e\nBlocking findings: 0\nWarnings: 1\nHash pinned: yes\nProceed? yes",
-  "profile_selection": {
-    "declared_version": "2.0.0",
-    "evaluated_policy": "2.0.0",
-    "content_policy": "corrected-content-1",
-    "anchor_policy": "1.0.0-strict"
-  },
-  "qualifying_anchor_count": 1
-}
-```
-The verifier MUST be able to render the same evidence as human-readable text.
-The verifier SHOULD include a compact verification report:
+A conformant verifier MUST emit machine-readable output that validates against the versioned [output schema](../../schemas/3.0.0/verifier-output.schema.json). The [complete example](example-report.json) in this directory conforms to it.
+The schema is closed. Every object rejects unknown fields, and every string is bounded by a pattern, a list or a constant. A conforming output therefore has no field that can hold free text, and a verifier MUST NOT add one. The schema bounds the form of each value. It cannot establish where a value came from. Three kinds of value remain that someone other than the verifier chose: the caller's `input.path` and `input.url`, the guide's URL fields, and the verifier's own name. Each is held to a narrow character set with no spaces. Fixtures plant marker text in a guide and require that none of it occurs anywhere in the serialized output.
+The output MUST include:
+- `verifier`: name and version as short tokens of letters, digits, `.`, `_`, `+` and `-`, and the verifier-profile and guide-profile versions, both `3.0.0`
+- `input`: `evaluation_mode`, `repository_read`, and `required_level` when the caller required a level
+- `evaluated_at`: the UTC time used for every date comparison
+- `guide`: `bytes`, `sha256`, `achieved_level` and `status`; `canonical_url` when the declared value satisfies the URL grammar; `superseded_by` when the guide is deprecated or revoked and the declared value satisfies the URL grammar
+- `actions`: `total`, `shape_listed` and `opaque`, counted over every exact action block. An action whose command is outside the grammar matches no shape and counts as opaque
+- `summary`: the number of findings at each severity
+- `findings`: each with `id` and `severity`, and optionally `section`, `line`, `column` and `evidence`. There is no message or remediation field
+- `verdict`: `proceed`, and `reason` when `proceed` is false
+- `compact_report`
+- `profile_selection` and `qualifying_anchor_count`
+In public-web evaluation the output MUST include `fetch`, with the final URL, the HTTP status and TLS validity. Nothing the server sent is copied. `fetch.content_type` is `text/plain` or `other`, `fetch.nosniff` says whether that header was set, and a redirect target outside the URL grammar is reported as a finding and omitted.
+`section` names a section of this profile or of the guide profile, as `verifier-conformance.<n>` or `spec.<n>`. `evidence` is an object limited to values the verifier computed: hashes, counts, limits and a channel name. `input.url` and `input.path` are caller input. In `input.path` every byte other than a letter, a digit, or one of `.`, `_`, `/`, `+`, `@` and `-` is replaced by an underscore. Neither is guide text, and neither is rendered on the `Guide:` line when the guide has a valid `canonical-url`. Local paths of a manifest or of anchor evidence are not reported.
+
+### Report invariants
+Schema validation is necessary and not sufficient. A conforming output also satisfies every relation below, which no schema can state:
+- `actions.total` equals `actions.shape_listed` plus `actions.opaque`
+- each `summary` count equals the number of findings at that severity
+- `verdict` is the value section 25 derives from the blocking count, the achieved level and `input.required_level`, with the first applicable reason
+- `compact_report` equals, byte for byte, the rendering defined below
+- `byte-profile.size-limit` is reported, always as an error, exactly when `guide.bytes` exceeds 8192; such a result has `achieved_level` 0, `status` `unknown`, every action count zero, no `canonical_url`, no `shape_registry_sha256`, and no other finding. `status` is `unknown` in no other case
+- Level 3 or above requires `status` `active` and at least one action
+- a deprecated guide has `achieved_level` at most 2 and carries `metadata.status.deprecated`; a revoked guide has at most 1 and carries `metadata.status.revoked`
+- `shape_registry_sha256`, the SHA-256 of the registry file the verifier used, is present exactly when `actions.total` is above zero
+- `level5_ready` is true only at Level 4
+- `qualifying_anchor_count` equals the number of anchors with `qualifies_for_level4`; such an anchor is a matching anchor on a qualifying channel, never a repository file, and never appears in local-file evaluation
+- Level 4 requires public-web evaluation, a fetched and valid manifest whose hash and byte count match, and at least one qualifying anchor
+- `fetch` is present exactly in public-web evaluation, and local-file evaluation reports `input.path`
+- every finding `id` is registered in `finding-ids.md`. A consumer that checks these relations MUST have the registry; without it the check is not complete
+The repository's reference statement of these relations is `scripts/profile_3_0_0_invariants.py`.
+
+### Compact report
+The verifier MUST be able to render the same evidence as human-readable text. The compact report is this rendering and nothing else:
 ```text
 Verifier: <name> <version>
 Guide: <canonical-url>
-Profile: 2.0.0 (declared <declared-version>)
-Content policy: corrected-content-1
+Profile: 3.0.0
+Content policy: restricted-argv-1
 Anchor policy: 1.0.0-strict
 Qualifying anchors: <count>
 Level: <achieved-level>
 SHA-256: <guide-sha256>
+Actions: <count> (<count> shape-listed, <count> opaque)
 Blocking findings: <count>
 Warnings: <count>
 Hash pinned: yes/no
 Proceed? yes/no
 ```
+`Guide:` carries `guide.canonical_url` when present, otherwise `input.path`, otherwise `n/a`. `Hash pinned:` is `yes` at Level 4 and `n/a` below it. The last line is `Proceed? yes` or `Proceed? no`; when it is `no`, one more line follows, `Reason: ` and the phrase in `verdict.reason`. Lines are joined by LF with no trailing LF.
+Because the compact report is derived, it cannot carry a line the other fields do not justify.
 The compact report is not a substitute for full output.
 
 ## 28. Output Integrity and Reproducibility
@@ -614,6 +544,7 @@ The verifier MAY sign its machine-readable output. Signed output is recommended 
 The verifier MUST NOT include secrets, cookies, authorization headers, or private network details in public reports.
 
 ## 29. Fixture Suite Conformance
+Fixture expectations for this profile validate against the versioned [fixture schema](../../schemas/3.0.0/fixture-expected.schema.json). Every id list in an expectation is exact.
 A verifier is conformant only if it passes the fixture suite for the declared verifier-profile version.
 The fixture suite SHOULD include:
 - valid Level 1 guide
@@ -749,6 +680,12 @@ final selected evaluation. Neither a positive conformance result nor
 Legacy and released output schemas and reports MUST NOT acquire new required
 fields, new policy warnings, or new semantics. Software/package version,
 selected engine version, profile version, and published self-guide version are
-independent. The 3.0.0 output schema, manifest schema, shape registry and
-example report are not yet published; this draft cannot be implemented to
-conformance until they are.
+independent.
+
+The versioned [output schema](../../schemas/3.0.0/verifier-output.schema.json),
+[manifest schema](../../schemas/3.0.0/manifest.schema.json),
+[fixture schema](../../schemas/3.0.0/fixture-expected.schema.json) and
+[registry schema](../../schemas/3.0.0/shape-registry.schema.json), with the
+[complete example](example-report.json), define the 3.0.0 contracts. The shape
+registry file itself and the fixture suite are not yet published; this draft
+cannot be implemented to conformance until they are.

@@ -1,6 +1,8 @@
 Status: draft profile 3.0.0, unreleased. No released verifier evaluates this
 profile and no published guide should declare it yet. Profiles 1.0.0 and 2.0.0
-remain the released contracts and are not changed by this document.
+remain the released contracts and are not changed by this document. Its schemas
+are in `schemas/3.0.0/`; its shape registry file and fixture suite do not exist
+yet.
 
 # GuideCheck Human-Verifiable Assistant Guide Profile
 
@@ -617,10 +619,10 @@ A verifier assigns every action to one of two tiers. There is no third tier for 
 
 Shape-listed. The profile carries a registry of exact invocation shapes, the file `shape-registry.json` in this profile's directory. An action is shape-listed only when its whole argument vector matches one registry entry. A recognized program with an unlisted option, subcommand, or argument count is not shape-listed.
 
-The registry is a JSON object with a `profile-version` string and an `entries` array. Each entry has:
+The registry is a JSON object with a `profile-version` string and an `entries` array, and validates against `schemas/3.0.0/shape-registry.schema.json`. Each entry has:
 
-- `id`: a unique name for the shape
-- `argv`: an array with one element per argument-vector position. An element is either a string, which matches only that exact token, or a slot object `{"slot": "<type>"}`
+- `id`: a name for the shape, unique within the registry
+- `argv`: an array with one element per argument-vector position. An element is either a string, which matches only that exact token, or a slot object `{"slot": "<type>"}`. The element at position 0 MUST be a string: no entry has a wildcard program. A string element MUST itself satisfy rule G3
 - `class-floor`: an array of categories the action MUST declare
 - `execution`: `none`, `exempt`, or `bound`
 - `pin`, required when `execution` is `bound`: either `{"slot": <index>}` naming the `local-ref` position whose file is pinned, or `{"file": "<relative path>"}` naming a file relative to `cwd`, such as a dispatch manifest
@@ -1036,7 +1038,7 @@ A verifier for this profile SHOULD:
 - enumerate every cross-channel hash anchor it can find (DNS TXT `_assistant-guide.<domain>`, package registry metadata, signed security.txt, transparency log) and compare each against the manifest hash, and compare a public repository file as corroborating evidence only; emit a failure on divergence; when no independent channel is present, emit an info finding, or an error when the verifier fetched the evidence and the guide declares `manifest-url`
 - record which channels were checked and which were unreachable; absence of an optional channel is an info finding, not an error
 - report the `last-reviewed` age as an informational finding, and warn when `valid-until` is in the past or malformed; there is no fixed `last-reviewed` expiry, because only the publisher's `valid-until` is a non-arbitrary staleness signal
-- emit structured evidence and remediation, not only a score
+- emit structured evidence, not only a score
 
 A verifier MUST NOT execute commands from the guide.
 
@@ -1049,6 +1051,9 @@ Assistants and verifier UIs SHOULD present a compact report before asking the us
 Verifier: <name> <version>
 Guide: <canonical-url>
 Profile: 3.0.0
+Content policy: restricted-argv-1
+Anchor policy: 1.0.0-strict
+Qualifying anchors: <count>
 Level: <achieved-level>
 SHA-256: <guide-sha256>
 Actions: <count> (<count> shape-listed, <count> opaque)
@@ -1073,7 +1078,9 @@ Field rendering by achieved level:
 - `SHA-256` is rendered as the computed value at Level 2 and above; at Level 1 the verifier MAY render the value if computed, otherwise `n/a`
 - `Hash pinned` is rendered `yes` only when a manifest is present and the manifest hash matches the fetched bytes; at Level 3 and below this field is rendered `n/a`
 - `Level` is the achieved level; verifiers MUST NOT render `5` for guide-only evaluation (see section 18 Level 5)
-- `Guide` is rendered from a value that satisfies the URL grammar of section 11. A local path is rendered with every byte outside printable ASCII replaced, so a file name cannot add a line to the report
+- `Guide` is the guide's `canonical-url` when it satisfies the URL grammar of section 11. Otherwise it is the local path the caller supplied, with every byte other than a letter, a digit, or one of `.`, `_`, `/`, `+`, `@` and `-` replaced by an underscore, so a file name cannot add a line or a sentence to the report
+
+The compact report is derived from the machine-readable output and from nothing else. The Verifier Conformance Profile, section 27, defines the rendering exactly.
 
 ## 22. Acceptance Checklist
 
@@ -1143,17 +1150,23 @@ A future revision of this specification may revisit this position if Unicode sec
 
 ## 26. Verifier Output Schema
 
-A verifier SHOULD emit machine-readable output alongside any human-readable report. The normative machine-readable output shape is defined by the Verifier Conformance Profile section 27. The schema for this profile will be published under `schemas/3.0.0/` before the profile is released; none exists for this draft.
+A verifier SHOULD emit machine-readable output alongside any human-readable report. The normative machine-readable output shape is defined by the Verifier Conformance Profile section 27 and by `schemas/3.0.0/verifier-output.schema.json`.
 
 The top-level JSON-compatible form is:
 ```text
 {
   "verifier": {},
   "input": {},
+  "evaluated_at": "",
   "fetch": {},
   "guide": {},
+  "actions": {},
   "summary": {},
-  "findings": []
+  "findings": [],
+  "verdict": {},
+  "compact_report": "",
+  "profile_selection": {},
+  "qualifying_anchor_count": 0
 }
 ```
 

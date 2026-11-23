@@ -1,0 +1,537 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/3.0.0/verifier-output.schema.json",
+  "title": "GuideCheck 3.0.0 Verifier Output",
+  "description": "Machine-readable output for a guide evaluated under profile 3.0.0 (content policy restricted-argv-1). Every object is closed and every string is bounded by a pattern, so a conforming output has no free-text field. The schema bounds form only: the relations between fields are the report invariants of verifier-conformance section 27. Draft, unreleased.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._+-]{1,64}$(?!\\n)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._+-]{1,64}$(?!\\n)"
+        },
+        "verifier_profile": {
+          "type": "string",
+          "const": "human-verifiable-assistant-guide-verifier"
+        },
+        "verifier_profile_version": {
+          "type": "string",
+          "const": "3.0.0"
+        },
+        "guide_profile": {
+          "type": "string",
+          "const": "human-verifiable-assistant-guide"
+        },
+        "guide_profile_version": {
+          "type": "string",
+          "const": "3.0.0"
+        },
+        "build_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._+-]{1,64}$(?!\\n)"
+        },
+        "fixture_suite_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._+-]{1,64}$(?!\\n)"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "verifier_profile",
+        "verifier_profile_version",
+        "guide_profile",
+        "guide_profile_version"
+      ]
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evaluation_mode": {
+          "type": "string",
+          "enum": [
+            "public-web",
+            "local-file"
+          ]
+        },
+        "repository_read": {
+          "type": "boolean",
+          "description": "Whether the verifier read repository files."
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?(?:\\?[A-Za-z0-9._=&-]{1,200})?$(?!\\n)",
+          "description": "The URL the caller submitted. Caller input, not guide text."
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._/+@-]{1,300}$(?!\\n)",
+          "description": "Local path the caller supplied, with every byte outside letters, digits and . _ / + @ - replaced by an underscore. Caller input, not guide text."
+        },
+        "required_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Minimum level the caller required, when one was required."
+        },
+        "expected_canonical_url": {
+          "type": "string",
+          "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+        },
+        "expected_guide_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?!\\n)"
+        }
+      },
+      "required": [
+        "evaluation_mode",
+        "repository_read"
+      ]
+    },
+    "evaluated_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$(?!\\n)",
+      "description": "UTC time used for every date comparison in this evaluation."
+    },
+    "fetch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "final_url": {
+          "type": "string",
+          "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+        },
+        "http_status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "tls_valid": {
+          "type": "boolean"
+        },
+        "content_type": {
+          "type": "string",
+          "enum": [
+            "text/plain",
+            "other"
+          ],
+          "description": "Whether the server declared text/plain. No text from the server is copied."
+        },
+        "nosniff": {
+          "type": "boolean"
+        },
+        "redirects": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "from": {
+                "type": "string",
+                "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+              },
+              "to": {
+                "type": "string",
+                "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+              },
+              "status": {
+                "type": "integer",
+                "minimum": 300,
+                "maximum": 399
+              }
+            },
+            "description": "`to` is omitted when the target is outside the URL grammar; the verifier reports a finding and does not copy it.",
+            "required": [
+              "from",
+              "status"
+            ]
+          }
+        }
+      },
+      "description": "Required in public-web evaluation. Header values from the server are never copied.",
+      "required": [
+        "final_url",
+        "http_status",
+        "tls_valid"
+      ]
+    },
+    "guide": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?!\\n)"
+        },
+        "achieved_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Level 5 is never reported for a guide alone."
+        },
+        "level5_ready": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "deprecated",
+            "revoked",
+            "unknown"
+          ],
+          "description": "unknown when the guide was refused before its metadata was read."
+        },
+        "canonical_url": {
+          "type": "string",
+          "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)",
+          "description": "The guide's canonical-url, reported only when it satisfies the URL grammar."
+        },
+        "superseded_by": {
+          "type": "string",
+          "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)",
+          "description": "Reported only when declared and valid under the URL grammar."
+        }
+      },
+      "required": [
+        "bytes",
+        "sha256",
+        "achieved_level",
+        "status"
+      ]
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shape_listed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "opaque": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "total",
+        "shape_listed",
+        "opaque"
+      ],
+      "description": "Tier counts over every exact action block."
+    },
+    "shape_registry_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$(?!\\n)",
+      "description": "SHA-256 of the shape registry file the verifier used. Present whenever the guide has an action block."
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?!\\n)"
+        },
+        "fetched": {
+          "type": "boolean"
+        },
+        "hash_match": {
+          "type": "boolean"
+        },
+        "bytes_match": {
+          "type": "boolean"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "guide_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?!\\n)"
+        }
+      },
+      "required": [
+        "fetched",
+        "valid"
+      ]
+    },
+    "cross_channel_anchors": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "dns-txt",
+              "package-registry",
+              "repository-file",
+              "signed-security-txt",
+              "transparency-log"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "present-matches",
+              "present-mismatch",
+              "unreachable",
+              "absent"
+            ]
+          },
+          "evidence_url": {
+            "type": "string",
+            "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?(?:\\?[A-Za-z0-9._=&-]{1,200})?$(?!\\n)",
+            "description": "Lookup URL the verifier built from validated values."
+          },
+          "observed_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$(?!\\n)"
+          },
+          "qualifies_for_level4": {
+            "type": "boolean"
+          },
+          "qualification_reason": {
+            "type": "string",
+            "enum": [
+              "qualifying-channel",
+              "repository-independence-unestablished",
+              "local-evidence-not-fetched",
+              "hash-mismatch",
+              "unreachable",
+              "absent"
+            ]
+          },
+          "independence": {
+            "type": "string",
+            "const": "unestablished"
+          },
+          "fetched_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$(?!\\n)"
+          }
+        },
+        "required": [
+          "channel",
+          "status",
+          "qualifies_for_level4",
+          "qualification_reason"
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "blocking_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "infos": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "blocking_findings",
+        "warnings",
+        "infos"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$(?!\\n)"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "section": {
+            "type": "string",
+            "pattern": "^(?:spec|verifier-conformance)\\.[0-9]{1,2}(?:\\.[0-9]{1,2})?$(?!\\n)"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "observed_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$(?!\\n)"
+              },
+              "expected_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$(?!\\n)"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "days": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "channel": {
+                "type": "string",
+                "enum": [
+                  "dns-txt",
+                  "package-registry",
+                  "repository-file",
+                  "signed-security-txt",
+                  "transparency-log"
+                ]
+              }
+            }
+          }
+        },
+        "description": "An id, a location, and values the verifier computed. A finding carries no message text; the meaning of an id is defined by the profile and its finding registry.",
+        "required": [
+          "id",
+          "severity"
+        ]
+      }
+    },
+    "verdict": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "proceed": {
+              "type": "boolean",
+              "const": true
+            }
+          },
+          "required": [
+            "proceed"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "proceed": {
+              "type": "boolean",
+              "const": false
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "blocking findings",
+                "below Level 3",
+                "below the required level"
+              ]
+            }
+          },
+          "required": [
+            "proceed",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "compact_report": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Exactly the rendering of the other fields defined in verifier-conformance section 27."
+    },
+    "profile_selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "declared_version": {
+          "type": "string",
+          "const": "3.0.0"
+        },
+        "evaluated_policy": {
+          "type": "string",
+          "const": "3.0.0"
+        },
+        "content_policy": {
+          "type": "string",
+          "const": "restricted-argv-1"
+        },
+        "anchor_policy": {
+          "type": "string",
+          "const": "1.0.0-strict"
+        }
+      },
+      "required": [
+        "declared_version",
+        "evaluated_policy",
+        "content_policy",
+        "anchor_policy"
+      ]
+    },
+    "qualifying_anchor_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "verifier",
+    "input",
+    "guide",
+    "actions",
+    "summary",
+    "findings",
+    "verdict",
+    "compact_report",
+    "profile_selection",
+    "qualifying_anchor_count",
+    "evaluated_at"
+  ]
+}

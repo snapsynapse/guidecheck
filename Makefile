@@ -70,6 +70,7 @@ test-corrected-content:
 .PHONY: test-restricted-argv
 test-restricted-argv:
 	python3 scripts/test_restricted_argv.py
+	python3 scripts/test_profile_3_0_0_schemas.py
 
 test-legacy-anchor-compatibility:
 	python3 scripts/test_legacy_anchor_compatibility.py

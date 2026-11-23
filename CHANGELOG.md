@@ -13,8 +13,18 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
   exact, sorts every action into a shape-listed or opaque tier, makes prose
   scans advisory, and ties the `Proceed?` line to Level 3 and to any level the
   caller requires. The text is unreleased: no verifier evaluates it, the
-  dispatcher still refuses 3.0.0, and its schemas, shape registry and fixtures
-  do not exist yet. Profiles 1.0.0 and 2.0.0 are unchanged.
+  dispatcher still refuses 3.0.0, and its shape registry and fixtures do not
+  exist yet. Profiles 1.0.0 and 2.0.0 are unchanged.
+- Add draft schemas for profile 3.0.0 in `schemas/3.0.0/` (verifier output,
+  manifest, fixture expectations and the shape registry), an example report,
+  `scripts/profile_3_0_0_invariants.py` for the relations between fields that
+  a schema cannot state, and `scripts/test_profile_3_0_0_schemas.py`. The
+  3.0.0 output schema is closed and bounds every string. The contract
+  3.0.0 output has no message or other free-text field in a finding. The
+  contract validator gains `minItems` and `maxItems`, which no earlier schema
+  uses, and an opt-in strict mode (`prefixItems`, boolean subschemas,
+  schema-valued `additionalProperties`) that only the 3.0.0 tests turn on, so
+  every released schema check behaves as before.
 - Add `scripts/guidecheck_restricted.py`, the first slice of the opt-in
   `restricted-argv-1` content policy selected in `INTENT.md` for a future
   profile 3.0.0, with `scripts/test_restricted_argv.py`. The slice covers a

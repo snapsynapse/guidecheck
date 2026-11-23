@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/3.0.0/manifest.schema.json",
+  "title": "GuideCheck 3.0.0 Manifest",
+  "description": "Sidecar manifest for an assistant-guide.txt artifact at Level 4, as parsed. The text form allows no repeated key and writes guide-bytes as plain digits with no sign, separator or leading zero; those rules are checked on the text, before this schema applies. Draft, unreleased.",
+  "type": "object",
+  "additionalProperties": {
+    "type": "string",
+    "pattern": "^[ -~]{1,300}$(?!\\n)"
+  },
+  "required": [
+    "guide-path",
+    "guide-version",
+    "guide-sha256",
+    "guide-bytes",
+    "immutable-release-url",
+    "profile",
+    "profile-version"
+  ],
+  "properties": {
+    "guide-path": {
+      "type": "string",
+      "pattern": "^/[A-Za-z0-9._+@-]+(?:/[A-Za-z0-9._+@-]+)*$(?!\\n)"
+    },
+    "guide-version": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*)|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:(?:0|[1-9][0-9]*)|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$(?!\\n)"
+    },
+    "guide-sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$(?!\\n)"
+    },
+    "guide-bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8192
+    },
+    "immutable-release-url": {
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[ -~]{1,300}$(?!\\n)"
+    },
+    "transparency-log-url": {
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+    },
+    "profile": {
+      "type": "string",
+      "const": "human-verifiable-assistant-guide"
+    },
+    "profile-version": {
+      "type": "string",
+      "const": "3.0.0"
+    },
+    "canonical-url": {
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+    },
+    "repository-url": {
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+    },
+    "released-at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$(?!\\n)"
+    },
+    "changelog-url": {
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+(?:/[A-Za-z0-9._+@-]+)*/?$(?!\\n)"
+    }
+  }
+}
