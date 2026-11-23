@@ -237,6 +237,16 @@ own docstring states.
 | `command.path.escape` | error | A command contains a parent-directory component. |
 | `command.path.absolute` | error | A command contains an absolute path and the action does not require approval. |
 
+The draft text in `profiles/3.0.0/` also names the ids below. No code emits
+them yet. Ids that the draft marks as proposed are not listed here.
+
+| ID | Severity | Trigger |
+|---|---|---|
+| `command.local-ref.unpinned` | error | A local reference that requires a pin has no `exec-sha256`, or an action has more than one. |
+| `action-block.class.under-declared` | error | An action's declared classes do not include its tier's class floor. |
+| `action.program-opaque` | warning | An action's command matches no registry shape and is treated as arbitrary code execution. |
+| `egress.pattern` | error | An `egress` value is not `none` or a list of valid host patterns. |
+
 ## Change control
 
 Finding ids are part of the verifier fixture contract. Renaming or removing a

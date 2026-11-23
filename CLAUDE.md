@@ -74,6 +74,9 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
     `test_*.py` files — CI-run checks invoked via `make test`.
 - `profiles/` — versioned normative profile documents (`1.0.0/`, `2.0.0/`),
   each with `spec.md`, `verifier-conformance.md`, and `example-report.json`.
+  `3.0.0/` holds draft, unreleased text for the `restricted-argv-1` profile:
+  `spec.md` and `verifier-conformance.md` only. It has no schemas, shape
+  registry, example report or fixtures yet, and no evaluator implements it.
 - `decisions/` — AI decision records (currently AIDR-0001, same-control-plane
   repository anchors).
 - `api/` — `verify.py`, the hosted verifier function behind

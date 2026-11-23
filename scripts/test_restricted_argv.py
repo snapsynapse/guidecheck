@@ -528,8 +528,8 @@ class CommandGrammarTests(unittest.TestCase):
         _, argv = restricted.check_command("tool a=b c:d ./e")
         self.assertEqual(argv, ("tool", "a=b", "c:d", "./e"))
 
-    def test_no_prefix_is_interpreted_yet(self):
-        """The privilege prefix rule is undecided; this slice strips nothing."""
+    def test_no_token_is_a_prefix(self):
+        """The profile has no privilege prefix: `sudo` is an ordinary program token."""
         found, argv = restricted.check_command("sudo rm -r ./build")
         self.assertEqual(found, ())
         self.assertEqual(argv[0], "sudo")

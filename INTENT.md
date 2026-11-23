@@ -110,6 +110,10 @@ counterparty requesting conformance checking. This does not change GuideCheck's
 standard scope or authorize a cross-standard certification product. The September
 5 session implements existing bounded-execution obligations as maintenance.
 
+Decided by Sam on 2026-11-22: his selection of active development on 2026-11-13
+supersedes the June 9 parking of new investment. The revisit triggers above are
+kept as a record of the earlier disposition and no longer gate work.
+
 ## Format over tool
 
 Decided by Sam on 2026-11-11, after a second local security audit and a review
@@ -129,8 +133,9 @@ as they are until a new profile is explicitly selected.
 2. Level 3 restricted command grammar. A new opt-in profile (working identity
    3.0.0, policy `restricted-argv-1`) replaces denylist command checks with an
    allowlist grammar: argv-only commands over a fixed character set. Sam assigned
-   the draft's open design questions to the build session. The draft is local
-   and unpublished.
+   the draft's open design questions to the build session and answered them on
+   2026-11-22. The answers are carried by the draft profile text in
+   `profiles/3.0.0/`, which is unreleased.
 3. Level 4 as a signed-artifact requirement. Level 4 moves toward requiring a
    standard signature bundle over the guide hash with a named signer, with
    verification delegated to existing verifiers and the result stated relative
@@ -146,9 +151,10 @@ Sequence selected by Sam: a security containment tranche first, then the Level 3
 build, then promotion planning. Directions 1 and 3 have no implementation
 scheduled.
 
-Not stated by Sam and recorded as open: whether direction 2 is maintenance under
-the June 9 demand gate, as the September 7 corrected-content work was, or new
-investment that needs the gate revisited.
+Decided by Sam on 2026-11-22: direction 2 is maintenance of the existing Level 3
+obligation, delivered as an opt-in profile as the September 7 corrected-content
+work was. The Level 3 command rules of the released profiles do not hold against
+a hostile author, and correcting that is upkeep of what Level 3 already claims.
 
 Level 5 ownership is unchanged. The landscape review found no runtime that meets
 the Level 5 requirements; the missing piece is a guide-aware driver, not a
@@ -156,6 +162,7 @@ sandbox. That is an input to Level 5 fixture design, not a new commitment.
 
 ## Changelog
 
+- 2026-11-22: Sam classified the restricted command grammar profile as maintenance of the Level 3 obligation and recorded that active development, selected 2026-11-13, supersedes the June 9 parking. He answered the design questions for profile 3.0.0; the draft text is in `profiles/3.0.0/`. Released behavior is unchanged.
 - 2026-11-11: Sam selected format over tool: scanner reduced to the deterministic byte check, a Level 3 restricted command grammar as an opt-in profile, Level 4 as a signed-artifact requirement with delegated verification, and the hosted verifier kept for Levels 1 to 3. Directions only; released behavior is unchanged. Sequence: security containment, Level 3 build, promotion planning.
 - 2026-10-03: Carry the September 22 owner direction into component strategy: inspectable installation, an explicitly incomplete attack-prevention objective, and eventual standards integration. Preserve released behavior and existing investment/readiness gates.
 - 2026-09-07: Sam selected blocking unresolved execution targets for Level 3 on the opt-in corrected path; released evaluations remain frozen.

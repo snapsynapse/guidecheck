@@ -32,7 +32,7 @@ Implemented:
   no absolute path without `approval: required`.
 
 Not implemented, and therefore not checked by this module: program tiers and
-the shape registry, pins, parameters, the privilege prefix, value grammars
+the shape registry, pins, parameters, value grammars
 for `class`, `approval`, `runner`, `cwd`, `egress` and `env`, required
 sections, the verification instruction, prose scans, line length and line
 count, disallowed constructs, metadata values, manifests, anchors, levels and

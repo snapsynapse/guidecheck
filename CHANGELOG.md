@@ -6,6 +6,15 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Added
 
+- Add draft profile text for an opt-in profile 3.0.0 in `profiles/3.0.0/`
+  (`spec.md`, `verifier-conformance.md`). It replaces pattern-based command
+  checks with an allowlist grammar over argv-only commands, makes action
+  fences, field labels, required headings and the verification instruction
+  exact, sorts every action into a shape-listed or opaque tier, makes prose
+  scans advisory, and ties the `Proceed?` line to Level 3 and to any level the
+  caller requires. The text is unreleased: no verifier evaluates it, the
+  dispatcher still refuses 3.0.0, and its schemas, shape registry and fixtures
+  do not exist yet. Profiles 1.0.0 and 2.0.0 are unchanged.
 - Add `scripts/guidecheck_restricted.py`, the first slice of the opt-in
   `restricted-argv-1` content policy selected in `INTENT.md` for a future
   profile 3.0.0, with `scripts/test_restricted_argv.py`. The slice covers a
