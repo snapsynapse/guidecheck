@@ -1,0 +1,18 @@
+# Dependabot keeps the GitHub Actions used by .github/workflows/ current.
+#
+# Every Action in this repository is pinned by full commit SHA with the
+# version in a trailing comment. Dependabot preserves that style: it rewrites
+# the SHA and the version comment together.
+#
+# Only the github-actions ecosystem is configured. The Python tools have no
+# runtime dependencies and the repository has no requirements file, lock file
+# or package.json to manage.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(ci)"
