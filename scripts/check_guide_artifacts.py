@@ -16,6 +16,7 @@ ARTIFACTS = [
     ROOT / "assistant-guide.txt",
     ROOT / "examples" / "level-1-assistant-guide.txt",
     ROOT / "examples" / "level-3-assistant-guide.txt",
+    ROOT / "examples" / "2.0.0-corrected-bound-inline" / "guide.txt",
     ROOT / "fixtures" / "valid" / "level-2" / "guide.txt",
     ROOT / "fixtures" / "valid" / "level-3" / "guide.txt",
     ROOT / "fixtures" / "valid" / "prompterkit-level-3" / "guide.txt",
