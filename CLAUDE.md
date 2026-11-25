@@ -190,7 +190,11 @@ verify locally against `.github/allowed_signers`; citation metadata is in
 - The README leads with a captured failed verification and a source-checkout
   trial that repairs the same guide under 2.0.0 (2026-11-24; evidence in
   `docs/readme-trial-evidence-2026-11-24.md`, held by
-  `scripts/test_readme_trial.py`), and `docs/index.html` links the trial. Local exit status for 1.0.0 and 2.0.0 guides that declare
+  `scripts/test_readme_trial.py`), and `docs/index.html` links the trial.
+  The trial checks out `3feb5e0` by SHA because tag `v2.0.0` lacks the
+  repaired example: never rewrite `main` history past it, and repin to a
+  release tag once one contains `examples/2.0.0-corrected-bound-inline/`.
+  Re-verified from a fresh GitHub clone on 2026-11-24 after PR 20 merged. Local exit status for 1.0.0 and 2.0.0 guides that declare
   `manifest-url` is an open roadmap question.
 - For security remediation or delivery status, read
   `docs/security/maintenance.md`; `roadmap.md` owns the wider work queue.
