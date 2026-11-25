@@ -48,28 +48,41 @@ Conformance checks do not establish that the instructions are safe, the publishe
 
 You need Python 3.10 or later and Git. The core verifier uses only the standard library. This path is a source checkout; it does not assume GuideCheck is published to a package index. Cloning contacts GitHub. Local evaluation reads the named guide as data. It does not execute the guide's actions and does not fetch provenance evidence. The `npm` command in the failing fixture is input data and is never run.
 
-The complete JSON reports behind this section, with the exact tag, commit, and Python version, are in [docs/readme-trial-evidence-2026-10-21.md](docs/readme-trial-evidence-2026-10-21.md). Your output will differ slightly: `local_evaluation.evaluated_at` is the evaluation time, and the `metadata.last-reviewed.age` info finding counts days from each guide's `last-reviewed` date.
+The trial is one lesson under one released profile: reproduce a rejected 2.0.0 guide, read the repair, verify the repaired guide under the same gate, then check your own. The complete JSON reports behind this section, with the exact commit and Python version, are in [docs/readme-trial-evidence-2026-11-24.md](docs/readme-trial-evidence-2026-11-24.md). Your output will differ slightly: `local_evaluation.evaluated_at` is the evaluation time, and the `metadata.last-reviewed.age` info finding counts days from each guide's `last-reviewed` date.
 
-Step 1. From an empty working directory, clone the released source and enter the checkout. The directory `guidecheck-trial` must not already exist there.
+Step 1. From an empty working directory, clone the source and check out the pinned commit that adds the repaired example. That commit follows the v2.0.0 release; its verifier reports version 2.0.0 and evaluates released profile 2.0.0. The directory `guidecheck-trial` must not already exist there.
 
 Literal
 ```bash
-git clone --branch v2.0.0 --depth 1 https://github.com/snapsynapse/guidecheck.git guidecheck-trial
+git clone https://github.com/snapsynapse/guidecheck.git guidecheck-trial
+```
+Literal
+```bash
 cd guidecheck-trial
+```
+Literal
+```bash
+git checkout --detach 3feb5e0043b224379d59782a8700bc795ede9a0d
 ```
 Step 2. Reproduce the known failure. Expect `action.exec-unbounded` as a blocking finding, achieved Level 2, and exit code 1.
 
 Literal
 ```bash
-python3 scripts/guidecheck_verify.py fixtures/profiles/2.0.0/corrected-bound-unpinned/guide.txt --level 3 --pretty
+python3 scripts/guidecheck_verify.py fixtures/profiles/2.0.0/corrected-bound-unpinned/guide.txt --require-profile-version 2.0.0 --level 3 --pretty
 ```
-Step 3. Run a positive control. This is a known-valid example guide under the legacy 0.7.1 profile. It is a different guide, not a repaired version of the failing one, and the guide's own bytes make the verifier select the frozen legacy evaluator, so the report shows verifier version 0.7.1. Expect achieved Level 3, no blocking findings, `Proceed? yes`, and exit code 0.
+Step 3. Read the repair. `examples/2.0.0-corrected-bound-inline/guide.txt` is the same guide with the action bounded: `npm --prefix subdir run check`, which runs repository code the guide does not show, becomes `example-verifier --version`, which a reviewer can read in full, and the class and approval follow. It also drops `manifest-url`, so a local check is not asked for Level 4 evidence it cannot fetch, and updates the version, review date, checklist and threat model lines to match. `diff` exits 1 because the files differ; that is expected.
 
 Literal
 ```bash
-python3 scripts/guidecheck_verify.py examples/level-3-assistant-guide.txt --level 3 --pretty
+diff fixtures/profiles/2.0.0/corrected-bound-unpinned/guide.txt examples/2.0.0-corrected-bound-inline/guide.txt
 ```
-Step 4. Check your own local `assistant-guide.txt` from the same checkout. You do not need to change its profile declarations to run the check.
+Step 4. Verify the repaired guide under the same gate. Expect verifier version 2.0.0, achieved Level 3, no blocking findings, `Proceed? yes`, and exit code 0.
+
+Literal
+```bash
+python3 scripts/guidecheck_verify.py examples/2.0.0-corrected-bound-inline/guide.txt --require-profile-version 2.0.0 --level 3 --pretty
+```
+Step 5. Check your own local `assistant-guide.txt` from the same checkout. You do not need to change its profile declarations to run the check.
 
 Replace: GUIDE_PATH -> the absolute path to the local assistant-guide.txt to inspect.
 
@@ -99,7 +112,7 @@ The scanner reports findings such as `surface.hidden-html-comment`, invisible Un
 
 1. Inspect the implicated bytes. The `evidence` field of `action.exec-unbounded` names the action id (`check-version` above).
 2. Bound the execution. Replace the repository script dispatch with inline actions that a reviewer can read in the guide, or declare a valid `exec-sha256` for the invoked code. The corrected-content policy covers dispatch and pinning limits: [docs/corrected-content-policy-2026-09-07.md](docs/corrected-content-policy-2026-09-07.md). Finding ids are registered in `finding-ids.md`.
-3. Rerun the check without executing the guide.
+3. Rerun the check without executing the guide. Steps 3 and 4 of "Try it" show this repair on the fixture above.
 
 Keep these claims distinct:
 - Human approval being requested (`approval: required`) does not bound the command.
@@ -381,7 +394,7 @@ CI runs the same `make test` target on pushes to `main` and pull requests.
 - `docs/owasp-crosswalk.md` - non-normative map to the OWASP Agentic Top 10 and ACS v0.1.0 hooks
 - `docs/mcp-integration.md` - non-normative MCP integration patterns
 - `docs/a2a-integration.md` - non-normative A2A integration patterns
-- `docs/readme-trial-evidence-2026-10-21.md` - captured output behind the "Try it" section
+- `docs/readme-trial-evidence-2026-11-24.md` - captured output behind the "Try it" section (supersedes `docs/readme-trial-evidence-2026-10-21.md`)
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
 - `finding-ids.md` - registry for fixture-required and emitted verifier finding ids
 - `assistant-guide.txt` - repository copy of the GuideCheck adoption guide

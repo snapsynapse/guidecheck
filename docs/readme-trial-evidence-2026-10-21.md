@@ -1,5 +1,7 @@
 # README trial evidence, 2026-10-21
 
+> Dated record, superseded by [readme-trial-evidence-2026-11-24.md](readme-trial-evidence-2026-11-24.md), which captures the current "Try it" section. This page records the earlier trial, whose positive control was a different guide under the legacy 0.7.1 profile.
+
 This file records the real output behind the "Try it" section of `README.md`. Each report below is the complete JSON written to stdout by the named command. Nothing is edited, trimmed, or simulated.
 
 ## Source

@@ -188,9 +188,9 @@ verify locally against `.github/allowed_signers`; citation metadata is in
   The 2026-10-03 documentation tranche is on `main` (34331b9); the receipt
   distinguishes the deployed source from that documentation work.
 - The README leads with a captured failed verification and a source-checkout
-  trial (2026-10-21, c08b82e; evidence in
-  `docs/readme-trial-evidence-2026-10-21.md`), and `docs/index.html` links the
-  trial. Local exit status for 1.0.0 and 2.0.0 guides that declare
+  trial that repairs the same guide under 2.0.0 (2026-11-24; evidence in
+  `docs/readme-trial-evidence-2026-11-24.md`, held by
+  `scripts/test_readme_trial.py`), and `docs/index.html` links the trial. Local exit status for 1.0.0 and 2.0.0 guides that declare
   `manifest-url` is an open roadmap question.
 - For security remediation or delivery status, read
   `docs/security/maintenance.md`; `roadmap.md` owns the wider work queue.
