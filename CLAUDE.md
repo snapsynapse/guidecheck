@@ -214,8 +214,10 @@ verify locally against `.github/allowed_signers`; citation metadata is in
 
 Sam selected four directions and a work order; `INTENT.md` section "Format over
 tool" is the single source. Order: security containment, then the Level 3
-restricted command grammar as an opt-in profile, then promotion planning. Each
-has a brief in `handoffs/`. Nothing released has changed.
+restricted command grammar as an opt-in profile, then promotion planning.
+Containment shipped 2026-11-12 (`1377fcc`); the 3.0.0 draft merged unreleased
+2026-11-24 (`e8bf9a9`). Promotion has a brief in `handoffs/`. Nothing released
+has changed.
 
 ## Version-aware release (2026-09-05)
 
