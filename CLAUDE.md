@@ -54,11 +54,16 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
     report replays guard compatibility.
   - `guidecheck_strict.py` implements the opt-in 1.0.0 provenance policy.
   - `guidecheck_corrected.py` implements the opt-in 2.0.0 corrected-content policy.
-  - `guidecheck_restricted.py` is the first slice of the unreleased
-    `restricted-argv-1` policy (working profile 3.0.0): size gate, byte allowlist,
-    exact action fences, fixed keys, `id` grammar, command grammar. No entry point imports
-    it and the dispatcher still refuses 3.0.0; `test_restricted_argv.py`
-    asserts both. It imports only `Finding` from the legacy engine.
+  - `guidecheck_restricted.py` is the evaluator for the unreleased
+    `restricted-argv-1` policy (draft profile 3.0.0): size gate, exact fences,
+    command grammar, shape registry tiers, pins, field grammars, metadata,
+    headings, levels, and a report in the 3.0.0 schema. The dispatcher selects
+    3.0.0 only for a caller that passes `allow_draft`; the local CLI
+    (`guidecheck_verify.py`) is the only one. The hosted verifier, the CLI
+    contract and every other caller still refuse it; `test_restricted_cli.py`
+    asserts that. The registry travels in `guidecheck_restricted_registry.py`,
+    held byte-equal to `profiles/3.0.0/shape-registry.json`. It reuses only the anchor text parsers of the legacy engine.
+    `test_restricted_fixtures.py` runs it over `fixtures/profiles/3.0.0/`.
   - `guidecheck_verify.py` — local-file reference verifier CLI (Levels 1-3,
     plus internal-consistency checks on Level 4 sidecar manifests/anchors).
   - `guidecheck_scan.py` / `guidecheck_cli.py` — instruction-surface scanner
@@ -74,6 +79,16 @@ Canonical site: https://guidecheck.org/ · Verifier: https://guidecheck.org/veri
     `test_*.py` files — CI-run checks invoked via `make test`.
 - `profiles/` — versioned normative profile documents (`1.0.0/`, `2.0.0/`),
   each with `spec.md`, `verifier-conformance.md`, and `example-report.json`.
+  `3.0.0/` holds draft, unreleased text for the `restricted-argv-1` profile:
+  `spec.md`, `verifier-conformance.md` and a hand-written `example-report.json`,
+  with draft schemas in `schemas/3.0.0/` (output, manifest, fixture
+  expectations, shape registry). The schemas are closed and bound every
+  string. `scripts/profile_3_0_0_invariants.py` holds the rules a schema
+  cannot state (verdict, derived compact report, refusal shape, registry
+  overlap, manifest text form); `scripts/test_profile_3_0_0_schemas.py`
+  covers both and pins the inventory of schema bounds.
+  `shape-registry.json` there lists the exact invocation shapes; every entry
+  has a matching and a near fixture under `fixtures/profiles/3.0.0/`.
 - `decisions/` — AI decision records (currently AIDR-0001, same-control-plane
   repository anchors).
 - `api/` — `verify.py`, the hosted verifier function behind
@@ -191,6 +206,9 @@ verify locally against `.github/allowed_signers`; citation metadata is in
 - The hosted verifier at guidecheck.org/verify is explicitly a preview: its
   conformance fixture suite is incomplete and it has not been shown to pass
   it; signed `security.txt` anchors are not yet fetched by the hosted path.
+  Since 2026-11-12 it awards no Level 4 under any profile and reports declared
+  anchors as unverified (see `docs/security/maintenance.md`). It does not
+  evaluate profile 3.0.0.
 
 ## Format over tool (2026-11-11)
 

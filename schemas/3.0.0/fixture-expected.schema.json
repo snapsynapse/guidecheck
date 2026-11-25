@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guidecheck.org/schemas/3.0.0/fixture-expected.schema.json",
+  "title": "GuideCheck 3.0.0 fixture expectations",
+  "description": "Exact expected result for one conformance fixture. Every id list is exact: an id that is not listed must not be emitted at that severity. Draft, unreleased.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "type": "string",
+      "pattern": "^[ -~]{1,300}$(?!\\n)"
+    },
+    "evaluation_mode": {
+      "type": "string",
+      "enum": [
+        "public-web",
+        "local-file"
+      ]
+    },
+    "evidence_fetched": {
+      "type": "boolean"
+    },
+    "repository_read": {
+      "type": "boolean"
+    },
+    "required_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4
+    },
+    "achieved_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4
+    },
+    "level5_ready": {
+      "type": "boolean"
+    },
+    "guide_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$(?!\\n)"
+    },
+    "blocking_finding_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$(?!\\n)"
+      }
+    },
+    "warning_finding_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$(?!\\n)"
+      }
+    },
+    "info_finding_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$(?!\\n)"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shape_listed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "opaque": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "total",
+        "shape_listed",
+        "opaque"
+      ]
+    },
+    "verdict": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "proceed": {
+              "type": "boolean",
+              "const": true
+            }
+          },
+          "required": [
+            "proceed"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "proceed": {
+              "type": "boolean",
+              "const": false
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "blocking findings",
+                "below Level 3",
+                "below the required level"
+              ]
+            }
+          },
+          "required": [
+            "proceed",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "qualifying_anchor_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "forbidden_output_substrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "pattern": "^[ -~]{4,120}$(?!\\n)"
+      },
+      "description": "Text from the fixture guide that must not occur anywhere in the serialized output."
+    }
+  },
+  "required": [
+    "evaluation_mode",
+    "evidence_fetched",
+    "repository_read",
+    "achieved_level",
+    "blocking_finding_ids",
+    "warning_finding_ids",
+    "info_finding_ids",
+    "actions",
+    "verdict",
+    "qualifying_anchor_count"
+  ]
+}

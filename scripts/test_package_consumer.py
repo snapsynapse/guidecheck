@@ -74,6 +74,14 @@ def main():
             assert terminal["gate"]["status"] == "accepted", terminal
             assert terminal["report"]["guide"]["achieved_level"] == 3, terminal
             print(f"PASS installed wheel: profile {version}")
+        # Draft profile 3.0.0: the installed package carries the evaluator and its registry.
+        draft = temp / "draft.txt"
+        shutil.copy2(ROOT / "fixtures/profiles/3.0.0/valid-level-3/guide.txt", draft)
+        report = json.loads(run(invoke + ["verify", str(draft)], temp, env))
+        assert report["guide"]["achieved_level"] == 3 and report["verdict"] == {"proceed": True}, report
+        assert report["actions"] == {"total": 6, "shape_listed": 5, "opaque": 1}, report
+        assert report["profile_selection"]["content_policy"] == "restricted-argv-1", report
+        print("PASS installed wheel: draft profile 3.0.0")
         rejected = temp / "rejected.txt"
         shutil.copy2(ROOT / "fixtures/invalid/missing-verification/guide.txt", rejected)
         for path, expected_code, status in ((rejected, 2, "rejected"), (temp / "missing.txt", 66, "not_evaluated")):

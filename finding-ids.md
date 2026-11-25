@@ -221,7 +221,7 @@ CSS-hidden findings are gated on instruction-likeness to keep precision high.
 ## Restricted argv policy (unreleased)
 
 Emitted by `scripts/guidecheck_restricted.py`, an unreleased and partial
-policy for a future profile. No released profile, fixture, schema or entry
+policy for a future profile. No released profile, fixture or schema
 point uses these ids, and they may change before a release. The module also
 emits `byte-profile.size-limit`, `byte-profile.non-ascii-byte`,
 `action-block.malformed`, `action-block.missing-required` and
@@ -236,6 +236,28 @@ own docstring states.
 | `command.grammar` | error | A command is outside the restricted argv grammar. |
 | `command.path.escape` | error | A command contains a parent-directory component. |
 | `command.path.absolute` | error | A command contains an absolute path and the action does not require approval. |
+
+The draft text in `profiles/3.0.0/` also names the ids below. No code emits
+them yet. The draft also widens two ids from the sections above:
+`exec-sha256.mismatch` covers a pinned reference that exists and is not a
+regular file, and `level4.requires-fetch` is reported whenever a guide declares
+`manifest-url` and its evidence was not fetched.
+
+| ID | Severity | Trigger |
+|---|---|---|
+| `command.local-ref.unpinned` | error | A local reference that requires a pin has no `exec-sha256`, or an action has more than one. |
+| `action-block.class.under-declared` | error | An action's declared classes do not include its tier's class floor. |
+| `action.program-opaque` | warning | An action's command matches no registry shape and is treated as arbitrary code execution. |
+| `egress.pattern` | error | An `egress` value is not `none` or a list of valid host patterns. |
+| `egress.class-mismatch` | error | An action that is not `networked` declares a host pattern. |
+| `action.program-opaque.unacknowledged` | error | An opaque action lacks `exec-opaque: acknowledged` or a `notes` rationale. |
+| `construct.code-fence` | error | A Level 3 guide contains a line with three consecutive backticks or tildes. |
+| `metadata.status.deprecated` | error | The guide status is `deprecated`. |
+| `manifest.hash-invalid` | error | Manifest `guide-sha256` is not 64 lowercase hexadecimal characters. |
+| `manifest.malformed` | error | A manifest line is not in key, colon, space, value form, or a key appears more than once. |
+| `filesystem.cwd.invalid` | error | A `cwd` value is outside its grammar, or is absolute without required approval. |
+| `env.invalid` | error | An `env` value is not a list of valid variable names. |
+| `params.invalid` | error | A `params` value is not a list of valid names that each occur in the command. |
 
 ## Change control
 

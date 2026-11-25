@@ -12,6 +12,18 @@ Current evidence and handoff disposition are recorded in the
 [security maintenance record](docs/security/maintenance.md). Completed
 foundations are not implementation tasks to repeat.
 
+- Level 3 restricted command grammar build, state on 2026-11-22. Delivered on
+  `main`: the first evaluator slice (`5e49f94`). Built and unreleased, in review:
+  the draft profile text in `profiles/3.0.0/`, draft schemas in `schemas/3.0.0/`,
+  the report invariants, the full evaluator in `scripts/guidecheck_restricted.py`,
+  a 22-entry shape registry and a 128-case fixture suite. Sam answered the
+  design questions that day; `INTENT.md` records the classification. The local
+  reference CLI evaluates a guide that declares 3.0.0 and labels the result a
+  draft; the dispatcher refuses 3.0.0 for every other caller. Not done: the
+  hosted verifier has no 3.0.0 report path and refuses the profile; prose scans
+  are not implemented; pinned files are never read; no guide has been migrated;
+  nothing is released. Open decisions: whether the hosted verifier should serve
+  3.0.0 before a release, and when to release.
 - Owner directions selected 2026-11-11 (see `INTENT.md`, Format over tool) set
   the order of work: a security containment tranche first; then the Level 3
   restricted command grammar as an opt-in profile, fixtures before code; then

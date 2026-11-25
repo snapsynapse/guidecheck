@@ -38,6 +38,10 @@ SCHEMA_FILES = [
     ROOT / "schemas" / "2.0.0" / "manifest.schema.json",
     ROOT / "schemas" / "2.0.0" / "verifier-output.schema.json",
     ROOT / "schemas" / "2.0.0" / "fixture-expected.schema.json",
+    ROOT / "schemas" / "3.0.0" / "manifest.schema.json",
+    ROOT / "schemas" / "3.0.0" / "verifier-output.schema.json",
+    ROOT / "schemas" / "3.0.0" / "fixture-expected.schema.json",
+    ROOT / "schemas" / "3.0.0" / "shape-registry.schema.json",
 ]
 FINDING_ID_PREFIXES = {
     "action-block",
@@ -119,12 +123,23 @@ def validate_json_schema_instance(
     schema: dict,
     *,
     at: str = "$",
+    strict: bool = False,
 ) -> None:
+    """Validate against the keyword subset this repository uses.
+
+    `strict` adds three behaviors that the released schema checks never had and
+    must not acquire: boolean subschemas, `prefixItems`, and a schema-valued
+    `additionalProperties`. The 3.0.0 draft schemas are checked with it.
+    """
+    if strict and isinstance(schema, bool):
+        if not schema:
+            fail(errors, label, f"{at} is not allowed")
+        return
     if "anyOf" in schema:
         trial_errors: list[list[str]] = []
         for option in schema["anyOf"]:
             option_errors: list[str] = []
-            validate_json_schema_instance(option_errors, label, instance, option, at=at)
+            validate_json_schema_instance(option_errors, label, instance, option, at=at, strict=strict)
             if not option_errors:
                 return
             trial_errors.append(option_errors)
@@ -161,14 +176,22 @@ def validate_json_schema_instance(
             fail(errors, label, f"{at} is above maximum")
 
     if isinstance(instance, list):
+        if "minItems" in schema and len(instance) < schema["minItems"]:
+            fail(errors, label, f"{at} has fewer items than minItems")
+        if "maxItems" in schema and len(instance) > schema["maxItems"]:
+            fail(errors, label, f"{at} has more items than maxItems")
         if schema.get("uniqueItems"):
             seen = {json.dumps(item, sort_keys=True) for item in instance}
             if len(seen) != len(instance):
                 fail(errors, label, f"{at} must contain unique items")
+        prefix_schemas = schema.get("prefixItems", []) if strict else []
+        for index, (item, prefix_schema) in enumerate(zip(instance, prefix_schemas)):
+            validate_json_schema_instance(errors, label, item, prefix_schema, at=f"{at}[{index}]", strict=strict)
         item_schema = schema.get("items")
-        if isinstance(item_schema, dict):
+        if isinstance(item_schema, dict) or (strict and isinstance(item_schema, bool)):
             for index, item in enumerate(instance):
-                validate_json_schema_instance(errors, label, item, item_schema, at=f"{at}[{index}]")
+                if index >= len(prefix_schemas):
+                    validate_json_schema_instance(errors, label, item, item_schema, at=f"{at}[{index}]", strict=strict)
 
     if isinstance(instance, dict):
         for key in schema.get("required", []):
@@ -178,9 +201,11 @@ def validate_json_schema_instance(
         for key, value in instance.items():
             child_schema = properties.get(key)
             if isinstance(child_schema, dict):
-                validate_json_schema_instance(errors, label, value, child_schema, at=f"{at}.{key}")
+                validate_json_schema_instance(errors, label, value, child_schema, at=f"{at}.{key}", strict=strict)
             elif schema.get("additionalProperties") is False:
                 fail(errors, label, f"{at}.{key} is not allowed")
+            elif strict and isinstance(schema.get("additionalProperties"), dict):
+                validate_json_schema_instance(errors, label, value, schema["additionalProperties"], at=f"{at}.{key}", strict=True)
 
 
 def load_schema(errors: list[str], schema_path: Path) -> dict | None:

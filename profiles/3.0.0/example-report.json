@@ -1,0 +1,67 @@
+{
+  "verifier": {
+    "name": "example-verifier",
+    "version": "0.0.0",
+    "verifier_profile": "human-verifiable-assistant-guide-verifier",
+    "verifier_profile_version": "3.0.0",
+    "guide_profile": "human-verifiable-assistant-guide",
+    "guide_profile_version": "3.0.0"
+  },
+  "input": {
+    "evaluation_mode": "local-file",
+    "repository_read": false,
+    "path": "assistant-guide.txt",
+    "required_level": 3
+  },
+  "evaluated_at": "2026-11-22T00:00:00Z",
+  "guide": {
+    "bytes": 6120,
+    "sha256": "fda906617114a720635f00a9c5a66610b6a6952faab4cc13560cca1d133a0a43",
+    "achieved_level": 3,
+    "level5_ready": false,
+    "status": "active",
+    "canonical_url": "https://example.com/.well-known/assistant-guide.txt"
+  },
+  "actions": {
+    "total": 4,
+    "shape_listed": 3,
+    "opaque": 1
+  },
+  "shape_registry_sha256": "bab5bc79fba6ae9029a6155a155f15a2b4569e85805a8ecb49011b4a4bd44c2e",
+  "summary": {
+    "blocking_findings": 0,
+    "warnings": 1,
+    "infos": 2
+  },
+  "findings": [
+    {
+      "id": "action.program-opaque",
+      "severity": "warning",
+      "line": 142,
+      "section": "verifier-conformance.19"
+    },
+    {
+      "id": "exec-sha256.unverified",
+      "severity": "info",
+      "line": 139
+    },
+    {
+      "id": "metadata.last-reviewed.age",
+      "severity": "info",
+      "evidence": {
+        "days": 12
+      }
+    }
+  ],
+  "verdict": {
+    "proceed": true
+  },
+  "profile_selection": {
+    "declared_version": "3.0.0",
+    "evaluated_policy": "3.0.0",
+    "content_policy": "restricted-argv-1",
+    "anchor_policy": "1.0.0-strict"
+  },
+  "qualifying_anchor_count": 0,
+  "compact_report": "Verifier: example-verifier 0.0.0\nGuide: https://example.com/.well-known/assistant-guide.txt\nProfile: 3.0.0\nContent policy: restricted-argv-1\nAnchor policy: 1.0.0-strict\nQualifying anchors: 0\nLevel: 3\nSHA-256: fda906617114a720635f00a9c5a66610b6a6952faab4cc13560cca1d133a0a43\nActions: 4 (3 shape-listed, 1 opaque)\nBlocking findings: 0\nWarnings: 1\nHash pinned: n/a\nProceed? yes"
+}

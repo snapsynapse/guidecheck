@@ -1,0 +1,24 @@
+{
+  "description": "a conforming guide with five listed actions and one acknowledged opaque action",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 3,
+  "blocking_finding_ids": [],
+  "warning_finding_ids": [
+    "action.program-opaque"
+  ],
+  "info_finding_ids": [
+    "exec-sha256.unverified",
+    "metadata.last-reviewed.age"
+  ],
+  "actions": {
+    "total": 6,
+    "shape_listed": 5,
+    "opaque": 1
+  },
+  "verdict": {
+    "proceed": true
+  },
+  "qualifying_anchor_count": 0
+}

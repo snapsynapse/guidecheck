@@ -6,6 +6,45 @@ All notable changes to GuideCheck's Human-Verifiable Assistant Guide profile and
 
 ### Added
 
+- Add draft profile text for an opt-in profile 3.0.0 in `profiles/3.0.0/`
+  (`spec.md`, `verifier-conformance.md`). It replaces pattern-based command
+  checks with an allowlist grammar over argv-only commands, makes action
+  fences, field labels, required headings and the verification instruction
+  exact, sorts every action into a shape-listed or opaque tier, makes prose
+  scans advisory, and ties the `Proceed?` line to Level 3 and to any level the
+  caller requires. The text is unreleased. Profiles 1.0.0 and 2.0.0 are
+  unchanged.
+- Add the evaluator for draft profile 3.0.0 to `scripts/guidecheck_restricted.py`,
+  the shape registry `profiles/3.0.0/shape-registry.json` (22 exact shapes), and
+  a fixture suite in `fixtures/profiles/3.0.0/` run by
+  `scripts/test_restricted_fixtures.py`. Every registry entry has a matching
+  and a near fixture, and every report is held to the 3.0.0 schema and report
+  invariants.
+- Tighten the draft 3.0.0 evaluator after an independent conformance review:
+  package-registry evidence qualifies only when the guide names a registry
+  record on a recognized host, compared exactly; a data URL is detected
+  whatever its media type; a manifest byte count is compared as text;
+  `guide-version` must be a semantic version; the registry is checked against
+  its full form when loaded; the report builder refuses inputs that would
+  contradict the report; an action that declares `env` is opaque; and the two
+  `curl` shapes carry `-q`. The fixture suite grows to 137 cases.
+- The local reference CLI (`guidecheck verify`) evaluates a guide that
+  declares profile 3.0.0, prints a note that the profile is an unreleased
+  draft, and exits by the verdict: non-zero for any blocking finding, for any
+  result below Level 3, and for any result below `--level`. The dispatcher
+  selects 3.0.0 only for a caller that passes `allow_draft`; the hosted
+  verifier and the experimental CLI contract still refuse it, and released
+  profiles behave exactly as before.
+- Add draft schemas for profile 3.0.0 in `schemas/3.0.0/` (verifier output,
+  manifest, fixture expectations and the shape registry), an example report,
+  `scripts/profile_3_0_0_invariants.py` for the relations between fields that
+  a schema cannot state, and `scripts/test_profile_3_0_0_schemas.py`. The
+  3.0.0 output schema is closed and bounds every string. The contract
+  3.0.0 output has no message or other free-text field in a finding. The
+  contract validator gains `minItems` and `maxItems`, which no earlier schema
+  uses, and an opt-in strict mode (`prefixItems`, boolean subschemas,
+  schema-valued `additionalProperties`) that only the 3.0.0 tests turn on, so
+  every released schema check behaves as before.
 - Add `scripts/guidecheck_restricted.py`, the first slice of the opt-in
   `restricted-argv-1` content policy selected in `INTENT.md` for a future
   profile 3.0.0, with `scripts/test_restricted_argv.py`. The slice covers a

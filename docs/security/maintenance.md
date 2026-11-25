@@ -212,8 +212,8 @@ retain their 2026-10-26 severity and evidence scope; no new full audit is claime
 | 3 | SEC-008: clean result for truncated local prefix | Medium | Limit-plus-one local reads and an incomplete, nonzero result. |
 | 3 | SEC-009: skipped NUL input returns success | Medium | Define skipped/incomplete counters and exit semantics with compatibility review. |
 | 3 | SEC-010: directory inventory omits llms.txt | Low | Reconcile directory inventory with URL discovery alongside scanner completeness. |
-| 4 | SEC-005: unknown execution wrappers | Medium | Select a modern-policy correction while preserving frozen reports and known-query positive controls. |
-| 4 | SEC-006: redirection target escapes cwd | Medium | Reject outside/unresolved targets in an explicitly selected static policy; runtime symlinks remain separate. |
+| 4 | SEC-005: unknown execution wrappers | Medium | Select a modern-policy correction while preserving frozen reports and known-query positive controls. 2026-11-22: the draft profile 3.0.0 (`profiles/3.0.0/`, evaluator and fixtures in review, unreleased) removes this class by construction. Released profiles are unchanged and this row stays open until 3.0.0 is released. |
+| 4 | SEC-006: redirection target escapes cwd | Medium | Reject outside/unresolved targets in an explicitly selected static policy; runtime symlinks remain separate. 2026-11-22: the draft profile 3.0.0 (`profiles/3.0.0/`, evaluator and fixtures in review, unreleased) removes this class by construction. Released profiles are unchanged and this row stays open until 3.0.0 is released. |
 | 4 | SEC-013: empty manifest release fields | Low | Resolve modern value validation and release-reference reachability separately from frozen behavior and fetch-budget design. |
 | 5 | SEC-004: cross-tenant redirect boundary | Medium | Decide exact-host redirects versus a maintained PSL including private suffixes. No private-network SSRF bypass was demonstrated. |
 | 6 | SEC-011: unsanitized surface labels | Low | Escape controls in text output while retaining identities through JSON escaping. |

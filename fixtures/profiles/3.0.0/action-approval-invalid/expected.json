@@ -1,0 +1,24 @@
+{
+  "description": "action approval invalid",
+  "evaluation_mode": "local-file",
+  "evidence_fetched": false,
+  "repository_read": false,
+  "achieved_level": 2,
+  "blocking_finding_ids": [
+    "action-block.approval.invalid"
+  ],
+  "warning_finding_ids": [],
+  "info_finding_ids": [
+    "metadata.last-reviewed.age"
+  ],
+  "actions": {
+    "total": 1,
+    "shape_listed": 1,
+    "opaque": 0
+  },
+  "verdict": {
+    "proceed": false,
+    "reason": "blocking findings"
+  },
+  "qualifying_anchor_count": 0
+}

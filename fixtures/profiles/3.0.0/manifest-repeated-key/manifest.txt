@@ -1,0 +1,8 @@
+profile: human-verifiable-assistant-guide
+profile-version: 3.0.0
+guide-path: /.well-known/assistant-guide.txt
+guide-version: 1.0.0
+guide-sha256: 43f35571d97ecc6f7ee1f94e6254b2d3f43694a43034d090231bedda9b756b35
+guide-bytes: 2423
+immutable-release-url: https://example.com/org/example-cli/releases/v1.0.0
+guide-bytes: 1

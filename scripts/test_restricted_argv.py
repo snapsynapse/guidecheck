@@ -86,10 +86,11 @@ class PolicyBoundaryTests(unittest.TestCase):
             profiles.select_profile(guide(action()))
         self.assertEqual(raised.exception.code, "profile-version-unsupported")
 
-    def test_released_entry_points_do_not_reference_the_module(self):
-        for name in ("scripts/guidecheck_verify.py", "scripts/guidecheck_profiles.py", "scripts/guidecheck_cli.py",
-                     "scripts/guidecheck_cli_contract.py", "scripts/guidecheck_legacy.py", "scripts/guidecheck_strict.py",
-                     "scripts/guidecheck_corrected.py", "api/verify.py", "pyproject.toml"):
+    def test_released_engines_and_the_hosted_verifier_do_not_reference_the_module(self):
+        """The local CLI and the dispatcher reach it, lazily and only for a caller that allows the draft."""
+        for name in ("scripts/guidecheck_cli_contract.py", "scripts/guidecheck_legacy.py", "scripts/guidecheck_strict.py",
+                     "scripts/guidecheck_corrected.py", "scripts/guidecheck_fetch.py", "scripts/guidecheck_scan.py",
+                     "scripts/guidecheck_hosted_anchors.py", "api/verify.py"):
             with self.subTest(path=name):
                 self.assertNotIn("guidecheck_restricted", (ROOT / name).read_text(encoding="utf-8"))
 
@@ -172,7 +173,8 @@ class PolicyBoundaryTests(unittest.TestCase):
                 imported.add(node.module)
             elif isinstance(node, ast.Attribute):
                 self.assertNotIn(node.attr, {"splitlines", "strip", "lstrip", "rstrip"}, f"line {node.lineno}")
-        self.assertLessEqual(imported, {"dataclasses", "guidecheck_legacy"})
+        self.assertLessEqual(imported, {"dataclasses", "datetime", "hashlib", "json", "pathlib", "guidecheck_legacy",
+                                        "profile_3_0_0_invariants", "guidecheck_restricted_registry"})
 
 
 class SizeGateTests(unittest.TestCase):
@@ -528,8 +530,8 @@ class CommandGrammarTests(unittest.TestCase):
         _, argv = restricted.check_command("tool a=b c:d ./e")
         self.assertEqual(argv, ("tool", "a=b", "c:d", "./e"))
 
-    def test_no_prefix_is_interpreted_yet(self):
-        """The privilege prefix rule is undecided; this slice strips nothing."""
+    def test_no_token_is_a_prefix(self):
+        """The profile has no privilege prefix: `sudo` is an ordinary program token."""
         found, argv = restricted.check_command("sudo rm -r ./build")
         self.assertEqual(found, ())
         self.assertEqual(argv[0], "sudo")
