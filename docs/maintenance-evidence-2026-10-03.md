@@ -1,5 +1,7 @@
 # Maintenance and integration evidence
 
+> Dated record: a maintenance receipt for 2026-10-03. It does not describe current state. Current work lives in [roadmap.md](../roadmap.md); security status lives in [security/maintenance.md](security/maintenance.md).
+>
 > Status note (2026-10-21): Point-in-time receipt. The tranche changes described as local were committed in 34331b9 and are on main. Handoff files it mentions no longer exist. Later main state, including c08b82e, is not covered.
 
 Date: 2026-10-03 America/Denver. Scope: GuideCheck component maintenance.

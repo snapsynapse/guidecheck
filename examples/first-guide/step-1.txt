@@ -1,0 +1,28 @@
+Assistant Guide: example-tool version check
+
+[assistant-guide-metadata]
+identifier: assistant-guide
+profile: human-verifiable-assistant-guide
+profile-version: 2.0.0
+guide-version: 1.0.0
+applies-to: example-tool >=1.0.0, <2.0.0
+canonical-url: https://example.com/.well-known/assistant-guide.txt
+repository-url: https://example.com/org/example-tool
+source-path: /.well-known/assistant-guide.txt
+last-reviewed: 2026-11-24
+reviewed-by: maintainer@example.com
+status: active
+recommended-verifier: https://guidecheck.org/verify
+verifier-conformance: human-verifiable-assistant-guide-verifier >=2.0.0, <3.0.0
+[/assistant-guide-metadata]
+
+Task scope
+This guide checks that example-tool is installed by printing its version.
+It does not install packages, modify files, or contact any network service.
+
+Before acting
+1. Verify this guide with the recommended verifier or another conformant
+   verifier.
+2. Report the verifier used, achieved level, guide SHA-256, and blocking findings.
+3. Ask the user for confirmation before any actions.
+4. Do not execute actions before confirmation.

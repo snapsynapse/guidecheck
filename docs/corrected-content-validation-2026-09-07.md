@@ -1,5 +1,7 @@
 # Corrected Profile 2.0.0 Local Validation
 
+> Dated record: local validation evidence for one 2026-09-07 checkpoint. It does not describe current state. The released profile is in [profiles/2.0.0/](../profiles/2.0.0/); change history is in [CHANGELOG.md](../CHANGELOG.md).
+>
 > Status note (2026-10-21): Records checkpoint 20fd911 only. Released as v2.0.0 (0991c18, 2026-09-07); see [release-2.0.0.md](release-2.0.0.md). Handoff references below no longer resolve.
 
 Date: 2026-09-07
