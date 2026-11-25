@@ -136,6 +136,8 @@ or as a missing point.
 
 ## How to reach each level
 
+For a worked example with verifier output after each step, from an empty file to Level 3 under 2.0.0, see [docs/first-guide.md](docs/first-guide.md).
+
 ### Level 1: plain text available
 
 1. Write the task instructions as a plain `.txt` file named

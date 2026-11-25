@@ -50,6 +50,7 @@ test-cli-contract:
 	python3 scripts/test_cli_contract.py
 	python3 scripts/test_caller_notes.py
 	python3 scripts/test_readme_trial.py
+	python3 scripts/test_first_guide.py
 
 test-posix-cli-contract:
 	python3 scripts/test_posix_cli_contract.py

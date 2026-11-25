@@ -124,7 +124,7 @@ Keep these claims distinct:
 Pages grouped by what they are for. Each page is listed once.
 
 - Tutorial: [Try it](#try-it), the fail, repair, pass lesson above.
-- How-to: [ADOPTION.md](ADOPTION.md) for the level-by-level path to a conforming guide, and [Have an instruction file rather than a guide?](#have-an-instruction-file-rather-than-a-guide) for scanning existing files.
+- How-to: [docs/first-guide.md](docs/first-guide.md) to write a first guide from an empty file to Level 3, [ADOPTION.md](ADOPTION.md) for the level-by-level path to a conforming guide, and [Have an instruction file rather than a guide?](#have-an-instruction-file-rather-than-a-guide) for scanning existing files.
 - Reference: [profiles/2.0.0/spec.md](profiles/2.0.0/spec.md), [profiles/2.0.0/verifier-conformance.md](profiles/2.0.0/verifier-conformance.md), [finding-ids.md](finding-ids.md), [docs/cli-contract.md](docs/cli-contract.md), and [docs/verifier-scope.md](docs/verifier-scope.md).
 - Explanation: [design-rationale.md](design-rationale.md), [threat-register.md](threat-register.md), and [operator-guide.md](operator-guide.md).
 
@@ -257,6 +257,7 @@ deployment that executes a Level 4 guide.
 - `docs/owasp-crosswalk.md` - non-normative map to the OWASP Agentic Top 10 and ACS v0.1.0 hooks
 - `docs/mcp-integration.md` - non-normative MCP integration patterns
 - `docs/a2a-integration.md` - non-normative A2A integration patterns
+- `docs/first-guide.md` - how to write a first guide, from an empty file to Level 3, with verifier output after each step
 - `docs/verifier-scope.md` - what each verifier checks, how to run it, current hosted limits, and the local eval suite
 - `docs/readme-trial-evidence-2026-11-24.md` - captured output behind the "Try it" section (supersedes `docs/readme-trial-evidence-2026-10-21.md`)
 - `schemas/` - JSON Schema for the manifest, verifier output, and fixture expectations
