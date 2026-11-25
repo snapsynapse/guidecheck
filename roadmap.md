@@ -12,18 +12,21 @@ Current evidence and handoff disposition are recorded in the
 [security maintenance record](docs/security/maintenance.md). Completed
 foundations are not implementation tasks to repeat.
 
-- Level 3 restricted command grammar build, state on 2026-11-22. Delivered on
-  `main`: the first evaluator slice (`5e49f94`). Built and unreleased, in review:
-  the draft profile text in `profiles/3.0.0/`, draft schemas in `schemas/3.0.0/`,
-  the report invariants, the full evaluator in `scripts/guidecheck_restricted.py`,
-  a 22-entry shape registry and a 128-case fixture suite. Sam answered the
-  design questions that day; `INTENT.md` records the classification. The local
-  reference CLI evaluates a guide that declares 3.0.0 and labels the result a
-  draft; the dispatcher refuses 3.0.0 for every other caller. Not done: the
-  hosted verifier has no 3.0.0 report path and refuses the profile; prose scans
-  are not implemented; pinned files are never read; no guide has been migrated;
-  nothing is released. Open decisions: whether the hosted verifier should serve
-  3.0.0 before a release, and when to release.
+- Level 3 restricted command grammar build, state on 2026-11-24. On `main`
+  (`e8bf9a9`, PR 18), unreleased: the draft profile text in `profiles/3.0.0/`,
+  draft schemas in `schemas/3.0.0/`, the report invariants, the full evaluator
+  in `scripts/guidecheck_restricted.py`, a 22-entry shape registry and a
+  137-case fixture suite. `INTENT.md` records Sam's 2026-11-22 and 2026-11-24
+  decisions. The local reference CLI evaluates a guide that declares 3.0.0 and
+  labels the result a draft; the dispatcher refuses 3.0.0 for every other
+  caller, and the hosted verifier keeps refusing it until a release decision.
+  Remaining build work, none scheduled: rewrite `verifier-conformance.md`
+  section 29 against `fixtures/profiles/3.0.0/` (it still lists 2.0.0 fixture
+  names); a second independent conformance pass on the evaluator after
+  `7af113f`; prose scans (advisory, warnings only), only if Sam wants them;
+  repository-reading mode, so pins stop being reported only as declared. Not
+  started and out of scope until Sam asks: release of 3.0.0 and migration of
+  any guide, including the self-guide.
 - Owner directions selected 2026-11-11 (see `INTENT.md`, Format over tool) set
   the order of work: a security containment tranche first; then the Level 3
   restricted command grammar as an opt-in profile, fixtures before code; then
@@ -73,11 +76,12 @@ foundations are not implementation tasks to repeat.
   verify locally against `.github/allowed_signers` (SSH signing from 3ceb30a,
   2026-09-05, onward; earlier history is unsigned and GitHub web-flow merges use
   GitHub's key). `CITATION.cff`, a CodeQL gate, and a Scorecard workflow with
-  `publish_results: false` exist, and Actions are pinned by commit SHA. Still
-  open as owner decisions: reviewing the first Scorecard and CodeQL results,
-  publishing Scorecard results and a badge, release build-provenance
-  attestations, Dependabot for pinned Actions, and a DOI. Nothing here
-  authorizes account changes or publication.
+  `publish_results: false` exist, and Actions are pinned by commit SHA. Since
+  then `.github/dependabot.yml` has Dependabot propose weekly updates to those
+  pins. Still open as owner decisions: reviewing the first Scorecard and CodeQL
+  results, publishing Scorecard results and a badge, release build-provenance
+  attestations, and a DOI. Nothing here authorizes account changes or
+  publication.
 - Hosted execution-artifact verification and transitive scanning remain pending
   fetch-limit and budget design. A declared execution pin remains unverified.
   Exemption-list maintenance and mixed built/pulled Compose services remain
