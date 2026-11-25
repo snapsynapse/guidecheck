@@ -156,6 +156,14 @@ obligation, delivered as an opt-in profile as the September 7 corrected-content
 work was. The Level 3 command rules of the released profiles do not hold against
 a hostile author, and correcting that is upkeep of what Level 3 already claims.
 
+Decided by Sam on 2026-11-24, for the 3.0.0 draft: the fail-closed choices
+from the independent conformance review stand as implemented (an action that
+declares `env` is opaque; the `curl` shapes carry `-q`; the read-only `git`
+shapes stay listed with repository git configuration stated as residual risk),
+and the session's registry contents stand as committed. The hosted verifier
+keeps refusing 3.0.0 until a release decision. Release of 3.0.0 and migration
+of any guide are not started.
+
 Level 5 ownership is unchanged. The landscape review found no runtime that meets
 the Level 5 requirements; the missing piece is a guide-aware driver, not a
 sandbox. That is an input to Level 5 fixture design, not a new commitment.
